@@ -155,6 +155,7 @@ class BillsOriginal extends Model
         'TransmissionVAT',
         'SystemLossVAT',
         'DistributionVAT',
+        'OthersVAT',
         'RealPropertyTax',
         'Notes',
         'UserId',
@@ -210,6 +211,10 @@ class BillsOriginal extends Model
         'ACRMVAT',
         'MissionaryElectrificationSPUG',
         'MissionaryElectrificationSPUGTRUEUP',
+        'FranchiseTaxOthers',
+        'AdvancedMaterialDeposit',
+        'CustomerDeposit',
+        'TransformerRental',
     ];
 
     /**
@@ -268,6 +273,7 @@ class BillsOriginal extends Model
         'TransmissionVAT' => 'string',
         'SystemLossVAT' => 'string',
         'DistributionVAT' => 'string',
+        'OthersVAT' => 'string',
         'RealPropertyTax' => 'string',
         'Notes' => 'string',
         'UserId' => 'string',
@@ -323,6 +329,10 @@ class BillsOriginal extends Model
         'ACRMVAT' => 'string',
         'MissionaryElectrificationSPUG' => 'string',
         'MissionaryElectrificationSPUGTRUEUP' => 'string',
+        'FranchiseTaxOthers' => 'string',
+        'AdvancedMaterialDeposit' => 'string',
+        'CustomerDeposit' => 'string',
+        'TransformerRental' => 'string',
     ];
 
     /**
@@ -381,6 +391,7 @@ class BillsOriginal extends Model
         'TransmissionVAT' => 'nullable|string|max:20',
         'SystemLossVAT' => 'nullable|string|max:20',
         'DistributionVAT' => 'nullable|string|max:20',
+        'OthersVAT' => 'nullable|string',
         'RealPropertyTax' => 'nullable|string|max:20',
         'Notes' => 'nullable|string|max:2500',
         'UserId' => 'nullable|string|max:255',
@@ -438,5 +449,9 @@ class BillsOriginal extends Model
         'ACRMVAT' => 'nullable|string',
         'MissionaryElectrificationSPUG' => 'nullable|string',
         'MissionaryElectrificationSPUGTRUEUP' => 'nullable|string',
+        'FranchiseTaxOthers' => 'nullable|string',
+        'AdvancedMaterialDeposit' => 'nullable|string',
+        'CustomerDeposit' => 'nullable|string',
+        'TransformerRental' => 'nullable|string',
     ];
 }

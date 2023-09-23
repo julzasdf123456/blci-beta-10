@@ -11,7 +11,7 @@
             <div class="col-sm-12">
                 <span>
                     <h4 style="display: inline; margin-right: 15px;">Pending Accounts</h4>
-                    <i class="text-muted">Energized service connection accounts for activation</i>
+                    <i class="text-muted">Energized service connection accounts for activation (Press <strong>F3</strong> to search)</i>
                 </span>
             </div>
         </div>
@@ -70,7 +70,7 @@
                     @foreach ($serviceConnections as $item)
                         <tr>
                             <th>{{ $i }}</th>
-                            <td>{{ $item->id }}</td>
+                            <td><a href="{{ route('serviceConnections.show', [$item->id]) }}">{{ $item->id }}</a></td>
                             <td>{{ $item->ServiceAccountName }} ({{ $item->AccountCount }})<i class="fas fa-check-circle text-primary" style="font-size: .75em;"></i></td>
                             <td>{{ ServiceConnections::getAddress($item) }}</td>
                             <td>{{ $item->ConnectionApplicationType }}</td>

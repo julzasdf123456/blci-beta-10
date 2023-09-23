@@ -537,6 +537,18 @@ class ReadingsController extends AppBaseController
 
                         $bills->Notes = $request['Notes'];
                         $bills->save();
+
+                        // DEDUCT MATERIAL DEPOSIT TO BALANCE
+                        if ($account->AdvancedMaterialDeposit > 0) {
+                            $account->AdvancedMaterialDeposit = round(floatval($account->AdvancedMaterialDeposit) + floatval($bills->AdvancedMaterialDeposit), 2);
+                            $account->save();
+                        }
+
+                        // DEDUCT CUSTOMER DEPOSIT TO BALANCE
+                        if ($account->CustomerDeposit > 0) {
+                            $account->CustomerDeposit = round(floatval($account->CustomerDeposit) + floatval($bills->CustomerDeposit), 2);
+                            $account->save();
+                        }
                     }
                 } else {
                     if ($account->Contestable=='Yes') {
@@ -569,6 +581,18 @@ class ReadingsController extends AppBaseController
 
                         $bills->Notes = $request['Notes'];
                         $bills->save();
+
+                        // DEDUCT MATERIAL DEPOSIT TO BALANCE
+                        if ($account->AdvancedMaterialDeposit > 0) {
+                            $account->AdvancedMaterialDeposit = round(floatval($account->AdvancedMaterialDeposit) + floatval($bills->AdvancedMaterialDeposit), 2);
+                            $account->save();
+                        }
+
+                        // DEDUCT CUSTOMER DEPOSIT TO BALANCE
+                        if ($account->CustomerDeposit > 0) {
+                            $account->CustomerDeposit = round(floatval($account->CustomerDeposit) + floatval($bills->CustomerDeposit), 2);
+                            $account->save();
+                        }
                     }
                 }            
             }

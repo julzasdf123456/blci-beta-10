@@ -930,3 +930,4 @@ Route::resource('meterInstallations', App\Http\Controllers\MeterInstallationCont
 Route::resource('notifications', App\Http\Controllers\NotificationsController::class);
 
 Route::resource('read-and-bill-notices', App\Http\Controllers\ReadAndBillNoticesController::class);
+Route::resource('bill-miscellaneouses', App\Http\Controllers\BillMiscellaneousController::class);

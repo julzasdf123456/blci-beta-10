@@ -274,9 +274,14 @@ p {
                 <td class="no-border-top-bottom text-right">{{ number_format($bills->SystemLossVAT, 2) }}</td>
             </tr>
             <tr class="no-border-top-bottom">
-                <td class="no-border-top-bottom text-left left-indent">VAT: Distribution & Others (%)</td>
+                <td class="no-border-top-bottom text-left left-indent">VAT: Distribution (%)</td>
                 <td class="no-border-top-bottom text-right">{{ $rate->DistributionVAT }}</td>
                 <td class="no-border-top-bottom text-right">{{ number_format($bills->DistributionVAT, 2) }}</td>
+            </tr>
+            <tr class="no-border-top-bottom">
+                <td class="no-border-top-bottom text-left left-indent">VAT: Others (%)</td>
+                <td class="no-border-top-bottom text-right">{{ $rate->OthersVAT }}</td>
+                <td class="no-border-top-bottom text-right">{{ number_format($bills->OthersVAT, 2) }}</td>
             </tr>
             <tr class="no-border-top-bottom">
                 <td class="no-border-top-bottom text-left left-indent">Franchise Tax (Php/kwh)</td>
@@ -428,6 +433,16 @@ p {
 
             {{-- TOTAL --}}
             <tr class="no-border-top-bottom">
+                <td class="no-border-top-bottom text-left left-indent">Adv. Mat. Deposit</td>
+                <td class="no-border-top-bottom text-right"></td>
+                <td class="no-border-top-bottom text-right">{{ number_format($bills->AdvancedMaterialDeposit, 2) }}</td>
+            </tr>
+            <tr class="no-border-top-bottom">
+                <td class="no-border-top-bottom text-left left-indent">Customer Deposit</td>
+                <td class="no-border-top-bottom text-right"></td>
+                <td class="no-border-top-bottom text-right">{{ number_format($bills->CustomerDeposit, 2) }}</td>
+            </tr>
+            <tr class="no-border-top-bottom">
                 <td class="no-border-top-bottom text-left left-indent">Deductions/Prepayments</td>
                 <td class="no-border-top-bottom text-right"></td>
                 <td class="no-border-top-bottom text-right">-{{ number_format(floatval($bills->Deductions) + floatval($bills->DeductedDeposit), 2) }}</td>
@@ -437,21 +452,21 @@ p {
                 <td class="no-border-top-bottom text-right"></td>
                 <td class="no-border-top-bottom text-right">{{ number_format($bills->AdditionalCharges, 2) }}</td>
             </tr>
-            <tr class="no-border-top-bottom">
+            {{-- <tr class="no-border-top-bottom">
                 <td class="no-border-top-bottom text-left left-indent">Katas Ng VAT</td>
                 <td class="no-border-top-bottom text-right"></td>
                 <td class="no-border-top-bottom text-right">-{{ number_format($bills->KatasNgVat, 2) }}</td>
-            </tr>
+            </tr> --}}
             <tr class="no-border-top-bottom">
                 <th class="no-border-top-bottom text-left left-indent">CURRENT AMOUNT DUE on/before</th>
                 <td class="no-border-top-bottom text-right"></td>
                 <th class="no-border-top-bottom text-right">{{ number_format($bills->NetAmount, 2) }}</th>
             </tr>
-            <tr class="no-border-top-bottom">
+            {{-- <tr class="no-border-top-bottom">
                 <td class="no-border-top-bottom text-left left-indent-more">Due Date: <strong>{{ date('M d, Y', strtotime($bills->DueDate)) }}</strong></td>
                 <td class="no-border-top-bottom text-right"></td>
                 <td class="no-border-top-bottom text-right"></td>
-            </tr>
+            </tr> --}}
             <tr class="no-border-top-bottom">
                 <th class="no-border-top-bottom text-left left-indent">Penalty Charges After</th>
                 <td class="no-border-top-bottom text-right"></td>

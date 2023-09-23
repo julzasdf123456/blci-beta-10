@@ -1,7 +1,3 @@
-@php
-    use App\Models\IDGenerator;
-@endphp
-
 @extends('layouts.app')
 
 @section('content')
@@ -9,7 +5,9 @@
         <div class="container-fluid">
             <div class="row mb-2">
                 <div class="col-sm-12">
-                    <h1>Create Zones</h1>
+                    <h1>
+                        Edit Bill Miscellaneous
+                    </h1>
                 </div>
             </div>
         </div>
@@ -21,20 +19,17 @@
 
         <div class="card">
 
-            {!! Form::open(['route' => 'zones.store']) !!}
+            {!! Form::model($billMiscellaneous, ['route' => ['billMiscellaneouses.update', $billMiscellaneous->id], 'method' => 'patch']) !!}
 
             <div class="card-body">
-
                 <div class="row">
-                    <input type="hidden" id="id" name="id" value="{{ IDGenerator::generateID() }}">
-                    @include('zones.fields')
+                    @include('bill_miscellaneouses.fields')
                 </div>
-
             </div>
 
             <div class="card-footer">
                 {!! Form::submit('Save', ['class' => 'btn btn-primary']) !!}
-                <a href="{{ route('zones.index') }}" class="btn btn-default">Cancel</a>
+                <a href="{{ route('billMiscellaneouses.index') }}" class="btn btn-default"> Cancel </a>
             </div>
 
             {!! Form::close() !!}

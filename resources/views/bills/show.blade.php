@@ -497,14 +497,14 @@
                                                 <th class="text-right">- {{ number_format($bills->KatasNgVat, 2) }}</th>
                                             </tr>
                                             <tr>
-                                                <td></td>
-                                                <td></td>
+                                                <td>Advanced Mat. Deposit</td>
+                                                <th class="text-right">{{ number_format($bills->AdvancedMaterialDeposit, 2) }}</th>
                                                 <td style="padding-left: 60px;">Penalty Charges after Due Date</td>
                                                 <th class="text-right">₱ {{ number_format(Bills::assessDueBillAndGetSurcharge($bills), 2) }}</th>
                                             </tr>
                                             <tr>
-                                                <td></td>
-                                                <td></td>
+                                                <td>Customer Deposit</td>
+                                                <th class="text-right">{{ number_format($bills->CustomerDeposit, 2) }}</th>
                                                 <td style="padding-left: 60px;" class="text-primary">Amount Due Before Due Date</td>
                                                 <th class="text-right text-primary"><h4><strong>₱ {{ number_format($bills->NetAmount, 2) }}</strong></h4></th>
                                             </tr>

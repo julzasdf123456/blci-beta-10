@@ -70,7 +70,7 @@ class BillingMetersController extends AppBaseController
             $billingMeters = $this->billingMetersRepository->create($input);
 
             if ($sa != null) {
-                $sa->MeterDetailsId = $billingMeters->id;
+                $sa->MeterDetailsId = $billingMeters->SerialNumber;
                 $sa->Multiplier = $billingMeters->Multiplier;
                 $sa->save();
             }

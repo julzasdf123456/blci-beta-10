@@ -39,6 +39,9 @@ use App\Models\PrePaymentBalance;
 use App\Models\PrePaymentTransHistory;
 use App\Models\AccountLocationHistory;
 use App\Models\KatasNgVat;
+use App\Models\Zones;
+use App\Models\Blocks;
+use App\Models\PaymentOrder;
 use App\Exports\DynamicExports;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Flash;
@@ -718,6 +721,8 @@ class ServiceAccountsController extends AppBaseController
         $barangays = Barangays::where('TownId', $serviceConnection->Town)->pluck('Barangay', 'id');
         $accountTypes = ServiceConnectionAccountTypes::all();
         $meterReaders = User::role('Meter Reader Inhouse')->get();
+        $zones = Zones::orderBy('Zone')->get();
+        $blocks = Blocks::orderBy('Block')->get();
 
         return view('/service_accounts/account_migration',
             [
@@ -728,6 +733,8 @@ class ServiceAccountsController extends AppBaseController
                 'accountTypes' => $accountTypes,
                 'meterReaders' => $meterReaders,
                 'serviceAccount' => $serviceAccount,
+                'zones' => $zones,
+                'blocks' => $blocks
             ]
         );
     }
@@ -743,7 +750,8 @@ class ServiceAccountsController extends AppBaseController
                     'CRM_Barangays.Barangay',
                     'Billing_ServiceAccounts.Purok as Sitio',
                     'Billing_ServiceAccounts.AccountType',
-                    'Billing_ServiceAccounts.AreaCode',
+                    'Billing_ServiceAccounts.Zone',
+                    'Billing_ServiceAccounts.BlockCode',
                     'Billing_ServiceAccounts.SequenceCode',
                     'Billing_ServiceAccounts.ServiceConnectionId',
                     'Billing_ServiceAccounts.MeterDetailsId')
@@ -781,7 +789,9 @@ class ServiceAccountsController extends AppBaseController
             ->first();
 
         $serviceConnection = ServiceConnections::find($serviceAccount->ServiceConnectionId);
-        $meters = BillingMeters::find($serviceAccount->MeterDetailsId);
+        $meters = BillingMeters::where('ServiceAccountId', $id)
+            ->orderByDesc('created_at')
+            ->first();
         $meterAndTransformer = ServiceConnectionMtrTrnsfrmr::where('ServiceConnectionId', $serviceAccount->ServiceConnectionId)->first();
         $bapa = DB::table('Billing_ServiceAccounts')
             ->select('OrganizationParentAccount')
@@ -789,12 +799,15 @@ class ServiceAccountsController extends AppBaseController
             ->orderBy('OrganizationParentAccount')
             ->get();
 
+        $paymentOrder = PaymentOrder::where('ServiceConnectionId', $serviceAccount->ServiceConnectionId)->first();
+
         return view('/service_accounts/account_migration_step_three', [
             'serviceAccount' => $serviceAccount,
             'meterAndTransformer' => $meterAndTransformer,
             'serviceConnection' => $serviceConnection,
             'meters' => $meters,
             'bapa' => $bapa,
+            'paymentOrder' => $paymentOrder,
         ]);
     }
 

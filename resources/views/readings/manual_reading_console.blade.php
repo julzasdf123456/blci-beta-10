@@ -350,6 +350,20 @@
                                 <input type="text" step="any"  name="ExcessDeposit" id="ExcessDeposit" class="form-blend form-control-sm text-right" readonly="true">
                             </td>
                         </tr>
+                        <tr>
+                            <td>
+                                <label for="AdvancedMaterialDeposit">Adv. Mat. Deposit</label>
+                            </td>
+                            <td>
+                                <input type="text" step="any"  name="AdvancedMaterialDeposit" id="AdvancedMaterialDeposit" class="form-blend form-control-sm text-right" readonly="true">
+                            </td>
+                            <td>
+                                <label for="CustomerDeposit">Customer Deposit</label>
+                            </td>
+                            <td>
+                                <input type="text" step="any"  name="CustomerDeposit" id="CustomerDeposit" class="form-blend form-control-sm text-right" readonly="true">
+                            </td>
+                        </tr>
                     </table>
                 </div>
             </div>
@@ -643,6 +657,8 @@
                         $('#DeductedDeposit').val(Number(parseFloat(res['DeductedDeposit']).toFixed(2)).toLocaleString())
                         $('#ExcessDeposit').val(Number(parseFloat(res['ExcessDeposit']).toFixed(2)).toLocaleString())
                         $('#AdditionalCharges').val(Number(parseFloat(res['AdditionalCharges']).toFixed(2)).toLocaleString())
+                        $('#AdvancedMaterialDeposit').val(Number(parseFloat(res['AdvancedMaterialDeposit']).toFixed(2)).toLocaleString())
+                        $('#CustomerDeposit').val(Number(parseFloat(res['CustomerDeposit']).toFixed(2)).toLocaleString())
                     },
                     error : function(error) {
                         Swal.fire({

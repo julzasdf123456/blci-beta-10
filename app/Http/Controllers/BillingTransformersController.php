@@ -11,6 +11,7 @@ use App\Models\ServiceAccounts;
 use App\Models\ServiceConnections;
 use Illuminate\Support\Facades\Auth;
 use App\Models\IDGenerator;
+use App\Models\BillMiscellaneous;
 use Flash;
 use Response;
 
@@ -65,21 +66,58 @@ class BillingTransformersController extends AppBaseController
 
         // UPDATE SERVICE ACCOUNT
         $serviceAccount = ServiceAccounts::find($request['ServiceAccountId']);
-        $serviceAccount->Coreloss = $request['Coreloss'];
         $serviceAccount->UserId = Auth::id();
-        $serviceAccount->Main = $request['Main'];
-        $serviceAccount->Organization = $request['BAPA'];
-        $serviceAccount->OrganizationParentAccount = $request['OrganizationParentAccount'];
         $serviceAccount->TransformerDetailsId = $input['id'];
         $serviceAccount->Locked = 'Yes';
-        $serviceAccount->Evat5Percent = $request['Evat5Percent'];
-        $serviceAccount->Ewt2Percent = $request['Ewt2Percent'];
-        $serviceAccount->save();
 
         // UPDATE SERVICE CONNECTION STATUS
         $serviceConnection = ServiceConnections::find($serviceAccount->ServiceConnectionId);
         $serviceConnection->Status = 'Closed';
         $serviceConnection->save();
+
+        // save transformer rental
+        if ($input['TransformerRental'] != null && floatval($input['TransformerRental']) > 0) {
+            $transformerRental = new BillMiscellaneous;
+            $transformerRental->id = IDGenerator::generateIDandRandString();
+            $transformerRental->ServiceAccountId = $request['ServiceAccountId'];
+            $transformerRental->Name = 'Transformer Rental';
+            $transformerRental->Balance = $input['TransformerRental'];
+            $transformerRental->Operation = "ADD";
+            $transformerRental->Status = 'NOT STARTED';
+            $transformerRental->Terms = "MONTHLY";
+            $transformerRental->save();
+        }
+
+        // save material deposit
+        if ($input['AdvanceMaterialDeposit'] != null && floatval($input['AdvanceMaterialDeposit']) > 0) {
+            // $materialDeposit = new BillMiscellaneous;
+            // $materialDeposit->id = IDGenerator::generateIDandRandString();
+            // $materialDeposit->ServiceAccountId = $request['ServiceAccountId'];
+            // $materialDeposit->Name = 'Advance Material Deposit';
+            // $materialDeposit->Balance = $input['AdvanceMaterialDeposit'];
+            // $materialDeposit->Operation = "DEDUCT";
+            // $materialDeposit->Status = 'NOT STARTED';
+            // $materialDeposit->Terms = "MONTHLY";
+            // $materialDeposit->save();
+
+            $serviceAccount->AdvancedMaterialDeposit = $input['AdvanceMaterialDeposit'];
+        }
+
+        // save customer deposit
+        if ($input['CustomerDeposit'] != null && floatval($input['CustomerDeposit']) > 0) {
+            // $materialDeposit = new BillMiscellaneous;
+            // $materialDeposit->id = IDGenerator::generateIDandRandString();
+            // $materialDeposit->ServiceAccountId = $request['ServiceAccountId'];
+            // $materialDeposit->Name = 'Customer Deposit';
+            // $materialDeposit->Balance = $input['CustomerDeposit'];
+            // $materialDeposit->Operation = "DEDUCT";
+            // $materialDeposit->Status = 'NOT STARTED';
+            // $materialDeposit->Terms = "MONTHLY";
+            // $materialDeposit->save();
+
+            $serviceAccount->CustomerDeposit = $input['CustomerDeposit'];
+        }
+        $serviceAccount->save();
 
         Flash::success('Account migrated successfully.');
 

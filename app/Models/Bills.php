@@ -203,6 +203,7 @@ class Bills extends Model
         'FranchiseTaxOthers',
         'AdvancedMaterialDeposit',
         'CustomerDeposit',
+        'TransformerRental',
     ];
 
     /**
@@ -320,6 +321,7 @@ class Bills extends Model
         'FranchiseTaxOthers' => 'string',
         'AdvancedMaterialDeposit' => 'string',
         'CustomerDeposit' => 'string',
+        'TransformerRental' => 'string',
     ];
 
     /**
@@ -439,6 +441,7 @@ class Bills extends Model
         'FranchiseTaxOthers' => 'nullable|string',
         'AdvancedMaterialDeposit' => 'nullable|string',
         'CustomerDeposit' => 'nullable|string',
+        'TransformerRental' => 'nullable|string',
     ];
 
     public static function getHighConsumptionPercentageAlert() {
@@ -695,19 +698,20 @@ class Bills extends Model
         $kwhUsed = floatval($bill->KwhUsed) /* * floatval($bill->Multiplier)*/;
         // MODIFY THIS
         $deductibles = $bill->GenerationSystemCharge +
-                    $bill->ACRM +
-                    $bill->TransmissionDeliveryChargeKWH +
-                    $bill->TransmissionDeliveryChargeKW +
-                    $bill->SystemLossCharge +
-                    $bill->OtherGenerationRateAdjustment +
-                    $bill->OtherTransmissionCostAdjustmentKW +
-                    $bill->OtherTransmissionCostAdjustmentKWH +
-                    $bill->OtherSystemLossCostAdjustment +
-                    $bill->DistributionDemandCharge +
-                    $bill->DistributionSystemCharge +
-                    $bill->SupplyRetailCustomerCharge +
-                    $bill->SupplySystemCharge +
-                    $bill->MeteringSystemCharge;
+            $bill->ACRM +
+            $bill->TransmissionDeliveryChargeKWH +
+            // $bill->TransmissionDeliveryChargeKW +
+            $bill->SystemLossCharge +
+            // $bill->OtherGenerationRateAdjustment +
+            // $bill->OtherTransmissionCostAdjustmentKW +
+            // $bill->OtherTransmissionCostAdjustmentKWH +
+            // $bill->OtherSystemLossCostAdjustment +
+            $bill->DistributionDemandCharge +
+            $bill->DistributionSystemCharge +
+            $bill->SupplyRetailCustomerCharge +
+            $bill->SupplySystemCharge +
+            $bill->MeteringSystemCharge +
+            $bill->MeteringRetailCustomerCharge;
 
         if ($account->Lifeliner == 'Yes') {
             if ($kwhUsed <= 20) {
@@ -732,21 +736,7 @@ class Bills extends Model
     public static function computeSeniorCitizen($account, $bill, $rate) {
         $kwhUsed = floatval($bill->KwhUsed) /* * floatval($bill->Multiplier)*/;
         // MODIFY THIS
-        $netAmount = $bill->GenerationSystemCharge +
-            $bill->ACRM +
-            $bill->TransmissionDeliveryChargeKWH +
-            $bill->TransmissionDeliveryChargeKW +
-            $bill->SystemLossCharge +
-            $bill->OtherGenerationRateAdjustment +
-            $bill->OtherTransmissionCostAdjustmentKW +
-            $bill->OtherTransmissionCostAdjustmentKWH +
-            $bill->OtherSystemLossCostAdjustment +
-            $bill->DistributionDemandCharge +
-            $bill->DistributionSystemCharge +
-            $bill->SupplyRetailCustomerCharge +
-            $bill->SupplySystemCharge +
-            $bill->MeteringSystemCharge +
-            $bill->LifelineRate;
+        $netAmount = Bills::getBilledAmount($bill);
 
         if ($account->SeniorCitizen == 'Yes' && $kwhUsed <= 100) {
             return -($netAmount * .05);
@@ -757,6 +747,27 @@ class Bills extends Model
                 return 0;
             }            
         }
+    }
+
+    public static function getBilledAmount($bill) {
+        $billed = $bill->GenerationSystemCharge +
+            $bill->ACRM +
+            $bill->TransmissionDeliveryChargeKWH +
+            // $bill->TransmissionDeliveryChargeKW +
+            $bill->SystemLossCharge +
+            // $bill->OtherGenerationRateAdjustment +
+            // $bill->OtherTransmissionCostAdjustmentKW +
+            // $bill->OtherTransmissionCostAdjustmentKWH +
+            // $bill->OtherSystemLossCostAdjustment +
+            $bill->DistributionDemandCharge +
+            $bill->DistributionSystemCharge +
+            $bill->SupplyRetailCustomerCharge +
+            $bill->SupplySystemCharge +
+            $bill->MeteringSystemCharge +
+            $bill->MeteringRetailCustomerCharge +
+            $bill->LifelineRate;
+
+        return $billed;
     }
 
     public static function get2307($bill) {
@@ -784,6 +795,52 @@ class Bills extends Model
             $bill->LifelineRate;
 
         return $total;
+    }
+
+    public static function getMaterialDeposit($account, $bill) {
+        if ($account->AdvancedMaterialDeposit > 0) {
+            if (date('Y', strtotime($account->ConnectionDate)) < 2023) {
+                // 2022 and below
+                $deposit = round(Bills::getBilledAmount($bill) * .75, 2);
+
+                if ($deposit >= $account->AdvancedMaterialDeposit) {
+                    return -$account->AdvancedMaterialDeposit;
+                } else {
+                    return -$deposit;
+                }
+            } else {
+                // 2023 above
+                $total = $bill->DistributionSystemCharge +
+                    $bill->DistributionDemandCharge +
+                    $bill->SupplyRetailCustomerCharge +
+                    $bill->MeteringRetailCustomerCharge +
+                    $bill->MeteringSystemCharge;
+
+                $deposit = round($total * .25, 2);
+
+                if ($deposit >= $account->AdvancedMaterialDeposit) {
+                    return -$account->AdvancedMaterialDeposit;
+                } else {
+                    return -$deposit;
+                }
+            }
+        } else {
+            return 0;
+        }
+    }
+
+    public static function getCustomerDeposit($account, $bill) {
+        if ($account->CustomerDeposit > 0) {
+            $billedAmt = Bills::getBilledAmount($bill);
+
+            if ($account->CustomerDeposit > $billedAmt) {
+                return -round($billedAmt, 2);
+            } else {
+                return -round($account->CustomerDeposit, 2);
+            }
+        } else {
+            return 0;
+        }
     }
 
     /**
@@ -935,6 +992,12 @@ class Bills extends Model
                         $bill->NetAmount = Bills::computeNetAmount($bill);
                     }
 
+                    // DEPOSITS
+                    $bill->AdvancedMaterialDeposit = Bills::getMaterialDeposit($account, $bill);
+                    $bill->NetAmount = $bill->NetAmount + $bill->AdvancedMaterialDeposit;
+                    $bill->CustomerDeposit = Bills::getCustomerDeposit($account, $bill);
+                    $bill->NetAmount = $bill->NetAmount + $bill->CustomerDeposit;
+
                     $bill->NetAmount = round($bill->NetAmount, 2);
 
                     $bill->SeniorCitizenSubsidy = round(Bills::computeSeniorCitizen($account, $bill, $rate), 2);
@@ -1069,6 +1132,7 @@ class Bills extends Model
 
                     if ($isSave) {
                         $bill->save();
+
                     } 
                 } else {
                     $bill = null;
@@ -1178,6 +1242,12 @@ class Bills extends Model
                         // TO BE CREATED DYNAMICALLY
                         $bill->NetAmount = Bills::computeNetAmount($bill);
                     }
+
+                    // DEPOSITS
+                    $bill->AdvancedMaterialDeposit = Bills::getMaterialDeposit($account, $bill);
+                    $bill->NetAmount = $bill->NetAmount + $bill->AdvancedMaterialDeposit;
+                    $bill->CustomerDeposit = Bills::getCustomerDeposit($account, $bill);
+                    $bill->NetAmount = $bill->NetAmount + $bill->CustomerDeposit;
 
                     $bill->NetAmount = round($bill->NetAmount, 2);
 
@@ -1313,6 +1383,7 @@ class Bills extends Model
 
                     if ($isSave) {
                         $bill->save();
+
                     } 
                 } else {
                     $bill = new Bills;
@@ -1424,6 +1495,12 @@ class Bills extends Model
                         $bill->NetAmount = Bills::computeNetAmount($bill);
                     }
 
+                    // DEPOSITS
+                    $bill->AdvancedMaterialDeposit = Bills::getMaterialDeposit($account, $bill);
+                    $bill->NetAmount = $bill->NetAmount + $bill->AdvancedMaterialDeposit;
+                    $bill->CustomerDeposit = Bills::getCustomerDeposit($account, $bill);
+                    $bill->NetAmount = $bill->NetAmount + $bill->CustomerDeposit;
+
                     $bill->NetAmount = round($bill->NetAmount, 2);
 
                     $bill->SeniorCitizenSubsidy = round(Bills::computeSeniorCitizen($account, $bill, $rate), 2);
@@ -1558,6 +1635,7 @@ class Bills extends Model
 
                     if ($isSave) {
                         $bill->save();
+                        
                     } 
                 }
                 

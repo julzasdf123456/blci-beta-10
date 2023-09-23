@@ -12,7 +12,7 @@
             <div class="col-sm-12">
                 <span>
                     <h4 style="display: inline; margin-right: 15px;">Account Migration Wizzard</h4>
-                    <i class="text-muted">Step 3. Import transformer details</i>
+                    <i class="text-muted">Step 3. Import transformer details and Deposit Balances</i>
                 </span>
             </div>
         </div>
@@ -94,7 +94,7 @@
     <div class="col-lg-9 col-md-8">
         <div class="card">
             <div class="card-header">
-                <span class="card-title"><strong>Step 3. </strong>Transformer Information</span>
+                <span class="card-title"><strong>Step 3. </strong>Transformer and Deposit Validation</span>
             </div>
             {!! Form::open(['route' => 'billingTransformers.store']) !!}
             <div class="card-body">

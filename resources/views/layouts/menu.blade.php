@@ -541,7 +541,7 @@ use Illuminate\Support\Facades\Auth;
             <li class="nav-item">
                 <a href="{{ route('serviceAccounts.pending-accounts') }}"
                    class="nav-link {{ Request::is('serviceAccounts.pending-accounts*') ? 'active' : '' }}">                   
-                   <i class="fas fa-user-alt-slash nav-icon text-primary"></i><p>Pending Accounts</p>
+                   <i class="fas fa-user-alt-slash nav-icon text-primary"></i><p>New Energized</p>
                 </a>
             </li>
             <li class="nav-item">
@@ -1440,5 +1440,4 @@ use Illuminate\Support\Facades\Auth;
         </ul>
     </li>
 @endcan
-
 

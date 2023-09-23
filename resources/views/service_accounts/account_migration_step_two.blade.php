@@ -38,10 +38,13 @@
                         <td><i class="fas fa-map-marker-alt ico-tab"></i>{{ ServiceConnections::getAddress($serviceAccount) }}</td>
                     </tr>
                     <tr>
-                        <td title="Account Number Format: New Account Number (Old/Legacy Account Number)"><i class="fas fa-user-alt ico-tab"></i>{{ $serviceAccount->id }} ({{ $serviceAccount->OldAccountNo }})</td>
+                        <td title="Account Number Format: Account Number (Account ID) "><i class="fas fa-user-alt ico-tab"></i>{{ $serviceAccount->id }} ({{ $serviceAccount->OldAccountNo }})</td>
                     </tr>
                     <tr>
-                        <td title="Area Code"><i class="fas fa-hashtag ico-tab"></i>{{ $serviceAccount->AreaCode }}</td>
+                        <td title="Zone"><i class="fas fa-hashtag ico-tab"></i>{{ $serviceAccount->Zone }}</td>
+                    </tr>
+                    <tr>
+                        <td title="Block"><i class="fas fa-hashtag ico-tab"></i>{{ $serviceAccount->BlockCode }}</td>
                     </tr>
                     <tr>
                         <td title="Sequence Number"><i class="fas fa-hashtag ico-tab"></i>{{ $serviceAccount->SequenceCode }}</td>

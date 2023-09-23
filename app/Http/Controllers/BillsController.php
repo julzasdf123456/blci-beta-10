@@ -691,7 +691,7 @@ class BillsController extends AppBaseController
             if ($account->Contestable=='Yes') {
                 $bills = Bills::computeContestableAndDontSave($account, $bill->id, $request['KwhUsed'], $bill->PreviousKwh, $bill->PresentKwh, $bill->ServicePeriod, $bill->BillingDate, $additionalCharges, $deductions, $request['Is2307'], $request['Demand']);
             } else {
-                $bills = Bills::computeRegularBillAndDontSave($account, $bill->id, $request['KwhUsed'], $bill->PreviousKwh, $bill->PresentKwh, $bill->ServicePeriod, $bill->BillingDate, $additionalCharges, $deductions, $request['Is2307']);
+                $bills = Bills::getRegularBill($account, $bill->id, $request['KwhUsed'], $bill->PreviousKwh, $bill->PresentKwh, $bill->ServicePeriod, $bill->BillingDate, $additionalCharges, $deductions, $request['Is2307'], false);
             }
         }        
 

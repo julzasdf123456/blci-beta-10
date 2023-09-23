@@ -18,10 +18,10 @@
 </section>
 
 <div class="row px-2">
-    <div class="col-lg-12">
+    <div class="col-lg-8 col-md-10 offset-lg-2 offset-md-1">
         <div class="card">
             {!! Form::open(['route' => 'serviceAccounts.store']) !!}
-            <div class="card-header">
+            <div class="card-header border-0">
                 <span class="card-title"><strong>Step 1. </strong>Account Information</span>
 
                 <div class="card-tools">
@@ -33,7 +33,7 @@
                                     <div class="input-group-prepend">
                                         <span class="input-group-text"><i class="fas fa-user-circle"></i></span>
                                     </div>
-                                    {!! Form::text('id', $serviceConnection->Town . '-' . $serviceConnection->id, ['class' => 'form-control','maxlength' => 50,'maxlength' => 50, 'readonly' => true]) !!}
+                                    {!! Form::text('id', $serviceConnection->Town . '-' . $serviceConnection->id, ['class' => 'form-control form-control-sm','maxlength' => 50,'maxlength' => 50, 'readonly' => true]) !!}
                                 </div>
                             </div>
                         </div> 
