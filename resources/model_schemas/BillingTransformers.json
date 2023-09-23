@@ -1,0 +1,98 @@
+[
+    {
+        "name": "id",
+        "dbType": "string,120",
+        "htmlType": "text",
+        "validations": null,
+        "searchable": false,
+        "fillable": false,
+        "primary": true,
+        "inForm": false,
+        "inIndex": false,
+        "inView": false
+    },
+    {
+        "name": "ServiceAccountId",
+        "dbType": "string,120:nullable",
+        "htmlType": "text",
+        "validations": "nullable|string|max:120|nullable|string|max:120",
+        "searchable": true,
+        "fillable": true,
+        "primary": false,
+        "inForm": true,
+        "inIndex": true,
+        "inView": true
+    },
+    {
+        "name": "TransformerNumber",
+        "dbType": "string,120:nullable",
+        "htmlType": "text",
+        "validations": "nullable|string|max:120|nullable|string|max:120",
+        "searchable": true,
+        "fillable": true,
+        "primary": false,
+        "inForm": true,
+        "inIndex": true,
+        "inView": true
+    },
+    {
+        "name": "Rating",
+        "dbType": "string,20:nullable",
+        "htmlType": "text",
+        "validations": "nullable|string|max:20|nullable|string|max:20",
+        "searchable": true,
+        "fillable": true,
+        "primary": false,
+        "inForm": true,
+        "inIndex": true,
+        "inView": true
+    },
+    {
+        "name": "RentalFee",
+        "dbType": "string,30:nullable",
+        "htmlType": "text",
+        "validations": "nullable|string|max:30|nullable|string|max:30",
+        "searchable": true,
+        "fillable": true,
+        "primary": false,
+        "inForm": true,
+        "inIndex": true,
+        "inView": true
+    },
+    {
+        "name": "Load",
+        "dbType": "string,50:nullable",
+        "htmlType": "text",
+        "validations": "nullable|string|max:50|nullable|string|max:50",
+        "searchable": true,
+        "fillable": true,
+        "primary": false,
+        "inForm": true,
+        "inIndex": true,
+        "inView": true
+    },
+    {
+        "name": "created_at",
+        "dbType": "datetime:nullable",
+        "htmlType": "date",
+        "validations": "nullable|nullable",
+        "searchable": false,
+        "fillable": false,
+        "primary": false,
+        "inForm": false,
+        "inIndex": false,
+        "inView": false
+    },
+    {
+        "name": "updated_at",
+        "dbType": "datetime:nullable",
+        "htmlType": "date",
+        "validations": "nullable|nullable",
+        "searchable": false,
+        "fillable": false,
+        "primary": false,
+        "inForm": false,
+        "inIndex": false,
+        "inView": false
+    }
+]

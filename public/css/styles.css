@@ -1,0 +1,15 @@
+.form-blend {
+    background-color: transparent;
+    border: 0;
+    padding: 0;
+    margin: 0;
+    width: 100%;
+}
+
+.form-blend:focus {
+    outline: none !important;
+    border: 1px solid #328afd;
+    border-radius: 5px;
+    margin: -1px -1px;
+    box-shadow: 0 0 5px #ebebeb;
+}
