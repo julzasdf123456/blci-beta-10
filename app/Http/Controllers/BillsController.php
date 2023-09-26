@@ -193,8 +193,10 @@ class BillsController extends AppBaseController
     public function update($id, UpdateBillsRequest $request)
     {
         $bills = $this->billsRepository->find($id);
-        $bills->AdjustedBy = Auth::id();
-        $bills->DateAdjusted = date('Y-m-d');
+        $bills->AdjustmentStatus = 'PENDING ADJUSTMENT APPROVAL';
+        $bills->AdjustmentRequestedBy = Auth::id();
+        $bills->DateAdjustmentRequested = date('Y-m-d H:i:s');
+        $bills->save();
 
         if (empty($bills)) {
             Flash::error('Bills not found');
@@ -204,12 +206,37 @@ class BillsController extends AppBaseController
 
         // BEFORE UPDATE
         // INSERT TO BILLS ORIGINAL
-        $billsArr = $bills->toArray();
+        $billsArr = $request->all();
         $billsArr['id'] = IDGenerator::generateIDandRandString();
+        $billsArr['BillNumber'] = $bills->BillNumber;
+        $billsArr['AccountNumber'] = $bills->AccountNumber;
+        $billsArr['ServicePeriod'] = $bills->ServicePeriod;
+        $billsArr['Deductions'] = $bills->Deductions;
+        $billsArr['BillingDate'] = $bills->BillingDate;
+        $billsArr['MeterNumber'] = $bills->MeterNumber;
+        $billsArr['ConsumerType'] = $bills->ConsumerType;
+        $billsArr['BillType'] = $bills->BillType;
+        $billsArr['UserId'] = $bills->UserId;
+        $billsArr['BilledFrom'] = 'WEB';
+        $billsArr['AveragedCount'] = $bills->AveragedCount;
+        $billsArr['MergedToCollectible'] = $bills->MergedToCollectible;
+        $billsArr['IsUnlockedForPayment'] = $bills->IsUnlockedForPayment;
+        $billsArr['UnlockedBy'] = $bills->UnlockedBy;
+        $billsArr['ForCancellation'] = $bills->ForCancellation;
+        $billsArr['CancelRequestedBy'] = $bills->CancelRequestedBy;
+        $billsArr['CancelApprovedBy'] = $bills->CancelApprovedBy;
+        $billsArr['PaidAmount'] = $bills->PaidAmount;
+        $billsArr['Balance'] = $bills->Balance;
+        $billsArr['AdjustmentStatus'] = 'PENDING ADJUSTMENT APPROVAL';
+        $billsArr['AdjustmentRequestedBy'] = Auth::id();
+        $billsArr['DateAdjustmentRequested'] = date('Y-m-d H:i:s');
         $billsOriginal = BillsOriginal::create($billsArr);
 
         // UPDATE BILL
-        $bills = $this->billsRepository->update($request->all(), $id);
+        // $request['AdjustmentStatus'] = 'PENDING ADJUSTMENT APPROVAL';
+        // $request['AdjustmentRequestedBy'] = Auth::id();
+        // $request['DateAdjustmentRequested'] = date('Y-m-d H:i:s');
+        // $bills = $this->billsRepository->update($request->all(), $id);
 
         // UPDATE READINGS
         $reading = Readings::where('AccountNumber', $bills->AccountNumber)
@@ -2305,7 +2332,16 @@ class BillsController extends AppBaseController
             $billsArr['id'] = IDGenerator::generateIDandRandString();
             $billsArr['ForCancellation'] = 'Cancelled';
             $billsArr['CancelApprovedBy'] = Auth::id();
+            $billsArr['AdjustmentStatus'] = null;
             $billsOriginal = BillsOriginal::create($billsArr);
+
+            $account = ServiceAccounts::find($bill->AccountNumber);
+            $advMatDeposit = $bill->AdvancedMaterialDeposit;
+            $customerDeposit = $bill->CustomerDeposit;
+
+            $account->AdvancedMaterialDeposit = floatval($account->AdvancedMaterialDeposit) - floatval($advMatDeposit);
+            $account->CustomerDeposit = floatval($account->CustomerDeposit) - floatval($customerDeposit);
+            $account->save();
 
             $bill->delete();
         }
@@ -7230,5 +7266,128 @@ class BillsController extends AppBaseController
             'from' => $from,
             'to' => $to
         ]);
+    }
+
+    public function billAdjustmentsApproval() {
+        $bills = DB::table('Billing_BillsOriginal')
+            ->leftJoin('Billing_ServiceAccounts', function($join) {
+                $join->on('Billing_BillsOriginal.AccountNumber', '=', 'Billing_ServiceAccounts.id');
+            })
+            ->leftJoin('CRM_Towns', 'Billing_ServiceAccounts.Town', '=', 'CRM_Towns.id')
+            ->leftJoin('CRM_Barangays', 'Billing_ServiceAccounts.Barangay', '=', 'CRM_Barangays.id')
+            ->leftJoin('users', 'Billing_BillsOriginal.AdjustmentRequestedBy', '=', 'users.id')
+            ->whereRaw("AdjustmentStatus='PENDING ADJUSTMENT APPROVAL'")
+            ->select('Billing_BillsOriginal.*',
+                'Billing_ServiceAccounts.ServiceAccountName',
+                'Billing_ServiceAccounts.OldAccountNo',
+                'CRM_Towns.Town',
+                'CRM_Barangays.Barangay',
+                'users.name',
+            )
+            ->orderByDesc('Billing_BillsOriginal.updated_at')
+            ->get();
+
+        return view('/bills/bill_adjustment_approvals', [
+            'bills' => $bills,
+        ]);
+    }
+
+    public function billAdjustmentsApprovalView($origId) {
+        $billsOriginal = BillsOriginal::find($origId);
+
+        if ($billsOriginal != null) {
+            $account = ServiceAccounts::find($billsOriginal->AccountNumber);
+
+            $bill = Bills::where('AccountNumber', $account->id)
+                ->where('ServicePeriod', $billsOriginal->ServicePeriod)
+                ->first();
+        } else {
+            $account = null;
+            $bill = null;
+        }
+
+        return view('/bills/bill_adjustment_approvals_view', [
+            'bill' => $bill,
+            'account' => $account,
+            'billsOriginal' => $billsOriginal,
+        ]);
+    }
+
+    public function billAdjustmentsApprove($origId) {
+        $billsOriginal = BillsOriginal::find($origId);
+        $billNo = $billsOriginal->BillNumber;
+
+        if ($billsOriginal != null) {
+
+            $account = ServiceAccounts::find($billsOriginal->AccountNumber);
+
+            $bill = Bills::where('AccountNumber', $billsOriginal->AccountNumber)
+                ->where('ServicePeriod', $billsOriginal->ServicePeriod)
+                ->orderByDesc('created_at')
+                ->first();
+
+            if ($bill != null) {
+                // ADD BILL TO BILLS ORIGNAL
+                $billId = $bill->id;
+                $advMatDeposit = $bill->AdvancedMaterialDeposit;
+                $customerDeposit = $bill->CustomerDeposit;
+                $bill = $bill->toArray();
+                $bill['id'] = IDGenerator::generateIDandRandString();
+                $bill['AdjustmentStatus'] = 'ADJUSTMENT APPROVED';
+                $bill['AdjustmentApprovedBy'] = Auth::id();
+                $bill['DateAdjusted'] = date('Y-m-d H:i:s');
+                BillsOriginal::create($bill);
+                Bills::where('id', $billId)->delete();
+                //E ULI FIRST ANG DEPOSITS SA ACCOUNT
+                $account->AdvancedMaterialDeposit = floatval($account->AdvancedMaterialDeposit) - floatval($advMatDeposit);
+                $account->CustomerDeposit = floatval($account->CustomerDeposit) - floatval($customerDeposit);
+                $account->save();
+
+                // INSERT BILLS ORIGINAL DATA TO BILLS
+                $advMatDeposit = $billsOriginal->AdvancedMaterialDeposit;
+                $customerDeposit = $billsOriginal->CustomerDeposit;
+                $billsOriginal = $billsOriginal->toArray();
+                $billsOriginal['id'] = IDGenerator::generateIDandRandString();
+                $billsOriginal['AdjustmentStatus'] = 'ADJUSTMENT APPROVED';
+                $billsOriginal['AdjustmentApprovedBy'] = Auth::id();
+                $billsOriginal['DateAdjusted'] = date('Y-m-d H:i:s');
+                Bills::create($billsOriginal);
+                BillsOriginal::where('id', $origId)->delete();
+                //E KALTAS ANG DEPOSITS SA ACCOUNT
+                $account->AdvancedMaterialDeposit = floatval($account->AdvancedMaterialDeposit) + floatval($advMatDeposit);
+                $account->CustomerDeposit = floatval($account->CustomerDeposit) + floatval($customerDeposit);
+                $account->save();
+            } else {
+                // INSERT BILLS ORIGINAL DATA TO BILLS
+                $billsOriginal = $billsOriginal->toArray();
+                $billsOriginal['AdjustmentStatus'] = 'ADJUSTMENT APPROVED';
+                $billsOriginal['AdjustmentApprovedBy'] = Auth::id();
+                $billsOriginal['DateAdjusted'] = date('Y-m-d H:i:s');
+                Bills::create($billsOriginal);
+            }
+        
+        } else {
+            $bill = null;
+        }
+
+        Flash::success('Bill adjustment approved for bill number ' . $billNo . '.');
+
+        return redirect(route('bills.bill-adjustments-approval'));
+    }
+
+    public function billAdjustmentsReject($origId) {
+        $billsOriginal = BillsOriginal::find($origId);
+        $billsOriginal->AdjustmentStatus = 'ADJUSTMENT REJECTED';
+        $billsOriginal->AdjustmentApprovedBy = Auth::id();
+        $billsOriginal->DateAdjusted = date('Y-m-d H:i:s');
+        $billsOriginal->save();
+
+        $bill = Bills::where('AccountNumber', $billsOriginal->AccountNumber)
+            ->where('ServicePeriod', $billsOriginal->ServicePeriod)
+            ->update(['AdjustmentStatus' => 'ADJUSTMENT REJECTED', 'AdjustmentApprovedBy' => Auth::id(), 'DateAdjusted' => date('Y-m-d H:i:s')]);
+
+        Flash::error('Bill adjustment rejected for bill number ' . $billsOriginal->BillNumber . '.');
+
+        return redirect(route('bills.bill-adjustments-approval'));
     }
 }

@@ -4,12 +4,58 @@
 
 <div class="row">
     <div class="col-lg-12">
-        <p class="text-center text-muted">Balance</p>
-        <p class="text-center text-success" style="font-size: 2.5em;">₱ {{ $prepaymentBalance != null ? (number_format($prepaymentBalance->Balance, 2)) : "0.0" }}</p>
-        @if (Auth::user()->hasAnyRole(['Administrator'])) 
-            <button id="remove-deposit" class="btn btn-danger btn-sm float-right" style="margin-right: 15px;" title="Remove Prepayment/Deposit Balance"><i class="fas fa-trash"></i></button>
-            <button id="add-deposit" class="btn btn-success btn-sm float-right" data-toggle="modal" data-target="#modal-add-balance" style="margin-right: 15px;" title="Add Prepayment/Deposit Balance Manual"><i class="fas fa-plus"></i></button>
-        @endif
+        <div class="row">
+            {{-- PREPAYMENT --}}
+            <div class="col-lg-4">
+                <p class="text-center text-muted">Prepayments</p>
+                <p class="text-center text-success" style="font-size: 2.5em;">₱ {{ $prepaymentBalance != null ? (number_format($prepaymentBalance->Balance, 2)) : "0.0" }}</p>
+                @if (Auth::user()->hasAnyRole(['Administrator'])) 
+                    <p class="text-center">
+                        <button id="remove-deposit" class="btn btn-link text-danger btn-xs" style="margin-right: 5px;" title="Remove Prepayment/Deposit Balance"><i class="fas fa-trash"></i></button>
+                        <button id="add-deposit" class="btn btn-link text-success btn-xs" data-toggle="modal" data-target="#modal-add-balance" title="Add Prepayment/Deposit Balance Manual"><i class="fas fa-plus"></i></button>
+                    </p>
+                @endif
+            </div>
+
+            {{-- MATERIAL DEPOSIT --}}
+            <div class="col-lg-4">
+                <p class="text-center text-muted">Material Deposit ({{ $serviceAccounts->AdvancedMaterialDepositStatus == 'DEDUCTING' ? 'Deducting' : 'Paused' }})</p>
+                <p class="text-center text-primary" style="font-size: 2.5em;">₱ {{ $serviceAccounts != null ? (number_format($serviceAccounts->AdvancedMaterialDeposit, 2)) : "0.0" }}</p>
+                @if (Auth::user()->hasAnyRole(['Administrator'])) 
+                    <p class="text-center">
+                        @if ($serviceAccounts->AdvancedMaterialDepositStatus == 'DEDUCTING')
+                            <button onclick="changeMaterialDepositState(`PAUSED`)" class="btn btn-link text-danger btn-xs" title="Pause Advanced Material Deposit Deduction">
+                                <i id="{{ $serviceAccounts->id }}-changeMaterialState" class="fas fa-pause"></i>
+                            </button>
+                        @else
+                            <button onclick="changeMaterialDepositState(`DEDUCTING`)" class="btn btn-link text-success btn-xs" title="Start deducting Advanced Material Deposit">
+                                <i id="{{ $serviceAccounts->id }}-changeMaterialState" class="fas fa-play"></i>
+                            </button>
+                        @endif
+                    </p>
+                @endif
+            </div>
+
+            {{-- CUSTOMER DEPOSIT --}}
+            <div class="col-lg-4">
+                <p class="text-center text-muted">Customer Deposit ({{ $serviceAccounts->CustomerDepositStatus == 'DEDUCTING' ? 'Deducting' : 'Paused' }})</p>
+                <p class="text-center text-info" style="font-size: 2.5em;">₱ {{ $serviceAccounts != null ? (number_format($serviceAccounts->CustomerDeposit, 2)) : "0.0" }}</p>
+                @if (Auth::user()->hasAnyRole(['Administrator'])) 
+                    <p class="text-center">
+                        @if ($serviceAccounts->CustomerDepositStatus == 'DEDUCTING')
+                            <button onclick="changeCustomerDepositState(`PAUSED`)" class="btn btn-link text-danger btn-xs" title="Pause Customer Deposit Deduction">
+                                <i id="{{ $serviceAccounts->id }}-changeCustomerState" class="fas fa-pause"></i>
+                            </button>
+                        @else
+                            <button onclick="changeCustomerDepositState(`DEDUCTING`)" class="btn btn-link text-success btn-xs" title="Start deducting Customer Deposit">
+                                <i id="{{ $serviceAccounts->id }}-changeCustomerState" class="fas fa-play"></i>
+                            </button>
+                        @endif
+                    </p>
+                @endif
+            </div>
+        </div>
+        
     </div>
 
     <div class="col-lg-12">
@@ -47,7 +93,6 @@
         </table>
     </div>
 </div>
-
 
 {{-- UPDATE COLLECTIBLES MODAL --}}
 <div class="modal fade" id="modal-add-balance" aria-hidden="true" style="display: none;">
@@ -138,5 +183,71 @@
                 
             })
         })
+
+        function changeMaterialDepositState(state) {
+            $.ajax({
+                url : "{{ route('serviceAccounts.change-material-deposit-state') }}",
+                type : "GET",
+                data : {
+                    AccountNumber : "{{ $serviceAccounts->id }}",
+                    State : state,
+                },
+                success : function (res) {
+                    if (state == 'DEDUCTING') {
+                        Toast.fire({
+                            icon : 'success',
+                            text : 'Material Deposit Deduction Paused'
+                        })
+                        $('#{{ $serviceAccounts->id }}-changeMaterialState').removeClass('fa-play').addClass('fa-pause')
+                    } else {
+                        Toast.fire({
+                            icon : 'success',
+                            text : 'Material Deposit Started Deducting'
+                        })
+                        $('#{{ $serviceAccounts->id }}-changeMaterialState').removeClass('fa-pause').addClass('fa-play')
+                    }       
+                    location.reload()             
+                },
+                error : function (err) {
+                    Toast.fire({
+                        icon : 'error',
+                        text : 'Error changing material deposit state!'
+                    })
+                }
+            })
+        }
+
+        function changeCustomerDepositState(state) {
+            $.ajax({
+                url : "{{ route('serviceAccounts.change-customer-deposit-state') }}",
+                type : "GET",
+                data : {
+                    AccountNumber : "{{ $serviceAccounts->id }}",
+                    State : state,
+                },
+                success : function (res) {
+                    if (state == 'DEDUCTING') {
+                        Toast.fire({
+                            icon : 'success',
+                            text : 'Customer Deposit Deduction Paused'
+                        })
+                        $('#{{ $serviceAccounts->id }}-changeCustomerState').removeClass('fa-play').addClass('fa-pause')
+                    } else {
+                        Toast.fire({
+                            icon : 'success',
+                            text : 'Customer Deposit Started Deducting'
+                        })
+                        $('#{{ $serviceAccounts->id }}-changeCustomerState').removeClass('fa-pause').addClass('fa-play')
+                    }       
+                    location.reload()             
+                },
+                error : function (err) {
+                    Toast.fire({
+                        icon : 'error',
+                        text : 'Error changing customer deposit state!'
+                    })
+                }
+            })
+        }
     </script>
 @endpush

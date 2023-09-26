@@ -111,6 +111,8 @@ class ServiceAccounts extends Model
         'SeniorCitizenDateExpire',
         'AdvancedMaterialDeposit',
         'CustomerDeposit',
+        'AdvancedMaterialDepositStatus', // PAUSED, DEDUCTING
+        'CustomerDepositStatus', // PAUSED, DEDUCTING
     ];
 
     /**
@@ -180,6 +182,8 @@ class ServiceAccounts extends Model
         'SeniorCitizenDateExpire' => 'string',
         'AdvancedMaterialDeposit' => 'string',
         'CustomerDeposit' => 'string',
+        'AdvancedMaterialDepositStatus' => 'string',
+        'CustomerDepositStatus' => 'string',
     ];
 
     /**
@@ -251,6 +255,8 @@ class ServiceAccounts extends Model
         'SeniorCitizenDateExpire' => 'nullable|string',
         'AdvancedMaterialDeposit' => 'nullable|string',
         'CustomerDeposit' => 'nullable|string',
+        'AdvancedMaterialDepositStatus' => 'nullable|string',
+        'CustomerDepositStatus' => 'nullable|string',
     ];
 
     public static function getAddress($serviceAccount) {

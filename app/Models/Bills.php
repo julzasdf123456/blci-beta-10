@@ -204,6 +204,10 @@ class Bills extends Model
         'AdvancedMaterialDeposit',
         'CustomerDeposit',
         'TransformerRental',
+        'AdjustmentRequestedBy',
+        'AdjustmentApprovedBy',
+        'AdjustmentStatus', // PENDING ADJUSTMENT APPROVAL, PENDING CANCELLATION APPROVAL, ADJUSTMENT APPROVED, CANCELLATION APPROVED
+        'DateAdjustmentRequested',
     ];
 
     /**
@@ -322,6 +326,10 @@ class Bills extends Model
         'AdvancedMaterialDeposit' => 'string',
         'CustomerDeposit' => 'string',
         'TransformerRental' => 'string',
+        'AdjustmentRequestedBy' => 'string',
+        'AdjustmentApprovedBy' => 'string',
+        'AdjustmentStatus' => 'string',
+        'DateAdjustmentRequested' => 'string',
     ];
 
     /**
@@ -442,6 +450,10 @@ class Bills extends Model
         'AdvancedMaterialDeposit' => 'nullable|string',
         'CustomerDeposit' => 'nullable|string',
         'TransformerRental' => 'nullable|string',
+        'AdjustmentRequestedBy' => 'nullable|string',
+        'AdjustmentApprovedBy' => 'nullable|string',
+        'AdjustmentStatus' => 'nullable|string',
+        'DateAdjustmentRequested' => 'nullable|string',
     ];
 
     public static function getHighConsumptionPercentageAlert() {
@@ -798,49 +810,57 @@ class Bills extends Model
     }
 
     public static function getMaterialDeposit($account, $bill) {
-        if ($account->AdvancedMaterialDeposit > 0) {
-            if (date('Y', strtotime($account->ConnectionDate)) < 2023) {
-                // 2022 and below
-                $deposit = round(Bills::getBilledAmount($bill) * .75, 2);
+        if ($account->AdvancedMaterialDepositStatus == 'DEDUCTING') {
+            if ($account->AdvancedMaterialDeposit > 0) {
+                if (date('Y', strtotime($account->ConnectionDate)) < 2023) {
+                    // 2022 and below
+                    $deposit = round(Bills::getBilledAmount($bill) * .75, 2);
 
-                if ($deposit >= $account->AdvancedMaterialDeposit) {
-                    return -$account->AdvancedMaterialDeposit;
+                    if ($deposit >= $account->AdvancedMaterialDeposit) {
+                        return -$account->AdvancedMaterialDeposit;
+                    } else {
+                        return -$deposit;
+                    }
                 } else {
-                    return -$deposit;
+                    // 2023 above
+                    $total = $bill->DistributionSystemCharge +
+                        $bill->DistributionDemandCharge +
+                        $bill->SupplyRetailCustomerCharge +
+                        $bill->MeteringRetailCustomerCharge +
+                        $bill->MeteringSystemCharge;
+
+                    $deposit = round($total * .25, 2);
+
+                    if ($deposit >= $account->AdvancedMaterialDeposit) {
+                        return -$account->AdvancedMaterialDeposit;
+                    } else {
+                        return -$deposit;
+                    }
                 }
             } else {
-                // 2023 above
-                $total = $bill->DistributionSystemCharge +
-                    $bill->DistributionDemandCharge +
-                    $bill->SupplyRetailCustomerCharge +
-                    $bill->MeteringRetailCustomerCharge +
-                    $bill->MeteringSystemCharge;
-
-                $deposit = round($total * .25, 2);
-
-                if ($deposit >= $account->AdvancedMaterialDeposit) {
-                    return -$account->AdvancedMaterialDeposit;
-                } else {
-                    return -$deposit;
-                }
+                return 0;
             }
         } else {
             return 0;
-        }
+        }        
     }
 
     public static function getCustomerDeposit($account, $bill) {
-        if ($account->CustomerDeposit > 0) {
-            $billedAmt = Bills::getBilledAmount($bill);
+        if ($account->CustomerDepositStatus == 'DEDUCTING') {
+            if ($account->CustomerDeposit > 0) {
+                $billedAmt = Bills::getBilledAmount($bill);
 
-            if ($account->CustomerDeposit > $billedAmt) {
-                return -round($billedAmt, 2);
+                if ($account->CustomerDeposit > $billedAmt) {
+                    return -round($billedAmt, 2);
+                } else {
+                    return -round($account->CustomerDeposit, 2);
+                }
             } else {
-                return -round($account->CustomerDeposit, 2);
+                return 0;
             }
         } else {
             return 0;
-        }
+        }        
     }
 
     /**

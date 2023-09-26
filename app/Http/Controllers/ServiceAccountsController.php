@@ -270,6 +270,10 @@ class ServiceAccountsController extends AppBaseController
                     'Billing_ServiceAccounts.AccountRetention',
                     'Billing_ServiceAccounts.DurationInMonths',
                     'Billing_ServiceAccounts.AccountExpiration',
+                    'Billing_ServiceAccounts.AdvancedMaterialDeposit',
+                    'Billing_ServiceAccounts.CustomerDeposit',
+                    'Billing_ServiceAccounts.AdvancedMaterialDepositStatus',
+                    'Billing_ServiceAccounts.CustomerDepositStatus',
                     'CRM_Towns.Town',
                     'CRM_Barangays.Barangay',
                     'DownloadedByDisco',
@@ -522,7 +526,7 @@ class ServiceAccountsController extends AppBaseController
             return redirect(route('serviceAccounts.index'));
         }
 
-        return view('service_accounts.edit')->with('serviceAccount', $serviceAccount);
+        return view('service_accounts.edit')->with('serviceAccounts', $serviceAccount);
     }
 
     /**
@@ -2594,16 +2598,16 @@ class ServiceAccountsController extends AppBaseController
         if ($meterReader != null) {
             $data = DB::table('Billing_ServiceAccounts')
                 ->whereRaw("(Billing_ServiceAccounts.GroupCode IS NULL OR Billing_ServiceAccounts.GroupCode='" . $day . "') AND Billing_ServiceAccounts.Town='" . $town . "' AND Billing_ServiceAccounts.MeterReader='" . $meterReader . "'")
-                ->select('Billing_ServiceAccounts.AreaCode', DB::raw("COUNT(Billing_ServiceAccounts.id) AS NoOfConsumers"))
-                ->groupBy('Billing_ServiceAccounts.AreaCode')
-                ->orderBy('Billing_ServiceAccounts.AreaCode')
+                ->select('Billing_ServiceAccounts.Zone', 'Billing_ServiceAccounts.BlockCode', DB::raw("COUNT(Billing_ServiceAccounts.id) AS NoOfConsumers"))
+                ->groupBy('Billing_ServiceAccounts.Zone', 'Billing_ServiceAccounts.BlockCode')
+                ->orderBy('Billing_ServiceAccounts.Zone')
                 ->get();
         } else {
             $data = DB::table('Billing_ServiceAccounts')
                 ->whereRaw("(Billing_ServiceAccounts.GroupCode IS NULL OR Billing_ServiceAccounts.GroupCode='" . $day . "') AND Billing_ServiceAccounts.Town='" . $town . "' AND Billing_ServiceAccounts.MeterReader IS NULL")
-                ->select('Billing_ServiceAccounts.AreaCode', DB::raw("COUNT(Billing_ServiceAccounts.id) AS NoOfConsumers"))
-                ->groupBy('Billing_ServiceAccounts.AreaCode')
-                ->orderBy('Billing_ServiceAccounts.AreaCode')
+                ->select('Billing_ServiceAccounts.Zone', 'Billing_ServiceAccounts.BlockCode', DB::raw("COUNT(Billing_ServiceAccounts.id) AS NoOfConsumers"))
+                ->groupBy('Billing_ServiceAccounts.Zone', 'Billing_ServiceAccounts.BlockCode')
+                ->orderBy('Billing_ServiceAccounts.Zone')
                 ->get();
         }       
             
@@ -2620,12 +2624,14 @@ class ServiceAccountsController extends AppBaseController
         foreach($data as $item) {
             $output .= "
                     <tr>
-                        <td><strong>" . $item->AreaCode . "</strong> (" . $item->NoOfConsumers . ")</td>
+                        <td><strong>" . $item->Zone . "</strong></td>
+                        <td><strong>" . $item->BlockCode . "</strong></td>
+                        <td>" . $item->NoOfConsumers . "</td>
                         <td>
-                            <select id='" . $item->AreaCode . "-mreader' class='form-control form-control-sm'>" . $mreaderSelect . "</select>
+                            <select id='" . $item->Zone . $item->BlockCode . "-mreader' class='form-control form-control-sm'>" . $mreaderSelect . "</select>
                         </td>
                         <td>
-                            <select id='" . $item->AreaCode . "-day' class='form-control form-control-sm'>
+                            <select id='" . $item->Zone . $item->BlockCode . "-day' class='form-control form-control-sm'>
                                 <option value='01'>01</option>
                                 <option value='02'>02</option>
                                 <option value='03'>03</option>
@@ -2641,7 +2647,7 @@ class ServiceAccountsController extends AppBaseController
                             </select>
                         </td>
                         <td>
-                            <button class='btn btn-sm btn-primary' onclick=moveRoute('" . $item->AreaCode . "')><i class='fas fa-check-circle'></i></button>
+                            <button class='btn btn-sm btn-primary' onclick='moveRoute(`$item->Zone`, `$item->BlockCode`)'><i class='fas fa-check-circle'></i></button>
                         </td>
                     </tr>
                 ";
@@ -2656,20 +2662,23 @@ class ServiceAccountsController extends AppBaseController
         $town = $request['Town'];
         $newDay = $request['NewDay'];
         $newMeterReader = $request['NewMeterReader'];
-        $route = $request['Route'];
+        $zone = $request['Zone'];
+        $block = $request['Block'];
 
         if ($ogDay != null) {
             if ($ogMreader != null) {
                 ServiceAccounts::where('MeterReader', $ogMreader)
                     ->where('GroupCode', $ogDay)
                     ->where('Town', $town)
-                    ->where('AreaCode', $route)
+                    ->where('Zone', $zone)
+                    ->where('BlockCode', $block)
                     ->update(['MeterReader' => $newMeterReader, 'GroupCode' => $newDay]);
             } else {
                 ServiceAccounts::whereNull('MeterReader')
                     ->where('GroupCode', $ogDay)
                     ->where('Town', $town)
-                    ->where('AreaCode', $route)
+                    ->where('Zone', $zone)
+                    ->where('BlockCode', $block)
                     ->update(['MeterReader' => $newMeterReader, 'GroupCode' => $newDay]);
             }
         } else {
@@ -2677,17 +2686,18 @@ class ServiceAccountsController extends AppBaseController
                 ServiceAccounts::where('MeterReader', $ogMreader)
                     ->whereRaw("GroupCode IS NULL")
                     ->where('Town', $town)
-                    ->where('AreaCode', $route)
+                    ->where('Zone', $zone)
+                    ->where('BlockCode', $block)
                     ->update(['MeterReader' => $newMeterReader, 'GroupCode' => $newDay]);
             } else {
                 ServiceAccounts::whereNull('MeterReader')
                     ->whereRaw("GroupCode IS NULL")
                     ->where('Town', $town)
-                    ->where('AreaCode', $route)
+                    ->where('Zone', $zone)
+                    ->where('BlockCode', $block)
                     ->update(['MeterReader' => $newMeterReader, 'GroupCode' => $newDay]);
             }
-        }
-        
+        }        
         
         return response()->json('ok', 200);
     }
@@ -3100,6 +3110,223 @@ class ServiceAccountsController extends AppBaseController
         $id = $request['id'];
 
         ServiceAccounts::where('id', $id)->update(['CheckBounceHistory' => null]);
+
+        return response()->json('ok', 200);
+    }
+
+    public function meterReaders(Request $request) {
+        $meterReaders = User::role('Meter Reader Inhouse')->orderBy('name')->get();
+
+        return view('/service_accounts/meter_readers', [
+            'meterReaders' => $meterReaders,
+        ]);
+    }
+
+    public function meterReadersView($id) {
+        $meterReader = Users::find($id);
+
+        $groupings = DB::table('Billing_ServiceAccounts')
+            ->whereRaw("MeterReader='" . $id . "'")
+            ->select('GroupCode')
+            ->groupBy('GroupCode')
+            ->orderBy('GroupCode')
+            ->get();
+
+        return view('/service_accounts/meter_readers_view', [
+            'meterReader' => $meterReader,
+            'groupings' => $groupings,
+        ]);
+    }
+
+    public function getAccountsByMeterReader(Request $request) {
+        $day = $request['Day'];
+        $meterReader = $request['MeterReader'];
+
+        $serviceAccounts = DB::table('Billing_ServiceAccounts')
+            ->leftJoin('CRM_Towns', 'Billing_ServiceAccounts.Town', '=', 'CRM_Towns.id')
+            ->leftJoin('CRM_Barangays', 'Billing_ServiceAccounts.Barangay', '=', 'CRM_Barangays.id')
+            ->select('Billing_ServiceAccounts.id',
+                    'Billing_ServiceAccounts.ServiceAccountName',
+                    'Billing_ServiceAccounts.OldAccountNo',
+                    'Billing_ServiceAccounts.Purok',
+                    'Billing_ServiceAccounts.AccountType',
+                    'Billing_ServiceAccounts.AccountStatus',
+                    'Billing_ServiceAccounts.AreaCode',
+                    'Billing_ServiceAccounts.Zone',
+                    'Billing_ServiceAccounts.BlockCode',
+                    'CRM_Towns.Town',
+                    'CRM_Barangays.Barangay',)
+            ->whereRaw("MeterReader='" . $meterReader . "' AND GroupCode='" . $day . "'")
+            ->get();
+
+        $output = "";
+        $i = 1;
+        foreach ($serviceAccounts as $item) {
+            $output .= "<tr>" .
+                        "<td>" . $i . "</td>" .
+                        "<td><a href='" . route('serviceAccounts.show', [$item->id]) . "'>" . $item->OldAccountNo . "</a></td>" .
+                        "<td>" . $item->ServiceAccountName . "</td>" .
+                        "<td>" . ServiceAccounts::getAddress($item) . "</td>" .
+                        "<td>" . $item->AccountStatus . "</td>" .
+                        "<td>" . $item->Zone . "</td>" .
+                        "<td>" . $item->BlockCode . "</td>" .
+                     "</tr>";
+            $i++;
+        }
+
+        return response()->json($output, 200);
+    }
+
+    public function meterReadersAddAccount($meterReader, $groupCode) {
+        $meterReader = Users::find($meterReader);
+
+        $serviceAccounts = DB::table('Billing_ServiceAccounts')
+            ->leftJoin('CRM_Towns', 'Billing_ServiceAccounts.Town', '=', 'CRM_Towns.id')
+            ->leftJoin('CRM_Barangays', 'Billing_ServiceAccounts.Barangay', '=', 'CRM_Barangays.id')
+            ->select('Billing_ServiceAccounts.id',
+                    'Billing_ServiceAccounts.ServiceAccountName',
+                    'Billing_ServiceAccounts.OldAccountNo',
+                    'Billing_ServiceAccounts.Purok',
+                    'Billing_ServiceAccounts.AccountType',
+                    'Billing_ServiceAccounts.AccountStatus',
+                    'Billing_ServiceAccounts.AreaCode',
+                    'CRM_Towns.Town',
+                    'CRM_Barangays.Barangay',)
+            ->whereRaw("MeterReader='" . $meterReader->id . "' AND GroupCode='" . $groupCode . "'")
+            ->get();
+
+        return view('/service_accounts/meter_readers_add_account', [
+            'meterReader' => $meterReader,
+            'serviceAccounts' => $serviceAccounts,
+            'groupCode' => $groupCode
+        ]);
+    }
+
+    public function searchAccountForMeterReader(Request $request) {
+        $search = $request['Search'];
+
+        $serviceAccounts = DB::table('Billing_ServiceAccounts')
+            ->leftJoin('users', 'Billing_ServiceAccounts.MeterReader', '=', 'users.id')
+            ->select('Billing_ServiceAccounts.id',
+                    'Billing_ServiceAccounts.ServiceAccountName',
+                    'users.name',
+                    'Billing_ServiceAccounts.OldAccountNo',)
+            ->whereRaw("ServiceAccountName LIKE '%" . $search . "%' OR OldAccountNo LIKE '%" . $search . "%' OR Billing_ServiceAccounts.id LIKE '%" . $search . "%'")
+            ->get();
+
+        $output = "";
+        foreach ($serviceAccounts as $item) {
+            $output .= "<tr id='" . $item->id . "'>" .
+                        "<td>" . $item->OldAccountNo . "</td>" .
+                        "<td>" . $item->ServiceAccountName . "</td>" .
+                        "<td>" . $item->name . "</td>" .
+                        "<td class='text-right'><button onclick=changeMeterReader('" . $item->id . "') class='btn btn-xs btn-success'>Add</button></td>" .
+                     "</tr>";
+        }
+
+        return response()->json($output, 200);
+    }
+
+    public function changeMeterReader(Request $request) {
+        $accountNo = $request['AccountNumber'];
+        $meterReader = $request['MeterReader'];
+        $group = $request['Group'];
+
+        $account = ServiceAccounts::find($accountNo);
+
+        if ($account != null) {
+            $account->GroupCode = $group;
+            $account->MeterReader = $meterReader;
+            $account->save();
+        }
+
+        return response()->json('ok', 200);
+    }
+
+    public function changeMaterialDepositState(Request $request) {
+        $acctNo = $request['AccountNumber'];
+        $state = $request['State'];
+
+        $account = ServiceAccounts::find($acctNo);
+
+        $account->AdvancedMaterialDepositStatus = $state;
+        $account->save();
+
+        return response()->json($account, 200);
+    }
+
+    public function changeCustomerDepositState(Request $request) {
+        $acctNo = $request['AccountNumber'];
+        $state = $request['State'];
+
+        $account = ServiceAccounts::find($acctNo);
+
+        $account->CustomerDepositStatus = $state;
+        $account->save();
+
+        return response()->json($account, 200);
+    }
+
+    public function lifelinersView(Request $request) {
+        $serviceAccounts = DB::table('Billing_ServiceAccounts')
+            ->leftJoin('CRM_Towns', 'Billing_ServiceAccounts.Town', '=', 'CRM_Towns.id')
+            ->leftJoin('CRM_Barangays', 'Billing_ServiceAccounts.Barangay', '=', 'CRM_Barangays.id')
+            ->select('Billing_ServiceAccounts.id',
+                    'Billing_ServiceAccounts.ServiceAccountName',
+                    'Billing_ServiceAccounts.OldAccountNo',
+                    'Billing_ServiceAccounts.AccountCount',
+                    'Billing_ServiceAccounts.Purok',
+                    'Billing_ServiceAccounts.AccountType',
+                    'Billing_ServiceAccounts.AccountStatus',
+                    'Billing_ServiceAccounts.Zone',
+                    'Billing_ServiceAccounts.BlockCode',
+                    'Billing_ServiceAccounts.Lifeliner',
+                    'Billing_ServiceAccounts.LifelinerDateApplied',
+                    'Billing_ServiceAccounts.LifelinerDateExpire',
+                    'CRM_Towns.Town',
+                    'CRM_Barangays.Barangay',)
+            ->where('Billing_ServiceAccounts.Lifeliner', 'Yes')
+            ->orderBy('OldAccountNo')
+            ->get();
+
+        return view('/service_accounts/lifeliners_view', [
+            'serviceAccounts' => $serviceAccounts,
+        ]);
+    }
+
+    public function seniorCitizenView(Request $request) {
+        $serviceAccounts = DB::table('Billing_ServiceAccounts')
+            ->leftJoin('CRM_Towns', 'Billing_ServiceAccounts.Town', '=', 'CRM_Towns.id')
+            ->leftJoin('CRM_Barangays', 'Billing_ServiceAccounts.Barangay', '=', 'CRM_Barangays.id')
+            ->select('Billing_ServiceAccounts.id',
+                    'Billing_ServiceAccounts.ServiceAccountName',
+                    'Billing_ServiceAccounts.OldAccountNo',
+                    'Billing_ServiceAccounts.AccountCount',
+                    'Billing_ServiceAccounts.Purok',
+                    'Billing_ServiceAccounts.AccountType',
+                    'Billing_ServiceAccounts.AccountStatus',
+                    'Billing_ServiceAccounts.Zone',
+                    'Billing_ServiceAccounts.BlockCode',
+                    'Billing_ServiceAccounts.SeniorCitizen',
+                    'Billing_ServiceAccounts.SeniorCitizenDateApplied',
+                    'Billing_ServiceAccounts.SeniorCitizenDateExpire',
+                    'CRM_Towns.Town',
+                    'CRM_Barangays.Barangay',)
+            ->where('Billing_ServiceAccounts.SeniorCitizen', 'Yes')
+            ->orderBy('OldAccountNo')
+            ->get();
+
+        return view('/service_accounts/senior_citizen_view', [
+            'serviceAccounts' => $serviceAccounts,
+        ]);
+    }
+
+    public function invalidateLifelinersAndSeniorCitizens() {
+        ServiceAccounts::whereRaw("LifelinerDateExpire < GETDATE()")
+            ->update(['Lifeliner' => null, 'LifelinerDateExpire' => null, 'LifelinerDateApplied' => null]);
+
+        ServiceAccounts::whereRaw("SeniorCitizenDateExpire < GETDATE()")
+            ->update(['SeniorCitizen' => null, 'SeniorCitizenDateExpire' => null, 'SeniorCitizenDateApplied' => null]);
 
         return response()->json('ok', 200);
     }

@@ -48,7 +48,9 @@
             <div class="card-body table-responsive p-0">
                 <table class="table table-hover" id="routes-table">
                     <thead>
-                        <th>Route Code</th>
+                        <th>Zone</th>
+                        <th>Block</th>
+                        <th># of Cons.</th>
                         <th>Transfer To (Meter Reader -> Day)</th>
                         <th></th>
                         <th></th>
@@ -98,7 +100,7 @@
             })
         }
 
-        function moveRoute(areacode) {
+        function moveRoute(zone, block) {
             $.ajax({
                 url : '{{ route("serviceAccounts.move-route") }}',
                 type : 'GET',
@@ -106,9 +108,10 @@
                     OriginalDay : day,
                     OriginalMeterReader : mreader,
                     Town : '{{ $town->id }}',
-                    NewDay : $('#' + areacode + "-day").val(),
-                    NewMeterReader : $('#' + areacode + "-mreader").val(),
-                    Route : areacode
+                    NewDay : $('#' + zone + block + "-day").val(),
+                    NewMeterReader : $('#' + zone + block + "-mreader").val(),
+                    Zone : zone,
+                    Block : block
                 },
                 success : function(res) {
                     Toast.fire({

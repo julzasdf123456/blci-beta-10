@@ -168,6 +168,7 @@ Route::get('/service_connections/for-payment', [ServiceConnectionsController::cl
 Route::get('/service_connections/for-energization', [ServiceConnectionsController::class, 'forEnergization'])->name('serviceConnections.for-energization');
 Route::get('/service_connections/set-connection-schedule', [ServiceConnectionsController::class, 'setConnectionSchedule'])->name('serviceConnections.set-connection-schedule');
 Route::get('/service_connections/get-existing-accounts', [ServiceConnectionsController::class, 'getExistingAccounts'])->name('serviceConnections.get-existing-accounts');
+Route::get('/service_connections/lifeliners-view', [ServiceConnectionsController::class, 'lifelinersView'])->name('serviceConnections.lifeliners-view');
 Route::resource('serviceConnections', App\Http\Controllers\ServiceConnectionsController::class);
 
 
@@ -295,6 +296,18 @@ Route::get('/service_accounts/download-account-list/{town}/{status}', [ServiceAc
 Route::get('/service_accounts/mark-bouncing-check', [ServiceAccountsController::class, 'markBouncingCheck'])->name('serviceAccounts.mark-bouncing-check');
 Route::get('/service_accounts/clear-bouncing-check', [ServiceAccountsController::class, 'clearBouncingCheck'])->name('serviceAccounts.clear-bouncing-check');
 Route::get('/service_accounts/search-account-ajax', [ServiceAccountsController::class, 'searchAccountAjax'])->name('serviceAccounts.search-account-ajax');
+Route::get('/service_accounts/meter-readers', [ServiceAccountsController::class, 'meterReaders'])->name('serviceAccounts.meter-readers');
+Route::get('/service_accounts/meter-readers-view/{id}', [ServiceAccountsController::class, 'meterReadersView'])->name('serviceAccounts.meter-readers-view');
+Route::get('/service_accounts/get-accounts-by-meter-reader', [ServiceAccountsController::class, 'getAccountsByMeterReader'])->name('serviceAccounts.get-accounts-by-meter-reader');
+Route::get('/service_accounts/meter-readers-add-account/{meterReader}/{group}', [ServiceAccountsController::class, 'meterReadersAddAccount'])->name('serviceAccounts.meter-readers-add-account');
+Route::get('/service_accounts/search-account-for-meter-reader', [ServiceAccountsController::class, 'searchAccountForMeterReader'])->name('serviceAccounts.search-account-for-meter-reader');
+Route::get('/service_accounts/change-meter-reader', [ServiceAccountsController::class, 'changeMeterReader'])->name('serviceAccounts.change-meter-reader');
+Route::get('/service_accounts/change-material-deposit-state', [ServiceAccountsController::class, 'changeMaterialDepositState'])->name('serviceAccounts.change-material-deposit-state');
+Route::get('/service_accounts/change-customer-deposit-state', [ServiceAccountsController::class, 'changeCustomerDepositState'])->name('serviceAccounts.change-customer-deposit-state');
+Route::get('/service_accounts/get-existing-accounts', [ServiceAccountsController::class, 'getExistingAccounts'])->name('serviceAccounts.get-existing-accounts');
+Route::get('/service_accounts/lifeliners-view', [ServiceAccountsController::class, 'lifelinersView'])->name('serviceAccounts.lifeliners-view');
+Route::get('/service_accounts/senior-citizen-view', [ServiceAccountsController::class, 'seniorCitizenView'])->name('serviceAccounts.senior-citizen-view');
+Route::get('/service_accounts/invalidate-lifeliners-and-scs', [ServiceAccountsController::class, 'invalidateLifelinersAndSeniorCitizens'])->name('serviceAccounts.invalidate-lifeliners-and-scs');
 Route::resource('serviceAccounts', ServiceAccountsController::class);
 
 
@@ -611,6 +624,10 @@ Route::get('/bills/adjustment-reports-with-gl', [BillsController::class,  'adjus
 Route::get('/bills/cancelled-bills', [BillsController::class,  'cancelledBills'])->name('bills.cancelled-bills');
 Route::get('/bills/print-cancelled-bills/{from}/{to}/{area}', [BillsController::class,  'printCancelledBills'])->name('bills.print-cancelled-bills');
 Route::get('/bills/detailed-adjustments', [BillsController::class,  'detailedAdjustments'])->name('bills.detailed-adjustments');
+Route::get('/bills/bill-adjustments-approval', [BillsController::class,  'billAdjustmentsApproval'])->name('bills.bill-adjustments-approval');
+Route::get('/bills/bill-adjustments-approval-view/{origId}', [BillsController::class,  'billAdjustmentsApprovalView'])->name('bills.bill-adjustments-approval-view');
+Route::get('/bills/bill-adjustments-approve/{origId}', [BillsController::class,  'billAdjustmentsApprove'])->name('bills.bill-adjustments-approve');
+Route::get('/bills/bill-adjustments-reject/{origId}', [BillsController::class,  'billAdjustmentsReject'])->name('bills.bill-adjustments-reject');
 Route::resource('bills', BillsController::class);
 
 

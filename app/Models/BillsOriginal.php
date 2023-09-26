@@ -215,6 +215,10 @@ class BillsOriginal extends Model
         'AdvancedMaterialDeposit',
         'CustomerDeposit',
         'TransformerRental',
+        'AdjustmentRequestedBy',
+        'AdjustmentApprovedBy',
+        'AdjustmentStatus',
+        'DateAdjustmentRequested',
     ];
 
     /**
@@ -333,6 +337,10 @@ class BillsOriginal extends Model
         'AdvancedMaterialDeposit' => 'string',
         'CustomerDeposit' => 'string',
         'TransformerRental' => 'string',
+        'AdjustmentRequestedBy' => 'string',
+        'AdjustmentApprovedBy' => 'string',
+        'AdjustmentStatus' => 'string',
+        'DateAdjustmentRequested' => 'string',
     ];
 
     /**
@@ -453,5 +461,9 @@ class BillsOriginal extends Model
         'AdvancedMaterialDeposit' => 'nullable|string',
         'CustomerDeposit' => 'nullable|string',
         'TransformerRental' => 'nullable|string',
+        'AdjustmentRequestedBy' => 'nullable|string',
+        'AdjustmentApprovedBy' => 'nullable|string',
+        'AdjustmentStatus' => 'nullable|string',
+        'DateAdjustmentRequested' => 'nullable|string',
     ];
 }

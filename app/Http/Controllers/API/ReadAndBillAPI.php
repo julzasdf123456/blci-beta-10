@@ -151,6 +151,7 @@ class ReadAndBillAPI extends Controller {
                     'Evat5Percent' => $item->Evat5Percent,
                     'Ewt2Percent' => $item->Ewt2Percent,
                     'Zone' => $item->Zone,
+                    'BlockCode' => $item->BlockCode,
                     'Lifeliner' => $item->Lifeliner,
                     'LifelinerDateExpire' => $item->LifelinerDateExpire,
                     'TownFull' => $item->TownFull,

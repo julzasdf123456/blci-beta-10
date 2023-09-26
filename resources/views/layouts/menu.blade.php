@@ -535,6 +535,20 @@ use Illuminate\Support\Facades\Auth;
                    <i class="fas fa-list nav-icon text-primary"></i><p>Accounts w/ OCL</p>
                 </a>
             </li>
+            <li class="nav-item">
+                <a href="{{ route('serviceAccounts.lifeliners-view') }}"
+                   class="nav-link {{ Request::is('serviceAccounts.lifeliners-view') ? 'active' : '' }}"
+                   title="Accounts with Termed Payments">                   
+                   <i class="fas fa-circle nav-icon text-primary"></i><p>Lifeliners</p>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a href="{{ route('serviceAccounts.senior-citizen-view') }}"
+                   class="nav-link {{ Request::is('serviceAccounts.senior-citizen-view') ? 'active' : '' }}"
+                   title="Accounts with Termed Payments">                   
+                   <i class="fas fa-circle nav-icon text-primary"></i><p>Senior Citizen</p>
+                </a>
+            </li>
             <li class="nav-header">                
                 Others 
             </li>
@@ -685,13 +699,13 @@ use Illuminate\Support\Facades\Auth;
                    class="nav-link {{ Request::is('serviceAccounts.reading-account-grouper*') ? 'active' : '' }}">                   
                    <i class="fas fa-calendar-alt nav-icon text-primary"></i><p>Reading Schedules</p>
                 </a>
-            </li>
-            {{-- <li class="nav-item">
-                <a href="{{ route('readings.captured-readings') }}"
-                   class="nav-link {{ Request::is('readings.captured-readings*') ? 'active' : '' }}">                   
-                   <i class="fas fa-circle nav-icon text-primary"></i><p>Captured Readings</p>
+            </li>            
+            <li class="nav-item">
+                <a href="{{ route('serviceAccounts.meter-readers') }}"
+                   class="nav-link {{ Request::is('serviceAccounts.meter-readers*') ? 'active' : '' }}">                   
+                   <i class="fas fa-circle nav-icon text-primary"></i><p>Meter Readers</p>
                 </a>
-            </li> --}}
+            </li>
             <li class="nav-item">
                 <a href="{{ route('readings.manual-reading') }}"
                    class="nav-link {{ Request::is('readings.manual-reading*') ? 'active' : '' }}">                   
@@ -749,7 +763,6 @@ use Illuminate\Support\Facades\Auth;
             </li>
         </ul>
     </li>
-    
 
     {{-- APPROVALS AND OVERRIDING --}}
     <li class="nav-item has-treeview">
@@ -768,87 +781,19 @@ use Illuminate\Support\Facades\Auth;
                 </a>
             </li>
             <li class="nav-item">
+                <a href="{{ route('bills.bill-adjustments-approval') }}"
+                   class="nav-link {{ Request::is('bills.bill-adjustments-approval*') ? 'active' : '' }}">                   
+                   <i class="fas fa-pen nav-icon text-primary"></i><p>Bill Adjustments</p>
+                </a>
+            </li>
+            <li class="nav-item">
                 <a href="{{ route('bills.bills-cancellation-approval') }}"
                    class="nav-link {{ Request::is('bills.bills-cancellation-approval*') ? 'active' : '' }}">                   
-                   <i class="fas fa-check-circle nav-icon text-primary"></i><p>Bills Cancellation</p>
+                   <i class="fas fa-check-circle nav-icon text-primary"></i><p>Bill Cancellations</p>
                 </a>
             </li>
         </ul>
     </li>
-
-        {{-- BILLING REPORTS --}}
-    {{-- <li class="nav-item has-treeview">
-        <a href="#" class="nav-link">
-            <i class="fas fa-file nav-icon text-primary"></i>
-            <p>
-                Reports
-                <i class="fas fa-angle-left right"></i>
-            </p>
-        </a>
-        <ul class="nav nav-treeview">
-            <li class="nav-header">                
-                Bills
-            </li>
-            <li class="nav-item">
-                <a href="{{ route('bills.adjustment-reports') }}"
-                   class="nav-link {{ Request::is('bills.adjustment-reports*') ? 'active' : '' }}">                   
-                   <i class="fas fa-circle nav-icon text-primary"></i><p>Adjustments</p>
-                </a>
-            </li>
-            <li class="nav-item">
-                <a href="{{ route('bills.lifeliners-report') }}"
-                   class="nav-link {{ Request::is('bills.lifeliners-report*') ? 'active' : '' }}">                   
-                   <i class="fas fa-circle nav-icon text-primary"></i><p>Lifeliners
-                    <span class="right badge badge-danger">New</span>
-                </p>
-                </a>
-            </li>
-            <li class="nav-item">
-                <a href="{{ route('bills.senior-citizen-report') }}"
-                   class="nav-link {{ Request::is('bills.senior-citizen-report*') ? 'active' : '' }}">                   
-                   <i class="fas fa-circle nav-icon text-primary"></i><p>Senior Citizen
-                    <span class="right badge badge-danger">New</span>
-                </p>
-                </a>
-            </li>
-            <li class="nav-header">                
-                Meter Reading 
-            </li>
-            <li class="nav-item">
-                <a href="{{ route('readings.billed-and-unbilled-reports') }}"
-                   class="nav-link {{ Request::is('readings.billed-and-unbilled-reports*') ? 'active' : '' }}">                   
-                   <i class="fas fa-circle nav-icon text-primary"></i><p>Billed & Unbilled</p>
-                </a>
-            </li>
-            <li class="nav-item">
-                <a href="{{ route('readings.billed-and-unbilled-reports-bapa') }}"
-                   class="nav-link {{ Request::is('readings.billed-and-unbilled-reports-bapa*') ? 'active' : '' }}">                   
-                   <i class="fas fa-circle nav-icon text-primary"></i><p>Billed & Unbilled BAPA</p>
-                </a>
-            </li>
-            <li class="nav-item">
-                <a href="{{ route('readings.efficiency-report') }}"
-                   class="nav-link {{ Request::is('readings.efficiency-report*') ? 'active' : '' }}">                   
-                   <i class="fas fa-chart-pie nav-icon text-primary"></i><p>Efficiency Report</p>
-                </a>
-            </li>
-            <li class="nav-header">                
-                CorPlan 
-            </li>
-            <li class="nav-item">
-                <a href="{{ route('kwhSales.index') }}"
-                   class="nav-link {{ Request::is('kwhSales.index*') ? 'active' : '' }}">                   
-                   <i class="fas fa-plug nav-icon text-primary"></i><p>KWH Sales</p>
-                </a>
-            </li>
-            <li class="nav-item">
-                <a href="{{ route('kwhSales.sales-distribution') }}"
-                   class="nav-link {{ Request::is('kwhSales.sales-distribution*') ? 'active' : '' }}">                   
-                   <i class="fas fa-file nav-icon text-primary"></i><p>Sales Distribution</p>
-                </a>
-            </li>
-        </ul>
-    </li> --}}
 
     {{-- TOOLS --}}
     <li class="nav-item has-treeview">

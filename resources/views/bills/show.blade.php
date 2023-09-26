@@ -47,7 +47,12 @@
                                     @if ($account->NetMetered=='Yes')
                                         <a href="{{ route('bills.adjust-bill-net-metering', [$bills->id]) }}" class="btn btn-link" title="Adjust Reading"><i class="fas fa-pen"></i></a>                                  
                                     @else
-                                        <a href="{{ route('bills.adjust-bill', [$bills->id]) }}" class="btn btn-link" title="Adjust Reading"><i class="fas fa-pen"></i></a>                                  
+                                        @if ($bills->AdjustmentStatus == 'PENDING ADJUSTMENT APPROVAL')
+                                            <span class="badge bg-danger">{{ $bills->AdjustmentStatus }}</span>
+                                        @else
+                                            <a href="{{ route('bills.adjust-bill', [$bills->id]) }}" class="btn btn-link" title="Adjust Reading"><i class="fas fa-pen"></i></a>       
+                                        @endif
+                                                                   
                                     @endif  
                                     
                                 @endif                                

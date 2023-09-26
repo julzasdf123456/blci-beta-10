@@ -68,7 +68,11 @@
                                         @if ($serviceAccounts->NetMetered=='Yes')     
                                             <a href="{{ route('bills.adjust-bill-net-metering', [$item->id]) }}" class="btn btn-link btn-xs text-warning" title="Adjust Reading"><i class="fas fa-pen"></i></a>
                                         @else
-                                            <a href="{{ route('bills.adjust-bill', [$item->id]) }}" class="btn btn-link btn-xs text-warning" title="Adjust Reading"><i class="fas fa-pen"></i></a>
+                                            @if ($item->AdjustmentStatus == 'PENDING ADJUSTMENT APPROVAL')
+                                                <a class="btn btn-xs btn-danger" title="{{ $item->AdjustmentStatus }}"><strong>! </strong> <i class="fas fa-pen"></i></a>
+                                            @else
+                                                <a href="{{ route('bills.adjust-bill', [$item->id]) }}" class="btn btn-link btn-xs text-warning" title="Adjust Reading"><i class="fas fa-pen"></i></a>
+                                            @endif
                                         @endif
                                         <button class="btn btn-link btn-xs text-danger" title="Cancel this Bill" onclick="requestCancel('{{ $item->id }}')"><i class="fas fa-ban"></i></button>                            
                                         <button class="btn btn-link btn-xs text-info" title="Mark as Paid (Application Adjustment)" onclick="markAsPaid('{{ $item->id }}')"><i class="fas fa-check-circle"></i></button>
