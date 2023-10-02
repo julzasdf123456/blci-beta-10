@@ -225,8 +225,8 @@ class BillsController extends AppBaseController
         $billsArr['ForCancellation'] = $bills->ForCancellation;
         $billsArr['CancelRequestedBy'] = $bills->CancelRequestedBy;
         $billsArr['CancelApprovedBy'] = $bills->CancelApprovedBy;
-        $billsArr['PaidAmount'] = $bills->PaidAmount;
-        $billsArr['Balance'] = $bills->Balance;
+        // $billsArr['PaidAmount'] = $bills->PaidAmount;
+        // $billsArr['Balance'] = $bills->Balance;
         $billsArr['AdjustmentStatus'] = 'PENDING ADJUSTMENT APPROVAL';
         $billsArr['AdjustmentRequestedBy'] = Auth::id();
         $billsArr['DateAdjustmentRequested'] = date('Y-m-d H:i:s');
@@ -2342,6 +2342,16 @@ class BillsController extends AppBaseController
             $account->AdvancedMaterialDeposit = floatval($account->AdvancedMaterialDeposit) - floatval($advMatDeposit);
             $account->CustomerDeposit = floatval($account->CustomerDeposit) - floatval($customerDeposit);
             $account->save();
+
+            
+            // UPDATE TERMED PAYMENTS
+            $ocl = ArrearsLedgerDistribution::where('AccountNumber', $bill->AccountNumber)
+                ->where('ServicePeriod', $bill->ServicePeriod)
+                ->get();
+            foreach($ocl as $item) {
+                $item->IsBilled = null;
+                $item->save();
+            }
 
             $bill->delete();
         }

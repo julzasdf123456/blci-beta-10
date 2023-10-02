@@ -450,7 +450,7 @@ p {
             <tr class="no-border-top-bottom">
                 <td class="no-border-top-bottom text-left left-indent">Termed Payments</td>
                 <td class="no-border-top-bottom text-right"></td>
-                <td class="no-border-top-bottom text-right">{{ number_format($bills->AdditionalCharges, 2) }}</td>
+                <td class="no-border-top-bottom text-right">{{ number_format($bills->TermedPayments, 2) }}</td>
             </tr>
             {{-- <tr class="no-border-top-bottom">
                 <td class="no-border-top-bottom text-left left-indent">Katas Ng VAT</td>

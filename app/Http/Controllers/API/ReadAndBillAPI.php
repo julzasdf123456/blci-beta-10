@@ -18,6 +18,7 @@ use App\Models\ReadingImages;
 use App\Models\PrePaymentBalance;
 use App\Models\IDGenerator;
 use App\Models\PrePaymentTransHistory;
+use App\Models\ArrearsLedgerDistribution;
 use App\Models\KatasNgVat;
 use App\Models\PaidBills;
 use App\Models\ReadAndBillNotices;
@@ -64,7 +65,6 @@ class ReadAndBillAPI extends Controller {
             ->first();
 
         $accounts = DB::table('Billing_ServiceAccounts')
-            ->leftJoin('Billing_Collectibles', 'Billing_ServiceAccounts.id', '=', 'Billing_Collectibles.AccountNumber')
             ->leftJoin('CRM_Towns', 'Billing_ServiceAccounts.Town', '=', 'CRM_Towns.id')
             ->leftJoin('CRM_Barangays', 'Billing_ServiceAccounts.Barangay', '=', 'CRM_Barangays.id')
             ->leftJoin('Billing_KatasNgVat', 'Billing_ServiceAccounts.id', '=', 'Billing_KatasNgVat.AccountNumber')
@@ -95,14 +95,17 @@ class ReadAndBillAPI extends Controller {
                 'Billing_ServiceAccounts.Evat5Percent',
                 'Billing_ServiceAccounts.Ewt2Percent',
                 'Billing_ServiceAccounts.Zone',
+                'Billing_ServiceAccounts.BlockCode',
                 'Billing_ServiceAccounts.Lifeliner',
                 'Billing_ServiceAccounts.LifelinerDateExpire',
+                'Billing_ServiceAccounts.AdvancedMaterialDeposit',
+                'Billing_ServiceAccounts.CustomerDeposit',
                 'CRM_Towns.Town as TownFull',
                 'CRM_Barangays.Barangay as BarangayFull',
                 'Billing_ServiceAccounts.Purok',
-                'Billing_Collectibles.Balance',
+                DB::raw("'0' AS Balance"),
                 'Billing_KatasNgVat.Balance as KatasNgVat',
-                DB::raw("(SELECT TOP 1 Amount FROM Billing_ArrearsLedgerDistribution WHERE AccountNumber=Billing_ServiceAccounts.id AND IsPaid IS NULL AND ServicePeriod='" . $request['ServicePeriod'] . "') AS ArrearsLedger"),
+                DB::raw("'0' AS ArrearsLedger"),
                 DB::raw("(SELECT TOP 1 KwhUsed FROM Billing_Readings WHERE ServicePeriod=(SELECT TOP 1 ServicePeriod FROM Billing_Readings WHERE AccountNumber=Billing_ServiceAccounts.id ORDER BY ServicePeriod DESC) AND AccountNumber=Billing_ServiceAccounts.id) AS KwhUsed"),
                 DB::raw("(SELECT TOP 1 KwhUsed FROM Billing_Bills WHERE ServicePeriod=(SELECT TOP 1 ServicePeriod FROM Billing_Bills WHERE AccountNumber=Billing_ServiceAccounts.id ORDER BY ServicePeriod DESC) AND AccountNumber=Billing_ServiceAccounts.id) AS PrevKwhUsed"),
                 DB::raw("(SELECT TOP 1 CAST(ReadingTimestamp AS DATE) FROM Billing_Readings WHERE ServicePeriod='" . $prevMonth . "' AND AccountNumber=Billing_ServiceAccounts.id) AS ReadingTimestamp"),
@@ -178,6 +181,27 @@ class ReadAndBillAPI extends Controller {
         } else {
             return response()->json([], 404);
         }        
+    }
+
+    public function getArrearLedgers(Request $request) {
+        $town = $request['AreaCode'];
+        $day = $request['GroupCode'];
+        $mreader = $request['MeterReader'];
+        $period = $request['ServicePeriod'];
+
+        $ledgers = DB::table('Billing_ArrearsLedgerDistribution')
+            ->leftJoin('Billing_ServiceAccounts', 'Billing_ServiceAccounts.id', '=', 'Billing_ArrearsLedgerDistribution.AccountNumber')
+            ->leftJoin('Billing_Collectibles', 'Billing_ServiceAccounts.id', '=', 'Billing_Collectibles.AccountNumber')
+            ->where('Billing_ServiceAccounts.Town', $town)
+            ->where('Billing_ServiceAccounts.GroupCode', $day)
+            ->where('Billing_ServiceAccounts.MeterReader', $mreader)
+            ->where('Billing_ArrearsLedgerDistribution.ServicePeriod', $period)
+            ->select(
+                'Billing_ArrearsLedgerDistribution.*'
+            )
+            ->get();
+
+        return response()->json($ledgers, 200);
     }
 
     public function downloadRates(Request $request) {
@@ -393,7 +417,12 @@ class ReadAndBillAPI extends Controller {
             }
         } else {
             $bill = Bills::create($input);
-        }       
+        }     
+        
+        // UPDATE TERMED PAYMETS
+        ArrearsLedgerDistribution::where('AccountNumber', $input['AccountNumber'])
+            ->where('ServicePeriod', $input['ServicePeriod'])
+            ->update(['IsBilled' => 'Yes']);
 
         return response()->json(['res' => 'ok'], $this->successStatus);
     }

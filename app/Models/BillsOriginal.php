@@ -219,6 +219,7 @@ class BillsOriginal extends Model
         'AdjustmentApprovedBy',
         'AdjustmentStatus',
         'DateAdjustmentRequested',
+        'TermedPayments',
     ];
 
     /**
@@ -341,6 +342,7 @@ class BillsOriginal extends Model
         'AdjustmentApprovedBy' => 'string',
         'AdjustmentStatus' => 'string',
         'DateAdjustmentRequested' => 'string',
+        'TermedPayments' => 'string',
     ];
 
     /**
@@ -465,5 +467,6 @@ class BillsOriginal extends Model
         'AdjustmentApprovedBy' => 'nullable|string',
         'AdjustmentStatus' => 'nullable|string',
         'DateAdjustmentRequested' => 'nullable|string',
+        'TermedPayments' => 'nullable|string',
     ];
 }

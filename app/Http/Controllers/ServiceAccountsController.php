@@ -300,11 +300,11 @@ class ServiceAccountsController extends AppBaseController
             ->get();
         
         // ARREARS
-        $collectibles = Collectibles::where('AccountNumber', $id)->first();
+        $collectibles = Collectibles::where('AccountNumber', $id)->orderBy('created_at')->get();
 
-        $arrearsLedger = ArrearsLedgerDistribution::where('AccountNumber', $id)
-            ->orderBy('ServicePeriod')
-            ->get();
+        // $arrearsLedger = ArrearsLedgerDistribution::where('AccountNumber', $id)
+        //     ->orderBy('ServicePeriod')
+        //     ->get();
 
         $checkLedger = ArrearsLedgerDistribution::where('AccountNumber', $id)
             ->whereNull('IsPaid')
@@ -488,7 +488,7 @@ class ServiceAccountsController extends AppBaseController
             'transformer' => $transformer,
             'bills' => $bills,
             'collectibles' => $collectibles,
-            'arrearsLedger' => $arrearsLedger,
+            // 'arrearsLedger' => $arrearsLedger,
             'billArrears' => $billArrears,
             'unmergedArrears' => $unmergedArrears,
             'checkLedger' => $checkLedger,

@@ -45,7 +45,8 @@ class ArrearsLedgerDistribution extends Model
         'IsBilled',
         'IsPaid',
         'LinkedBillNumber',
-        'Notes'
+        'Notes',
+        'CollectibleId',
     ];
 
     /**
@@ -61,7 +62,8 @@ class ArrearsLedgerDistribution extends Model
         'IsBilled' => 'string',
         'IsPaid' => 'string',
         'LinkedBillNumber' => 'string',
-        'Notes' => 'string'
+        'Notes' => 'string',
+        'CollectibleId' => 'string',
     ];
 
     /**
@@ -79,7 +81,8 @@ class ArrearsLedgerDistribution extends Model
         'LinkedBillNumber' => 'nullable|string|max:255',
         'Notes' => 'nullable|string|max:1000',
         'created_at' => 'nullable',
-        'updated_at' => 'nullable'
+        'updated_at' => 'nullable',
+        'CollectibleId' => 'nullable|string',
     ];
 
     

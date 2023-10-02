@@ -175,6 +175,7 @@ class CollectiblesController extends AppBaseController
                     $arrearLedger->AccountNumber = $collectibles->AccountNumber;
                     $arrearLedger->ServicePeriod = date('Y-m-01', strtotime(date('Y-m-01') . ' +' . ($i+1) . ' months'));
                     $arrearLedger->Amount = $termAmount;
+                    $arrearLedger->CollectibleId = $collectibles->id;
                     $arrearLedger->save();
                 }
             }
@@ -184,10 +185,11 @@ class CollectiblesController extends AppBaseController
         }
     }
 
-    public function clearLedger($id) {
-        $arrearLedger = ArrearsLedgerDistribution::where('AccountNumber', $id)->whereNull('IsPaid')->delete();
+    public function clearLedger(Request $request) {
+        $arrearLedger = ArrearsLedgerDistribution::where('CollectibleId', $request['id'])->whereNull('IsPaid')->delete();
 
-        return redirect(route('serviceAccounts.show', [$id]));
+        // return redirect(route('serviceAccounts.show', [$id]));
+        return response()->json($arrearLedger, 200);
     }
 
     public function addToMonth(Request $request) {
@@ -207,5 +209,40 @@ class CollectiblesController extends AppBaseController
         }
 
         return response()->json(['res' => 'ok'], 200);
+    }
+
+    public function addNew(Request $request) {
+        $acctNo = $request['AccountNumber'];
+        $notes = $request['Notes'];
+        $balance = $request['Balance'];
+
+        $collectibles = new Collectibles;
+        $collectibles->id = IDGenerator::generateID();
+        $collectibles->AccountNumber = $acctNo;
+        $collectibles->Notes = $notes;
+        $collectibles->Balance = $balance;
+        $collectibles->save();
+
+        return response()->json($collectibles, 200);
+    }
+
+    public function getLedgerFromCollectible(Request $request) {
+        $id = $request['id'];
+
+        $ledger = ArrearsLedgerDistribution::where('CollectibleId', $id)->orderBy('ServicePeriod')->get();
+
+        $data = "";
+        foreach($ledger as $item) {
+            $data .= "<tr>
+                        <td>
+                            <i class='fas " . Collectibles::getStatusDisplay($item) . "'></i>
+                            " . date('F Y', strtotime($item->ServicePeriod)) . "
+                        </td>
+                        <td class='text-right'>" . number_format($item->Amount, 2) . "</td>
+                        <td></td>
+                    </tr>";
+        }
+
+        return response()->json($data, 200);
     }
 }

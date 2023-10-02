@@ -532,7 +532,7 @@ use Illuminate\Support\Facades\Auth;
                 <a href="{{ route('serviceAccounts.termed-payment-accounts') }}"
                    class="nav-link {{ Request::is('serviceAccounts.termed-payment-accounts') ? 'active' : '' }}"
                    title="Accounts with Termed Payments">                   
-                   <i class="fas fa-list nav-icon text-primary"></i><p>Accounts w/ OCL</p>
+                   <i class="fas fa-list nav-icon text-primary"></i><p>Termed Payment Accounts</p>
                 </a>
             </li>
             <li class="nav-item">

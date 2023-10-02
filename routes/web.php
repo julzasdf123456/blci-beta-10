@@ -635,7 +635,9 @@ Route::resource('readingImages', App\Http\Controllers\ReadingImagesController::c
 
 Route::get('/collectibles/ledgerize', [App\Http\Controllers\CollectiblesController::class, 'ledgerize'])->name('collectibles.ledgerize');
 Route::get('/collectibles/add-to-month', [App\Http\Controllers\CollectiblesController::class, 'addToMonth'])->name('collectibles.add-to-month');
-Route::post('/collectibles/clear-ledger/{id}', [App\Http\Controllers\CollectiblesController::class, 'clearLedger'])->name('collectibles.clear-ledger');
+Route::get('/collectibles/clear-ledger', [App\Http\Controllers\CollectiblesController::class, 'clearLedger'])->name('collectibles.clear-ledger');
+Route::get('/collectibles/add-new', [App\Http\Controllers\CollectiblesController::class, 'addNew'])->name('collectibles.add-new');
+Route::get('/collectibles/get-ledger-from-collectible', [App\Http\Controllers\CollectiblesController::class, 'getLedgerFromCollectible'])->name('collectibles.get-ledger-from-collectible');
 Route::resource('collectibles', App\Http\Controllers\CollectiblesController::class);
 
 

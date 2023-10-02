@@ -66,5 +66,15 @@ class Collectibles extends Model
         'updated_at' => 'nullable'
     ];
 
-    
+    public static function getStatusDisplay($ledger) {
+        if ($ledger->IsPaid == 'Yes') {
+            return 'fa-check-circle text-success';
+        } else {
+            if ($ledger->IsBilled == 'Yes') {
+                return 'fa-info-circle text-primary';
+            } else {
+                return 'fa-exclamation-circle text-danger';
+            }
+        }
+    }
 }

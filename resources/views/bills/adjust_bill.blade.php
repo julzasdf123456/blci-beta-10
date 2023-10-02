@@ -93,27 +93,14 @@
                     </div>
 
                     <div class="form-group col-lg-3">
-                        <label for="AdditionalCharges">Termed Payment Attached</label>
-                        <input type="number" step="any" name="AdditionalCharges" id="AdditionalCharges" value="{{ $ocl != null ? $ocl->Amount : '0' }}" class="form-control form-control-sm text-right" readonly>
+                        <label for="TermedPayments">Termed Payment Attached</label>
+                        <input type="number" step="any" name="TermedPayments" id="TermedPayments" value="{{ $bill->TermedPayments }}" class="form-control form-control-sm text-right" readonly>
                     </div>
 
                     <div class="form-group col-lg-3">
                         <label for="Deductions">Deductions</label>
                         <input type="number" step="any" name="Deductions" id="Deductions" value="{{ $bill->Deductions }}" class="form-control form-control-sm text-right">
                     </div>
-
-                    {{-- <div class="col-lg-3">
-                        {!! Form::label('Form 2307:') !!}
-                        <div class="input-group">
-                            <input type="hidden" value="" name="Form2307">
-                            <input type="checkbox" value="{{ $bill->Form2307Amount }}" name="Form2307" id="Form2307" class="custom-checkbox" {{ $bill->Form2307Amount != null ? 'checked' : '' }}>
-                        </div>
-                    </div> --}}
-
-                    {{-- <div class="form-group col-lg-3">
-                        <label for="Form2307Amount">Form 2307 Amount</label>
-                        <input type="number" step="any" name="Form2307Amount" id="Form2307Amount" value="{{ $bill->Form2307Amount }}" class="form-control form-control-sm text-right" readonly>
-                    </div> --}}
 
                     <div class="form-group col-lg-3">
                         <label for="ServiceDateFrom">Date From</label>
@@ -144,8 +131,6 @@
                             })
                         </script>
                     @endpush
-
-
                 </div>
 
                 <div class="divider"></div>
@@ -383,6 +368,20 @@
                             <input type="number" step="any" value="{{ $bill->CustomerDeposit }}"  name="CustomerDeposit" id="CustomerDeposit" class="form-control form-control-sm text-right" readonly="true">
                         </td>
                     </tr>
+                    <tr>
+                        <td>
+                            <label for="Balance">Balance</label>
+                        </td>
+                        <td>
+                            <input type="number" step="any" value="{{ $bill->Balance }}"  name="Balance" id="Balance" class="form-control form-control-sm text-right" readonly="true">
+                        </td>
+                        <td>
+                            <label for="PaidAmount">Paid Partial Amount</label>
+                        </td>
+                        <td>
+                            <input type="number" step="any" value="{{ $bill->PaidAmount }}"  name="PaidAmount" id="PaidAmount" class="form-control form-control-sm text-right" readonly="true">
+                        </td>
+                    </tr>
                 </table>
             </div>
             <div class="card-footer">
@@ -480,41 +479,44 @@
                         Demand : $('#DemandPresentKwh').val()
                     },
                     success : function(res) {
-                        $('#NetAmount').val(Number(parseFloat(res['NetAmount']).toFixed(2)).toLocaleString())
-                        $('#GenerationSystemCharge').val(Number(parseFloat(res['GenerationSystemCharge']).toFixed(2)).toLocaleString())
-                        $('#ACRM').val(Number(parseFloat(res['ACRM']).toFixed(2)).toLocaleString())
-                        $('#TransmissionDeliveryChargeKWH').val(Number(parseFloat(res['TransmissionDeliveryChargeKWH']).toFixed(2)).toLocaleString())
-                        $('#StrandedContractCosts').val(Number(parseFloat(res['StrandedContractCosts']).toFixed(2)).toLocaleString())
-                        $('#SystemLossCharge').val(Number(parseFloat(res['SystemLossCharge']).toFixed(2)).toLocaleString())
-                        $('#NPCStrandedDebt').val(Number(parseFloat(res['NPCStrandedDebt']).toFixed(2)).toLocaleString())
-                        $('#MissionaryElectrificationREDCI').val(Number(parseFloat(res['MissionaryElectrificationREDCI']).toFixed(2)).toLocaleString())
-                        $('#MissionaryElectrificationSPUG').val(Number(parseFloat(res['MissionaryElectrificationSPUG']).toFixed(2)).toLocaleString())
-                        $('#MissionaryElectrificationSPUGTRUEUP').val(Number(parseFloat(res['MissionaryElectrificationSPUGTRUEUP']).toFixed(2)).toLocaleString())
-                        $('#GenerationVAT').val(Number(parseFloat(res['GenerationVAT']).toFixed(2)).toLocaleString())
-                        $('#TransmissionVAT').val(Number(parseFloat(res['TransmissionVAT']).toFixed(2)).toLocaleString())
-                        $('#DistributionDemandCharge').val(Number(parseFloat(res['DistributionDemandCharge']).toFixed(2)).toLocaleString())
-                        $('#SystemLossVAT').val(Number(parseFloat(res['SystemLossVAT']).toFixed(2)).toLocaleString())
-                        $('#OthersVAT').val(Number(parseFloat(res['OthersVAT']).toFixed(2)).toLocaleString())
-                        $('#DistributionSystemCharge').val(Number(parseFloat(res['DistributionSystemCharge']).toFixed(2)).toLocaleString())
-                        $('#DistributionVAT').val(Number(parseFloat(res['DistributionVAT']).toFixed(2)).toLocaleString())
-                        $('#ACRMVAT').val(Number(parseFloat(res['ACRMVAT']).toFixed(2)).toLocaleString())
-                        $('#SupplyRetailCustomerCharge').val(Number(parseFloat(res['SupplyRetailCustomerCharge']).toFixed(2)).toLocaleString())
-                        $('#FranchiseTax').val(Number(parseFloat(res['FranchiseTax']).toFixed(2)).toLocaleString())
-                        $('#FranchiseTaxOthers').val(Number(parseFloat(res['FranchiseTaxOthers']).toFixed(2)).toLocaleString())
-                        $('#PowerActReduction').val(Number(parseFloat(res['PowerActReduction']).toFixed(2)).toLocaleString())
-                        $('#MeteringRetailCustomerCharge').val(Number(parseFloat(res['MeteringRetailCustomerCharge']).toFixed(2)).toLocaleString())
-                        $('#MeteringSystemCharge').val(Number(parseFloat(res['MeteringSystemCharge']).toFixed(2)).toLocaleString())
-                        $('#LifelineRate').val(Number(parseFloat(res['LifelineRate']).toFixed(2)).toLocaleString())
-                        $('#InterClassCrossSubsidyCharge').val(Number(parseFloat(res['InterClassCrossSubsidyCharge']).toFixed(2)).toLocaleString())
-                        $('#SeniorCitizenSubsidy').val(Number(parseFloat(res['SeniorCitizenSubsidy']).toFixed(2)).toLocaleString())
-                        $('#Form2307Amount').val(Number(parseFloat(res['Form2307Amount']).toFixed(2)).toLocaleString())                     
-                        $('#Evat2Percent').val(Number(parseFloat(res['Evat2Percent']).toFixed(2)).toLocaleString())
-                        $('#Evat5Percent').val(Number(parseFloat(res['Evat5Percent']).toFixed(2)).toLocaleString())
-                        $('#DeductedDeposit').val(Number(parseFloat(res['DeductedDeposit']).toFixed(2)).toLocaleString())
-                        $('#ExcessDeposit').val(Number(parseFloat(res['ExcessDeposit']).toFixed(2)).toLocaleString())
-                        $('#AdditionalCharges').val(Number(parseFloat(res['AdditionalCharges']).toFixed(2)).toLocaleString())
-                        $('#AdvancedMaterialDeposit').val(Number(parseFloat(res['AdvancedMaterialDeposit']).toFixed(2)).toLocaleString())
-                        $('#CustomerDeposit').val(Number(parseFloat(res['CustomerDeposit']).toFixed(2)).toLocaleString())
+                        $('#NetAmount').val(parseFloat(res['NetAmount']).toFixed(2))
+                        $('#GenerationSystemCharge').val(parseFloat(res['GenerationSystemCharge']).toFixed(2))
+                        $('#ACRM').val(parseFloat(res['ACRM']).toFixed(2))
+                        $('#TransmissionDeliveryChargeKWH').val(parseFloat(res['TransmissionDeliveryChargeKWH']).toFixed(2))
+                        $('#StrandedContractCosts').val(parseFloat(res['StrandedContractCosts']).toFixed(2))
+                        $('#SystemLossCharge').val(parseFloat(res['SystemLossCharge']).toFixed(2))
+                        $('#NPCStrandedDebt').val(parseFloat(res['NPCStrandedDebt']).toFixed(2))
+                        $('#MissionaryElectrificationREDCI').val(parseFloat(res['MissionaryElectrificationREDCI']).toFixed(2))
+                        $('#MissionaryElectrificationSPUG').val(parseFloat(res['MissionaryElectrificationSPUG']).toFixed(2))
+                        $('#MissionaryElectrificationSPUGTRUEUP').val(parseFloat(res['MissionaryElectrificationSPUGTRUEUP']).toFixed(2))
+                        $('#GenerationVAT').val(parseFloat(res['GenerationVAT']).toFixed(2))
+                        $('#TransmissionVAT').val(parseFloat(res['TransmissionVAT']).toFixed(2))
+                        $('#DistributionDemandCharge').val(parseFloat(res['DistributionDemandCharge']).toFixed(2))
+                        $('#SystemLossVAT').val(parseFloat(res['SystemLossVAT']).toFixed(2))
+                        $('#OthersVAT').val(parseFloat(res['OthersVAT']).toFixed(2))
+                        $('#DistributionSystemCharge').val(parseFloat(res['DistributionSystemCharge']).toFixed(2))
+                        $('#DistributionVAT').val(parseFloat(res['DistributionVAT']).toFixed(2))
+                        $('#ACRMVAT').val(parseFloat(res['ACRMVAT']).toFixed(2))
+                        $('#SupplyRetailCustomerCharge').val(parseFloat(res['SupplyRetailCustomerCharge']).toFixed(2))
+                        $('#FranchiseTax').val(parseFloat(res['FranchiseTax']).toFixed(2))
+                        $('#FranchiseTaxOthers').val(parseFloat(res['FranchiseTaxOthers']).toFixed(2))
+                        $('#PowerActReduction').val(parseFloat(res['PowerActReduction']).toFixed(2))
+                        $('#MeteringRetailCustomerCharge').val(parseFloat(res['MeteringRetailCustomerCharge']).toFixed(2))
+                        $('#MeteringSystemCharge').val(parseFloat(res['MeteringSystemCharge']).toFixed(2))
+                        $('#LifelineRate').val(parseFloat(res['LifelineRate']).toFixed(2))
+                        $('#InterClassCrossSubsidyCharge').val(parseFloat(res['InterClassCrossSubsidyCharge']).toFixed(2))
+                        $('#SeniorCitizenSubsidy').val(parseFloat(res['SeniorCitizenSubsidy']).toFixed(2))
+                        $('#Form2307Amount').val(parseFloat(res['Form2307Amount']).toFixed(2))                     
+                        $('#Evat2Percent').val(parseFloat(res['Evat2Percent']).toFixed(2))
+                        $('#Evat5Percent').val(parseFloat(res['Evat5Percent']).toFixed(2))
+                        $('#DeductedDeposit').val(parseFloat(res['DeductedDeposit']).toFixed(2))
+                        $('#ExcessDeposit').val(parseFloat(res['ExcessDeposit']).toFixed(2))
+                        $('#AdditionalCharges').val(parseFloat(res['AdditionalCharges']).toFixed(2))
+                        $('#AdvancedMaterialDeposit').val(parseFloat(res['AdvancedMaterialDeposit']).toFixed(2))
+                        $('#CustomerDeposit').val(parseFloat(res['CustomerDeposit']).toFixed(2))
+                        $('#TermedPayments').val(parseFloat(res['TermedPayments']).toFixed(2))
+                        $('#Balance').val(parseFloat(res['Balance']).toFixed(2))
+                        $('#PaidAmount').val(parseFloat(res['PaidAmount']).toFixed(2))
                     },
                     error : function(error) {
                         Swal.fire({

@@ -364,6 +364,21 @@
                                 <input type="text" step="any"  name="CustomerDeposit" id="CustomerDeposit" class="form-blend form-control-sm text-right" readonly="true">
                             </td>
                         </tr>
+                        
+                        <tr>
+                            <td>
+                                <label for="TermedPayments">Termed Payments</label>
+                            </td>
+                            <td>
+                                <input type="text" step="any"  name="TermedPayments" id="TermedPayments" class="form-blend form-control-sm text-right" readonly="true">
+                            </td>
+                            <td>
+                                {{-- <label for="CustomerDeposit">Customer Deposit</label> --}}
+                            </td>
+                            <td>
+                                {{-- <input type="text" step="any"  name="CustomerDeposit" id="CustomerDeposit" class="form-blend form-control-sm text-right" readonly="true"> --}}
+                            </td>
+                        </tr>
                     </table>
                 </div>
             </div>
@@ -659,6 +674,7 @@
                         $('#AdditionalCharges').val(Number(parseFloat(res['AdditionalCharges']).toFixed(2)).toLocaleString())
                         $('#AdvancedMaterialDeposit').val(Number(parseFloat(res['AdvancedMaterialDeposit']).toFixed(2)).toLocaleString())
                         $('#CustomerDeposit').val(Number(parseFloat(res['CustomerDeposit']).toFixed(2)).toLocaleString())
+                        $('#TermedPayments').val(Number(parseFloat(res['TermedPayments']).toFixed(2)).toLocaleString())
                     },
                     error : function(error) {
                         Swal.fire({

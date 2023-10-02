@@ -208,6 +208,7 @@ class Bills extends Model
         'AdjustmentApprovedBy',
         'AdjustmentStatus', // PENDING ADJUSTMENT APPROVAL, PENDING CANCELLATION APPROVAL, ADJUSTMENT APPROVED, CANCELLATION APPROVED
         'DateAdjustmentRequested',
+        'TermedPayments',
     ];
 
     /**
@@ -330,6 +331,7 @@ class Bills extends Model
         'AdjustmentApprovedBy' => 'string',
         'AdjustmentStatus' => 'string',
         'DateAdjustmentRequested' => 'string',
+        'TermedPayments' => 'string',
     ];
 
     /**
@@ -454,6 +456,7 @@ class Bills extends Model
         'AdjustmentApprovedBy' => 'nullable|string',
         'AdjustmentStatus' => 'nullable|string',
         'DateAdjustmentRequested' => 'nullable|string',
+        'TermedPayments' => 'nullable|string',
     ];
 
     public static function getHighConsumptionPercentageAlert() {
@@ -646,6 +649,7 @@ class Bills extends Model
                 $bill->FranchiseTax +
                 $bill->FranchiseTaxOthers +
                 $bill->BusinessTax +
+                $bill->TermedPayments +
                 $bill->AdditionalCharges -
                 $bill->Deductions -
                 $bill->Evat2Percent -
@@ -888,7 +892,11 @@ class Bills extends Model
          */
         $ocl = ArrearsLedgerDistribution::where('AccountNumber', $account->id)
             ->where('ServicePeriod', $period)
-            ->first();
+            ->get();
+        $termedPaymentAmnt = 0;
+        foreach($ocl as $item) {
+            $termedPaymentAmnt += round(floatval($item->Amount), 2);
+        }
          
         /**
          * PREPAYMENT
@@ -905,7 +913,7 @@ class Bills extends Model
             $kwhAmountUsed = round(floatval($kwh), 2);
             $multiplier = round(floatval($account->Multiplier != null ? $account->Multiplier : 1), 2);
             $kwh = $kwhAmountUsed;
-            $additionalCharges = $ocl != null ? round(floatval($ocl->Amount), 2) : 0;
+            $additionalCharges = 0;
             $deductions = round(floatval($deductions), 2);
 
             // IF BILL UPDATE
@@ -982,6 +990,8 @@ class Bills extends Model
                     $bill->BusinessTax = round($kwh * Rates::floatRate($rate->BusinessTax), 2);
 
                     $bill->OthersVAT = round(($bill->FranchiseTax + $bill->FranchiseTaxOthers + $previousSurcharges) * .12, 2);
+
+                    $bill->TermedPayments = $termedPaymentAmnt;
 
                     /**
                      * COMPUTE EVAT
@@ -1234,6 +1244,8 @@ class Bills extends Model
                     
                     $bill->OthersVAT = round(($bill->FranchiseTax + $bill->FranchiseTaxOthers + $previousSurcharges) * .12, 2);
 
+                    $bill->TermedPayments = $termedPaymentAmnt;
+
                     /**
                      * COMPUTE EVAT
                      */
@@ -1485,6 +1497,8 @@ class Bills extends Model
                     $bill->BusinessTax = round($kwh * Rates::floatRate($rate->BusinessTax), 2);
                     
                     $bill->OthersVAT = round(($bill->FranchiseTax + $bill->FranchiseTaxOthers + $previousSurcharges) * .12, 2);
+
+                    $bill->TermedPayments = $termedPaymentAmnt;
 
                     /**
                      * COMPUTE EVAT

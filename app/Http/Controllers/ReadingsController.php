@@ -19,6 +19,7 @@ use App\Models\BillingMeters;
 use App\Models\PrePaymentBalance;
 use App\Models\ServiceAccounts;
 use App\Models\IDGenerator;
+use App\Models\ArrearsLedgerDistribution;
 use Flash;
 use Response;
 
@@ -553,6 +554,15 @@ class ReadingsController extends AppBaseController
                                 $account->save();
                             }
                         }
+
+                        // UPDATE TERMED PAYMENTS
+                        $ocl = ArrearsLedgerDistribution::where('AccountNumber', $account->id)
+                            ->where('ServicePeriod', $request['ServicePeriod'])
+                            ->get();
+                        foreach($ocl as $item) {
+                            $item->IsBilled = 'Yes';
+                            $item->save();
+                        }
                     }
                 } else {
                     if ($account->Contestable=='Yes') {
@@ -600,6 +610,15 @@ class ReadingsController extends AppBaseController
                                 $account->CustomerDeposit = round(floatval($account->CustomerDeposit) + floatval($bills->CustomerDeposit), 2);
                                 $account->save();
                             }
+                        }
+
+                        // UPDATE TERMED PAYMENTS
+                        $ocl = ArrearsLedgerDistribution::where('AccountNumber', $account->id)
+                            ->where('ServicePeriod', $request['ServicePeriod'])
+                            ->get();
+                        foreach($ocl as $item) {
+                            $item->IsBilled = 'Yes';
+                            $item->save();
                         }
                     }
                 }            
