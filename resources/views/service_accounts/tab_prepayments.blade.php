@@ -21,18 +21,20 @@
             <div class="col-lg-4">
                 <p class="text-center text-muted">Material Deposit ({{ $serviceAccounts->AdvancedMaterialDepositStatus == 'DEDUCTING' ? 'Deducting' : 'Paused' }})</p>
                 <p class="text-center text-primary" style="font-size: 2.5em;">₱ {{ $serviceAccounts != null ? (number_format($serviceAccounts->AdvancedMaterialDeposit, 2)) : "0.0" }}</p>
-                @if (Auth::user()->hasAnyRole(['Administrator'])) 
-                    <p class="text-center">
-                        @if ($serviceAccounts->AdvancedMaterialDepositStatus == 'DEDUCTING')
-                            <button onclick="changeMaterialDepositState(`PAUSED`)" class="btn btn-link text-danger btn-xs" title="Pause Advanced Material Deposit Deduction">
-                                <i id="{{ $serviceAccounts->id }}-changeMaterialState" class="fas fa-pause"></i>
-                            </button>
-                        @else
-                            <button onclick="changeMaterialDepositState(`DEDUCTING`)" class="btn btn-link text-success btn-xs" title="Start deducting Advanced Material Deposit">
-                                <i id="{{ $serviceAccounts->id }}-changeMaterialState" class="fas fa-play"></i>
-                            </button>
-                        @endif
-                    </p>
+                @if (Auth::user()->hasAnyRole(['Administrator', 'Heads and Managers', 'Data Administrator', 'Billing Head'])) 
+                    @if ($serviceAccounts->AdvancedMaterialDeposit > 0)
+                        <p class="text-center">
+                            @if ($serviceAccounts->AdvancedMaterialDepositStatus == 'DEDUCTING')
+                                <button onclick="changeMaterialDepositState(`PAUSED`)" class="btn btn-link text-danger btn-xs" title="Pause Advanced Material Deposit Deduction">
+                                    <i id="{{ $serviceAccounts->id }}-changeMaterialState" class="fas fa-pause"></i>
+                                </button>
+                            @else
+                                <button onclick="changeMaterialDepositState(`DEDUCTING`)" class="btn btn-link text-success btn-xs" title="Start deducting Advanced Material Deposit">
+                                    <i id="{{ $serviceAccounts->id }}-changeMaterialState" class="fas fa-play"></i>
+                                </button>
+                            @endif
+                        </p>
+                    @endif                    
                 @endif
             </div>
 
@@ -40,18 +42,20 @@
             <div class="col-lg-4">
                 <p class="text-center text-muted">Customer Deposit ({{ $serviceAccounts->CustomerDepositStatus == 'DEDUCTING' ? 'Deducting' : 'Paused' }})</p>
                 <p class="text-center text-info" style="font-size: 2.5em;">₱ {{ $serviceAccounts != null ? (number_format($serviceAccounts->CustomerDeposit, 2)) : "0.0" }}</p>
-                @if (Auth::user()->hasAnyRole(['Administrator'])) 
-                    <p class="text-center">
-                        @if ($serviceAccounts->CustomerDepositStatus == 'DEDUCTING')
-                            <button onclick="changeCustomerDepositState(`PAUSED`)" class="btn btn-link text-danger btn-xs" title="Pause Customer Deposit Deduction">
-                                <i id="{{ $serviceAccounts->id }}-changeCustomerState" class="fas fa-pause"></i>
-                            </button>
-                        @else
-                            <button onclick="changeCustomerDepositState(`DEDUCTING`)" class="btn btn-link text-success btn-xs" title="Start deducting Customer Deposit">
-                                <i id="{{ $serviceAccounts->id }}-changeCustomerState" class="fas fa-play"></i>
-                            </button>
-                        @endif
-                    </p>
+                @if (Auth::user()->hasAnyRole(['Administrator', 'Heads and Managers', 'Data Administrator', 'Billing Head'])) 
+                    @if ($serviceAccounts->CustomerDeposit > 0)
+                        <p class="text-center">
+                            @if ($serviceAccounts->CustomerDepositStatus == 'DEDUCTING')
+                                <button onclick="changeCustomerDepositState(`PAUSED`)" class="btn btn-link text-danger btn-xs" title="Pause Customer Deposit Deduction">
+                                    <i id="{{ $serviceAccounts->id }}-changeCustomerState" class="fas fa-pause"></i>
+                                </button>
+                            @else
+                                <button onclick="changeCustomerDepositState(`DEDUCTING`)" class="btn btn-link text-success btn-xs" title="Start deducting Customer Deposit">
+                                    <i id="{{ $serviceAccounts->id }}-changeCustomerState" class="fas fa-play"></i>
+                                </button>
+                            @endif
+                        </p>
+                    @endif                    
                 @endif
             </div>
         </div>
