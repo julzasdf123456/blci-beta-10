@@ -51,8 +51,14 @@
                                             <span class="badge bg-danger">{{ $bills->AdjustmentStatus }}</span>
                                         @else
                                             <a href="{{ route('bills.adjust-bill', [$bills->id]) }}" class="btn btn-link" title="Adjust Reading"><i class="fas fa-pen"></i></a>       
+                                        @endif    
+                                        {{-- SKIPPABLE --}}
+                                        @if ($bills->Item3 != null)
+                                            <span class="badge bg-warning" title="This bill is allowed to be skipped from the cashiering app.">{{ $bills->Item3 }}</span>
+                                        @else
+                                            <button class="btn btn-link text-warning" data-toggle="modal" data-target="#modal-allow-skip" title="Allow This Bill to Be Paid in the Future"><i class="fas fa-clipboard-check"></i></button>                    
                                         @endif
-                                                                   
+                                        
                                     @endif  
                                     
                                 @endif                                
@@ -537,3 +543,7 @@
         </div>
     </div>
 @endsection
+
+@include('bills.modal_skip_bill_payment')
+
+

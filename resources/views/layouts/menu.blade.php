@@ -549,6 +549,20 @@ use Illuminate\Support\Facades\Auth;
                    <i class="fas fa-circle nav-icon text-primary"></i><p>Senior Citizen</p>
                 </a>
             </li>
+            <li class="nav-item">
+                <a href="{{ route('serviceAccounts.material-deposit-accounts') }}"
+                   class="nav-link {{ Request::is('serviceAccounts.material-deposit-accounts') ? 'active' : '' }}"
+                   title="Accounts with Termed Payments">                   
+                   <i class="fas fa-circle nav-icon text-primary"></i><p>Material Deposits</p>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a href="{{ route('serviceAccounts.customer-deposit-accounts') }}"
+                   class="nav-link {{ Request::is('serviceAccounts.customer-deposit-accounts') ? 'active' : '' }}"
+                   title="Accounts with Termed Payments">                   
+                   <i class="fas fa-circle nav-icon text-primary"></i><p>Customer Deposits</p>
+                </a>
+            </li>
             <li class="nav-header">                
                 Others 
             </li>
@@ -1385,4 +1399,3 @@ use Illuminate\Support\Facades\Auth;
         </ul>
     </li>
 @endcan
-

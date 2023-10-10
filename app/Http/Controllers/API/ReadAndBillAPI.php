@@ -98,16 +98,16 @@ class ReadAndBillAPI extends Controller {
                 'Billing_ServiceAccounts.BlockCode',
                 'Billing_ServiceAccounts.Lifeliner',
                 'Billing_ServiceAccounts.LifelinerDateExpire',
-                'CRM_Towns.Town as TownFull',
-                'CRM_Barangays.Barangay as BarangayFull',
-                'Billing_ServiceAccounts.Purok',
-                DB::raw("'0' AS Balance"),
-                'Billing_KatasNgVat.Balance as KatasNgVat',
                 'Billing_ServiceAccounts.AdvancedMaterialDeposit',
                 'Billing_ServiceAccounts.CustomerDeposit',
                 'Billing_ServiceAccounts.AdvancedMaterialDepositStatus',
                 'Billing_ServiceAccounts.CustomerDepositStatus',
                 'Billing_ServiceAccounts.ConnectionDate',
+                'CRM_Towns.Town as TownFull',
+                'CRM_Barangays.Barangay as BarangayFull',
+                'Billing_ServiceAccounts.Purok',
+                DB::raw("'0' AS Balance"),
+                'Billing_KatasNgVat.Balance as KatasNgVat',
                 DB::raw("'0' AS ArrearsLedger"),
                 DB::raw("(SELECT TOP 1 KwhUsed FROM Billing_Readings WHERE ServicePeriod=(SELECT TOP 1 ServicePeriod FROM Billing_Readings WHERE AccountNumber=Billing_ServiceAccounts.id ORDER BY ServicePeriod DESC) AND AccountNumber=Billing_ServiceAccounts.id) AS KwhUsed"),
                 DB::raw("(SELECT TOP 1 KwhUsed FROM Billing_Bills WHERE ServicePeriod=(SELECT TOP 1 ServicePeriod FROM Billing_Bills WHERE AccountNumber=Billing_ServiceAccounts.id ORDER BY ServicePeriod DESC) AND AccountNumber=Billing_ServiceAccounts.id) AS PrevKwhUsed"),
@@ -160,6 +160,11 @@ class ReadAndBillAPI extends Controller {
                     'BlockCode' => $item->BlockCode,
                     'Lifeliner' => $item->Lifeliner,
                     'LifelinerDateExpire' => $item->LifelinerDateExpire,
+                    'AdvancedMaterialDeposit' => $item->AdvancedMaterialDeposit,
+                    'CustomerDeposit' => $item->CustomerDeposit,
+                    'AdvancedMaterialDepositStatus' => $item->AdvancedMaterialDepositStatus,
+                    'CustomerDepositStatus' => $item->CustomerDepositStatus,
+                    'ConnectionDate' => $item->ConnectionDate,
                     'TownFull' => $item->TownFull,
                     'BarangayFull' => $item->BarangayFull,
                     'Purok' => $item->Purok,
@@ -253,6 +258,8 @@ class ReadAndBillAPI extends Controller {
             $bills = Bills::where('ServicePeriod', $input['ServicePeriod'])
                 ->where('AccountNumber', $input['AccountNumber'])
                 ->first();
+
+            $account = ServiceAccounts::find($request['AccountNumber']);
 
             $prepaymentBalance = PrePaymentBalance::where('AccountNumber', $input['AccountNumber'])->first();
             
@@ -413,6 +420,25 @@ class ReadAndBillAPI extends Controller {
 
                         $katas->Balance = round($katasRemain, 2);
                         $katas->save();
+                    }
+                }
+
+                /**
+                 * ASSESS MATERIAL AND CUSTOMER DEPOSITS
+                 */
+                if ($account->AdvancedMaterialDepositStatus == 'DEDUCTING') {
+                    // DEDUCT MATERIAL DEPOSIT TO BALANCE
+                    if ($account->AdvancedMaterialDeposit > 0) {
+                        $account->AdvancedMaterialDeposit = round(floatval($account->AdvancedMaterialDeposit) + floatval($input['AdvancedMaterialDeposit']), 2);
+                        $account->save();
+                    }
+                }
+                
+                if ($account->CustomerDepositStatus == 'DEDUCTING') {
+                    // DEDUCT CUSTOMER DEPOSIT TO BALANCE
+                    if ($account->CustomerDeposit > 0) {
+                        $account->CustomerDeposit = round(floatval($account->CustomerDeposit) + floatval($input['CustomerDeposit']), 2);
+                        $account->save();
                     }
                 }
 

@@ -190,7 +190,7 @@ class Bills extends Model
         'SolarMeteringSystemCharge',
         'Item1', // CURRENT AMOUNT DU TO CUSTOMER / PARTIAL AMOUNT
         'Item2', 
-        'Item3',
+        'Item3', // INDICATOR IF THE BILL IS APPROVED BY MANAGEMENT TO BE UNPAID IN THE CASHIERING APP (SKIP_AUTO=AUTO SKIPPED, SKIP_MANUAL=NOT AUTOMATICALLY SKIPPED BUT CAN BE SKIPPED)
         'Item4', // CURRENT AMOUNT CUSTOMER TO DU (Solar Gen - Residual sa Previous)
         'Item5',
         'PaidAmount',

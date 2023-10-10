@@ -308,6 +308,8 @@ Route::get('/service_accounts/get-existing-accounts', [ServiceAccountsController
 Route::get('/service_accounts/lifeliners-view', [ServiceAccountsController::class, 'lifelinersView'])->name('serviceAccounts.lifeliners-view');
 Route::get('/service_accounts/senior-citizen-view', [ServiceAccountsController::class, 'seniorCitizenView'])->name('serviceAccounts.senior-citizen-view');
 Route::get('/service_accounts/invalidate-lifeliners-and-scs', [ServiceAccountsController::class, 'invalidateLifelinersAndSeniorCitizens'])->name('serviceAccounts.invalidate-lifeliners-and-scs');
+Route::get('/service_accounts/material-deposit-accounts', [ServiceAccountsController::class, 'materialDepositAccounts'])->name('serviceAccounts.material-deposit-accounts');
+Route::get('/service_accounts/customer-deposit-accounts', [ServiceAccountsController::class, 'customerDepositAccounts'])->name('serviceAccounts.customer-deposit-accounts');
 Route::resource('serviceAccounts', ServiceAccountsController::class);
 
 
@@ -628,6 +630,7 @@ Route::get('/bills/bill-adjustments-approval', [BillsController::class,  'billAd
 Route::get('/bills/bill-adjustments-approval-view/{origId}', [BillsController::class,  'billAdjustmentsApprovalView'])->name('bills.bill-adjustments-approval-view');
 Route::get('/bills/bill-adjustments-approve/{origId}', [BillsController::class,  'billAdjustmentsApprove'])->name('bills.bill-adjustments-approve');
 Route::get('/bills/bill-adjustments-reject/{origId}', [BillsController::class,  'billAdjustmentsReject'])->name('bills.bill-adjustments-reject');
+Route::get('/bills/allow-skip', [BillsController::class,  'allowSkip'])->name('bills.allow-skip');
 Route::resource('bills', BillsController::class);
 
 
@@ -950,3 +953,4 @@ Route::resource('notifications', App\Http\Controllers\NotificationsController::c
 
 Route::resource('read-and-bill-notices', App\Http\Controllers\ReadAndBillNoticesController::class);
 Route::resource('bill-miscellaneouses', App\Http\Controllers\BillMiscellaneousController::class);
+Route::resource('bill-mirrors', App\Http\Controllers\BillMirrorController::class);

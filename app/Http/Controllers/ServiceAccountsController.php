@@ -3330,4 +3330,56 @@ class ServiceAccountsController extends AppBaseController
 
         return response()->json('ok', 200);
     }
+
+    public function materialDepositAccounts() {
+        $serviceAccounts = DB::table('Billing_ServiceAccounts')
+            ->leftJoin('CRM_Towns', 'Billing_ServiceAccounts.Town', '=', 'CRM_Towns.id')
+            ->leftJoin('CRM_Barangays', 'Billing_ServiceAccounts.Barangay', '=', 'CRM_Barangays.id')
+            ->select('Billing_ServiceAccounts.id',
+                    'Billing_ServiceAccounts.ServiceAccountName',
+                    'Billing_ServiceAccounts.OldAccountNo',
+                    'Billing_ServiceAccounts.AccountCount',
+                    'Billing_ServiceAccounts.Purok',
+                    'Billing_ServiceAccounts.AccountType',
+                    'Billing_ServiceAccounts.AccountStatus',
+                    'Billing_ServiceAccounts.Zone',
+                    'Billing_ServiceAccounts.BlockCode',
+                    'Billing_ServiceAccounts.AdvancedMaterialDeposit',
+                    'Billing_ServiceAccounts.AdvancedMaterialDepositStatus',
+                    'CRM_Towns.Town',
+                    'CRM_Barangays.Barangay',)
+            ->whereRaw("Billing_ServiceAccounts.AdvancedMaterialDeposit > 0")
+            ->orderBy('OldAccountNo')
+            ->get();
+
+        return view('/service_accounts/material_deposit_accounts', [
+            'serviceAccounts' => $serviceAccounts,
+        ]);
+    }
+
+    public function customerDepositAccounts() {
+        $serviceAccounts = DB::table('Billing_ServiceAccounts')
+            ->leftJoin('CRM_Towns', 'Billing_ServiceAccounts.Town', '=', 'CRM_Towns.id')
+            ->leftJoin('CRM_Barangays', 'Billing_ServiceAccounts.Barangay', '=', 'CRM_Barangays.id')
+            ->select('Billing_ServiceAccounts.id',
+                    'Billing_ServiceAccounts.ServiceAccountName',
+                    'Billing_ServiceAccounts.OldAccountNo',
+                    'Billing_ServiceAccounts.AccountCount',
+                    'Billing_ServiceAccounts.Purok',
+                    'Billing_ServiceAccounts.AccountType',
+                    'Billing_ServiceAccounts.AccountStatus',
+                    'Billing_ServiceAccounts.Zone',
+                    'Billing_ServiceAccounts.BlockCode',
+                    'Billing_ServiceAccounts.CustomerDeposit',
+                    'Billing_ServiceAccounts.CustomerDepositStatus',
+                    'CRM_Towns.Town',
+                    'CRM_Barangays.Barangay',)
+            ->whereRaw("Billing_ServiceAccounts.CustomerDeposit > 0")
+            ->orderBy('OldAccountNo')
+            ->get();
+
+        return view('/service_accounts/customer_deposit_accounts', [
+            'serviceAccounts' => $serviceAccounts,
+        ]);
+    }
 }

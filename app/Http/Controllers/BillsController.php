@@ -7400,4 +7400,14 @@ class BillsController extends AppBaseController
 
         return redirect(route('bills.bill-adjustments-approval'));
     }
+
+    public function allowSkip(Request $request) {
+        $id = $request['id'];
+        $skipStatus = $request['SkipStatus'];
+
+        Bills::where('id', $id)
+            ->update(['Item3' => $skipStatus]);
+
+        return response()->json('ok', 200);
+    }
 }
