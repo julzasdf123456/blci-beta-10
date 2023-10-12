@@ -794,8 +794,8 @@ class BillsController extends AppBaseController
     public function billArrearsUnlocking() {
         $bills = DB::table('Billing_Bills')
             ->leftJoin('Billing_ServiceAccounts', 'Billing_Bills.AccountNumber', '=', 'Billing_ServiceAccounts.id')
-            ->leftJoin('users', 'Billing_Bills.UnlockedBy', '=', 'users.id')
-            ->where('Billing_Bills.IsUnlockedForPayment', 'Requested')
+            ->leftJoin('users', 'Billing_Bills.SurchargeWaiveRequestedBy', '=', 'users.id')
+            ->where('Billing_Bills.SurchargeWaived', 'PENDING APPROVAL')
             ->select('Billing_ServiceAccounts.ServiceAccountName',
                 'users.name',
                 'Billing_Bills.*')
@@ -809,8 +809,8 @@ class BillsController extends AppBaseController
     public function unlockBillArrear($id) {
         $bill = Bills::find($id);
 
-        $bill->IsUnlockedForPayment = 'Yes';
-        $bill->UnlockedBy = Auth::id();
+        $bill->SurchargeWaived = 'APPROVED';
+        $bill->SurchargeWaiveApprovedBy = Auth::id();
         $bill->save();
 
         return redirect(route('bills.bill-arrears-unlocking'));
@@ -819,8 +819,7 @@ class BillsController extends AppBaseController
     public function rejectUnlockBillArrear($id) {
         $bill = Bills::find($id);
 
-        $bill->IsUnlockedForPayment = null;
-        $bill->UnlockedBy = Auth::id();
+        $bill->SurchargeWaived = null;
         $bill->save();
 
         return redirect(route('bills.bill-arrears-unlocking'));
@@ -7407,6 +7406,15 @@ class BillsController extends AppBaseController
 
         Bills::where('id', $id)
             ->update(['Item3' => $skipStatus]);
+
+        return response()->json('ok', 200);
+    }
+
+    public function requestWaiveSurcharges(Request $request) {
+        $id = $request['id'];
+
+        Bills::where('id', $id)
+            ->update(['SurchargeWaived' => 'PENDING APPROVAL', 'SurchargeWaiveRequestedBy' => Auth::id(), 'SurchargeWaiveRequestDate' => date('Y-m-d H:i:s')]);
 
         return response()->json('ok', 200);
     }

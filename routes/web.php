@@ -631,6 +631,7 @@ Route::get('/bills/bill-adjustments-approval-view/{origId}', [BillsController::c
 Route::get('/bills/bill-adjustments-approve/{origId}', [BillsController::class,  'billAdjustmentsApprove'])->name('bills.bill-adjustments-approve');
 Route::get('/bills/bill-adjustments-reject/{origId}', [BillsController::class,  'billAdjustmentsReject'])->name('bills.bill-adjustments-reject');
 Route::get('/bills/allow-skip', [BillsController::class,  'allowSkip'])->name('bills.allow-skip');
+Route::get('/bills/request-waive-surcharges', [BillsController::class,  'requestWaiveSurcharges'])->name('bills.request-waive-surcharges');
 Route::resource('bills', BillsController::class);
 
 
@@ -954,3 +955,4 @@ Route::resource('notifications', App\Http\Controllers\NotificationsController::c
 Route::resource('read-and-bill-notices', App\Http\Controllers\ReadAndBillNoticesController::class);
 Route::resource('bill-miscellaneouses', App\Http\Controllers\BillMiscellaneousController::class);
 Route::resource('bill-mirrors', App\Http\Controllers\BillMirrorController::class);
+Route::resource('collection-date-adjustments', App\Http\Controllers\CollectionDateAdjustmentsController::class);

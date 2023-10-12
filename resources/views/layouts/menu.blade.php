@@ -791,7 +791,7 @@ use Illuminate\Support\Facades\Auth;
             <li class="nav-item">
                 <a href="{{ route('bills.bill-arrears-unlocking') }}"
                    class="nav-link {{ Request::is('bills.bill-arrears-unlocking*') ? 'active' : '' }}">                   
-                   <i class="fas fa-unlock nav-icon text-primary"></i><p>Bill Arrears Unlocking</p>
+                   <i class="fas fa-unlock nav-icon text-primary"></i><p>Waived Surcharges</p>
                 </a>
             </li>
             <li class="nav-item">
@@ -1106,31 +1106,6 @@ use Illuminate\Support\Facades\Auth;
         </ul>
     </li> --}}
 @endcanany
-@canany(['Super Admin', 'bapa adjust', 'billing re-bill'])
-    <li class="nav-item has-treeview">
-        <a href="#" class="nav-link">
-            <i class="fas fa-receipt nav-icon text-info"></i>
-            <p>
-                BAPA
-                <i class="fas fa-angle-left right"></i>
-            </p>
-        </a>
-        <ul class="nav nav-treeview">
-            <li class="nav-item">
-                <a href="{{ route('bAPAAdjustments.search-bapa-monitor') }}"
-                class="nav-link {{ Request::is('bAPAAdjustments.search-bapa-monitor*') ? 'active' : '' }}">
-                <i class="fas fa-chart-line nav-icon text-info"></i><p>Collection Monitor</p>
-                </a>
-            </li>
-            <li class="nav-item">
-                <a href="{{ route('bAPAAdjustments.index') }}"
-                class="nav-link {{ Request::is('bAPAAdjustments.index*') ? 'active' : '' }}">
-                <i class="fas fa-users nav-icon text-info"></i><p>New BAPA Adjustments</p>
-                </a>
-            </li>
-        </ul>
-    </li>
-@endcanany
 @canany(['Super Admin', 'teller view'])
     <li class="nav-item">
         <a href="{{ route('transactionIndices.browse-ors') }}"
@@ -1174,6 +1149,24 @@ use Illuminate\Support\Facades\Auth;
                 <a href="{{ route('oRCancellations.other-payments') }}"
                 class="nav-link {{ Request::is('oRCancellations.other-payments*') ? 'active' : '' }}">
                 <i class="fas fa-plug nav-icon text-info"></i><p>Other Payments</p>
+                </a>
+            </li>
+        </ul>
+    </li>
+    {{-- TELLERS MODULE --}}
+    <li class="nav-item has-treeview">
+        <a href="#" class="nav-link">
+            <i class="fas fa-users nav-icon text-info"></i>
+            <p>
+                Tellers
+                <i class="fas fa-angle-left right"></i>
+            </p>
+        </a>
+        <ul class="nav nav-treeview">
+            <li class="nav-item">
+                <a href="{{ route('collection-date-adjustments.index') }}"
+                class="nav-link {{ Request::is('collection-date-adjustments.index*') ? 'active' : '' }}">
+                <i class="fas fa-calendar nav-icon text-info"></i><p>Collection Date Adj.</p>
                 </a>
             </li>
         </ul>

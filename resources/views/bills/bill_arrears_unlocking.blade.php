@@ -35,11 +35,11 @@
                         <td><a href="{{ route('bills.show', [$item->id]) }}">{{ $item->BillNumber }}</a></td>
                         <td>{{ $item->AccountNumber }}</td>
                         <td>{{ $item->ServiceAccountName }}</td>
-                        <td>{{ date('M d, Y', strtotime($item->ServicePeriod)) }}</td>
+                        <td>{{ date('M Y', strtotime($item->ServicePeriod)) }}</td>
                         <td>{{ $item->KwhUsed }}</td>
                         <td>{{ number_format($item->NetAmount, 2) }}</td>
                         <td>{{ date('M d, Y', strtotime($item->DueDate)) }}</td>
-                        <td>{{ Bills::getFinalPenalty($item) }}</td>
+                        <td>{{ number_format(Bills::assessDueBillAndGetSurcharge($item), 2) }}</td>
                         <td>{{ $item->name }}</td>
                         <td class="text-right">
                             <a href="{{ route('bills.unlock-bill-arrear', [$item->id]) }}" class="btn btn-xs btn-primary">Approve</a>

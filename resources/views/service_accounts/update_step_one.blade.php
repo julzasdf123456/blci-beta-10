@@ -58,7 +58,7 @@
                                 <script>
                                     $("#OldAccountNo").focus()
                                     $("#OldAccountNo").inputmask({
-                                        mask: '99-99999-999',
+                                        mask: '99999-99',
                                         placeholder: '',
                                         showMaskOnHover: false,
                                         showMaskOnFocus: false,

@@ -209,6 +209,11 @@ class Bills extends Model
         'AdjustmentStatus', // PENDING ADJUSTMENT APPROVAL, PENDING CANCELLATION APPROVAL, ADJUSTMENT APPROVED, CANCELLATION APPROVED
         'DateAdjustmentRequested',
         'TermedPayments',
+        'SurchargeWaived', // APPROVED, PENDING APPROVAL
+        'SurchargeWaiveRequestedBy',
+        'SurchargeWaiveApprovedBy',
+        'SurchargeWaiveRequestDate',
+        'SurchargeWaiveApprovedDate',
     ];
 
     /**
@@ -332,6 +337,11 @@ class Bills extends Model
         'AdjustmentStatus' => 'string',
         'DateAdjustmentRequested' => 'string',
         'TermedPayments' => 'string',
+        'SurchargeWaived' => 'string',
+        'SurchargeWaiveRequestedBy' => 'string',
+        'SurchargeWaiveApprovedBy' => 'string',
+        'SurchargeWaiveRequestDate' => 'string',
+        'SurchargeWaiveApprovedDate' => 'string',
     ];
 
     /**
@@ -457,6 +467,11 @@ class Bills extends Model
         'AdjustmentStatus' => 'nullable|string',
         'DateAdjustmentRequested' => 'nullable|string',
         'TermedPayments' => 'nullable|string',
+        'SurchargeWaived' => 'nullable|string',
+        'SurchargeWaiveRequestedBy' => 'nullable|string',
+        'SurchargeWaiveApprovedBy' => 'nullable|string',
+        'SurchargeWaiveRequestDate' => 'nullable|string',
+        'SurchargeWaiveApprovedDate' => 'nullable|string',
     ];
 
     public static function getHighConsumptionPercentageAlert() {
@@ -567,6 +582,14 @@ class Bills extends Model
             return Bills::assessDueBillAndGetSurcharge($bill);
         } else {
             return 0;
+        }
+    }
+
+    public static function isBillDue($bill) {
+        if (date('Y-m-d') > $bill->DueDate) {
+            return true;
+        } else {
+            return false;
         }
     }
 

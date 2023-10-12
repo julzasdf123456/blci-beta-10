@@ -51,14 +51,25 @@
                                             <span class="badge bg-danger">{{ $bills->AdjustmentStatus }}</span>
                                         @else
                                             <a href="{{ route('bills.adjust-bill', [$bills->id]) }}" class="btn btn-link" title="Adjust Reading"><i class="fas fa-pen"></i></a>       
-                                        @endif    
-                                        {{-- SKIPPABLE --}}
-                                        @if ($bills->Item3 != null)
-                                            <span class="badge bg-warning" title="This bill is allowed to be skipped from the cashiering app.">{{ $bills->Item3 }}</span>
-                                        @else
-                                            <button class="btn btn-link text-warning" data-toggle="modal" data-target="#modal-allow-skip" title="Allow This Bill to Be Paid in the Future"><i class="fas fa-clipboard-check"></i></button>                    
                                         @endif
-                                        
+
+                                        @if (Bills::isBillDue($bills))
+                                            {{-- SKIPPABLE --}}
+                                            @if ($bills->Item3 != null)
+                                                <span class="badge bg-warning" title="This bill is allowed to be skipped from the cashiering app.">{{ $bills->Item3 }}</span>
+                                            @else
+                                                <button class="btn btn-link text-warning" data-toggle="modal" data-target="#modal-allow-skip" title="Allow This Bill to Be Paid in the Future"><i class="fas fa-clipboard-check"></i></button>                    
+                                            @endif
+
+                                            {{-- WAIVE SURCHARGE --}}
+                                            @if ($bills->SurchargeWaived == 'PENDING APPROVAL')
+                                                <span class="badge bg-info" title="SURCHARGE WAIVED - PENDING APPROVAL">SURCHARGE WAIVED - PENDING APPROVAL</span>
+                                            @elseif ($bills->SurchargeWaived == 'APPROVED')
+                                                <span class="badge bg-success" title="SURCHARGE WAIVED - APPROVED">SURCHARGE WAIVED - APPROVED</span>
+                                            @else
+                                                <button id="reqSurcharge" class="btn btn-link text-danger" title="Waive Surcharges"><i class="fas fa-minus"></i></button>                                            
+                                            @endif
+                                        @endif
                                     @endif  
                                     
                                 @endif                                
@@ -542,8 +553,49 @@
             </div>
         </div>
     </div>
+
+    @include('bills.modal_skip_bill_payment')
 @endsection
 
-@include('bills.modal_skip_bill_payment')
+@push('page_scripts')
+    <script>
+        $(document).ready(function() {
+            $('#reqSurcharge').on('click', function() {
+                requestWaiveSurcharge()
+            })
+        })
 
-
+        function requestWaiveSurcharge() {
+            Swal.fire({
+                title: 'Waive Surcharges?',
+                text : "Are you sure you want to waive this bill's surcharges? This will still be a subject for approval.",
+                showCancelButton: true,
+                confirmButtonText: 'Yes',
+                denyButtonText: `No`,
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    $.ajax({
+                        url : "{{ route('bills.request-waive-surcharges') }}",
+                        type : 'GET',
+                        data : {
+                            id : "{{ $bills->id }}"
+                        },
+                        success : function(res) {
+                            Toast.fire({
+                                icon : 'success',
+                                text : 'Waiving of surcharges requested!'
+                            })
+                            location.reload()
+                        },
+                        error : function(err) {
+                            Swal.fire({
+                                icon : 'error',
+                                text : 'Error waiving surcharges!'
+                            })
+                        }
+                    })
+                }
+            })
+        }
+    </script>
+@endpush

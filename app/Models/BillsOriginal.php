@@ -220,6 +220,11 @@ class BillsOriginal extends Model
         'AdjustmentStatus',
         'DateAdjustmentRequested',
         'TermedPayments',
+        'SurchargeWaived',
+        'SurchargeWaiveRequestedBy',
+        'SurchargeWaiveApprovedBy',
+        'SurchargeWaiveRequestDate',
+        'SurchargeWaiveApprovedDate',
     ];
 
     /**
@@ -343,6 +348,11 @@ class BillsOriginal extends Model
         'AdjustmentStatus' => 'string',
         'DateAdjustmentRequested' => 'string',
         'TermedPayments' => 'string',
+        'SurchargeWaived' => 'string',
+        'SurchargeWaiveRequestedBy' => 'string',
+        'SurchargeWaiveApprovedBy' => 'string',
+        'SurchargeWaiveRequestDate' => 'string',
+        'SurchargeWaiveApprovedDate' => 'string',
     ];
 
     /**
@@ -468,5 +478,10 @@ class BillsOriginal extends Model
         'AdjustmentStatus' => 'nullable|string',
         'DateAdjustmentRequested' => 'nullable|string',
         'TermedPayments' => 'nullable|string',
+        'SurchargeWaived' => 'nullable|string',
+        'SurchargeWaiveRequestedBy' => 'nullable|string',
+        'SurchargeWaiveApprovedBy' => 'nullable|string',
+        'SurchargeWaiveRequestDate' => 'nullable|string',
+        'SurchargeWaiveApprovedDate' => 'nullable|string',
     ];
 }
