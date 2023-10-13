@@ -1,3 +1,6 @@
+@php
+    use App\Models\Bills;
+@endphp
 <div class="content">
     <div class="row">
         <div class="col-lg-4">
@@ -73,9 +76,7 @@
                                             @else
                                                 <a href="{{ route('bills.adjust-bill', [$item->id]) }}" class="btn btn-link btn-xs text-warning" title="Adjust Reading"><i class="fas fa-pen"></i></a>
                                             @endif
-                                        @endif
-                                        <button class="btn btn-link btn-xs text-danger" title="Cancel this Bill" onclick="requestCancel('{{ $item->id }}')"><i class="fas fa-ban"></i></button>                            
-                                        <button class="btn btn-link btn-xs text-info" title="Mark as Paid (Application Adjustment)" onclick="markAsPaid('{{ $item->id }}')"><i class="fas fa-check-circle"></i></button>
+                                        @endif                                        
                                     @endif
                                 @endif
                                 @if ($serviceAccounts->NetMetered=='Yes')
@@ -84,8 +85,42 @@
                                     <a href="{{ route('bills.print-single-bill-new-format', [$item->id]) }}" class="btn btn-xs btn-link" title="Print New Formatted Bill"><i class="fas fa-print"></i></a>
                                 @endif
                                 
-                                {{-- <a href="{{ route('bills.print-single-bill-old', [$item->id]) }}" class="btn btn-link btn-xs text-warning" title="Print Pre-Formatted Bill (Old)"><i class="fas fa-print"></i></a> --}}
+                                {{-- OVERFLOW ELLIPSIS --}}
                                 <button class="btn btn-link btn-xs text-default" title="Adjustment History" onclick="showBillHistory('{{ $item->id }}')"><i class="fas fa-history"></i></button>
+                                
+                                <div class="btn-group" title="More options">
+                                    <button type="button" class="btn btn-sm btn-link text-default dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
+                                    </button>
+                                    <div class="dropdown-menu">
+                                        <a class="dropdown-item" href="#">Action</a>
+                                        <a class="dropdown-item" href="#">Another action</a>
+                                        <a class="dropdown-item" href="#">Something else here</a>
+
+                                        @if ($item->ORDate == null)
+                                            @if (Bills::isBillDue($item))
+                                                {{-- SKIPPABLE --}}
+                                                @if ($item->Item3 != null)
+                                                    <span class="dropdown-item badge bg-warning" style="padding-top: 3px; padding-bottom: 3px;" title="This bill is allowed to be skipped from the cashiering app.">Cashier : {{ $item->Item3 }}</span>
+                                                @else
+                                                    <button class="dropdown-item btn btn-link" onclick="allowSkipping(`{{ $item->id }}`)" title="Allow This Bill to Be Paid in the Future"><i class="fas fa-clipboard-check ico-tab"></i>Allow Skipping</button>                    
+                                                @endif
+
+                                                {{-- WAIVE SURCHARGE --}}
+                                                @if ($item->SurchargeWaived == 'PENDING APPROVAL')
+                                                    <span class="dropdown-item  badge bg-info" title="SURCHARGE WAIVED - PENDING APPROVAL">SURCHARGE WAIVED - PENDING APPROVAL</span>
+                                                @elseif ($item->SurchargeWaived == 'APPROVED')
+                                                    <span class="dropdown-item  badge bg-success" title="SURCHARGE WAIVED - APPROVED">SURCHARGE WAIVED - APPROVED</span>
+                                                @else
+                                                    <button onclick="requestWaiveSurcharges(`{{ $item->id }}`)" class="dropdown-item btn btn-link" title="Waive Surcharges"><i class="fas fa-minus ico-tab"></i>Waive Surcharges</button>                                            
+                                                @endif
+                                            @endif
+
+                                            <button class="dropdown-item btn btn-link" title="Mark as Paid (Application Adjustment)" onclick="markAsPaid('{{ $item->id }}')"><i class="fas fa-check-circle ico-tab"></i>Mark as Paid</button>
+                                            <div class="dropdown-divider"></div>
+                                            <button class="dropdown-item btn btn-link text-danger" title="Cancel this Bill" onclick="requestCancel('{{ $item->id }}')"><i class="fas fa-trash ico-tab"></i> Cancel Bill</button>                            
+                                        @endif
+                                    </div>
+                                </div>
                             </td>
                         </tr>
                     @endforeach
@@ -241,8 +276,30 @@
     </div>
 </div>
 
+{{-- ALLOW SKIP --}}
+<div class="modal fade" id="modal-allow-skip" aria-hidden="true" style="display: none;">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title">Skip Bills Payment?</h4>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">×</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <p>Allow this Bill to be skipped from the Cashiering app? </p>
+            </div>
+            <div class="modal-footer justify-content-between">
+                <button onclick="allowSkip(`SKIP_AUTO`)" class="btn btn-success float-right">Skip Automatically</button>
+                <button onclick="allowSkip(`SKIP_MANUAL`)" class="btn btn-primary float-right">Allow Cashier to Manually Skip</button>
+            </div>
+        </div>
+    </div>
+</div>
+
 @push('page_scripts')
     <script>
+        var selectedBillId = ""
         function requestCancel(id) {
             (async () => {
                 const { value: text } = await Swal.fire({
@@ -330,6 +387,68 @@
                         icon : 'error'
                     })
                     $('#loader-adjustment-hist').addClass('gone')
+                }
+            })
+        }
+
+        function allowSkipping(id) {
+            $('#modal-allow-skip').modal('show')
+            selectedBillId = id
+        }
+
+        function allowSkip(skipStatus) {
+            $.ajax({
+                url : "{{ route('bills.allow-skip') }}",
+                type : 'GET',
+                data : {
+                    id : selectedBillId,
+                    SkipStatus : skipStatus,
+                },
+                success : function(res) {
+                    Toast.fire({
+                        icon : 'success',
+                        text : 'Billed allowed to be skipped'
+                    })
+                    location.reload()
+                },
+                error : function(err) {
+                    Swal.fire({
+                        icon : 'error',
+                        text : 'Error skipping bill to cashier'
+                    })
+                }
+            })
+        }
+
+        function requestWaiveSurcharges(id) {
+            Swal.fire({
+                title: 'Waive Surcharges?',
+                text : "Are you sure you want to waive this bill's surcharges? This will still be a subject for approval.",
+                showCancelButton: true,
+                confirmButtonText: 'Yes',
+                denyButtonText: `No`,
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    $.ajax({
+                        url : "{{ route('bills.request-waive-surcharges') }}",
+                        type : 'GET',
+                        data : {
+                            id : id,
+                        },
+                        success : function(res) {
+                            Toast.fire({
+                                icon : 'success',
+                                text : 'Waiving of surcharges requested!'
+                            })
+                            location.reload()
+                        },
+                        error : function(err) {
+                            Swal.fire({
+                                icon : 'error',
+                                text : 'Error waiving surcharges!'
+                            })
+                        }
+                    })
                 }
             })
         }

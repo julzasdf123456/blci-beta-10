@@ -155,13 +155,20 @@ use Illuminate\Support\Facades\Auth;
                         <i class="fas fa-tachometer-alt nav-icon text-warning"></i><p>For Meter Assigning</p>
                         </a>
                     </li>
-
+                    
+                    <li class="nav-item">
+                        <a href="{{ route('serviceConnections.manual-energization') }}"
+                        class="nav-link {{ Request::is('serviceConnections.manual-energization*') ? 'active' : '' }}">
+                        <i class="fas fa-circle nav-icon text-warning"></i><p>Manual Energization</p>
+                        </a>
+                    </li>
+{{-- 
                     <li class="nav-item">
                         <a href="{{ route('serviceConnections.energization') }}"
                         class="nav-link {{ Request::is('serviceConnections.energization*') ? 'active' : '' }}">
                         <i class="fas fa-check nav-icon text-warning"></i><p>For Energization</p>
                         </a>
-                    </li>
+                    </li> --}}
                 </ul>
             </li>
             @endcanany

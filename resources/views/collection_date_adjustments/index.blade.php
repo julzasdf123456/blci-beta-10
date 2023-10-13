@@ -36,7 +36,7 @@
                     <tbody>
                         @foreach ($tellers as $item)
                             @php
-                                $collectionDate = CollectionDateAdjustments::where('UserId', $item->id)
+                                $collectionDate = CollectionDateAdjustments::whereRaw("UserId='" . $item->id . "'")
                                     ->orderByDesc('created_at')
                                     ->first();
 

@@ -103,7 +103,7 @@ Route::get('/service_connections/fetchserviceconnectiontrash', [ServiceConnectio
 Route::get('/service_connections/energization', [ServiceConnectionsController::class, 'energization'])->name('serviceConnections.energization');
 Route::get('/service_connections/print_order/{id}', [ServiceConnectionsController::class, 'printOrder'])->name('serviceConnections.print-order');
 Route::post('/service_connections/change-station-crew', [ServiceConnectionsController::class, 'changeStationCrew']);
-Route::post('/service_connections/update-energization-status', [ServiceConnectionsController::class, 'updateEnergizationStatus']);
+Route::post('/service_connections/update-energization-status', [ServiceConnectionsController::class, 'updateEnergizationStatus'])->name('serviceConnections.update-energization-status');
 Route::get('/service_connections/select_application_type/{consumerId}', [ServiceConnectionsController::class, 'selectApplicationType'])->name('serviceConnections.select-application-type');
 Route::post('/service_connections/relay_account_type/{consumerId}', [ServiceConnectionsController::class, 'relayApplicationType'])->name('serviceConnections.relay-account-type');
 Route::get('/service_connections/dashboard', [ServiceConnectionsController::class, 'dashboard'])->name('serviceConnections.dashboard');
@@ -169,6 +169,7 @@ Route::get('/service_connections/for-energization', [ServiceConnectionsControlle
 Route::get('/service_connections/set-connection-schedule', [ServiceConnectionsController::class, 'setConnectionSchedule'])->name('serviceConnections.set-connection-schedule');
 Route::get('/service_connections/get-existing-accounts', [ServiceConnectionsController::class, 'getExistingAccounts'])->name('serviceConnections.get-existing-accounts');
 Route::get('/service_connections/lifeliners-view', [ServiceConnectionsController::class, 'lifelinersView'])->name('serviceConnections.lifeliners-view');
+Route::get('/service_connections/manual-energization', [ServiceConnectionsController::class, 'manualEnergization'])->name('serviceConnections.manual-energization');
 Route::resource('serviceConnections', App\Http\Controllers\ServiceConnectionsController::class);
 
 
@@ -310,6 +311,7 @@ Route::get('/service_accounts/senior-citizen-view', [ServiceAccountsController::
 Route::get('/service_accounts/invalidate-lifeliners-and-scs', [ServiceAccountsController::class, 'invalidateLifelinersAndSeniorCitizens'])->name('serviceAccounts.invalidate-lifeliners-and-scs');
 Route::get('/service_accounts/material-deposit-accounts', [ServiceAccountsController::class, 'materialDepositAccounts'])->name('serviceAccounts.material-deposit-accounts');
 Route::get('/service_accounts/customer-deposit-accounts', [ServiceAccountsController::class, 'customerDepositAccounts'])->name('serviceAccounts.customer-deposit-accounts');
+Route::get('/service_accounts/increment-customer-deposit-interests', [ServiceAccountsController::class, 'incrementCustomerDepositInterests'])->name('serviceAccounts.increment-customer-deposit-interests');
 Route::resource('serviceAccounts', ServiceAccountsController::class);
 
 
@@ -956,3 +958,4 @@ Route::resource('read-and-bill-notices', App\Http\Controllers\ReadAndBillNotices
 Route::resource('bill-miscellaneouses', App\Http\Controllers\BillMiscellaneousController::class);
 Route::resource('bill-mirrors', App\Http\Controllers\BillMirrorController::class);
 Route::resource('collection-date-adjustments', App\Http\Controllers\CollectionDateAdjustmentsController::class);
+Route::resource('customer-deposit-interests', App\Http\Controllers\CustomerDepositInterestsController::class);

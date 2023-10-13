@@ -3,7 +3,7 @@
    <tr>
       <td>Order No :</td>
       <td>
-         <input type="text" id="meter-OrderNo" class="form-control form-control-xs text-right" value="{{ $whHeadMeters->orderno }}" readonly>
+         <input type="text" id="meter-OrderNo" class="form-control form-control-xs text-right" value="{{ $whHeadMeters != null ? $whHeadMeters->orderno : '' }}" readonly>
       </td>
       <td></td>
       <td></td>
@@ -15,24 +15,24 @@
    <tr>
       <td>Date :</td>
       <td>
-         <input type="text" id="meter-MIRSDate" class="form-control form-control-xs" value="{{ $whHeadMeters->tdate }}" readonly>
+         <input type="text" id="meter-MIRSDate" class="form-control form-control-xs" value="{{ $whHeadMeters != null ? $whHeadMeters->tdate : '' }}" readonly>
       </td>
       <td></td>
       <td>Invoice No : </td>
       <td>
-         <input type="text" id="meter-InvoiceNo" class="form-control form-control-xs" value="{{ $whHeadMeters->invoice }}">
+         <input type="text" id="meter-InvoiceNo" class="form-control form-control-xs" value="{{ $whHeadMeters != null ?  $whHeadMeters->invoice : '' }}">
       </td>
       <td rowspan="2">
-         <textarea name="MIRSNo" id="meter-MIRSNo" cols="30" rows="2" class="form-control form-control-xs" placeholder="MIRS No:">{{ $whHeadMeters->misno }}</textarea>
+         <textarea name="MIRSNo" id="meter-MIRSNo" cols="30" rows="2" class="form-control form-control-xs" placeholder="MIRS No:">{{ $whHeadMeters != null ? $whHeadMeters->misno : '' }}</textarea>
       </td>
    </tr>
    <tr>
       <td>Requisition By :</td>
       <td>
-         <input type="text" id="meter-RequisitionById" class="form-control form-control-xs text-right" value="{{ $whHeadMeters->emp_id }}" readonly>
+         <input type="text" id="meter-RequisitionById" class="form-control form-control-xs text-right" value="{{ $whHeadMeters != null ? $whHeadMeters->emp_id : '' }}" readonly>
       </td>
       <td>
-         <input type="text" id="meter-RequisitionByName" class="form-control form-control-xs" value="{{ strtoupper($whHeadMeters->chkby) }}" readonly>
+         <input type="text" id="meter-RequisitionByName" class="form-control form-control-xs" value="{{ $whHeadMeters != null ? strtoupper($whHeadMeters->chkby) : '' }}" readonly>
       </td>
       <td>OR No : </td>
       <td>
@@ -64,7 +64,7 @@
    <tr>
       <td>Charge To :</td>
       <td>
-         <input type="text" id="meter-ChargeTo" class="form-control form-control-xs" readonly value="{{ $whHeadMeters->dept }}">
+         <input type="text" id="meter-ChargeTo" class="form-control form-control-xs" readonly value="{{ $whHeadMeters != null ? $whHeadMeters->dept : '' }}">
       </td>
       <td></td>
       <td>Type Of Service: </td>
@@ -72,7 +72,7 @@
          <input type="text" id="meter-TypeOfService" class="form-control form-control-xs" value="NEW INSTALLATION" readonly>
       </td>
       <td>
-         <input type="text" id="meter-TypeOfServiceId" class="form-control form-control-xs" value="{{ $whHeadMeters->serv_code }}" readonly>
+         <input type="text" id="meter-TypeOfServiceId" class="form-control form-control-xs" value="{{ $whHeadMeters != null ? $whHeadMeters->serv_code : '' }}" readonly>
       </td>
    </tr>
    <tr>
@@ -94,7 +94,7 @@
    <tr>
       <td>Requested By :</td>
       <td colspan="2">
-         <input type="text" id="meter-RequestedBy" class="form-control form-control-xs" value="{{ $whHeadMeters->chkby }}" readonly>
+         <input type="text" id="meter-RequestedBy" class="form-control form-control-xs" value="{{ $whHeadMeters != null ? $whHeadMeters->chkby : '' }}" readonly>
       </td> 
    </tr>
 </table>

@@ -116,6 +116,8 @@ class BillingTransformersController extends AppBaseController
             // $materialDeposit->save();
 
             $serviceAccount->CustomerDeposit = $input['CustomerDeposit'];
+            $serviceAccount->CustomerDepositOriginalAmount = $input['CustomerDeposit'];
+            $serviceAccount->CustomerDepositLastRenewed = isset($input['ConnectionDate']) ? $input['ConnectionDate'] : date('Y-m-d');
         }
         $serviceAccount->save();
 

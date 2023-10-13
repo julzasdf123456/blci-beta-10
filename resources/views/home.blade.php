@@ -17,8 +17,10 @@
     <script>
         $(document).ready(function() {
             invalidateLifelinersAndSeniorCitizens()
+            incrementCustomerDepositInterests()
         })
         
+        // INVALIDATE LIFELINERS AND SENIOR CITIZENS
         function invalidateLifelinersAndSeniorCitizens() {
             $.ajax({
                 url : "{{ route('serviceAccounts.invalidate-lifeliners-and-scs') }}",
@@ -33,6 +35,23 @@
                     Swal.fire({
                         icon : 'error',
                         text : 'Error invalidating lifeliners and senior citizens!'
+                    })
+                }
+            })
+        }
+
+        // INCREMENT CUSTOMER DEPOSIT INTERESTS
+        function incrementCustomerDepositInterests() {
+            $.ajax({
+                url : "{{ route('serviceAccounts.increment-customer-deposit-interests') }}",
+                type : "GET",
+                success : function(res) {
+                    console.log('customer deposits incremented!')
+                },
+                error : function(err) {
+                    Swal.fire({
+                        icon : 'error',
+                        text : 'Error incrementing customer deposit interests!'
                     })
                 }
             })

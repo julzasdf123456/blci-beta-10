@@ -113,6 +113,9 @@ class ServiceAccounts extends Model
         'CustomerDeposit',
         'AdvancedMaterialDepositStatus', // PAUSED, DEDUCTING
         'CustomerDepositStatus', // PAUSED, DEDUCTING
+        'CustomerDepositYearRenewed',
+        'CustomerDepositOriginalAmount',
+        'CustomerDepositLastRenewed',
     ];
 
     /**
@@ -184,6 +187,9 @@ class ServiceAccounts extends Model
         'CustomerDeposit' => 'string',
         'AdvancedMaterialDepositStatus' => 'string',
         'CustomerDepositStatus' => 'string',
+        'CustomerDepositYearRenewed' => 'string',
+        'CustomerDepositOriginalAmount' => 'string',
+        'CustomerDepositLastRenewed' => 'string',
     ];
 
     /**
@@ -257,6 +263,9 @@ class ServiceAccounts extends Model
         'CustomerDeposit' => 'nullable|string',
         'AdvancedMaterialDepositStatus' => 'nullable|string',
         'CustomerDepositStatus' => 'nullable|string',
+        'CustomerDepositYearRenewed' => 'nullable|string',
+        'CustomerDepositOriginalAmount' => 'nullable|string',
+        'CustomerDepositLastRenewed' => 'nullable|string',
     ];
 
     public static function getAddress($serviceAccount) {
@@ -293,5 +302,22 @@ class ServiceAccounts extends Model
         } else {
             return null;
         }
+    }
+
+    public static function getCustomerDepositInterest($account) {
+        $ogAmount = floatval($account->CustomerDepositOriginalAmount);
+
+        $startDay = $account->CustomerDepositLastRenewed != null ? $account->CustomerDepositLastRenewed : $account->ConnectionDate;
+        $startDay = $startDay != null ? strtotime($startDay) : time();
+        $endDay = time();
+        $dateDif = $endDay - $startDay;
+
+        $days = round($dateDif / (60 * 60 * 24));
+        $interestPercent = 0.0005;
+        $whTax = .2;
+
+        $interest = $ogAmount * ($days/365) * $interestPercent;
+
+        return $interest - ($interest * $whTax);
     }
 }

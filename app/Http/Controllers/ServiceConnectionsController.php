@@ -1182,26 +1182,25 @@ class ServiceConnectionsController extends AppBaseController
     }
 
     public function updateEnergizationStatus(Request $request) {
-        if (request()->ajax()) {
-            $serviceConnection = ServiceConnections::find($request['id']);
+        $serviceConnection = ServiceConnections::find($request['id']);
 
-            $serviceConnection->Status = $request['Status'];
-            $serviceConnection->DateTimeOfEnergization = $request['EnergizationDate'];
-            $serviceConnection->DateTimeLinemenArrived = $request['ArrivalDate'];
+        $serviceConnection->Status = $request['Status'];
+        $serviceConnection->DateTimeOfEnergization = $request['EnergizationDate'];
+        $serviceConnection->DateTimeLinemenArrived = $request['ArrivalDate'];
+        $serviceConnection->StationCrewAssigned = $request['Crew'];
 
-            $serviceConnection->save();
+        $serviceConnection->save();
 
-            // CREATE Timeframes
-            $timeFrame = new ServiceConnectionTimeframes;
-            $timeFrame->id = IDGenerator::generateID();
-            $timeFrame->ServiceConnectionId = $request['id'];
-            $timeFrame->UserId = Auth::id();
-            $timeFrame->Status = $request['Status'];
-            $timeFrame->Notes = 'Crew arrived at ' . date('F d, Y h:i:s A', strtotime($request['ArrivalDate'])) . '<br>' . 'Performed energization attempt at ' . date('F d, Y h:i:s A', strtotime($request['EnergizationDate'])) . '<br>' . $request['Reason'];
-            $timeFrame->save();
+        // CREATE Timeframes
+        $timeFrame = new ServiceConnectionTimeframes;
+        $timeFrame->id = IDGenerator::generateID();
+        $timeFrame->ServiceConnectionId = $request['id'];
+        $timeFrame->UserId = Auth::id();
+        $timeFrame->Status = $request['Status'];
+        $timeFrame->Notes = 'Crew arrived at ' . date('F d, Y h:i:s A', strtotime($request['ArrivalDate'])) . '<br>' . 'Performed energization attempt at ' . date('F d, Y h:i:s A', strtotime($request['EnergizationDate'])) . '<br>' . $request['Reason'];
+        $timeFrame->save();
 
-            return response()->json([ 'success' => true ]);
-        }
+        return response()->json('ok', 200);
     }
 
     public function printOrder($id) {
@@ -3851,53 +3850,54 @@ class ServiceConnectionsController extends AppBaseController
         }
 
         // SAVE WAREHOUSE HEAD METERS
-        $whHead = new WarehouseHead;
-        $whHead->orderno = $meter_reqNo;
-        $whHead->ent_no = $meter_entryNo;
-        $whHead->misno = $meter_mirsNo;
-        $whHead->address = ServiceConnections::getAddress($serviceConnections);
-        $whHead->tdate = date('m/d/Y');
-        $whHead->emp_id = Auth::id();
-        $whHead->ccode = $CostCenter;
-        $whHead->dept = $meter_chargeTo;
-        $whHead->pcode = $meter_projectCode;
-        $whHead->reqby = $meter_requestedBy;
-        $whHead->invoice = $meter_invoiceNo;
-        $whHead->orno = $ORNumber;
-        $whHead->purpose = 'FOR ' . strtoupper($meter_customerName);
-        $whHead->serv_code = $meter_typeOfServiceId;
-        $whHead->account_no = $ServiceConnectionId;
-        $whHead->cust_name = $meter_customerName;
-        $whHead->tot_amt = $MaterialTotal;
-        $whHead->chkby = $meter_requestedBy;
-        if (Auth::user()->hasAnyRole(ServiceConnections::whHeadStatus())) {
-            $whHead->stat = 'Checked';
-        } else {
-            $whHead->stat = 'Pending';
-        }
-        $whHead->rdate = date('m/d/Y');
-        $whHead->rtime = date('h:i A');
-        $whHead->walk_in = 0;
-        $whHead->appl_no = $ServiceConnectionId;
-        $whHead->appby = ' ';
-        $whHead->save();
+        if ($meter_reqNo != null) {
+            $whHead = new WarehouseHead;
+            $whHead->orderno = $meter_reqNo;
+            $whHead->ent_no = $meter_entryNo;
+            $whHead->misno = $meter_mirsNo;
+            $whHead->address = ServiceConnections::getAddress($serviceConnections);
+            $whHead->tdate = date('m/d/Y');
+            $whHead->emp_id = Auth::id();
+            $whHead->ccode = $CostCenter;
+            $whHead->dept = $meter_chargeTo;
+            $whHead->pcode = $meter_projectCode;
+            $whHead->reqby = $meter_requestedBy;
+            $whHead->invoice = $meter_invoiceNo;
+            $whHead->orno = $ORNumber;
+            $whHead->purpose = 'FOR ' . strtoupper($meter_customerName);
+            $whHead->serv_code = $meter_typeOfServiceId;
+            $whHead->account_no = $ServiceConnectionId;
+            $whHead->cust_name = $meter_customerName;
+            $whHead->tot_amt = $MaterialTotal;
+            $whHead->chkby = $meter_requestedBy;
+            if (Auth::user()->hasAnyRole(ServiceConnections::whHeadStatus())) {
+                $whHead->stat = 'Checked';
+            } else {
+                $whHead->stat = 'Pending';
+            }
+            $whHead->rdate = date('m/d/Y');
+            $whHead->rtime = date('h:i A');
+            $whHead->walk_in = 0;
+            $whHead->appl_no = $ServiceConnectionId;
+            $whHead->appby = ' ';
+            $whHead->save();
 
-        foreach($meterItems as $item) {
-            $whItems = new WarehouseItems;
-            $whItems->reqno = $item->ReqNo;
-            $whItems->ent_no = $item->EntryNo;            
-            $whItems->tdate = date('m/d/Y');
-            $whItems->itemcd = $item->ItemCode;  
-            $whItems->qty = $item->ItemQuantity;  
-            $whItems->uom = $item->ItemUOM; 
-            $whItems->cst = $item->ItemUnitPrice; 
-            $whItems->amt = $item->ItemTotalCost; 
-            $whItems->itemno = $item->ItemNo; 
-            $whItems->rdate = date('m/d/Y');
-            $whItems->rtime = date('h:i A');
-            $whItems->save();
+            foreach($meterItems as $item) {
+                $whItems = new WarehouseItems;
+                $whItems->reqno = $item->ReqNo;
+                $whItems->ent_no = $item->EntryNo;            
+                $whItems->tdate = date('m/d/Y');
+                $whItems->itemcd = $item->ItemCode;  
+                $whItems->qty = $item->ItemQuantity;  
+                $whItems->uom = $item->ItemUOM; 
+                $whItems->cst = $item->ItemUnitPrice; 
+                $whItems->amt = $item->ItemTotalCost; 
+                $whItems->itemno = $item->ItemNo; 
+                $whItems->rdate = date('m/d/Y');
+                $whItems->rtime = date('h:i A');
+                $whItems->save();
+            }
         }
-
         return response()->json('ok', 200);
     }
 
@@ -4386,5 +4386,37 @@ class ServiceConnectionsController extends AppBaseController
         }
 
         return response()->json($output, 200);
+    }
+
+    public function manualEnergization(Request $request) {
+        $data = DB::table('CRM_ServiceConnections')
+            ->leftJoin('CRM_ServiceConnectionInspections', 'CRM_ServiceConnectionInspections.ServiceConnectionId', '=', 'CRM_ServiceConnections.id')
+            ->leftJoin('CRM_Towns', 'CRM_ServiceConnections.Town', '=', 'CRM_Towns.id')
+            ->leftJoin('CRM_Barangays', 'CRM_ServiceConnections.Barangay', '=', 'CRM_Barangays.id')
+            ->leftJoin('users', 'CRM_ServiceConnectionInspections.Inspector', '=', 'users.id')
+            ->whereRaw("(Trash IS NULL OR Trash='No') AND ConnectionSchedule IS NOT NULL")
+            ->whereRaw("CRM_ServiceConnections.Status='For Energization' AND CRM_ServiceConnections.ORNumber IS NOT NULL")
+            ->select(
+                'CRM_ServiceConnections.id',
+                'CRM_ServiceConnections.ServiceAccountName',
+                'CRM_ServiceConnections.Sitio',
+                'CRM_ServiceConnections.Status',
+                'CRM_Towns.Town',
+                'CRM_Barangays.Barangay',
+                'CRM_ServiceConnections.DateOfApplication',
+                'CRM_ServiceConnections.AccountApplicationType',
+                'CRM_ServiceConnectionInspections.DateOfVerification',
+                'CRM_ServiceConnections.ConnectionSchedule',
+                'CRM_ServiceConnections.StationCrewAssigned',
+                'users.name',
+            )
+            ->orderBy('ConnectionSchedule')
+            ->orderBy('ServiceAccountName')
+            ->get();
+
+        return view('/service_connections/manual_energization', [
+            'data' => $data,
+            'crew' => ServiceConnectionCrew::orderBy('StationName')->get(),
+        ]);
     }
 }

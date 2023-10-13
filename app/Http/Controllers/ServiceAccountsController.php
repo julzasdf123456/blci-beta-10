@@ -42,6 +42,7 @@ use App\Models\KatasNgVat;
 use App\Models\Zones;
 use App\Models\Blocks;
 use App\Models\PaymentOrder;
+use App\Models\CustomerDepositInterests;
 use App\Exports\DynamicExports;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Flash;
@@ -3381,5 +3382,34 @@ class ServiceAccountsController extends AppBaseController
         return view('/service_accounts/customer_deposit_accounts', [
             'serviceAccounts' => $serviceAccounts,
         ]);
+    }
+
+    public function incrementCustomerDepositInterests(Request $request) {
+        $accounts = ServiceAccounts::whereRaw("CustomerDeposit > 0")
+            ->get();
+
+        foreach ($accounts as $item) {
+            // FILTER IF INTEREST HAS ALREADY BEEN EARNED
+            if ($item->CustomerDepositYearRenewed == null | intval($item->CustomerDepositYearRenewed) < date('Y')) {
+                $depositBalance = floatval($item->CustomerDeposit);
+                $interest = ServiceAccounts::getCustomerDepositInterest($item);
+                $depositBalance = $depositBalance + $interest;
+                $item->CustomerDeposit = $depositBalance;
+                $item->CustomerDepositLastRenewed = date('Y-m-d');
+                $item->CustomerDepositYearRenewed = date('Y');
+                $item->save();
+
+                // SAVE LOGS
+                $logs = new CustomerDepositInterests;
+                $logs->id = IDGenerator::generateIDandRandString();
+                $logs->AccountNumber = $item->id;
+                $logs->InterestEarned = $interest;
+                $logs->CurrentAmountRemaining = $item->CustomerDeposit;
+                $logs->OriginalAmount = $item->CustomerDepositOriginalAmount;
+                $logs->save();
+            }
+        }
+
+        return response()->json(['res' => 'ok'], 200);
     }
 }

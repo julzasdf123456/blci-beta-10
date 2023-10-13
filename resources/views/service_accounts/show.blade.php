@@ -35,11 +35,10 @@
                         @endif   
                         
                         @if ($serviceAccounts->CheckBounceHistory == 'Yes')
-                        <button onclick="clearCheckBounce(`{{ $serviceAccounts->id }}`)" class="btn btn-xs btn-success float-right" style="margin-right: 15px;" title="Clear bounce check history"><i class="fas fa-exclamation-triangle ico-tab-mini"></i> Clear Bounced Check</button>
+                            <button onclick="clearCheckBounce(`{{ $serviceAccounts->id }}`)" class="btn btn-xs btn-success float-right" style="margin-right: 15px;" title="Clear bounce check history"><i class="fas fa-exclamation-triangle ico-tab-mini"></i> Clear Bounced Check</button>
                         @else
                             <button onclick="markCheckBounce(`{{ $serviceAccounts->id }}`)" class="btn btn-xs btn-danger float-right" style="margin-right: 15px;" title="Mark this account with bouncing check history"><i class="fas fa-exclamation-triangle ico-tab-mini"></i> Bounced Check</button>
                         @endif
-                        
                         
                         <a href="{{ route('serviceAccounts.update-step-one', [$serviceAccounts->id]) }}" class="btn btn-xs btn-warning float-right" style="margin-right: 30px;" title="Update Consumer Info"><i class="fas fa-pen ico-tab-mini"></i> Update</a>
                     @endif
