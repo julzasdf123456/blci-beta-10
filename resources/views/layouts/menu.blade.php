@@ -524,7 +524,7 @@ use Illuminate\Support\Facades\Auth;
         <a href="#" class="nav-link">
             <i class="fas fa-file-invoice-dollar nav-icon text-primary"></i>
             <p>
-                Billing Inquiry
+                Consumer Accounts
                 <i class="fas fa-angle-left right"></i>
             </p>
         </a>

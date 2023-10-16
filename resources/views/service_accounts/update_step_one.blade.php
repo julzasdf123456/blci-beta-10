@@ -394,7 +394,7 @@
 
                             @else
                                 <!-- EVAT Field -->
-                                <div class="col-lg-1 col-md-2">
+                                {{-- <div class="col-lg-1 col-md-2">
                                     {!! Form::label('Evat5Percent', '5% EVAT:') !!}
                                 </div>
 
@@ -415,7 +415,7 @@
                                         <input type="hidden" value="" name="Ewt2Percent">
                                         <input type="checkbox" value="Yes" name="Ewt2Percent" class="custom-checkbox" {{ $serviceAccount->Ewt2Percent=='Yes' ? 'checked' : '' }}>
                                     </div>
-                                </div>
+                                </div> --}}
                             @endif
                             
                             <!-- Accountstatus Field -->

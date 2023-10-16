@@ -59,7 +59,7 @@
                     <th>{{ $serviceAccounts->SequenceCode }}</th>
                 </tr>
                 <tr>
-                    <td class="text-muted">Group Code/Day</td>
+                    <td class="text-muted">Reading Day</td>
                     <th>{{ $serviceAccounts->GroupCode }}</th>
                 </tr>
                 <tr>
@@ -96,14 +96,14 @@
                         <th class="{{ date('Y-m-d', strtotime($serviceAccounts->AccountExpiration)) < date('Y-m-d') ? 'text-danger' : 'text-muted' }}">{{ $serviceAccounts->AccountExpiration != null ? date('F d, Y', strtotime($serviceAccounts->AccountExpiration)) : '-' }}</th>
                     </tr>
                 @endif
-                <tr>
+                {{-- <tr>
                     <td class="text-muted">EVAT 5%</td>
                     <th class="{{ $serviceAccounts->Evat5Percent=='Yes' ? 'text-success' : 'text-muted' }}">{{ $serviceAccounts->Evat5Percent=='Yes' ? 'Yes' : 'No' }}</th>
                 </tr>
                 <tr>
                     <td class="text-muted">EWT 2%</td>
                     <th class="{{ $serviceAccounts->Ewt2Percent=='Yes' ? 'text-success' : 'text-muted' }}">{{ $serviceAccounts->Ewt2Percent=='Yes' ? 'Yes' : 'No' }}</th>
-                </tr>
+                </tr> --}}
                 <tr>
                     <td class="text-muted">Coop Consumption</td>
                     <th class="{{ $serviceAccounts->CoopConsumption=='Yes' ? 'text-success' : 'text-muted' }}">{{ $serviceAccounts->CoopConsumption=='Yes' ? 'Yes' : 'No' }}</th>
@@ -112,10 +112,10 @@
                     <th>Multiplier</th>
                     <th>{{ $meters != null ? $meters->Multiplier : "1" }}</th>
                 </tr>
-                <tr>
+                {{-- <tr>
                     <th>Coreloss</th>
                     <th>{{ $serviceAccounts->Coreloss }}</th>
-                </tr>
+                </tr> --}}
                 @if ($katas != null)
                     <tr>
                         <th>Katas Ng VAT</th>

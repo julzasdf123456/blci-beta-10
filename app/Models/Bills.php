@@ -541,7 +541,11 @@ class Bills extends Model
 
     public static function assessDueBillAndGetSurcharge($bill) {
         if (Bills::isPenaltyable(Bills::getAccountTypeByType($bill->ConsumerType))) {
-            return Bills::getFinalRawPenalty($bill) /* + Bills::getInterest($bill) */;                
+            if ($bill->SurchargeWaived == 'APPROVED') {
+                return 0;
+            } else {
+                return Bills::getFinalRawPenalty($bill) /* + Bills::getInterest($bill) */;   
+            }          
         } else {                
             return 0;
         }  
@@ -675,8 +679,8 @@ class Bills extends Model
                 $bill->TermedPayments +
                 $bill->AdditionalCharges -
                 $bill->Deductions -
-                $bill->Evat2Percent -
-                $bill->Evat5Percent;
+                floatval($bill->Evat2Percent) -
+                floatval($bill->Evat5Percent);
 
         return round($amount, 2);
     }
@@ -2885,25 +2889,35 @@ class Bills extends Model
     }
 
     public static function getFivePercent($item) {
-        return round((floatval($item->DistributionSystemCharge) + 
-                floatval($item->DistributionDemandCharge) +
-                floatval($item->SupplyRetailCustomerCharge) + 
-                floatval($item->MeteringRetailCustomerCharge) + 
-                // floatval($item->MeteringSystemCharge) + 
-                floatval($item->LifelineRate) + 
-                floatval($item->OtherLifelineRateCostAdjustment) + 
-                floatval($item->InterClassCrossSubsidyCharge)) * .05, 2);
-    }
+        $subTotal = (floatval($item->DistributionSystemCharge) + 
+            floatval($item->DistributionDemandCharge) +
+            floatval($item->SupplyRetailCustomerCharge) + 
+            floatval($item->MeteringRetailCustomerCharge) + 
+            floatval($item->MeteringSystemCharge) + 
+            floatval($item->LifelineRate) + 
+            floatval($item->OtherLifelineRateCostAdjustment) + 
+            floatval($item->InterClassCrossSubsidyCharge));
+        
+        $subTotal = $subTotal/.12;
 
+        return round($subTotal * .05, 2);
+    }
+    
     public static function getTwoPercent($item) {
-        return round((floatval($item->DistributionSystemCharge) + 
-                floatval($item->DistributionDemandCharge) +
-                floatval($item->SupplyRetailCustomerCharge) + 
-                floatval($item->MeteringRetailCustomerCharge) + 
-                // floatval($item->MeteringSystemCharge) + 
-                floatval($item->LifelineRate) + 
-                floatval($item->OtherLifelineRateCostAdjustment) + 
-                floatval($item->InterClassCrossSubsidyCharge)) * .02, 2);
+        $subTotal = (floatval($item->DistributionSystemCharge) + 
+            floatval($item->DistributionDemandCharge) +
+            floatval($item->SupplyRetailCustomerCharge) + 
+            floatval($item->MeteringRetailCustomerCharge) + 
+            floatval($item->MeteringSystemCharge) + 
+            floatval($item->LifelineRate) + 
+            floatval($item->OtherLifelineRateCostAdjustment) + 
+            floatval($item->InterClassCrossSubsidyCharge) + 
+            floatval($item->GenerationSystemCharge) + 
+            floatval($item->TransmissionDeliveryChargeKWH) + 
+            floatval($item->SystemLossCharge) + 
+            floatval($item->ACRM));
+
+        return round($subTotal * .02, 2);
     }
 
     /**

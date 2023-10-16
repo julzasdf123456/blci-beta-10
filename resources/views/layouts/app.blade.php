@@ -593,6 +593,13 @@
         showConfirmButton: false,
         timer: 3000
     });
+
+    function toast(icon, message) {
+        Toast.fire({
+            icon : icon,
+            text : message
+        })
+    }
 </script>
 
 @yield('third_party_scripts')

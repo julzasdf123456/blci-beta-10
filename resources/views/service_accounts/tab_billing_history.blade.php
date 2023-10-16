@@ -1,6 +1,11 @@
 @php
     use App\Models\Bills;
 @endphp
+<style>
+    .dropdown-toggle::after {
+        display: none;
+    }
+</style>
 <div class="content">
     <div class="row">
         <div class="col-lg-4">
@@ -28,7 +33,7 @@
         <p class="center-text"><i>No billing history recorded</i></p>
     @else
         <div class="table-responsive p-0" style="height: 60vh;">
-            <table class="table table-sm table-hover table-bordered"">
+            <table class="table table-sm table-hover table-bordered">
                 <thead>
                     <th>Bill No.</th>
                     <th>Billing Mo.</th>
@@ -38,33 +43,46 @@
                     <th class="text-center" title="Multiplier">x*</th>
                     <th class="text-center">Total<br>Kwh</th>
                     {{-- <th class="text-right">Rate</th> --}}
-                    <th class="text-center">Amount</th>
-                    <th class="text-center">OR No.</th>
-                    <th class="text-center">Payment<br>Date</th>
+                    <th class="text-center">Bill<br>Amount</th>
+                    <th class="text-center">Paid<br>Amount</th>
+                    <th class="text-center">Balance</th>
                     <th></th>
                 </thead>
                 <tbody>
                     @foreach ($bills as $item)
-                        <tr title="{{ $item->AdjustmentType=='Application' ? 'Application Adjustment' : '' }}">
+                        <tr title="{{ $item->AdjustmentType=='Application' ? 'Application Adjustment' : '' }}" id="{{ $item->id }}" fivePercent="{{ Bills::getFivePercent($item) }}" twoPercent="{{ Bills::getTwoPercent($item) }}">
                             @if ($item->AdjustmentType=='Application')
-                                <td><i class="fas fa-info-circle text-info ico-tab"></i><a href="{{ route('bills.show', [$item->id]) }}">{{ $item->BillNumber }}</a></td>
+                                <td>
+                                    <i class="fas fa-info-circle text-info ico-tab" title="Marked as paid manually"></i>
+                                    <a href="{{ route('bills.show', [$item->id]) }}">{{ $item->BillNumber }}</a>
+                                </td>
                             @else
-                                <td><i class="fas {{ $item->ORDate != null ? 'fa-check-circle text-success' : 'fa-exclamation-circle text-danger' }} ico-tab"></i><a href="{{ route('bills.show', [$item->id]) }}">{{ $item->BillNumber }}</a></td>
+                                <td>
+                                    <i class="fas {{ $item->ORNumber != null ? 'fa-check-circle text-success' : 'fa-exclamation-circle text-danger' }} ico-tab-mini" title="{{ $item->ORNumber != null ? 'Paid' : 'Unpaid' }}"></i>
+                                    @if ($item->SurchargeWaived != null)
+                                        <i onclick="toast(`info`, `Surcharge Waived | Status: {{ $item->SurchargeWaived }}`)" class="fas fa-minus text-danger ico-tab-mini" title="Surcharge Waived | Status: {{ $item->SurchargeWaived }}"></i>
+                                    @endif
+
+                                    @if ($item->Item3 != null) 
+                                        <i onclick="toast(`info`, `This bill is allowed to be skipped from the cashiering app.`)" class="fas fa-clipboard-check text-danger ico-tab-mini" title="This bill is allowed to be skipped from the cashiering app"></i>
+                                    @endif
+                                    <a href="{{ route('bills.show', [$item->id]) }}">{{ $item->BillNumber }}</a>
+                                </td>
                             @endif
                             
                             <td>{{ date('M Y', strtotime($item->ServicePeriod)) }}</td>
                             <td class="text-right">{{ $item->PreviousKwh }}</td>
                             <td class="text-right">{{ $item->PresentKwh }}</td>
-                            <th class="text-right text-info">{{ is_numeric($item->Multiplier) ? round(floatval($item->PresentKwh) - floatval($item->PreviousKwh),2) : 'MULT_ERR' }}</th>
-                            <th class="text-right text-warning">{{ $item->Multiplier }}</th>
+                            <td class="text-right text-info" title="Multiplier">{{ is_numeric($item->Multiplier) ? round(floatval($item->PresentKwh) - floatval($item->PreviousKwh),2) : 'MULT_ERR' }}</td>
+                            <td class="text-right text-warning">{{ $item->Multiplier }}</td>
                             <th class="text-right text-primary">{{ is_numeric($item->KwhUsed) ? round(floatval($item->KwhUsed), 2) : $item->KwhUsed }}</th>
                             {{-- <td class="text-right">{{ $item->EffectiveRate != null ? number_format($item->EffectiveRate, 4) : '0' }}</td> --}}
-                            <th class="text-right text-danger">P {{ $item->NetAmount != null ? (is_numeric($item->NetAmount) ? number_format($item->NetAmount, 2) : '0') : '0' }}</th>
-                            <td class="text-right"><a href="{{ $item->PaidBillId != null ? (route('transactionIndices.browse-ors-view', [$item->PaidBillId, 'BILLS PAYMENT'])) : '' }}">{{ $item->ORNumber != null ? $item->ORNumber : '-' }}</a></td>
-                            <td class="text-right">{{ $item->ORDate != null ? date('M d, Y', strtotime($item->ORDate)) : '-' }}</td>
+                            <th class="text-right text-info">P {{ $item->NetAmount != null ? (is_numeric($item->NetAmount) ? number_format($item->NetAmount, 2) : '0') : '0' }}</th>
+                            <th class="text-right text-success">P {{ $item->PaidAmount != null ? (is_numeric($item->PaidAmount) ? number_format($item->PaidAmount, 2) : '0') : '0' }}</th>
+                            <th class="text-right text-danger">P {{ $item->Balance != null ? (is_numeric($item->Balance) ? number_format($item->Balance, 2) : '0') : '0' }}</th>
                             <td class="text-right">
                                 @if (Auth::user()->hasAnyRole(['Administrator', 'Heads and Managers', 'Data Administrator'])) 
-                                    @if ($item->ORDate == null)
+                                    @if ($item->ORNumber == null)
                                         @if ($item->IsUnlockedForPayment == 'CLOSED')
                                             <span class="badge bg-success">CLOSED</span>
                                         @endif   
@@ -90,34 +108,34 @@
                                 
                                 <div class="btn-group" title="More options">
                                     <button type="button" class="btn btn-sm btn-link text-default dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
+                                        <i class="fas fa-ellipsis-v" style="color: #878787;"></i>
                                     </button>
                                     <div class="dropdown-menu">
-                                        <a class="dropdown-item" href="#">Action</a>
-                                        <a class="dropdown-item" href="#">Another action</a>
-                                        <a class="dropdown-item" href="#">Something else here</a>
-
-                                        @if ($item->ORDate == null)
+                                        @if ($item->ORNumber == null)
                                             @if (Bills::isBillDue($item))
                                                 {{-- SKIPPABLE --}}
                                                 @if ($item->Item3 != null)
-                                                    <span class="dropdown-item badge bg-warning" style="padding-top: 3px; padding-bottom: 3px;" title="This bill is allowed to be skipped from the cashiering app.">Cashier : {{ $item->Item3 }}</span>
+                                                    <button class="dropdown-item btn btn-link" onclick="disallowSkipping(`{{ $item->id }}`)" title="Restrict cashier/teller to skip this bill."><i class="fas fa-user-slash ico-tab"></i>Disallow Skipping</button>                    
                                                 @else
-                                                    <button class="dropdown-item btn btn-link" onclick="allowSkipping(`{{ $item->id }}`)" title="Allow This Bill to Be Paid in the Future"><i class="fas fa-clipboard-check ico-tab"></i>Allow Skipping</button>                    
+                                                    <button class="dropdown-item btn btn-link" onclick="allowSkipping(`{{ $item->id }}`)" title="Allow This Bill to Be Paid in the Future"><i class="fas fa-clipboard-check ico-tab"></i>Allow Skipping</button>
                                                 @endif
 
                                                 {{-- WAIVE SURCHARGE --}}
-                                                @if ($item->SurchargeWaived == 'PENDING APPROVAL')
-                                                    <span class="dropdown-item  badge bg-info" title="SURCHARGE WAIVED - PENDING APPROVAL">SURCHARGE WAIVED - PENDING APPROVAL</span>
-                                                @elseif ($item->SurchargeWaived == 'APPROVED')
-                                                    <span class="dropdown-item  badge bg-success" title="SURCHARGE WAIVED - APPROVED">SURCHARGE WAIVED - APPROVED</span>
+                                                @if ($item->SurchargeWaived != null)
+                                                    <button onclick="unwaiveSurcharge(`{{ $item->id }}`)" class="dropdown-item btn btn-link" title="Unwaive Surcharges"><i class="fas fa-minus-circle ico-tab"></i>Unwaive Surcharges</button>
                                                 @else
-                                                    <button onclick="requestWaiveSurcharges(`{{ $item->id }}`)" class="dropdown-item btn btn-link" title="Waive Surcharges"><i class="fas fa-minus ico-tab"></i>Waive Surcharges</button>                                            
+                                                    <button onclick="requestWaiveSurcharges(`{{ $item->id }}`)" class="dropdown-item btn btn-link" title="Waive Surcharges"><i class="fas fa-minus ico-tab"></i>Waive Surcharges</button>
                                                 @endif
                                             @endif
-
+                                            
+                                            <button class="dropdown-item btn btn-link" title="Withholding taxes computation" onclick="withHoldingTaxes('{{ $item->id }}')"><i class="fas fa-percent ico-tab"></i>Withholding Taxes</button>
                                             <button class="dropdown-item btn btn-link" title="Mark as Paid (Application Adjustment)" onclick="markAsPaid('{{ $item->id }}')"><i class="fas fa-check-circle ico-tab"></i>Mark as Paid</button>
                                             <div class="dropdown-divider"></div>
                                             <button class="dropdown-item btn btn-link text-danger" title="Cancel this Bill" onclick="requestCancel('{{ $item->id }}')"><i class="fas fa-trash ico-tab"></i> Cancel Bill</button>                            
+                                        @else
+                                            <a class="dropdown-item btn btn-link" href="{{ $item->PaidBillId != null ? (route('transactionIndices.browse-ors-view', [$item->PaidBillId, 'BILLS PAYMENT'])) : '' }}"><i class="fas fa-info-circle ico-tab"></i>View Payment Details</a>
+                                            <div class="dropdown-divider"></div>
+                                            <a class="dropdown-item btn btn-link" href="#" title="Transfer this payment to another bill"><i class="fas fa-exchange-alt ico-tab"></i>Credit Memo</a>
                                         @endif
                                     </div>
                                 </div>
@@ -126,7 +144,6 @@
                     @endforeach
                 </tbody>
             </table>
-
         </div>
     @endif
 </div>
@@ -297,9 +314,72 @@
     </div>
 </div>
 
+{{-- WITHOLDING TAXES --}}
+<div class="modal fade" id="modal-withholding-taxes" aria-hidden="true" style="display: none;">
+    <div class="modal-dialog modal-md">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title">Withholding Taxes</h4>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">×</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div id="withholding-loader" class="spinner-border text-info gone" role="status">
+                    <span class="sr-only">Loading...</span>
+                </div>
+                <table class="table table-borderless table-hover table-sm">
+                    <tbody>
+                        <tr>
+                            <td>Bill Amount</td>
+                            <td class="text-right"><strong id="bill-amnt">0.0</strong></td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <div class="custom-control custom-switch">
+                                    <input type="checkbox" class="custom-control-input" id="two-percent-toggle">
+                                    <label class="custom-control-label" for="two-percent-toggle" style="font-weight: normal">2% WT</label>
+                                </div>
+                            </td>
+                            <td class="text-right"><strong id="2percent-amnt">0.0</strong></td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <div class="custom-control custom-switch">
+                                    <input type="checkbox" class="custom-control-input" id="five-percent-toggle">
+                                    <label class="custom-control-label" for="five-percent-toggle" style="font-weight: normal">5% WT</label>
+                                </div>
+                            </td>
+                            <td class="text-right"><strong id="5percent-amnt">0.0</strong></td>
+                        </tr>
+                        <tr>
+                            <td><strong>Net Amount Due</strong></td>
+                            <td class="text-right text-success"><strong id="net-amnt">0.0</strong></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <div class="modal-footer justify-content-between">
+                <button onclick="saveWithholdingTax()" class="btn btn-primary float-right"><i class="fas fa-check-circle ico-tab"></i>Save</button>
+            </div>
+        </div>
+    </div>
+</div>
+
 @push('page_scripts')
     <script>
         var selectedBillId = ""
+
+        /**
+         *  WITHOLDING AREA
+         */
+        var isFivePercent = false
+        var isTwoPercent = false
+        var fivePercentAmnt = 0 
+        var twoPercentAmnt = 0
+        var netAmntBeforeWT = 0
+        var netAmntAfterWT = 0
+
         function requestCancel(id) {
             (async () => {
                 const { value: text } = await Swal.fire({
@@ -453,7 +533,193 @@
             })
         }
 
+        function withHoldingTaxes (id) {
+            $('#withholding-loader').removeClass('gone')
+            selectedBillId = id
+            $('#modal-withholding-taxes').modal('show')
+
+            // FETCH BILL
+            $.ajax({
+                url : "{{ route('bills.get-bill-ajax') }}",
+                type : "GET",
+                data : {
+                    id : selectedBillId,
+                },
+                success : function(res) {
+                    if (jQuery.isEmptyObject(res)) {
+                        $('#modal-withholding-taxes').modal('hide')
+                        Swal.fire({
+                            icon : 'info',
+                            text : 'Bill not found!'
+                        })
+                    } else {
+                        netAmntBeforeWT = parseFloat(res['NetAmount'])
+                        $('#bill-amnt').text(Number(parseFloat(res['NetAmount'])).toLocaleString())
+                        netAmntAfterWT = parseFloat(res['Balance'])
+                        $('#net-amnt').text(Number(parseFloat(res['Balance'])).toLocaleString())
+
+                        fivePercentAmnt = jQuery.isEmptyObject(res['Evat5Percent']) ? 0 : parseFloat(res['Evat5Percent'])
+                        twoPercentAmnt = jQuery.isEmptyObject(res['Evat2Percent']) ? 0 :  parseFloat(res['Evat2Percent'])
+
+                        if (fivePercentAmnt > 0) {
+                            $('#five-percent-toggle').prop('checked', true)
+                            isFivePercent = true
+                        }
+
+                        if (twoPercentAmnt > 0) {
+                            $('#two-percent-toggle').prop('checked', true)
+                            isTwoPercent = true
+                        }
+
+                        validateWithholding()
+                    }
+                    $('#withholding-loader').addClass('gone')
+                },
+                error : function(err) {
+                    Swal.fire({
+                        icon : 'error',
+                        text : 'Error getting bill!'
+                    })
+                    $('#withholding-loader').addClass('gone')
+                }
+            })
+        }
+
+        function saveWithholdingTax() {
+            Swal.fire({
+                title: 'Do you want to save the changes?',
+                showCancelButton: true,
+                confirmButtonText: 'Yes',
+                denyButtonText: `No`,
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    $.ajax({
+                        url : "{{ route('bills.save-withholding-taxes') }}",
+                        type : "GET",
+                        data : {
+                            id : selectedBillId,
+                            TwoPercent : twoPercentAmnt,
+                            FivePercent : fivePercentAmnt,
+                            NetAmount : netAmntAfterWT
+                        },
+                        success : function(res) {
+                            Toast.fire({
+                                icon : 'success',
+                                text : 'Withholding applied to bill!'
+                            })
+                            location.reload()
+                        },
+                        error : function(err) {
+                            Swal.fire({
+                                icon : 'error',
+                                text : 'Error applying witholding tax to bill!'
+                            })
+                        }
+                    })
+                }
+            })
+        }
+
+        function validateWithholding() {
+            $('#2percent-amnt').text(Number(twoPercentAmnt).toLocaleString())
+            $('#5percent-amnt').text(Number(fivePercentAmnt).toLocaleString())
+
+            var wt = parseFloat(twoPercentAmnt) + parseFloat(fivePercentAmnt)
+
+            netAmntAfterWT = netAmntBeforeWT - wt
+            $('#net-amnt').text(Number(parseFloat(netAmntAfterWT)).toLocaleString())
+        }
+
+        function unwaiveSurcharge(id) {
+            Swal.fire({
+                title: 'Unwaive Surcharges?',
+                text : "Are you sure you want to undo waiving of this bill's surcharges?",
+                showCancelButton: true,
+                confirmButtonText: 'Yes',
+                denyButtonText: `No`,
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    $.ajax({
+                        url : "{{ route('bills.unwaive-surcharges') }}",
+                        type : 'GET',
+                        data : {
+                            id : id,
+                        },
+                        success : function(res) {
+                            Toast.fire({
+                                icon : 'success',
+                                text : 'Waiving of surcharges removed!'
+                            })
+                            location.reload()
+                        },
+                        error : function(err) {
+                            Swal.fire({
+                                icon : 'error',
+                                text : 'Error unwaiving surcharges!'
+                            })
+                        }
+                    })
+                }
+            })
+        }
+
+        function disallowSkipping(id) {
+            Swal.fire({
+                title: 'Disallow Skipping?',
+                text : "Restrict cashier/teller to skip this bill?",
+                showCancelButton: true,
+                confirmButtonText: 'Yes',
+                denyButtonText: `No`,
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    $.ajax({
+                        url : "{{ route('bills.allow-skip') }}",
+                        type : 'GET',
+                        data : {
+                            id : id,
+                            SkipStatus : null,
+                        },
+                        success : function(res) {
+                            Toast.fire({
+                                icon : 'success',
+                                text : 'Billed disallowed to be skipped'
+                            })
+                            location.reload()
+                        },
+                        error : function(err) {
+                            Swal.fire({
+                                icon : 'error',
+                                text : 'Error performing task!'
+                            })
+                        }
+                    })
+                }
+            })
+        }
+
         $(document).ready(function() {
+            $('#two-percent-toggle').on('change', function(e) {
+                if (isTwoPercent) {
+                    isTwoPercent = false
+                    twoPercentAmnt = 0
+                } else {
+                    isTwoPercent = true
+                    twoPercentAmnt = $('#' + selectedBillId).attr('twoPercent')
+                }
+                validateWithholding()
+            })
+
+            $('#five-percent-toggle').on('change', function(e) {
+                if (isFivePercent) {
+                    isFivePercent = false
+                    fivePercentAmnt = 0
+                } else {
+                    isFivePercent = true
+                    fivePercentAmnt = $('#' + selectedBillId).attr('fivePercent')
+                }
+                validateWithholding()
+            })
+
             $('#print-ledger').on('click', function() {
                 var from = $('#FromLedger').val()
                 var to = $('#ToLedger').val()
@@ -467,6 +733,24 @@
                     window.location.href  = "{{ url('/service_accounts/print-ledger') }}" + "/{{ $serviceAccounts->id }}/" + from + "/" + to
                 }
             })
+
+            $('#modal-withholding-taxes').on('hidden.bs.modal', function (e) {
+                selectedBillId = ""
+                var isFivePercent = false
+                var isTwoPercent = false
+                var fivePercentAmnt = 0 
+                var twoPercentAmnt = 0
+                var netAmntBeforeWT = 0
+                var netAmntAfterWT = 0
+
+                $('#2percent-amnt').text("0")
+                $('#5percent-amnt').text("0")
+                $('#bill-amnt').text("0")
+                $('#net-amnt').text("0")
+
+                $('#five-percent-toggle').prop('checked', false)
+                $('#two-percent-toggle').prop('checked', false)
+            });
         })
     </script>
 @endpush

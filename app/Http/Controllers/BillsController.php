@@ -7418,4 +7418,52 @@ class BillsController extends AppBaseController
 
         return response()->json('ok', 200);
     }
+
+    public function getBillAjax(Request $request) {
+        $id = $request['id'];
+
+        return response()->json(Bills::find($id), 200);
+    }
+
+    public function get2307FivePercentAjax(Request $request) {
+        $id = $request['id'];
+
+        $bill = Bills::find($id);
+
+        return response()->json(Bills::getFivePercent($bill), 200);
+    }
+
+    public function saveWitholdingTaxes(Request $request) {
+        $id = $request['id'];
+        $twoPercent = $request['TwoPercent'];
+        $fivePercent = $request['FivePercent'];
+        $amount = $request['NetAmount'];
+
+        $bill = Bills::find($id);
+        
+        if ($bill != null) {
+            if ($twoPercent != null) {
+                $bill->Evat2Percent = $twoPercent;
+            }
+
+            if ($fivePercent != null) {
+                $bill->Evat5Percent = $fivePercent;
+            }
+
+            // $bill->NetAmount = $amount;
+            $bill->Balance = $amount;
+            $bill->save();
+        }
+
+        return response()->json($bill, 200);
+    }
+
+    public function unwaiveSurcharges(Request $request) {
+        $id = $request['id'];
+
+        Bills::where('id', $id)
+            ->update(['SurchargeWaived' => null, 'SurchargeWaiveRequestedBy' => null, 'SurchargeWaiveRequestDate' => null]);
+
+        return response()->json('ok', 200);
+    }
 }

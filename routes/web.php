@@ -634,6 +634,10 @@ Route::get('/bills/bill-adjustments-approve/{origId}', [BillsController::class, 
 Route::get('/bills/bill-adjustments-reject/{origId}', [BillsController::class,  'billAdjustmentsReject'])->name('bills.bill-adjustments-reject');
 Route::get('/bills/allow-skip', [BillsController::class,  'allowSkip'])->name('bills.allow-skip');
 Route::get('/bills/request-waive-surcharges', [BillsController::class,  'requestWaiveSurcharges'])->name('bills.request-waive-surcharges');
+Route::get('/bills/get-bill-ajax', [BillsController::class,  'getBillAjax'])->name('bills.get-bill-ajax');
+Route::get('/bills/get-five-percent-ajax', [BillsController::class,  'get2307FivePercentAjax'])->name('bills.get-five-percent-ajax');
+Route::get('/bills/save-withholding-taxes', [BillsController::class,  'saveWitholdingTaxes'])->name('bills.save-withholding-taxes');
+Route::get('/bills/unwaive-surcharges', [BillsController::class,  'unwaiveSurcharges'])->name('bills.unwaive-surcharges');
 Route::resource('bills', BillsController::class);
 
 

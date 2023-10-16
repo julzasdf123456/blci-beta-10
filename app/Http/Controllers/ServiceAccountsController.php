@@ -295,7 +295,6 @@ class ServiceAccountsController extends AppBaseController
             ->where('Billing_Bills.AccountNumber', $id)
             ->select('Billing_Bills.*',
                 DB::raw("(SELECT TOP 1 ORNumber FROM Cashier_PaidBills WHERE AccountNumber=Billing_Bills.AccountNumber AND Cashier_PaidBills.ServicePeriod=Billing_Bills.ServicePeriod AND (Status IS NULL OR Status='Application') AND AccountNumber IS NOT NULL) AS ORNumber"),
-                DB::raw("(SELECT TOP 1 ORDate FROM Cashier_PaidBills WHERE AccountNumber=Billing_Bills.AccountNumber AND Cashier_PaidBills.ServicePeriod=Billing_Bills.ServicePeriod AND (Status IS NULL OR Status='Application') AND AccountNumber IS NOT NULL) AS ORDate"),
                 DB::raw("(SELECT TOP 1 id FROM Cashier_PaidBills WHERE AccountNumber=Billing_Bills.AccountNumber AND Cashier_PaidBills.ServicePeriod=Billing_Bills.ServicePeriod AND (Status IS NULL OR Status='Application') AND AccountNumber IS NOT NULL) AS PaidBillId"))
             ->orderByDesc('Billing_Bills.ServicePeriod')
             ->get();
