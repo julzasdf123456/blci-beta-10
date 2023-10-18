@@ -341,7 +341,9 @@
                                     <label class="custom-control-label" for="two-percent-toggle" style="font-weight: normal">2% WT</label>
                                 </div>
                             </td>
-                            <td class="text-right"><strong id="2percent-amnt">0.0</strong></td>
+                            <td class="text-right">                                
+                                <input type="number" step="any" class="form-control form-control-sm text-right" id="2percent-amnt">
+                            </td>
                         </tr>
                         <tr>
                             <td>
@@ -350,7 +352,9 @@
                                     <label class="custom-control-label" for="five-percent-toggle" style="font-weight: normal">5% WT</label>
                                 </div>
                             </td>
-                            <td class="text-right"><strong id="5percent-amnt">0.0</strong></td>
+                            <td class="text-right">
+                                <input type="number" step="any" class="form-control form-control-sm text-right" id="5percent-amnt">
+                            </td>
                         </tr>
                         <tr>
                             <td><strong>Net Amount Due</strong></td>
@@ -598,8 +602,8 @@
                         type : "GET",
                         data : {
                             id : selectedBillId,
-                            TwoPercent : twoPercentAmnt,
-                            FivePercent : fivePercentAmnt,
+                            TwoPercent : $('#2percent-amnt').val(),
+                            FivePercent : $('#5percent-amnt').val(),
                             NetAmount : netAmntAfterWT
                         },
                         success : function(res) {
@@ -621,8 +625,20 @@
         }
 
         function validateWithholding() {
-            $('#2percent-amnt').text(Number(twoPercentAmnt).toLocaleString())
-            $('#5percent-amnt').text(Number(fivePercentAmnt).toLocaleString())
+            if (isTwoPercent) {
+                $('#2percent-amnt').prop('disabled', false)
+            } else {
+                $('#2percent-amnt').prop('disabled', true)
+            }
+            
+            if (isFivePercent) {
+                $('#5percent-amnt').prop('disabled', false)
+            } else {
+                $('#5percent-amnt').prop('disabled', true)
+            }
+
+            $('#2percent-amnt').val(twoPercentAmnt)
+            $('#5percent-amnt').val(fivePercentAmnt)
 
             var wt = parseFloat(twoPercentAmnt) + parseFloat(fivePercentAmnt)
 
@@ -743,14 +759,34 @@
                 var netAmntBeforeWT = 0
                 var netAmntAfterWT = 0
 
-                $('#2percent-amnt').text("0")
-                $('#5percent-amnt').text("0")
+                $('#2percent-amnt').val("0")
+                $('#5percent-amnt').val("0")
                 $('#bill-amnt').text("0")
                 $('#net-amnt').text("0")
 
                 $('#five-percent-toggle').prop('checked', false)
                 $('#two-percent-toggle').prop('checked', false)
             });
+
+            $('#2percent-amnt').on('change', function() {
+                twoPercentAmnt = this.value
+                validateWithholding()
+            })
+
+            $('#2percent-amnt').on('keyup', function() {
+                twoPercentAmnt = this.value
+                validateWithholding()
+            })
+
+            $('#5percent-amnt').on('change', function() {
+                fivePercentAmnt = this.value
+                validateWithholding()
+            })
+
+            $('#5percent-amnt').on('keyup', function() {
+                fivePercentAmnt = this.value
+                validateWithholding()
+            })
         })
     </script>
 @endpush

@@ -6,8 +6,16 @@
     <div class="col-lg-12">
         <div class="row">
             {{-- PREPAYMENT --}}
+            @php
+                $notifCounter = 0;
+            @endphp
             <div class="col-lg-4">
                 <p class="text-center text-muted">Prepayments</p>
+                @php
+                    if ($prepaymentBalance != null) {
+                        $notifCounter = $notifCounter + 1;
+                    }
+                @endphp
                 <p class="text-center text-success" style="font-size: 2.5em;">₱ {{ $prepaymentBalance != null ? (number_format($prepaymentBalance->Balance, 2)) : "0.0" }}</p>
                 @if (Auth::user()->hasAnyRole(['Administrator'])) 
                     <p class="text-center">
@@ -21,6 +29,11 @@
             <div class="col-lg-4">
                 <p class="text-center text-muted">Material Deposit ({{ $serviceAccounts->AdvancedMaterialDepositStatus == 'DEDUCTING' ? 'Deducting' : 'Paused' }})</p>
                 <p class="text-center text-primary" style="font-size: 2.5em;">₱ {{ $serviceAccounts != null ? (number_format($serviceAccounts->AdvancedMaterialDeposit, 2)) : "0.0" }}</p>
+                @php
+                    if (floatval($serviceAccounts->AdvancedMaterialDeposit) > 0) {
+                        $notifCounter = $notifCounter + 1;
+                    }
+                @endphp
                 @if (Auth::user()->hasAnyRole(['Administrator', 'Heads and Managers', 'Data Administrator', 'Billing Head'])) 
                     @if ($serviceAccounts->AdvancedMaterialDeposit > 0)
                         <p class="text-center">
@@ -41,6 +54,11 @@
             {{-- CUSTOMER DEPOSIT --}}
             <div class="col-lg-4">
                 <p class="text-center text-muted">Customer Deposit ({{ $serviceAccounts->CustomerDepositStatus == 'DEDUCTING' ? 'Deducting' : 'Paused' }})</p>
+                @php
+                    if (floatval($serviceAccounts->CustomerDeposit) > 0) {
+                        $notifCounter = $notifCounter + 1;
+                    }
+                @endphp
                 <p class="text-center text-info" style="font-size: 2.5em;">₱ {{ $serviceAccounts != null ? (number_format($serviceAccounts->CustomerDeposit, 2)) : "0.0" }}</p>
                 @if (Auth::user()->hasAnyRole(['Administrator', 'Heads and Managers', 'Data Administrator', 'Billing Head'])) 
                     @if ($serviceAccounts->CustomerDeposit > 0)
@@ -186,6 +204,12 @@
                 }
                 
             })
+
+            var notifCounter = "{{ $notifCounter }}"
+            if (jQuery.isEmptyObject(notifCounter) | parseInt(notifCounter) > 0) {
+                $('#prepayments-tab').append('<span class="badge badge-danger">{{ $notifCounter }}</span>')
+            }
+            
         })
 
         function changeMaterialDepositState(state) {

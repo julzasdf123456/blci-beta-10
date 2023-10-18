@@ -64,12 +64,21 @@
                             <li class="nav-item"><a class="nav-link" href="#disco-hist" data-toggle="tab">
                                 <i class="fas fa-unlink"></i>
                                 Disco/Reco History</a></li>
-                            <li class="nav-item"><a class="nav-link" href="#arrears" data-toggle="tab">
-                                <i class="fas fa-receipt"></i>
-                                Arrears</a></li>
-                            <li class="nav-item"><a class="nav-link" href="#prepayments" data-toggle="tab">
-                                <i class="fas fa-piggy-bank"></i>
-                                Pre-Payments/Deposits</a></li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="#arrears" data-toggle="tab">
+                                    <i class="fas fa-receipt"></i>
+                                    Arrears
+                                    @if (count($collectibles) > 0)
+                                        <span class="badge badge-danger" title="{{ count($collectibles) }} Termed Payments">{{ count($collectibles) }}</span>
+                                    @endif    
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a id="prepayments-tab" class="nav-link" href="#prepayments" data-toggle="tab">
+                                    <i class="fas fa-piggy-bank"></i>
+                                    Pre-Payments/Deposits
+                                </a>
+                            </li>
                             <li class="nav-item"><a class="nav-link" href="#technical" data-toggle="tab">
                                 <i class="fas fa-car-battery"></i>
                                 Technical Info</a></li>
