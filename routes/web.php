@@ -312,6 +312,7 @@ Route::get('/service_accounts/invalidate-lifeliners-and-scs', [ServiceAccountsCo
 Route::get('/service_accounts/material-deposit-accounts', [ServiceAccountsController::class, 'materialDepositAccounts'])->name('serviceAccounts.material-deposit-accounts');
 Route::get('/service_accounts/customer-deposit-accounts', [ServiceAccountsController::class, 'customerDepositAccounts'])->name('serviceAccounts.customer-deposit-accounts');
 Route::get('/service_accounts/increment-customer-deposit-interests', [ServiceAccountsController::class, 'incrementCustomerDepositInterests'])->name('serviceAccounts.increment-customer-deposit-interests');
+Route::get('/service_accounts/refund-customer-deposit', [ServiceAccountsController::class, 'refundCustomerDeposit'])->name('serviceAccounts.refund-customer-deposit');
 Route::resource('serviceAccounts', ServiceAccountsController::class);
 
 
@@ -963,3 +964,4 @@ Route::resource('bill-miscellaneouses', App\Http\Controllers\BillMiscellaneousCo
 Route::resource('bill-mirrors', App\Http\Controllers\BillMirrorController::class);
 Route::resource('collection-date-adjustments', App\Http\Controllers\CollectionDateAdjustmentsController::class);
 Route::resource('customer-deposit-interests', App\Http\Controllers\CustomerDepositInterestsController::class);
+Route::resource('customer-deposit-logs', App\Http\Controllers\CustomerDepositLogsController::class);

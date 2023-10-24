@@ -67,8 +67,8 @@
                     @endpush
 
                     <div class="form-group col-lg-3">
-                        <label for="Notes">Remarks/Comments</label>
-                        <input type="text" name="Notes" id="Notes" value="{{ $bill->Notes }}" class="form-control form-control-sm text-right">
+                        <label for="Notes">Reason</label>
+                        <input type="text" name="Notes" id="Notes" value="{{ $bill->Notes }}" class="form-control form-control-sm">
                     </div>
 
                     <div class="form-group col-lg-3">

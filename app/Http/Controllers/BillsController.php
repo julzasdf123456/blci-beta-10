@@ -30,6 +30,7 @@ use App\Models\DistributionSystemLoss;
 use App\Models\PendingBillAdjustments;
 use App\Models\ArrearsLedgerDistribution;
 use App\Models\ChangeMeterLogs;
+use App\Models\CustomerDepositLogs;
 use App\Exports\DynamicExports;
 use App\Models\DCRSummaryTransactions;
 use App\Repositories\ReadingsRepository;
@@ -99,7 +100,8 @@ class BillsController extends AppBaseController
      */
     public function show($id)
     {
-        $bills = $this->billsRepository->find($id);
+        $billsOriginal = BillsOriginal::find($id);
+        $bills = Bills::where('AccountNumber', $billsOriginal->AccountNumber)->where("ServicePeriod", $billsOriginal->ServicePeriod)->first();
         $account = DB::table('Billing_ServiceAccounts')
             ->leftJoin('CRM_Towns', 'Billing_ServiceAccounts.Town', '=', 'CRM_Towns.id')
             ->leftJoin('CRM_Barangays', 'Billing_ServiceAccounts.Barangay', '=', 'CRM_Barangays.id')
@@ -131,7 +133,7 @@ class BillsController extends AppBaseController
                     'CRM_Towns.Town',
                     'Billing_ServiceAccounts.Town as TownCode',
                     'CRM_Barangays.Barangay')
-            ->where('Billing_ServiceAccounts.id', $bills->AccountNumber)
+            ->where('Billing_ServiceAccounts.id', $billsOriginal->AccountNumber)
             ->first();
 
         $paidBill = DB::table('Cashier_PaidBills')
@@ -197,6 +199,15 @@ class BillsController extends AppBaseController
         $bills->AdjustmentRequestedBy = Auth::id();
         $bills->DateAdjustmentRequested = date('Y-m-d H:i:s');
         $bills->save();
+
+        if (floatval($bills->CustomerDeposit > 0)) {
+            $depositLog = new CustomerDepositLogs;
+            $depositLog->id = IDGenerator::generateIDandRandString();
+            $depositLog->AccountNumber = $bills->AccountNumber;
+            $depositLog->LogDetails = "Deposit deduction updated for " . date('F Y', strtotime($bills->ServicePeriod)) . " billing month, amounting " . $bills->CustomerDeposit . ".";
+            $depositLog->UserId = Auth::id();
+            $depositLog->save();
+        }
 
         if (empty($bills)) {
             Flash::error('Bills not found');

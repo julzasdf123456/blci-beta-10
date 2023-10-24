@@ -60,21 +60,27 @@
                     }
                 @endphp
                 <p class="text-center text-info" style="font-size: 2.5em;">₱ {{ $serviceAccounts != null ? (number_format($serviceAccounts->CustomerDeposit, 2)) : "0.0" }}</p>
+                <p class="text-center">
                 @if (Auth::user()->hasAnyRole(['Administrator', 'Heads and Managers', 'Data Administrator', 'Billing Head'])) 
                     @if ($serviceAccounts->CustomerDeposit > 0)
-                        <p class="text-center">
-                            @if ($serviceAccounts->CustomerDepositStatus == 'DEDUCTING')
-                                <button onclick="changeCustomerDepositState(`PAUSED`)" class="btn btn-link text-danger btn-xs" title="Pause Customer Deposit Deduction">
-                                    <i id="{{ $serviceAccounts->id }}-changeCustomerState" class="fas fa-pause"></i>
-                                </button>
-                            @else
-                                <button onclick="changeCustomerDepositState(`DEDUCTING`)" class="btn btn-link text-success btn-xs" title="Start deducting Customer Deposit">
-                                    <i id="{{ $serviceAccounts->id }}-changeCustomerState" class="fas fa-play"></i>
-                                </button>
-                            @endif
-                        </p>
-                    @endif                    
+                        @if ($serviceAccounts->CustomerDepositStatus == 'DEDUCTING')
+                            <button onclick="changeCustomerDepositState(`PAUSED`)" class="btn btn-link text-danger btn-xs" title="Pause Customer Deposit Deduction">
+                                <i id="{{ $serviceAccounts->id }}-changeCustomerState" class="fas fa-pause"></i>
+                            </button>
+                        @else
+                            <button onclick="changeCustomerDepositState(`DEDUCTING`)" class="btn btn-link text-success btn-xs" title="Start deducting Customer Deposit">
+                                <i id="{{ $serviceAccounts->id }}-changeCustomerState" class="fas fa-play"></i>
+                            </button>
+                        @endif
+                        <button onclick="refund()" class="btn btn-link text-success btn-xs" title="Refund this deposit to consumer">
+                            <i class="fas fa-check-double"></i>
+                        </button>
+                    @endif   
+                    <button class="btn btn-link text-info btn-xs" data-toggle="modal" data-target="#modal-customer-deposit-logs" title="Customer Deposit Logs">
+                        <i class="fas fa-info-circle"></i>
+                    </button>                 
                 @endif
+                </p>
             </div>
         </div>
         
@@ -135,6 +141,41 @@
             <div class="modal-footer justify-content-between">
                 <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
                 <button id="save-balance" class="btn btn-primary">Save</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+{{-- CUSTOMER DEPOSIT LOGS --}}
+<div class="modal fade" id="modal-customer-deposit-logs" aria-hidden="true" style="display: none;">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title">Customer Deposit Logs</h4>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">×</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <table class="table table-sm table-hover">
+                    <thead>
+                        <th>Date/Time</th>
+                        <th>Logs</th>
+                        <th>User Performed</th>
+                    </thead>
+                    <tbody>
+                        @foreach ($customerDepositLogs as $item)
+                            <tr>
+                                <td>{{ date('M d, Y h:i A', strtotime($item->created_at)) }}</td>
+                                <td>{{ $item->LogDetails }}</td>
+                                <td>{{ $item->name }}</td>
+                            </tr>
+                        @endforeach
+                    </tbody>
+                </table>
+            </div>
+            <div class="modal-footer justify-content-between">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
             </div>
         </div>
     </div>
@@ -277,5 +318,41 @@
                 }
             })
         }
+
+        function refund() {
+            Swal.fire({
+                title: 'Refund Deposit?',
+                text : 'Mark this deposit as refunded to the consumer? This cannot be undone.',
+                showCancelButton: true,
+                confirmButtonText: 'Save',
+                denyButtonText: `Don't save`,
+            }).then((result) => {
+                /* Read more about isConfirmed, isDenied below */
+                if (result.isConfirmed) {
+                    $.ajax({
+                        url : "{{ route('serviceAccounts.refund-customer-deposit') }}",
+                        type : "GET",
+                        data : {
+                            id : "{{ $serviceAccounts->id }}"
+                        },
+                        success : function(res) {
+                            Toast.fire({
+                                icon : 'success',
+                                text : 'Customer Deposit Refunded!'
+                            })
+                            location.reload()
+                        },
+                        error : function(err) {
+                            console.log(err)
+                            Swal.fire({
+                                icon : 'error',
+                                text : 'Refund unsuccessful!'
+                            })
+                        }
+                    })
+                } 
+            })
+        }
+
     </script>
 @endpush

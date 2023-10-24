@@ -20,6 +20,7 @@ use App\Models\PrePaymentBalance;
 use App\Models\ServiceAccounts;
 use App\Models\IDGenerator;
 use App\Models\ArrearsLedgerDistribution;
+use App\Models\CustomerDepositLogs;
 use Flash;
 use Response;
 
@@ -609,6 +610,13 @@ class ReadingsController extends AppBaseController
                             if ($account->CustomerDeposit > 0) {
                                 $account->CustomerDeposit = round(floatval($account->CustomerDeposit) + floatval($bills->CustomerDeposit), 2);
                                 $account->save();
+
+                                $depositLog = new CustomerDepositLogs;
+                                $depositLog->id = IDGenerator::generateIDandRandString();
+                                $depositLog->AccountNumber = $account->id;
+                                $depositLog->LogDetails = "Deposit deducted for " . date('F Y', strtotime($bills->ServicePeriod)) . " billing month, amounting " . $bills->CustomerDeposit . ".";
+                                $depositLog->UserId = Auth::id();
+                                $depositLog->save();
                             }
                         }
 

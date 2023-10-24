@@ -34,7 +34,8 @@
                         <td>{{ account.AccountStatus }}</td>                        
                         <td>{{ account.MeterNumber }}</td>
                         <td class="text-right">
-                            <a :href="'/serviceAccounts/' + account.id" class="btn btn-primary btn-xs"><i class="fas fa-eye ico-tab-mini"></i>View</a>
+                            <a :href="baseURL + '/serviceAccounts/' + account.id" class="btn btn-primary btn-xs"><i class="fas fa-eye ico-tab-mini"></i>View</a>    <!-- IF PORT 80 -->                         
+                            <!-- <a :href="'/serviceAccounts/' + account.id" class="btn btn-primary btn-xs"><i class="fas fa-eye ico-tab-mini"></i>View</a>  --> <!-- IF PORT 8000 -->
                         </td>
                     </tr>
                 </tbody>
@@ -58,11 +59,13 @@ export default {
             search : '',
             isEditMode : false,
             accounts : {},
+            baseURL : axios.defaults.baseURL,
         }
     },
     methods : {
         view (page = 1) {
-            axios.get(`/service_accounts/search-account-ajax?page=${page}&search=${this.search}`)
+            // axios.get(`/service_accounts/search-account-ajax?page=${page}&search=${this.search}`) // IF PORT 8000
+            axios.get(`${ axios.defaults.baseURL }/service_accounts/search-account-ajax?page=${page}&search=${this.search}`) // IF PORT 80 DIRECT FROM APACHE
             .then(response => {
                 this.accounts = response.data
             })

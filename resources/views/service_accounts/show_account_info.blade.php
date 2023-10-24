@@ -3,9 +3,7 @@
 @endphp
 <div class="card card-outline shadow-none {{ $serviceAccounts->AccountStatus=='ACTIVE' ? 'card-success' : 'card-danger' }}" title="{{ $serviceAccounts->AccountStatus=='ACTIVE' ? 'Account Active' : 'Account Disconnected' }}"">
     <div class="card-header border-0">
-        <span class="card-title">
-            <strong>{{ $serviceAccounts->ServiceAccountName }}  {{ $serviceAccounts->AccountCount != null ? '(# ' . $serviceAccounts->AccountCount . ')' : '' }}</strong>
-        </span>
+        <span class="card-title">Account Details</span>
 
         <div class="card-tools">
             @if (Auth::user()->hasAnyRole(['Administrator', 'Heads and Managers', 'Data Administrator'])) 

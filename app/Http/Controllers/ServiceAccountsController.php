@@ -43,6 +43,7 @@ use App\Models\Zones;
 use App\Models\Blocks;
 use App\Models\PaymentOrder;
 use App\Models\CustomerDepositInterests;
+use App\Models\CustomerDepositLogs;
 use App\Exports\DynamicExports;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Flash;
@@ -482,6 +483,13 @@ class ServiceAccountsController extends AppBaseController
             ->orderByDesc('Billing_Readings.ServicePeriod')
             ->get();
 
+        $customerDepositLogs = DB::table('Billing_CustomerDepositLogs')
+        ->leftJoin('users', 'Billing_CustomerDepositLogs.UserId', '=', 'users.id')
+            ->where('AccountNumber', $id)
+            ->select('Billing_CustomerDepositLogs.*', 'users.name')
+            ->orderByDesc('created_at')
+            ->get();
+
         return view('service_accounts.show', [
             'serviceAccounts' => $serviceAccounts,
             'meters' => $meters,
@@ -506,6 +514,7 @@ class ServiceAccountsController extends AppBaseController
             'katas' => $katas,
             'balances' => $balances,
             'surcharges' => $surcharges,
+            'customerDepositLogs' => $customerDepositLogs,
         ]);
     }
 
@@ -3410,5 +3419,25 @@ class ServiceAccountsController extends AppBaseController
         }
 
         return response()->json(['res' => 'ok'], 200);
+    }
+
+    public function refundCustomerDeposit(Request $request) {
+        $id = $request['id'];
+
+        $account = ServiceAccounts::find($id);
+        if ($account != null) {
+            $depositLog = new CustomerDepositLogs;
+            $depositLog->id = IDGenerator::generateIDandRandString();
+            $depositLog->AccountNumber = $account->id;
+            $depositLog->LogDetails = "Customer deposit amounting " . number_format($account->CustomerDeposit, 2) . " refunded.";
+            $depositLog->UserId = Auth::id();
+            $depositLog->save();
+
+            $account->CustomerDepositStatus = 'DONE';
+            $account->CustomerDeposit = 0;
+            $account->save();
+        }
+
+        return response()->json($account, 200);
     }
 }

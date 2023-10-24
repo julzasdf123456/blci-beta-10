@@ -8,14 +8,14 @@
     <section class="content-header">
         <div class="container-fluid">
             <div class="row mb-2">
-                <div class="col-sm-5">
-                    <h4>Service Account Management Console 
+                <div class="col-sm-12 col-lg-8">
+                    <h4><strong>{{ $serviceAccounts->ServiceAccountName }}</strong>
                         @if ($serviceAccounts->CheckBounceHistory == 'Yes')
                             <span class="badge bg-danger">Bouncing Check History</span>
                         @endif                         
                     </h4>
                 </div>
-                <div class="col-sm-7">
+                <div class="col-sm-12 col-lg-4">
                     @if (Auth::user()->hasAnyRole(['Administrator', 'Heads and Managers', 'Data Administrator'])) 
                         @if ($serviceAccounts->AccountStatus == 'APPREHENDED')
                         
