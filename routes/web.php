@@ -732,6 +732,10 @@ Route::get('/paid_bills/third-party-api-console', [PaidBillsController::class, '
 Route::get('/paid_bills/third-party-collection-api-dcr/{source}/{date}', [PaidBillsController::class, 'thirdPartyCollectionAPIDCR'])->name('paidBills.third-party-collection-api-dcr');
 Route::get('/paid_bills/clear-deposit', [PaidBillsController::class, 'clearDeposit'])->name('paidBills.clear-deposit');
 Route::get('/paid_bills/fix-third-party-dcr', [PaidBillsController::class, 'fixThirdPartyDCR'])->name('paidBills.fix-third-party-dcr');
+Route::get('/paid_bills/credit-memo/{acctNo}/{period}', [PaidBillsController::class, 'creditMemo'])->name('paidBills.credit-memo');
+Route::get('/paid_bills/search-account-for-credit-memo', [PaidBillsController::class, 'searchAccountForCreditMemo'])->name('paidBills.search-account-for-credit-memo');
+Route::get('/paid_bills/get-unpaid-bills-for-credit-memo', [PaidBillsController::class, 'getUnpaidBillsForCreditMemo'])->name('paidBills.get-unpaid-bills-for-credit-memo');
+Route::get('/paid_bills/apply-credit-memo', [PaidBillsController::class, 'applyCreditMemo'])->name('paidBills.apply-credit-memo');
 Route::resource('paidBills', PaidBillsController::class);
 
 Route::get('/disconnection_histories/generate-turn-off-list', [App\Http\Controllers\DisconnectionHistoryController::class, 'generateTurnOffList'])->name('disconnectionHistories.generate-turn-off-list');

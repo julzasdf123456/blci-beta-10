@@ -135,7 +135,7 @@
                                         @else
                                             <a class="dropdown-item btn btn-link" href="{{ $item->PaidBillId != null ? (route('transactionIndices.browse-ors-view', [$item->PaidBillId, 'BILLS PAYMENT'])) : '' }}"><i class="fas fa-info-circle ico-tab"></i>View Payment Details</a>
                                             <div class="dropdown-divider"></div>
-                                            <a class="dropdown-item btn btn-link" href="#" title="Transfer this payment to another bill"><i class="fas fa-exchange-alt ico-tab"></i>Credit Memo</a>
+                                            <a class="dropdown-item btn btn-link" href="{{ route('paidBills.credit-memo', [$item->AccountNumber, $item->ServicePeriod]) }}" title="Transfer this payment to another bill"><i class="fas fa-exchange-alt ico-tab"></i>Credit Memo</a>
                                         @endif
                                     </div>
                                 </div>

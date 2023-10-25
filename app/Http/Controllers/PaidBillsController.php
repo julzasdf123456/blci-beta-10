@@ -14,6 +14,7 @@ use App\Models\Bills;
 use App\Models\IDGenerator;
 use App\Models\PaidBills;
 use App\Models\PaidBillsDetails;
+use App\Models\BillMirror;
 use App\Models\ORAssigning;
 use App\Models\Notifiers;
 use App\Models\BillingMeters;
@@ -3316,6 +3317,297 @@ class PaidBillsController extends AppBaseController
         }
         
         return response()->json('ok', 200);
+    }
+
+    public function creditMemo($accountNumber, $period) {
+        $account = DB::table('Billing_ServiceAccounts')
+            ->leftJoin('CRM_Towns', 'Billing_ServiceAccounts.Town', '=', 'CRM_Towns.id')
+            ->leftJoin('CRM_Barangays', 'Billing_ServiceAccounts.Barangay', '=', 'CRM_Barangays.id')
+            ->leftJoin('users', 'Billing_ServiceAccounts.MeterReader', '=', 'users.id')
+            ->select('Billing_ServiceAccounts.id',
+                    'Billing_ServiceAccounts.ServiceAccountName',
+                    'Billing_ServiceAccounts.OldAccountNo',
+                    'Billing_ServiceAccounts.Purok',
+                    'Billing_ServiceAccounts.AccountType',
+                    'Billing_ServiceAccounts.AccountStatus',
+                    'CRM_Towns.Town',
+                    'CRM_Barangays.Barangay',)
+            ->where('Billing_ServiceAccounts.id', $accountNumber)
+            ->first();
+
+        $paidBills = PaidBills::where('AccountNumber', $accountNumber)
+            ->where('ServicePeriod', $period)
+            ->get();
+
+        $bill = Bills::where('AccountNumber', $accountNumber)
+            ->where('ServicePeriod', $period)
+            ->first();
+
+        return view('/paid_bills/credit_memo', [
+            'account' => $account,
+            'paidBills' => $paidBills,
+            'bill' => $bill,
+        ]);
+    }
+
+    public function searchAccountForCreditMemo(Request $request) {
+        if ($request['search'] == null) {
+            $serviceAccounts = DB::table('Billing_ServiceAccounts')
+                        ->leftJoin('CRM_Towns', 'Billing_ServiceAccounts.Town', '=', 'CRM_Towns.id')
+                        ->leftJoin('CRM_Barangays', 'Billing_ServiceAccounts.Barangay', '=', 'CRM_Barangays.id')
+                        ->select('Billing_ServiceAccounts.id', 
+                            'Billing_ServiceAccounts.ServiceAccountName',
+                            'Billing_ServiceAccounts.Purok',
+                            'Billing_ServiceAccounts.OldAccountNo', 
+                            'Billing_ServiceAccounts.AccountCount',  
+                            'Billing_ServiceAccounts.AccountStatus',
+                            'Billing_ServiceAccounts.AccountType',
+                            'MeterDetailsId', 
+                            'CRM_Towns.Town', 
+                            'CRM_Barangays.Barangay')
+                        ->orderBy('Billing_ServiceAccounts.ServiceAccountName')
+                        ->paginate(50);
+        } else {
+            $serviceAccounts = DB::table('Billing_ServiceAccounts')
+                        ->leftJoin('CRM_Towns', 'Billing_ServiceAccounts.Town', '=', 'CRM_Towns.id')
+                        ->leftJoin('CRM_Barangays', 'Billing_ServiceAccounts.Barangay', '=', 'CRM_Barangays.id')
+                        ->select('Billing_ServiceAccounts.id', 
+                            'Billing_ServiceAccounts.ServiceAccountName',
+                            'Billing_ServiceAccounts.Purok',
+                            'Billing_ServiceAccounts.OldAccountNo',   
+                            'Billing_ServiceAccounts.AccountCount',  
+                            'Billing_ServiceAccounts.AccountStatus',
+                            'Billing_ServiceAccounts.AccountType',
+                            'MeterDetailsId',
+                            'CRM_Towns.Town', 
+                            'CRM_Barangays.Barangay')
+                        ->whereRaw("Billing_ServiceAccounts.ServiceAccountName LIKE '%" . $request['search'] . "%' 
+                            OR Billing_ServiceAccounts.id LIKE '%" . $request['search'] . "%' 
+                            OR Billing_ServiceAccounts.OldAccountNo LIKE '%" . $request['search'] . "%'
+                            OR Billing_ServiceAccounts.MeterDetailsId LIKE '%" . $request['search'] . "%'")
+                        ->orderBy('Billing_ServiceAccounts.ServiceAccountName')
+                        ->paginate(50);
+        } 
+
+        $output = "";
+        foreach($serviceAccounts as $item) {
+            $output .= "<tr>
+                            <td>" . $item->OldAccountNo . "</td>
+                            <td>" . $item->ServiceAccountName . "</td>
+                            <td>" . ServiceAccounts::getAddress($item) . "</td>
+                            <td>" . $item->AccountType . "</td>
+                            <td class='text-right'>
+                                <button onclick='setCreditMemo(`" . $item->id . "`, `" . $item->ServiceAccountName . "`, `" . $item->OldAccountNo . "`)' class='btn btn-xs btn-success'><i class='fas fa-arrow-right'></i></button>
+                            </td>
+                        </tr>";
+        }
+
+        return response()->json($output, 200);
+    }
+
+    public function getUnpaidBillsForCreditMemo(Request $request) {
+        $bills = DB::table('Billing_Bills')
+            ->whereRaw("Balance > 0 AND AccountNumber='" . $request['AccountNumber'] . "'")
+            ->select('Billing_Bills.*')
+            ->orderBy('Billing_Bills.ServicePeriod')
+            ->get();
+
+        $output = "";
+        foreach($bills as $item) {
+            $surcharge = Bills::getSurchargeFinal($item);
+            $output .= "<tr>
+                            <td>" . date('F Y', strtotime($item->ServicePeriod)) . "</td>
+                            <td>" . number_format($item->NetAmount, 2) . "</td>
+                            <td>" . number_format($surcharge, 2) . "</td>
+                            <td>" . number_format($item->Balance + $surcharge, 2) . "</td>
+                            <td class='text-right'>
+                                <button onclick='applyCreditMemo(`" . $item->id . "`)' class='btn btn-xs btn-success'><i class='fas fa-check-circle ico-tab-mini'></i>Apply</button>
+                            </td>
+                        </tr>";
+        }
+
+        return response()->json($output, 200); 
+    }
+
+    public function applyCreditMemo(Request $request) {
+        $billIdTo = $request['BillIdTo'];
+        $accountNumberFrom = $request['AccountNumberFrom'];
+        $periodFrom = $request['PeriodFrom'];
+        $paidBillId = $request['PaidBillId'];
+
+        $billTo = Bills::find($billIdTo);
+        $surcharge = Bills::getSurchargeFinal($billTo);
+        $totalPayable = $surcharge + floatval($billTo->Balance);
+        // UPDATE OLD BILL TO UNPAID
+        $billFrom = Bills::where('AccountNumber', $accountNumberFrom)
+            ->where('ServicePeriod', $periodFrom)
+            ->first();
+        if ($billFrom != null) {
+            $billFrom->PaidAmount = null;
+            $billFrom->Balance = $billFrom->NetAmount;
+            $billFrom->save();
+        }
+
+        $accountTo = ServiceAccounts::find($billTo->AccountNumber);
+
+        $totalAmountPaid = 0;
+        $paidBillsFrom = PaidBills::find($paidBillId);
+        // DELETE Cashier_BillMirror
+        $billMirrorFrom = BillMirror::where('AccountNumber', $accountNumberFrom)
+            ->where('ServicePeriod', $periodFrom)
+            ->where('ORNumber', $paidBillsFrom->ORNumber)
+            ->where('ORDate', $paidBillsFrom->ORDate)
+            ->delete();
+        
+        if ($paidBillsFrom != null) {
+            $totalAmountPaid += $paidBillsFrom->NetAmount;
+
+            // CREATE NEW PAIDBILL
+            $paidBillTo = new PaidBills;
+            
+            // UPDATE OLD PAID BILL
+            $paidBillsFrom->Status = 'CREDIT MEMOED';
+            $paidBillsFrom->Notes = 'Credit memoed to account number ' . $accountTo->OldAccountNo;
+            $paidBillsFrom->save();
+            
+            // UPDATE NEWLY CREATED PAIDBILL
+            $paidBillTo->id = IDGenerator::generateIDandRandString();
+            $paidBillTo->BillNumber = $billTo->BillNumber;
+            $paidBillTo->AccountNumber = $billTo->AccountNumber;
+            $paidBillTo->ServicePeriod = $billTo->ServicePeriod;
+            $paidBillTo->KwhUsed = $billTo->KwhUsed;
+            $paidBillTo->PostingDate = date('Y-m-d');
+            $paidBillTo->PostingTime = date('H:i:s');
+            $paidBillTo->Source = 'MONTHLY BILL - Credit Memo';
+            $paidBillTo->ObjectSourceId = $billTo->id;
+            $paidBillTo->UserId = Auth::id();
+            $paidBillTo->ORNumber = $paidBillsFrom->ORNumber;
+            $paidBillTo->ORDate = $paidBillsFrom->ORDate;
+            $paidBillTo->Teller = $paidBillsFrom->Teller;
+            $paidBillTo->OfficeTransacted = $paidBillsFrom->OfficeTransacted;
+
+            // SET PARAMS FOR NEW PAIDBILL
+            $netAmnt = 0;
+            if ($totalAmountPaid >= $totalPayable) {
+                // IF MAS LABAW OR EQUAL RA ANG GIBAYRAN SA NEW BILL AMOUNT
+                $netAmnt = $totalPayable;
+
+                // ISULOD ANG EXCESS SA PREPAYMENT
+                $excessPayment = $totalAmountPaid - $totalPayable;
+                $prepaymentBalance = PrePaymentBalance::where('AccountNumber', $billTo->AccountNumber)->first();
+
+                if ($prepaymentBalance != null) {
+                    $balance = is_numeric($prepaymentBalance->Balance) ? floatval($prepaymentBalance->Balance) : 0;
+                    $amount = floatval($excessPayment);
+                    $prepaymentBalance->Balance = round($balance + $amount, 2);
+                    $prepaymentBalance->save();
+
+                    $history = new PrePaymentTransHistory;
+                    $history->id = IDGenerator::generateIDandRandString();
+                    $history->AccountNumber = $prepaymentBalance->AccountNumber;
+                    $history->Method = 'DEPOSIT';
+                    $history->Notes = 'Excess of Credit Memo';
+                    $history->Amount = round($amount, 2);
+                    $history->UserId = Auth::id();
+                    $history->save();
+                } else {
+                    $prepaymentBalance = new PrePaymentBalance;
+                    $prepaymentBalance->id = IDGenerator::generateIDandRandString();
+                    $prepaymentBalance->AccountNumber = $billTo->AccountNumber;
+                    $prepaymentBalance->Balance = round($excessPayment);
+                    $prepaymentBalance->save();
+
+                    $history = new PrePaymentTransHistory;
+                    $history->id = IDGenerator::generateIDandRandString();
+                    $history->AccountNumber = $billTo->AccountNumber;
+                    $history->Method = 'DEPOSIT';
+                    $history->Notes = 'Excess of Credit Memo';
+                    $history->Amount = round($excessPayment, 2);
+                    $history->UserId = Auth::id();
+                    $history->save();
+                }
+
+                // ADD BILLMIRROR
+                $billMirrorTo = BillMirror::bridgeFromBills($billTo);
+                $billMirrorTo->id = IDGenerator::generateIDandRandString();
+                $billMirrorTo->ORNumber = $paidBillTo->ORNumber;
+                $billMirrorTo->ORDate = $paidBillTo->ORDate;
+                $billMirrorTo->Teller = $paidBillTo->Teller;
+                $billMirrorTo->PaidBillId = $paidBillTo->id;
+                $billMirrorTo->save();
+
+                // UPDATE BILL TO
+                $billTo->PaidAmount = $billTo->Balance;
+                $billTo->Balance = 0;
+                $billTo->save();
+
+                // ADD PARAMS TO PAIDBILL TO
+                $paidBillTo->Surcharge = $surcharge;
+                $paidBillTo->NetAmount = $netAmnt;
+            } else {
+                // IF MAS GAMAY ANG GIBAYRAN KAYSA BAYRONON
+                $balance = floatval($billTo->Balance) - $totalAmountPaid;
+
+                $billedAmntTotal = Bills::getBilledAmount($billTo);
+                $othersAmntTotal = Bills::getOthersAmount($billTo);
+
+                $totalAmountPaid = floatval($totalAmountPaid);
+                $remainingAmount = $totalAmountPaid;
+
+                // ADD TO BILL MIRROR
+                $billMirror = BillMirror::where('AccountNumber', $billTo->AccountNumber)
+                    ->where('ServicePeriod', $billTo->ServicePeriod)
+                    ->first();
+                
+                if ($billMirror == null) {
+                    $billMirror = new BillMirror;
+                    $billMirror->id = IDGenerator::generateIDandRandString();
+                    $billMirror->BillNumber = $billTo->BillNumber;
+                    $billMirror->AccountNumber = $billTo->AccountNumber;
+                    $billMirror->ServicePeriod = $billTo->ServicePeriod;
+                    $billMirror->NetAmount = $billTo->NetAmount;
+                    $billMirror->BillingDate = $billTo->BillingDate;
+                    $billMirror->ServiceDateFrom = $billTo->ServiceDateFrom;
+                    $billMirror->ServiceDateTo = $billTo->ServiceDateTo;
+                    $billMirror->DueDate = $billTo->DueDate;
+                    $billMirror->ORNumber = $paidBillTo->ORNumber;
+                    $billMirror->ORDate = $paidBillTo->ORDate;
+                    $billMirror->Teller = $paidBillTo->Teller;
+                    $billMirror->PaidBillId = $paidBillTo->id;
+                }
+                
+                // SET TERMED PAYMENT FIRST
+                if ($billTo->TermedPayments > 0) {
+                    if ($remainingAmount >= $billTo->TermedPayments) {
+                        $remainingAmount = BillMirror::populateTermedPaymentAmountUpdate($remainingAmount, $billTo, $billMirror);
+                    }
+                }
+
+                if ($remainingAmount >= $othersAmntTotal) {
+                    $remainingAmount = BillMirror::populateOtherAmountUpdate($remainingAmount, $billTo, $billMirror);
+
+                    if ($remainingAmount > 0) {
+                        $remainingAmount = BillMirror::populateBilledAmountUpdate($remainingAmount, $billTo, $billMirror);
+                    }
+                } else {
+                    BillMirror::populateBilledAmountUpdate($remainingAmount, $billTo, $billMirror);
+                }
+                $billMirror->save();
+
+                // UPDATE BILL
+                $billTo->PaidAmount = $totalAmountPaid;
+                $billTo->Balance = $balance;
+                $billTo->save();
+
+                // ADD PARAMS TO PAIDBILL TO
+                $paidBillTo->Surcharge = $surcharge;
+                $paidBillTo->NetAmount = $totalAmountPaid;
+            }
+
+            $paidBillTo->save();
+        }
+
+        return response()->json($paidBillTo, 200);
     }
 }
 

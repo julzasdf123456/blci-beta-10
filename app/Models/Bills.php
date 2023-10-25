@@ -813,6 +813,31 @@ class Bills extends Model
         return $billed;
     }
 
+    public static function getOthersAmount($bill) {
+        $others = $bill->FranchiseTax +
+            $bill->FranchiseTaxOthers +
+            $bill->BusinessTax +
+            $bill->RealPropertyTax +
+            $bill->InterClassCrossSubsidyCharge +
+            $bill->PowerActReduction +
+            $bill->SeniorCitizenSubsidy +
+            $bill->EnvironmentalCharge +
+            $bill->StrandedContractCosts +
+            $bill->NPCStrandedDebt +
+            $bill->FeedInTariffAllowance +
+            $bill->MissionaryElectrificationREDCI +
+            $bill->MissionaryElectrificationSPUG +
+            $bill->MissionaryElectrificationSPUGTRUEUP +
+            $bill->GenerationVAT +
+            $bill->ACRMVAT +
+            $bill->TransmissionVAT +
+            $bill->SystemLossVAT +
+            $bill->DistributionVAT +
+            $bill->OthersVAT;
+
+        return $others;
+    }
+
     public static function get2307($bill) {
         $taxables = $bill->GenerationVAT +
             $bill->TransmissionVAT +

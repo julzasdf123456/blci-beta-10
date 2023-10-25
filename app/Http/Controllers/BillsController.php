@@ -100,8 +100,7 @@ class BillsController extends AppBaseController
      */
     public function show($id)
     {
-        $billsOriginal = BillsOriginal::find($id);
-        $bills = Bills::where('AccountNumber', $billsOriginal->AccountNumber)->where("ServicePeriod", $billsOriginal->ServicePeriod)->first();
+        $bills = Bills::find($id);
         $account = DB::table('Billing_ServiceAccounts')
             ->leftJoin('CRM_Towns', 'Billing_ServiceAccounts.Town', '=', 'CRM_Towns.id')
             ->leftJoin('CRM_Barangays', 'Billing_ServiceAccounts.Barangay', '=', 'CRM_Barangays.id')
@@ -133,7 +132,7 @@ class BillsController extends AppBaseController
                     'CRM_Towns.Town',
                     'Billing_ServiceAccounts.Town as TownCode',
                     'CRM_Barangays.Barangay')
-            ->where('Billing_ServiceAccounts.id', $billsOriginal->AccountNumber)
+            ->where('Billing_ServiceAccounts.id', $bills->AccountNumber)
             ->first();
 
         $paidBill = DB::table('Cashier_PaidBills')

@@ -332,5 +332,550 @@ class BillMirror extends Model
         'PaidBillId' => 'nullable|string|max:100'
     ];
 
-    
+    public static function distributeUpdate($amount, $charges, $existingValue) {
+        $remaining = $charges - $existingValue;
+
+        if ($amount >= $remaining) {
+            return $remaining;
+        } else {
+            $dif = $remaining - $amount;
+            return $remaining - $dif;
+        }
+    }
+
+    public static function populateTermedPaymentAmountUpdate($amount, $bill, $billMirror) {
+        // TermedPayments
+        if ($amount > 0) {
+            $dist =  BillMirror::doubleNull($bill->TermedPayments);
+            $existingValue = BillMirror::doubleNull($billMirror->TermedPayments);
+            if ($existingValue == $dist) {
+
+            } else {
+                $amnt = BillMirror::distributeUpdate($amount, $dist, $existingValue);
+                $billMirror->TermedPayments = ($amnt + $existingValue);
+                $amount = $amount - $amnt;
+            }
+        }
+
+        return $amount;
+    }
+
+    public static function populateOtherAmountUpdate($amount, $bill, $billMirror) {
+        // FranchiseTax
+        if ($amount > 0) {
+            $dist =  BillMirror::doubleNull($bill->FranchiseTax);
+            $existingValue = BillMirror::doubleNull($billMirror->FranchiseTax);
+            if ($existingValue == $dist) {
+
+            } else {
+                $amnt = BillMirror::distributeUpdate($amount, $dist, $existingValue);
+                $billMirror->FranchiseTax = ($amnt + $existingValue);
+                $amount = $amount - $amnt;
+            }
+        }
+
+        // FranchiseTaxOthers
+        if ($amount > 0) {
+            $dist =  BillMirror::doubleNull($bill->FranchiseTaxOthers);
+            $existingValue = BillMirror::doubleNull($billMirror->FranchiseTaxOthers);
+            if ($existingValue == $dist) {
+
+            } else {
+                $amnt = BillMirror::distributeUpdate($amount, $dist, $existingValue);
+                $billMirror->FranchiseTaxOthers = ($amnt + $existingValue);
+                $amount = $amount - $amnt;
+            }
+        }
+
+        // BusinessTax
+        if ($amount > 0) {
+            $dist =  BillMirror::doubleNull($bill->BusinessTax);
+            $existingValue = BillMirror::doubleNull($billMirror->BusinessTax);
+            if ($existingValue == $dist) {
+
+            } else {
+                $amnt = BillMirror::distributeUpdate($amount, $dist, $existingValue);
+                $billMirror->BusinessTax = ($amnt + $existingValue);
+                $amount = $amount - $amnt;
+            }
+        }
+
+        // RealPropertyTax
+        if ($amount > 0) {
+            $dist =  BillMirror::doubleNull($bill->RealPropertyTax);
+            $existingValue = BillMirror::doubleNull($billMirror->RealPropertyTax);
+            if ($existingValue == $dist) {
+
+            } else {
+                $amnt = BillMirror::distributeUpdate($amount, $dist, $existingValue);
+                $billMirror->RealPropertyTax = ($amnt + $existingValue);
+                $amount = $amount - $amnt;
+            }
+        }
+
+        // InterClassCrossSubsidyCharge
+        if ($amount > 0) {
+            $dist =  BillMirror::doubleNull($bill->InterClassCrossSubsidyCharge);
+            $existingValue = BillMirror::doubleNull($billMirror->InterClassCrossSubsidyCharge);
+            if ($existingValue == $dist) {
+
+            } else {
+                $amnt = BillMirror::distributeUpdate($amount, $dist, $existingValue);
+                $billMirror->InterClassCrossSubsidyCharge = ($amnt + $existingValue);
+                $amount = $amount - $amnt;
+            }
+        }
+
+        // PowerActReduction
+        if ($amount > 0) {
+            $dist =  BillMirror::doubleNull($bill->PowerActReduction);
+            $existingValue = BillMirror::doubleNull($billMirror->PowerActReduction);
+            if ($existingValue == $dist) {
+
+            } else {
+                $amnt = BillMirror::distributeUpdate($amount, $dist, $existingValue);
+                $billMirror->PowerActReduction = ($amnt + $existingValue);
+                $amount = $amount - $amnt;
+            }
+        }
+
+        // SeniorCitizenSubsidy
+        if ($amount > 0) {
+            $dist =  BillMirror::doubleNull($bill->SeniorCitizenSubsidy);
+            $existingValue = BillMirror::doubleNull($billMirror->SeniorCitizenSubsidy);
+            if ($existingValue == $dist) {
+
+            } else {
+                $amnt = BillMirror::distributeUpdate($amount, $dist, $existingValue);
+                $billMirror->SeniorCitizenSubsidy = ($amnt + $existingValue);
+                $amount = $amount - $amnt;
+            }
+        }
+
+        // EnvironmentalCharge
+        if ($amount > 0) {
+            $dist =  BillMirror::doubleNull($bill->EnvironmentalCharge);
+            $existingValue = BillMirror::doubleNull($billMirror->EnvironmentalCharge);
+            if ($existingValue == $dist) {
+
+            } else {
+                $amnt = BillMirror::distributeUpdate($amount, $dist, $existingValue);
+                $billMirror->EnvironmentalCharge = ($amnt + $existingValue);
+                $amount = $amount - $amnt;
+            }
+        }
+
+        // StrandedContractCosts
+        if ($amount > 0) {
+            $dist =  BillMirror::doubleNull($bill->StrandedContractCosts);
+            $existingValue = BillMirror::doubleNull($billMirror->StrandedContractCosts);
+            if ($existingValue == $dist) {
+
+            } else {
+                $amnt = BillMirror::distributeUpdate($amount, $dist, $existingValue);
+                $billMirror->StrandedContractCosts = ($amnt + $existingValue);
+                $amount = $amount - $amnt;
+            }
+        }
+
+        // NPCStrandedDebt
+        if ($amount > 0) {
+            $dist =  BillMirror::doubleNull($bill->NPCStrandedDebt);
+            $existingValue = BillMirror::doubleNull($billMirror->NPCStrandedDebt);
+            if ($existingValue == $dist) {
+
+            } else {
+                $amnt = BillMirror::distributeUpdate($amount, $dist, $existingValue);
+                $billMirror->NPCStrandedDebt = ($amnt + $existingValue);
+                $amount = $amount - $amnt;
+            }
+        }
+
+        // FeedInTariffAllowance
+        if ($amount > 0) {
+            $dist =  BillMirror::doubleNull($bill->FeedInTariffAllowance);
+            $existingValue = BillMirror::doubleNull($billMirror->FeedInTariffAllowance);
+            if ($existingValue == $dist) {
+
+            } else {
+                $amnt = BillMirror::distributeUpdate($amount, $dist, $existingValue);
+                $billMirror->FeedInTariffAllowance = ($amnt + $existingValue);
+                $amount = $amount - $amnt;
+            }
+        }
+
+        // MissionaryElectrificationREDCI
+        if ($amount > 0) {
+            $dist =  BillMirror::doubleNull($bill->MissionaryElectrificationREDCI);
+            $existingValue = BillMirror::doubleNull($billMirror->MissionaryElectrificationREDCI);
+            if ($existingValue == $dist) {
+
+            } else {
+                $amnt = BillMirror::distributeUpdate($amount, $dist, $existingValue);
+                $billMirror->MissionaryElectrificationREDCI = ($amnt + $existingValue);
+                $amount = $amount - $amnt;
+            }
+        }
+
+        // MissionaryElectrificationSPUG
+        if ($amount > 0) {
+            $dist =  BillMirror::doubleNull($bill->MissionaryElectrificationSPUG);
+            $existingValue = BillMirror::doubleNull($billMirror->MissionaryElectrificationSPUG);
+            if ($existingValue == $dist) {
+
+            } else {
+                $amnt = BillMirror::distributeUpdate($amount, $dist, $existingValue);
+                $billMirror->MissionaryElectrificationSPUG = ($amnt + $existingValue);
+                $amount = $amount - $amnt;
+            }
+        }
+
+        // MissionaryElectrificationSPUGTRUEUP
+        if ($amount > 0) {
+            $dist =  BillMirror::doubleNull($bill->MissionaryElectrificationSPUGTRUEUP);
+            $existingValue = BillMirror::doubleNull($billMirror->MissionaryElectrificationSPUGTRUEUP);
+            if ($existingValue == $dist) {
+
+            } else {
+                $amnt = BillMirror::distributeUpdate($amount, $dist, $existingValue);
+                $billMirror->MissionaryElectrificationSPUGTRUEUP = ($amnt + $existingValue);
+                $amount = $amount - $amnt;
+            }
+        }
+
+        // GenerationVAT
+        if ($amount > 0) {
+            $dist =  BillMirror::doubleNull($bill->GenerationVAT);
+            $existingValue = BillMirror::doubleNull($billMirror->GenerationVAT);
+            if ($existingValue == $dist) {
+
+            } else {
+                $amnt = BillMirror::distributeUpdate($amount, $dist, $existingValue);
+                $billMirror->GenerationVAT = ($amnt + $existingValue);
+                $amount = $amount - $amnt;
+            }
+        }
+
+        // ACRMVAT
+        if ($amount > 0) {
+            $dist =  BillMirror::doubleNull($bill->ACRMVAT);
+            $existingValue = BillMirror::doubleNull($billMirror->ACRMVAT);
+            if ($existingValue == $dist) {
+
+            } else {
+                $amnt = BillMirror::distributeUpdate($amount, $dist, $existingValue);
+                $billMirror->ACRMVAT = ($amnt + $existingValue);
+                $amount = $amount - $amnt;
+            }
+        }
+
+        // TransmissionVAT
+        if ($amount > 0) {
+            $dist =  BillMirror::doubleNull($bill->TransmissionVAT);
+            $existingValue = BillMirror::doubleNull($billMirror->TransmissionVAT);
+            if ($existingValue == $dist) {
+
+            } else {
+                $amnt = BillMirror::distributeUpdate($amount, $dist, $existingValue);
+                $billMirror->TransmissionVAT = ($amnt + $existingValue);
+                $amount = $amount - $amnt;
+            }
+        }
+
+        // SystemLossVAT
+        if ($amount > 0) {
+            $dist =  BillMirror::doubleNull($bill->SystemLossVAT);
+            $existingValue = BillMirror::doubleNull($billMirror->SystemLossVAT);
+            if ($existingValue == $dist) {
+
+            } else {
+                $amnt = BillMirror::distributeUpdate($amount, $dist, $existingValue);
+                $billMirror->SystemLossVAT = ($amnt + $existingValue);
+                $amount = $amount - $amnt;
+            }
+        }
+
+        // DistributionVAT
+        if ($amount > 0) {
+            $dist =  BillMirror::doubleNull($bill->DistributionVAT);
+            $existingValue = BillMirror::doubleNull($billMirror->DistributionVAT);
+            if ($existingValue == $dist) {
+
+            } else {
+                $amnt = BillMirror::distributeUpdate($amount, $dist, $existingValue);
+                $billMirror->DistributionVAT = ($amnt + $existingValue);
+                $amount = $amount - $amnt;
+            }
+        }
+
+        // OthersVAT
+        if ($amount > 0) {
+            $dist =  BillMirror::doubleNull($bill->OthersVAT);
+            $existingValue = BillMirror::doubleNull($billMirror->OthersVAT);
+            if ($existingValue == $dist) {
+
+            } else {
+                $amnt = BillMirror::distributeUpdate($amount, $dist, $existingValue);
+                $billMirror->OthersVAT = ($amnt + $existingValue);
+                $amount = $amount - $amnt;
+            }
+        }
+
+        return $amount;
+    }
+
+    public static function populateBilledAmountUpdate($amount, $bill, $billMirror) {
+        // GENERATION SYSTEM
+        if ($amount > 0) {
+            $dist =  BillMirror::doubleNull($bill->GenerationSystemCharge);
+            $existingValue = BillMirror::doubleNull($billMirror->GenerationSystemCharge);
+            if ($existingValue == $dist) {
+
+            } else {
+                $amnt = BillMirror::distributeUpdate($amount, $dist, $existingValue);
+                $billMirror->GenerationSystemCharge = ($amnt + $existingValue);
+                $amount = $amount - $amnt;
+            }
+        }
+
+        // ACRM
+        if ($amount > 0) {
+            $dist =  BillMirror::doubleNull($bill->ACRM);
+            $existingValue = BillMirror::doubleNull($billMirror->ACRM);
+            if ($existingValue == $dist) {
+
+            } else {
+                $amnt = BillMirror::distributeUpdate($amount, $dist, $existingValue);
+                $billMirror->ACRM = ($amnt + $existingValue);
+                $amount = $amount - $amnt;
+            }
+        }
+
+        // TransmissionDeliveryChargeKWH
+        if ($amount > 0) {
+            $dist =  BillMirror::doubleNull($bill->TransmissionDeliveryChargeKWH);
+            $existingValue = BillMirror::doubleNull($billMirror->TransmissionDeliveryChargeKWH);
+            if ($existingValue == $dist) {
+
+            } else {
+                $amnt = BillMirror::distributeUpdate($amount, $dist, $existingValue);
+                $billMirror->TransmissionDeliveryChargeKWH = ($amnt + $existingValue);
+                $amount = $amount - $amnt;
+            }
+        }
+
+        // SystemLossCharge
+        if ($amount > 0) {
+            $dist =  BillMirror::doubleNull($bill->SystemLossCharge);
+            $existingValue = BillMirror::doubleNull($billMirror->SystemLossCharge);
+            if ($existingValue == $dist) {
+
+            } else {
+                $amnt = BillMirror::distributeUpdate($amount, $dist, $existingValue);
+                $billMirror->SystemLossCharge = ($amnt + $existingValue);
+                $amount = $amount - $amnt;
+            }
+        }
+
+        // DistributionDemandCharge
+        if ($amount > 0) {
+            $dist =  BillMirror::doubleNull($bill->DistributionDemandCharge);
+            $existingValue = BillMirror::doubleNull($billMirror->DistributionDemandCharge);
+            if ($existingValue == $dist) {
+
+            } else {
+                $amnt = BillMirror::distributeUpdate($amount, $dist, $existingValue);
+                $billMirror->DistributionDemandCharge = ($amnt + $existingValue);
+                $amount = $amount - $amnt;
+            }
+        }
+
+        // DistributionSystemCharge
+        if ($amount > 0) {
+            $dist =  BillMirror::doubleNull($bill->DistributionSystemCharge);
+            $existingValue = BillMirror::doubleNull($billMirror->DistributionSystemCharge);
+            if ($existingValue == $dist) {
+
+            } else {
+                $amnt = BillMirror::distributeUpdate($amount, $dist, $existingValue);
+                $billMirror->DistributionSystemCharge = ($amnt + $existingValue);
+                $amount = $amount - $amnt;
+            }
+        }
+
+        // SupplyRetailCustomerCharge
+        if ($amount > 0) {
+            $dist =  BillMirror::doubleNull($bill->SupplyRetailCustomerCharge);
+            $existingValue = BillMirror::doubleNull($billMirror->SupplyRetailCustomerCharge);
+            if ($existingValue == $dist) {
+
+            } else {
+                $amnt = BillMirror::distributeUpdate($amount, $dist, $existingValue);
+                $billMirror->SupplyRetailCustomerCharge = ($amnt + $existingValue);
+                $amount = $amount - $amnt;
+            }
+        }
+
+        // SupplySystemCharge
+        if ($amount > 0) {
+            $dist =  BillMirror::doubleNull($bill->SupplySystemCharge);
+            $existingValue = BillMirror::doubleNull($billMirror->SupplySystemCharge);
+            if ($existingValue == $dist) {
+
+            } else {
+                $amnt = BillMirror::distributeUpdate($amount, $dist, $existingValue);
+                $billMirror->SupplySystemCharge = ($amnt + $existingValue);
+                $amount = $amount - $amnt;
+            }
+        }
+
+        // MeteringSystemCharge
+        if ($amount > 0) {
+            $dist =  BillMirror::doubleNull($bill->MeteringSystemCharge);
+            $existingValue = BillMirror::doubleNull($billMirror->MeteringSystemCharge);
+            if ($existingValue == $dist) {
+
+            } else {
+                $amnt = BillMirror::distributeUpdate($amount, $dist, $existingValue);
+                $billMirror->MeteringSystemCharge = ($amnt + $existingValue);
+                $amount = $amount - $amnt;
+            }
+        }
+
+        // MeteringRetailCustomerCharge
+        if ($amount > 0) {
+            $dist =  BillMirror::doubleNull($bill->MeteringRetailCustomerCharge);
+            $existingValue = BillMirror::doubleNull($billMirror->MeteringRetailCustomerCharge);
+            if ($existingValue == $dist) {
+
+            } else {
+                $amnt = BillMirror::distributeUpdate($amount, $dist, $existingValue);
+                $billMirror->MeteringRetailCustomerCharge = ($amnt + $existingValue);
+                $amount = $amount - $amnt;
+            }
+        }
+
+        // LifelineRate
+        if ($amount > 0) {
+            $dist =  BillMirror::doubleNull($bill->LifelineRate);
+            $existingValue = BillMirror::doubleNull($billMirror->LifelineRate);
+            if ($existingValue == $dist) {
+
+            } else {
+                $amnt = BillMirror::distributeUpdate($amount, $dist, $existingValue);
+                $billMirror->LifelineRate = ($amnt + $existingValue);
+                $amount = $amount - $amnt;
+            }
+        }
+
+        return $amount;
+    }
+
+    public static function doubleNull($value) {
+        return $value != null ? floatval($value) : 0;
+    }
+
+    public static function bridgeFromBills($bill) {
+        $billMirror = new BillMirror;
+            
+        $billMirror->BillNumber = $bill->BillNumber;
+        $billMirror->AccountNumber = $bill->AccountNumber;
+        $billMirror->ServicePeriod = $bill->ServicePeriod;
+        $billMirror->AdditionalCharges = $bill->AdditionalCharges;
+        $billMirror->Deductions = $bill->Deductions;
+        $billMirror->NetAmount = $bill->NetAmount;
+        $billMirror->BillingDate = $bill->BillingDate;
+        $billMirror->ServiceDateFrom = $bill->ServiceDateFrom;
+        $billMirror->ServiceDateTo = $bill->ServiceDateTo;
+        $billMirror->DueDate = $bill->DueDate;
+        $billMirror->GenerationSystemCharge = $bill->GenerationSystemCharge;
+        $billMirror->TransmissionDeliveryChargeKW = $bill->TransmissionDeliveryChargeKW;
+        $billMirror->TransmissionDeliveryChargeKWH = $bill->TransmissionDeliveryChargeKWH;
+        $billMirror->SystemLossCharge = $bill->SystemLossCharge;
+        $billMirror->DistributionDemandCharge = $bill->DistributionDemandCharge;
+        $billMirror->DistributionSystemCharge = $bill->DistributionSystemCharge;
+        $billMirror->SupplyRetailCustomerCharge = $bill->SupplyRetailCustomerCharge;
+        $billMirror->SupplySystemCharge = $bill->SupplySystemCharge;
+        $billMirror->MeteringRetailCustomerCharge = $bill->MeteringRetailCustomerCharge;
+        $billMirror->MeteringSystemCharge = $bill->MeteringSystemCharge;
+        $billMirror->RFSC = $bill->RFSC;
+        $billMirror->LifelineRate = $bill->LifelineRate;
+        $billMirror->InterClassCrossSubsidyCharge = $bill->InterClassCrossSubsidyCharge;
+        $billMirror->PPARefund = $bill->PPARefund;
+        $billMirror->SeniorCitizenSubsidy = $bill->SeniorCitizenSubsidy;
+        $billMirror->MissionaryElectrificationCharge = $bill->MissionaryElectrificationCharge;
+        $billMirror->EnvironmentalCharge = $bill->EnvironmentalCharge;
+        $billMirror->StrandedContractCosts = $bill->StrandedContractCosts;
+        $billMirror->NPCStrandedDebt = $bill->NPCStrandedDebt;
+        $billMirror->FeedInTariffAllowance = $bill->FeedInTariffAllowance;
+        $billMirror->MissionaryElectrificationREDCI = $bill->MissionaryElectrificationREDCI;
+        $billMirror->GenerationVAT = $bill->GenerationVAT;
+        $billMirror->TransmissionVAT = $bill->TransmissionVAT;
+        $billMirror->SystemLossVAT = $bill->SystemLossVAT;
+        $billMirror->DistributionVAT = $bill->DistributionVAT;
+        $billMirror->RealPropertyTax = $bill->RealPropertyTax;
+        $billMirror->Notes = $bill->Notes;
+        $billMirror->UserId = $bill->UserId;
+        $billMirror->OtherGenerationRateAdjustment = $bill->OtherGenerationRateAdjustment;
+        $billMirror->OtherTransmissionCostAdjustmentKW = $bill->OtherTransmissionCostAdjustmentKW;
+        $billMirror->OtherTransmissionCostAdjustmentKWH = $bill->OtherTransmissionCostAdjustmentKWH;
+        $billMirror->OtherSystemLossCostAdjustment = $bill->OtherSystemLossCostAdjustment;
+        $billMirror->OtherLifelineRateCostAdjustment = $bill->OtherLifelineRateCostAdjustment;
+        $billMirror->SeniorCitizenDiscountAndSubsidyAdjustment = $bill->SeniorCitizenDiscountAndSubsidyAdjustment;
+        $billMirror->FranchiseTax = $bill->FranchiseTax;
+        $billMirror->BusinessTax = $bill->BusinessTax;
+        $billMirror->AdjustmentType = $bill->AdjustmentType;
+        $billMirror->Form2307Amount = $bill->Form2307Amount;
+        $billMirror->DeductedDeposit = $bill->DeductedDeposit;
+        $billMirror->ExcessDeposit = $bill->ExcessDeposit;
+        $billMirror->IsUnlockedForPayment = $bill->IsUnlockedForPayment;
+        $billMirror->UnlockedBy = $bill->UnlockedBy;
+        $billMirror->Evat2Percent = $bill->Evat2Percent;
+        $billMirror->Evat5Percent = $bill->Evat5Percent;
+        $billMirror->AdjustmentNumber = $bill->AdjustmentNumber;
+        $billMirror->AdjustedBy = $bill->AdjustedBy;
+        $billMirror->DateAdjusted = $bill->DateAdjusted;
+        $billMirror->ForCancellation = $bill->ForCancellation;
+        $billMirror->CancelRequestedBy = $bill->CancelRequestedBy;
+        $billMirror->CancelApprovedBy = $bill->CancelApprovedBy;
+        $billMirror->KatasNgVat = $bill->KatasNgVat;
+        $billMirror->SolarImportPresent = $bill->SolarImportPresent;
+        $billMirror->SolarImportPrevious = $bill->SolarImportPrevious;
+        $billMirror->SolarExportPresent = $bill->SolarExportPresent;
+        $billMirror->SolarExportPrevious = $bill->SolarExportPrevious;
+        $billMirror->SolarImportKwh = $bill->SolarImportKwh;
+        $billMirror->SolarExportKwh = $bill->SolarExportKwh;
+        $billMirror->GenerationChargeSolarExport = $bill->GenerationChargeSolarExport;
+        $billMirror->SolarResidualCredit = $bill->SolarResidualCredit;
+        $billMirror->SolarDemandChargeKW = $bill->SolarDemandChargeKW;
+        $billMirror->SolarDemandChargeKWH = $bill->SolarDemandChargeKWH;
+        $billMirror->SolarRetailCustomerCharge = $bill->SolarRetailCustomerCharge;
+        $billMirror->SolarSupplySystemCharge = $bill->SolarSupplySystemCharge;
+        $billMirror->SolarMeteringRetailCharge = $bill->SolarMeteringRetailCharge;
+        $billMirror->SolarMeteringSystemCharge = $bill->SolarMeteringSystemCharge;
+        $billMirror->Item1 = $bill->Item1;
+        $billMirror->Item2 = $bill->Item2;
+        $billMirror->Item3 = $bill->Item3;
+        $billMirror->Item4 = $bill->Item4;
+        $billMirror->Item5 = $bill->Item5;
+        $billMirror->PaidAmount = $bill->PaidAmount;
+        $billMirror->Balance = $bill->Balance;
+        $billMirror->ACRM = $bill->ACRM;
+        $billMirror->PowerActReduction = $bill->PowerActReduction;
+        $billMirror->ACRMVAT = $bill->ACRMVAT;
+        $billMirror->MissionaryElectrificationSPUG = $bill->MissionaryElectrificationSPUG;
+        $billMirror->MissionaryElectrificationSPUGTRUEUP = $bill->MissionaryElectrificationSPUGTRUEUP;
+        $billMirror->FranchiseTaxOthers = $bill->FranchiseTaxOthers;
+        $billMirror->OthersVAT = $bill->OthersVAT;
+        $billMirror->AdvancedMaterialDeposit = $bill->AdvancedMaterialDeposit;
+        $billMirror->CustomerDeposit = $bill->CustomerDeposit;
+        $billMirror->TransformerRental = $bill->TransformerRental;
+        $billMirror->AdjustmentRequestedBy = $bill->AdjustmentRequestedBy;
+        $billMirror->AdjustmentApprovedBy = $bill->AdjustmentApprovedBy;
+        $billMirror->AdjustmentStatus = $bill->AdjustmentStatus;
+        $billMirror->DateAdjustmentRequested = $bill->DateAdjustmentRequested;
+        $billMirror->TermedPayments = $bill->TermedPayments;
+            
+        return $billMirror;
+    }
 }
