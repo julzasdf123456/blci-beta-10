@@ -2,7 +2,7 @@
     <div class="row mb-2" style="margin-top: 10px;">
         <form class="col-md-6 offset-md-3" @submit.prevent="view">
             <div class="input-group">
-                <input v-model="search" type="text" class="form-control" placeholder="Search Account Number, Name, Meter Number" name="params" autofocus>
+                <input v-model="search" @keyup="view" type="text" class="form-control" placeholder="Search Account Number, Name, Meter Number" name="params" autofocus>
                 <div class="input-group-append">
                     <button type="submit" class="btn btn-primary"><i class="fas fa-search"></i></button>
                 </div>
