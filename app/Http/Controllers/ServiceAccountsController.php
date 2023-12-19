@@ -3440,4 +3440,346 @@ class ServiceAccountsController extends AppBaseController
 
         return response()->json($account, 200);
     }
+
+    // CUSTOMER LIST WITH DEMAND
+    public function mwCustomerList(Request $request) {
+        return view('/service_accounts/mw_customer_list', [
+
+        ]);
+    }
+
+    public function validateMwCustomerFile(Request $request) {
+        $file = $request->file('file');
+
+        // Process the file line by line
+        if ($file->isValid()) {
+            $path = $file->path();
+            $handle = fopen($path, 'r');
+
+            if ($handle) {
+                $i = 1;
+                echo "<table style='width: 100%; border-collapse: collapse;'>
+                    <thead>
+                        <th>#</th>
+                        <th>Zone</th>
+                        <th>Block</th>
+                        <th>Name</th>
+                        <th>Account No</th>
+                        <th>Classification</th>
+                        <th>House No</th>
+                        <th>Meter No</th>
+                        <th>Flag</th>
+                        <th>Multiplier</th>
+                        <th>Discount Type</th>
+                        <th>Rate</th>
+                        <th>Last Reading Date</th>
+                        <th>Last Reading kWh</th>
+                        <th>Status</th>
+                    </thead>
+                    <tbody>";
+                $prevZone = "";
+                $prevBlock = "";
+                while (($line = fgets($handle)) !== false) {
+                    // $data = explode("~", $line);
+                    $line;
+
+                    $zone = substr($line, 0, 3);
+                    $block = substr($line, 4, 3);
+                    $name = substr($line, 8, 29);
+                    $acctNo = substr($line, 37, 8);
+                    $classification = substr($line, 46, 2);
+                    $houseNo = trim(substr($line, 52, 9));
+                    $meterNo = trim(substr($line, 61, 13));
+                    $flag = trim(substr($line, 75, 5));
+                    $multiplier = trim(substr($line, 82, 10));
+                    $dscType = trim(substr($line, 93, 4));
+                    $rate = trim(substr($line, 97, 5));
+                    $lastReadingDate = trim(substr($line, 103, 8));
+                    $lastReading = str_replace(",", "", trim(substr($line, 113, 9)));
+                    $status = trim(substr($line, 123, 4));
+
+                    if (strlen(trim($line)) > 0 | trim($line) != null) {
+
+                        if ((trim($zone) == null | is_numeric($zone)) && trim($name) != null) {
+                            // $prevZone = strlen(trim($zone)) < 1 ? $prevZone : $zone;
+                            // $prevBlock = trim($block) == null ? $prevBlock : $block;
+
+                            echo "<tr>
+                                    <td style='border: 1px solid black;'>" . $i . "</td>
+                                    <td style='border: 1px solid black;'>" . (trim($zone) == null ? $prevZone : $zone) . "</td>
+                                    <td style='border: 1px solid black;'>" . (trim($block) == null ? $prevBlock : $block) . "</td>
+                                    <td style='border: 1px solid black;'>" . $name . "</td>
+                                    <td style='border: 1px solid black;'>" . $acctNo . "</td>
+                                    <td style='border: 1px solid black;'>" . $classification . "</td>
+                                    <td style='border: 1px solid black;'>" . $houseNo . "</td>
+                                    <td style='border: 1px solid black;'>" . $meterNo . "</td>
+                                    <td style='border: 1px solid black;'>" . $flag . "</td>
+                                    <td style='border: 1px solid black;'>" . $multiplier . "</td>
+                                    <td style='border: 1px solid black;'>" . $dscType . "</td>
+                                    <td style='border: 1px solid black;'>" . $rate . "</td>
+                                    <td style='border: 1px solid black;'>" . $lastReadingDate . "</td>
+                                    <td style='border: 1px solid black;'>" . $lastReading . "</td>
+                                    <td style='border: 1px solid black;'>" . $status . "</td>
+                                </tr>";
+
+                            $prevZone = trim($zone) == null ? $prevZone : $zone;
+                            $prevBlock = trim($block) == null ? $prevBlock : $block;
+                            $i+=1;
+                        }
+                    }
+                  
+                }
+                echo "</tbody></table>";
+
+                fclose($handle);
+            } else {
+                // Handle error opening the file
+                return response()->json(['error' => 'Unable to open the file.'], 500);
+            }
+        } else {
+            // Handle invalid file
+            return response()->json(['error' => 'Invalid file.'], 400);
+        }
+
+        // Flash::success('Bohol Water Service Accounts updated!');
+
+        // return redirect(route('boholWaterServiceAccounts.index'));
+    }
+
+    public function mwCustomerMasterList(Request $request) {
+        return view('/service_accounts/mw_customer_master_list', [
+
+        ]);
+    }
+
+    public function validateMwCustomerMasterListFile(Request $request) {
+        $file = $request->file('file');
+
+        // Process the file line by line
+        if ($file->isValid()) {
+            $path = $file->path();
+            $handle = fopen($path, 'r');
+
+            if ($handle) {
+                $i = 1;
+                // // for display
+                // echo "<table style='width: 100%; border-collapse: collapse;'>
+                //     <thead>
+                //         <th>#</th>
+                //         <th>Zone</th>
+                //         <th>Block</th>
+                //         <th>Classification</th>
+                //         <th>Name</th>
+                //         <th>Account No</th>
+                //         <th>House No</th>
+                //         <th>Meter No</th>
+                //         <th>Flag</th>
+                //         <th>Multiplier</th>
+                //         <th>Discount Type</th>
+                //         <th>Rate</th>
+                //         <th>Last Reading Date</th>
+                //         <th>Last Reading kWh</th>
+                //         <th>Outstanding Balance</th>
+                //         <th>Status</th>
+                //     </thead>
+                //     <tbody>";
+                $prevZone = "";
+                $prevBlock = "";
+                $prevClass = "";
+                while (($line = fgets($handle)) !== false) {
+                    $line;
+
+                    $zone = substr($line, 0, 3);
+                    $block = substr($line, 4, 3);
+                    $classification = substr($line, 8, 2);
+                    $name = substr($line, 14, 28);
+                    $acctNo = substr($line, 43, 8);
+                    $houseNo = trim(substr($line, 52, 8));
+                    $meterNo = trim(substr($line, 61, 12));
+                    $flag = trim(substr($line, 74, 4));
+                    $multiplier = "1";
+                    $dscType = trim(substr($line, 80, 4));
+                    $rate = trim(substr($line, 84, 6));
+                    $lastReadingDate = trim(substr($line, 91, 9));
+                    $lastReading = str_replace(",", "", trim(substr($line, 100, 11)));
+                    $outBalance = str_replace(",", "", trim(substr($line, 117, 11)));
+                    $status = trim(substr($line, 128, 4));
+
+                    // if outstanding balance is negative
+                    if (str_contains($outBalance, '-')) {
+                        $outBalance = str_replace('-', '', $outBalance);
+                        $outBalance = '-' . $outBalance;
+                    }
+
+                    if (strlen(trim($line)) > 0 | trim($line) != null) {
+
+                        if ((trim($zone) == null | is_numeric($zone)) && trim($name) != null) {
+
+                            // // for display
+                            // echo "<tr>
+                            //         <td style='border: 1px solid black;'>" . $i . "</td>
+                            //         <td style='border: 1px solid black;'>" . (trim($zone) == null ? $prevZone : $zone) . "</td>
+                            //         <td style='border: 1px solid black;'>" . (trim($block) == null ? $prevBlock : $block) . "</td>
+                            //         <td style='border: 1px solid black;'>" . (trim($classification) == null ? $prevClass : $classification) . "</td>
+                            //         <td style='border: 1px solid black;'>" . utf8_decode($name) . "</td>
+                            //         <td style='border: 1px solid black;'>" . $acctNo . "</td>
+                            //         <td style='border: 1px solid black;'>" . $houseNo . "</td>
+                            //         <td style='border: 1px solid black;'>" . $meterNo . "</td>
+                            //         <td style='border: 1px solid black;'>" . $flag . "</td>
+                            //         <td style='border: 1px solid black;'>" . $multiplier . "</td>
+                            //         <td style='border: 1px solid black;'>" . $dscType . "</td>
+                            //         <td style='border: 1px solid black;'>" . $rate . "</td>
+                            //         <td style='border: 1px solid black;'>" . $lastReadingDate . "</td>
+                            //         <td style='border: 1px solid black;'>" . $lastReading . "</td>
+                            //         <td style='border: 1px solid black;'>" . $outBalance . "</td>
+                            //         <td style='border: 1px solid black;'>" . $status . "</td>
+                            //     </tr>";
+                            
+                            // INSERT ACCOUNTS
+                            $serviceAccount = ServiceAccounts::where('OldAccountNo', $acctNo)->first();
+                            if ($serviceAccount != null) {
+                                // UPDATE
+                                $serviceAccount->Zone = (trim($zone) == null ? $prevZone : $zone);
+                                $serviceAccount->BlockCode = (trim($block) == null ? $prevBlock : $block);
+                                $serviceAccount->AccountType = utf8_decode(trim($classification) == null ? $prevClass : $classification);
+                                $serviceAccount->ServiceAccountName = utf8_decode($name);
+                                $serviceAccount->HouseNumber = utf8_decode($houseNo);
+                                $serviceAccount->MeterDetailsId = utf8_decode($meterNo);
+                                $serviceAccount->Flag = utf8_decode($flag);
+                                $serviceAccount->Multiplier = $multiplier;
+                                $serviceAccount->DiscountType = $dscType;                                
+                                $serviceAccount->DiscountRate = is_numeric($rate) ? $rate : '0';                              
+                                $serviceAccount->AccountStatus = $status;                           
+                                $serviceAccount->OutstandingBalance = is_numeric($outBalance) ? $outBalance : '0';
+                                $serviceAccount->save();
+
+                                // INSERT METER NO HERE
+                                $meter = BillingMeters::where('SerialNumber', $meterNo)
+                                    ->where('ServiceAccountId', $serviceAccount->id)
+                                    ->first();
+                                
+                                if ($meter == null) {
+                                    $meter = new BillingMeters;
+                                    $meter->id = IDGenerator::generateID() . $i;
+                                    $meter->ServiceAccountId = $serviceAccount->id;
+                                    $meter->SerialNumber = $meterNo;
+                                    $meter->Multiplier = $multiplier;
+                                    $meter->LatestReading = $lastReading;
+                                    $meter->LatestReadingDate = date('Y-m-d', strtotime($lastReadingDate));
+                                    $meter->save();
+                                } else {
+                                    $meter->Multiplier = $multiplier;
+                                    $meter->LatestReading = $lastReading;
+                                    $meter->LatestReadingDate = date('Y-m-d', strtotime($lastReadingDate));
+                                    $meter->save();
+                                }
+
+
+                                // INSERT LAST READING HERE
+                                $period = date('Y-m-01', strtotime($lastReadingDate));
+                                $reading = Readings::where('AccountNumber', $serviceAccount->id)
+                                    ->where('ServicePeriod', $period)
+                                    ->first();
+
+                                if ($reading != null) {
+                                    $reading->KwhUsed = $lastReading;
+                                    $reading->save();
+                                } else {
+                                    $reading = new Readings;
+                                    $reading->id = IDGenerator::generateIDandRandString() . $i;
+                                    $reading->AccountNumber = $serviceAccount->id;
+                                    $reading->ServicePeriod = $period;
+                                    $reading->KwhUsed = $lastReading;
+                                    $reading->save();
+                                }
+                            } else {
+                                // INSERT NEW
+                                $serviceAccount = new ServiceAccounts;
+                                $serviceAccount->id = IDGenerator::generateID() . $i;
+                                $serviceAccount->Zone = (trim($zone) == null ? $prevZone : $zone);
+                                $serviceAccount->BlockCode = (trim($block) == null ? $prevBlock : $block);
+                                $serviceAccount->AccountType = utf8_decode(trim($classification) == null ? $prevClass : $classification);
+                                $serviceAccount->ServiceAccountName = utf8_decode($name);
+                                $serviceAccount->OldAccountNo = utf8_decode($acctNo);
+                                $serviceAccount->HouseNumber = utf8_decode($houseNo);
+                                $serviceAccount->MeterDetailsId = utf8_decode($meterNo);
+                                $serviceAccount->Flag = utf8_decode($flag);
+                                $serviceAccount->Multiplier = $multiplier;
+                                $serviceAccount->DiscountType = $dscType;                                        
+                                $serviceAccount->DiscountRate = is_numeric($rate) ? $rate : '0';                              
+                                $serviceAccount->AccountStatus = $status;                           
+                                $serviceAccount->OutstandingBalance = is_numeric($outBalance) ? $outBalance : '0';
+                                $serviceAccount->save();
+
+                                // INSERT METER NO HERE
+                                $meter = BillingMeters::where('SerialNumber', $meterNo)
+                                    ->where('ServiceAccountId', $serviceAccount->id)
+                                    ->first();
+                                
+                                if ($meter == null) {
+                                    $meter = new BillingMeters;
+                                    $meter->id = IDGenerator::generateID() . $i;
+                                    $meter->ServiceAccountId = $serviceAccount->id;
+                                    $meter->SerialNumber = $meterNo;
+                                    $meter->Multiplier = $multiplier;
+                                    $meter->LatestReading = $lastReading;
+                                    $meter->LatestReadingDate = date('Y-m-d', strtotime($lastReadingDate));
+                                    $meter->save();
+                                } else {
+                                    $meter->Multiplier = $multiplier;
+                                    $meter->LatestReading = $lastReading;
+                                    $meter->LatestReadingDate = date('Y-m-d', strtotime($lastReadingDate));
+                                    $meter->save();
+                                }
+
+
+                                // INSERT LAST READING HERE
+                                $period = date('Y-m-01', strtotime($lastReadingDate));
+                                $reading = Readings::where('AccountNumber', $serviceAccount->id)
+                                    ->where('ServicePeriod', $period)
+                                    ->first();
+
+                                if ($reading != null) {
+                                    $reading->KwhUsed = $lastReading;
+                                    $reading->save();
+                                } else {
+                                    $reading = new Readings;
+                                    $reading->id = IDGenerator::generateIDandRandString() . $i;
+                                    $reading->AccountNumber = $serviceAccount->id;
+                                    $reading->ServicePeriod = $period;
+                                    $reading->KwhUsed = $lastReading;
+                                    $reading->save();
+                                }
+                            }
+
+                            $prevZone = trim($zone) == null ? $prevZone : $zone;
+                            $prevBlock = trim($block) == null ? $prevBlock : $block;
+                            $prevClass = trim($classification) == null ? $prevClass : $classification;
+                            $i+=1;
+                        }
+                    }
+
+                    // // for display
+                    // if ($i > 2000) {
+                    //     break;
+                    // }
+                  
+                }
+                // // for display
+                // echo "</tbody></table>";
+
+                fclose($handle);
+            } else {
+                // Handle error opening the file
+                return response()->json(['error' => 'Unable to open the file.'], 500);
+            }
+        } else {
+            // Handle invalid file
+            return response()->json(['error' => 'Invalid file.'], 400);
+        }
+
+        Flash::success('Account master list updated!');
+
+        return redirect(route('serviceAccounts.index'));
+    }
 }

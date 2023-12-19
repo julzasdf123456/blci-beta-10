@@ -313,6 +313,10 @@ Route::get('/service_accounts/material-deposit-accounts', [ServiceAccountsContro
 Route::get('/service_accounts/customer-deposit-accounts', [ServiceAccountsController::class, 'customerDepositAccounts'])->name('serviceAccounts.customer-deposit-accounts');
 Route::get('/service_accounts/increment-customer-deposit-interests', [ServiceAccountsController::class, 'incrementCustomerDepositInterests'])->name('serviceAccounts.increment-customer-deposit-interests');
 Route::get('/service_accounts/refund-customer-deposit', [ServiceAccountsController::class, 'refundCustomerDeposit'])->name('serviceAccounts.refund-customer-deposit');
+Route::get('/service_accounts/mw-customer-list', [ServiceAccountsController::class, 'mwCustomerList'])->name('serviceAccounts.mw-customer-list');
+Route::post('/service_accounts/validate-mw-customer-file', [ServiceAccountsController::class, 'validateMwCustomerFile'])->name('serviceAccounts.validate-mw-customer-file');
+Route::get('/service_accounts/mw-customer-master-list', [ServiceAccountsController::class, 'mwCustomerMasterList'])->name('serviceAccounts.mw-customer-master-list');
+Route::post('/service_accounts/validate-mw-customer-master-list-file', [ServiceAccountsController::class, 'validateMwCustomerMasterListFile'])->name('serviceAccounts.validate-mw-customer-master-list-file');
 Route::resource('serviceAccounts', ServiceAccountsController::class);
 
 
@@ -969,3 +973,8 @@ Route::resource('bill-mirrors', App\Http\Controllers\BillMirrorController::class
 Route::resource('collection-date-adjustments', App\Http\Controllers\CollectionDateAdjustmentsController::class);
 Route::resource('customer-deposit-interests', App\Http\Controllers\CustomerDepositInterestsController::class);
 Route::resource('customer-deposit-logs', App\Http\Controllers\CustomerDepositLogsController::class);
+
+Route::get('/bohol_water_service_accounts/upload-file', [App\Http\Controllers\BoholWaterServiceAccountsController::class, 'uploadFile'])->name('boholWaterServiceAccounts.upload-file');
+Route::post('/bohol_water_service_accounts/validate-uploaded-file', [App\Http\Controllers\BoholWaterServiceAccountsController::class, 'validateUploadedFile'])->name('boholWaterServiceAccounts.validate-uploaded-file');
+Route::resource('boholWaterServiceAccounts', App\Http\Controllers\BoholWaterServiceAccountsController::class);
+Route::resource('bohol-water-collections', App\Http\Controllers\BoholWaterCollectionController::class);

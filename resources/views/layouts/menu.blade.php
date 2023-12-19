@@ -1282,6 +1282,33 @@ use Illuminate\Support\Facades\Auth;
         </a>
     </li>  
 @endcanany
+{{-- BWUI --}}
+@canany(['Super Admin', 'create membership', 'sc create', 'teller create', 'teller approve'])
+    <li class="nav-header">BWUI</li>
+    <li class="nav-item has-treeview">
+        <a href="#" class="nav-link">
+            <i class="fas fa-hand-holding-water nav-icon"></i>
+            <p>
+                BWUI Module
+                <i class="fas fa-angle-left right"></i>
+            </p>
+        </a>
+        <ul class="nav nav-treeview">
+            <li class="nav-item">
+                <a href="{{ route('towns.index') }}"
+                class="nav-link {{ Request::is('towns*') ? 'active' : '' }}">
+                <i class="fas fa-user nav-icon"></i><p>Consumer Accounts</p>
+                </a>
+            </li>   
+            <li class="nav-item">
+                <a href="{{ route('boholWaterServiceAccounts.upload-file') }}"
+                class="nav-link {{ Request::is('boholWaterServiceAccounts.upload-file*') ? 'active' : '' }}">
+                <i class="fas fa-upload nav-icon"></i><p>Upload New Data</p>
+                </a>
+            </li>           
+        </ul>
+    </li>
+@endcanany
 <!-- EXTRAS MENU -->
 @canany(['Super Admin', 'create membership', 'sc create', 'teller create', 'teller approve'])
     <li class="nav-header">MISCELLANEOUS</li>
@@ -1354,6 +1381,31 @@ use Illuminate\Support\Facades\Auth;
             
         </ul>
     </li>
+    {{-- MIDDLEWARE --}}
+    <li class="nav-item has-treeview">
+        <a href="#" class="nav-link">
+            <i class="fas fa-code-branch nav-icon"></i>
+            <p>
+                Middleware
+                <i class="fas fa-angle-left right"></i>
+            </p>
+        </a>
+        <ul class="nav nav-treeview">
+            <li class="nav-item">
+                <a href="{{ route('serviceAccounts.mw-customer-master-list') }}"
+                class="nav-link {{ Request::is('serviceAccounts.mw-customer-master-list*') ? 'active' : '' }}">
+                <i class="fas fa-circle nav-icon"></i><p>Customer Master List</p>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a href="{{ route('serviceAccounts.mw-customer-list') }}"
+                class="nav-link {{ Request::is('serviceAccounts.mw-customer-list*') ? 'active' : '' }}">
+                <i class="fas fa-circle nav-icon"></i><p>Customer List w/ Demand</p>
+                </a>
+            </li>
+
+        </ul>
+    </li>
 @endcanany
 
 <!-- ADMIN MENU -->
@@ -1399,3 +1451,4 @@ use Illuminate\Support\Facades\Auth;
         </ul>
     </li>
 @endcan
+

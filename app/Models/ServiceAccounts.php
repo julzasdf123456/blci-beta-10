@@ -116,6 +116,11 @@ class ServiceAccounts extends Model
         'CustomerDepositYearRenewed',
         'CustomerDepositOriginalAmount',
         'CustomerDepositLastRenewed',
+        'OutstandingBalance',
+        'HouseNumber',
+        'Flag',
+        'DiscountType',
+        'DiscountRate',
     ];
 
     /**
@@ -190,6 +195,11 @@ class ServiceAccounts extends Model
         'CustomerDepositYearRenewed' => 'string',
         'CustomerDepositOriginalAmount' => 'string',
         'CustomerDepositLastRenewed' => 'string',
+        'OutstandingBalance' => 'string',
+        'HouseNumber' => 'string',
+        'Flag' => 'string',
+        'DiscountType' => 'string',
+        'DiscountRate' => 'string',
     ];
 
     /**
@@ -266,6 +276,11 @@ class ServiceAccounts extends Model
         'CustomerDepositYearRenewed' => 'nullable|string',
         'CustomerDepositOriginalAmount' => 'nullable|string',
         'CustomerDepositLastRenewed' => 'nullable|string',
+        'OutstandingBalance' => 'nullable|string',
+        'HouseNumber' => 'nullable|string',
+        'Flag' => 'nullable|string',
+        'DiscountType' => 'nullable|string',
+        'DiscountRate' => 'nullable|string',
     ];
 
     public static function getAddress($serviceAccount) {
