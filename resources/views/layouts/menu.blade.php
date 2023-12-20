@@ -1409,6 +1409,12 @@ use Illuminate\Support\Facades\Auth;
                 <i class="fas fa-circle nav-icon"></i><p>Adv. Material Deposit Bal.</p>
                 </a>
             </li>
+            <li class="nav-item">
+                <a href="{{ route('serviceAccounts.mw-customer-deposit-balances') }}"
+                class="nav-link {{ Request::is('serviceAccounts.mw-customer-deposit-balances*') ? 'active' : '' }}">
+                <i class="fas fa-circle nav-icon"></i><p>Customer Deposit Bal.</p>
+                </a>
+            </li>
 
         </ul>
     </li>
