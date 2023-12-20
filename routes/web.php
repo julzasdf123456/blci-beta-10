@@ -317,6 +317,8 @@ Route::get('/service_accounts/mw-customer-list', [ServiceAccountsController::cla
 Route::post('/service_accounts/validate-mw-customer-file', [ServiceAccountsController::class, 'validateMwCustomerFile'])->name('serviceAccounts.validate-mw-customer-file');
 Route::get('/service_accounts/mw-customer-master-list', [ServiceAccountsController::class, 'mwCustomerMasterList'])->name('serviceAccounts.mw-customer-master-list');
 Route::post('/service_accounts/validate-mw-customer-master-list-file', [ServiceAccountsController::class, 'validateMwCustomerMasterListFile'])->name('serviceAccounts.validate-mw-customer-master-list-file');
+Route::get('/service_accounts/mw-advance-material-deposit-balances', [ServiceAccountsController::class, 'mwAdvanceMaterialDepositBalances'])->name('serviceAccounts.mw-advance-material-deposit-balances');
+Route::post('/service_accounts/validate-mw-advance-material-deposit-balances', [ServiceAccountsController::class, 'validateMwAdvanceMaterialDepositBalances'])->name('serviceAccounts.validate-mw-advance-material-deposit-balances');
 Route::resource('serviceAccounts', ServiceAccountsController::class);
 
 

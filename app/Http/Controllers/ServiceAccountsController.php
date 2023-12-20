@@ -3782,4 +3782,102 @@ class ServiceAccountsController extends AppBaseController
 
         return redirect(route('serviceAccounts.index'));
     }
+
+    public function mwAdvanceMaterialDepositBalances(Request $request) {
+        return view('/service_accounts/mw_adv_material_deposit_balances', [
+
+        ]);
+    }
+
+    public function validateMwAdvanceMaterialDepositBalances(Request $request) {
+        $file = $request->file('file');
+
+        // Process the file line by line
+        if ($file->isValid()) {
+            $path = $file->path();
+            $handle = fopen($path, 'r');
+
+            if ($handle) {
+                $i = 1;
+                // // for display
+                // echo "<table style='width: 100%; border-collapse: collapse;'>
+                //     <thead>
+                //         <th>#</th>
+                //         <th>Zone</th>
+                //         <th>Block</th>
+                //         <th>Name</th>
+                //         <th>Account No</th>
+                //         <th>Meter No</th>
+                //         <th>Outstanding Balance</th>
+                //     </thead>
+                //     <tbody>";
+                $prevZone = "";
+                $prevBlock = "";
+                while (($line = fgets($handle)) !== false) {
+                    $line;
+
+                    $zone = substr($line, 10, 3);
+                    $block = substr($line, 14, 3);
+                    $name = substr($line, 18, 28);
+                    $acctNo = substr($line, 49, 8);
+                    $meterNo = trim(substr($line, 58, 12));
+                    $outBalance = str_replace(",", "", trim(substr($line, 76, 15)));
+
+                    // if outstanding balance is negative
+                    if (str_contains($outBalance, '-')) {
+                        $outBalance = str_replace('-', '', $outBalance);
+                        $outBalance = '-' . $outBalance;
+                    }
+
+                    if (strlen(trim($line)) > 0 | trim($line) != null) {
+
+                        if ((trim($zone) == null | is_numeric($zone)) && trim($name) != null) {
+
+                            // // for display
+                            // echo "<tr>
+                            //         <td style='border: 1px solid black;'>" . $i . "</td>
+                            //         <td style='border: 1px solid black;'>" . (trim($zone) == null ? $prevZone : $zone) . "</td>
+                            //         <td style='border: 1px solid black;'>" . (trim($block) == null ? $prevBlock : $block) . "</td>
+                            //         <td style='border: 1px solid black;'>" . utf8_decode($name) . "</td>
+                            //         <td style='border: 1px solid black;'>" . $acctNo . "</td>
+                            //         <td style='border: 1px solid black;'>" . $meterNo . "</td>
+                            //         <td style='border: 1px solid black;'>" . $outBalance . "</td>
+                            //     </tr>";
+                            
+                            // UPDATE BALANCES
+                            $serviceAccount = ServiceAccounts::where('OldAccountNo', $acctNo)->first();
+                            if ($serviceAccount != null) {
+                                $serviceAccount->AdvancedMaterialDeposit = $outBalance;
+                                $serviceAccount->save();
+                            }
+
+                            $prevZone = trim($zone) == null ? $prevZone : $zone;
+                            $prevBlock = trim($block) == null ? $prevBlock : $block;
+                            $i+=1;
+                        }
+                    }
+
+                    // // for display
+                    // if ($i > 2000) {
+                    //     break;
+                    // }
+                  
+                }
+                // // for display
+                // echo "</tbody></table>";
+
+                fclose($handle);
+            } else {
+                // Handle error opening the file
+                return response()->json(['error' => 'Unable to open the file.'], 500);
+            }
+        } else {
+            // Handle invalid file
+            return response()->json(['error' => 'Invalid file.'], 400);
+        }
+
+        Flash::success('Advanced material deposit balances updated!');
+
+        return redirect(route('serviceAccounts.mw-advance-material-deposit-balances'));
+    }
 }

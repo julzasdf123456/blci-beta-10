@@ -5,7 +5,7 @@
         <div class="container-fluid">
             <div class="row mb-2">
                 <div class="col-sm-12">
-                    <h4>Upload Customer List with Demand/Multiplier Text File</h4>
+                    <h4>Upload Advance Customer Deposit Balances Text File</h4>
                 </div>
             </div>
         </div>
@@ -19,7 +19,7 @@
             <div class="clearfix"></div>
 
             <div class="card">
-                <form method="POST" enctype="multipart/form-data" action="{{ route('serviceAccounts.validate-mw-customer-file') }}" >
+                <form method="POST" enctype="multipart/form-data" action="{{ route('serviceAccounts.validate-mw-advance-material-deposit-balances') }}" >
                 <div class="card-header">
                     <span class="card-title">Upload .txt File</span>
                 </div>
@@ -27,7 +27,7 @@
                     <input type="hidden" name="_token" value="{{ csrf_token() }}">
 
                     <div class="form-group col-lg-8 offset-lg-2 col-md-12 col-sm-12">
-                        {!! Form::label('file', 'Select Customer List with Demand Text File (.txt):') !!}
+                        {!! Form::label('file', 'Select Advance Customer Deposit Balances Text File (.txt):') !!}
                         <br>
                         <input type="file" name="file" placeholder="Choose File" id="file">
                         <span class="text-danger">{{ $errors->first('file') }}</span>
