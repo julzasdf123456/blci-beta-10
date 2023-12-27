@@ -85,6 +85,14 @@
             margin-right: 4px;
         }
 
+        .ico-tab-left {
+            margin-left: 15px;
+        }
+
+        .ico-tab-mini-left {
+            margin-left: 4px;
+        }
+
         .badge-lg {
             padding: 10px;
             border-radius: 4px;
@@ -206,6 +214,15 @@
             <li class="nav-item">
                 <a class="nav-link" data-widget="pushmenu" href="#" role="button"><i class="fas fa-bars"></i></a>
             </li>
+            {{-- @php
+                echo Route::currentRouteName();
+            @endphp --}}
+            {{-- 
+                ===========================================================================
+                SHOW MENUS FOR ROUTE "serviceAccounts.show"
+                ===========================================================================
+                --}}
+            @include('layouts.sub_menus')
         </ul>
 
         <ul class="navbar-nav ml-auto">
@@ -214,19 +231,25 @@
                 <button class="btn btn-link text-primary" title="Search Consumer"  data-toggle="modal" data-target="#modal-search-main"><i class="fas fa-search ico-tab"></i></button> 
             </li>
     
-            <!-- Notifications Dropdown Menu -->
-            <li class="nav-item dropdown">
-                <a class="nav-link" data-toggle="dropdown" href="#">
-                    <i class="far fa-bell"></i>
-                    <span class="badge badge-warning navbar-badge">15</span>
-                </a>
-                <div class="dropdown-menu dropdown-menu-lg dropdown-menu-right" id="notifier-bin">
-                    {{-- <span class="dropdown-item dropdown-header">15 Notifications</span> --}}
-                    <span>
-                        
-                    </span>                    
-                </div>
-            </li>
+            <!-- Notifications Dropdown Menu -->            
+            {{-- 
+                ===========================================================================
+                ENABLE/UNCOMMENT THIS AREA IF NOTIFICATIONS ARE ACTIVATED
+                ===========================================================================
+                --}}
+            {{-- 
+                <li class="nav-item dropdown">
+                    <a class="nav-link" data-toggle="dropdown" href="#">
+                        <i class="far fa-bell"></i>
+                        <span class="badge badge-warning navbar-badge">15</span>
+                    </a>
+                    <div class="dropdown-menu dropdown-menu-lg dropdown-menu-right" id="notifier-bin">
+                        <span>
+                            
+                        </span>                    
+                    </div>
+                </li>
+             --}}
             <li class="nav-item">
                 <a class="nav-link" data-widget="fullscreen" href="#" role="button">
                     <i class="fas fa-expand-arrows-alt"></i>
