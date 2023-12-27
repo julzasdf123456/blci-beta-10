@@ -659,7 +659,7 @@ class BillMirror extends Model
 
             } else {
                 $amnt = BillMirror::distributeUpdate($amount, $dist, $existingValue);
-                $billMirror->TransmissionDeliveryChargeKWH = ($amnt + $existingValue);
+                $billMirror->TransmissionDeliveryChargeKWH = round(($amnt + $existingValue), 2);
                 $amount = $amount - $amnt;
             }
         }
@@ -877,5 +877,5 @@ class BillMirror extends Model
         $billMirror->TermedPayments = $bill->TermedPayments;
             
         return $billMirror;
-    }
+    } 
 }

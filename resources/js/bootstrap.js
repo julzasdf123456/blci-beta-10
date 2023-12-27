@@ -11,8 +11,8 @@ window.axios = axios;
 
 window.axios.defaults.headers.common['X-Requested-With'] = 'XMLHttpRequest';
 
-// window.axios.defaults.baseURL = 'http://localhost/blci-beta-10/public/index.php';
-window.axios.defaults.baseURL = 'http://10.10.1.104:8004/blci-beta-10/public/index.php';
+window.axios.defaults.baseURL = 'http://localhost/blci-beta-10/public/index.php';
+// window.axios.defaults.baseURL = 'http://10.10.1.104:8004/blci-beta-10/public/index.php';
 
 
 /**

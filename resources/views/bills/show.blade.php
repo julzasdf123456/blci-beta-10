@@ -501,10 +501,10 @@
                                     <div class="col-lg-12">
                                         <table class="table table-borderless table-sm table-hover" style="width: 100%;">
                                             <tr>
-                                                <td>Billed Amount</td>
-                                                <th class="text-right">{{ number_format(Bills::getBilledAmount($bills), 2) }}</th>
-                                                <td style="padding-left: 60px;">Others Amount</td>
-                                                <th class="text-right">- {{ Bills::getOthersAmount($bills) }}</th>
+                                                <td class="text-success"><strong>Billed Amount</strong></td>
+                                                <th class="text-right text-success">{{ number_format(Bills::getBilledAmount($bills), 2) }}</th>
+                                                <td class="text-danger" style="padding-left: 60px;"><strong>Others Amount</strong></td>
+                                                <th class="text-right text-danger">{{ Bills::getOthersAmount($bills) }}</th>
                                             </tr>
                                             <tr>
                                                 <td>Termed Payments</td>

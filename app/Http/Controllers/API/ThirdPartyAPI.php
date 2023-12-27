@@ -11,6 +11,7 @@ use App\Models\PaidBillsDetails;
 use App\Models\ServiceAccounts;
 use App\Models\IDGenerator;
 use App\Models\Bills;
+use App\Models\BillMirror;
 use App\Models\ThirdPartyTokens;
 use App\Models\Users;
 use App\Models\ArrearsLedgerDistribution;
@@ -39,56 +40,61 @@ class ThirdPartyAPI extends Controller {
 
                     if ($serviceAccount != null) {
                         // GET BILLS
-                        // $bills = DB::table('Billing_Bills')
-                        //     ->whereRaw("AccountNumber='" . $serviceAccount->id . "' AND AccountNumber NOT IN (SELECT AccountNumber FROM Cashier_PaidBills WHERE AccountNumber IS NOT NULL AND AccountNumber='" . $serviceAccount->id . "' AND (Status IS NULL OR Status='Application') AND ServicePeriod=Billing_Bills.ServicePeriod)")
-                        //     ->select('Billing_Bills.*')
-                        //     ->orderByDesc('Billing_Bills.ServicePeriod')
-                        //     ->get();
                         if ($serviceAccount->DownloadedByDisco == 'Yes') {
                             return response()->json("This account is due for disconnection. A disconnector is on its way to disconnect this consumer.", 403);
                         } else {
+                            // $bills = DB::table('Billing_Bills')
+                            //     ->whereRaw("AccountNumber='" . $serviceAccount->id . "' AND AccountNumber NOT IN (SELECT AccountNumber FROM Cashier_PaidBills WHERE AccountNumber=Billing_Bills.AccountNumber AND ServicePeriod=Billing_Bills.ServicePeriod AND (Status IS NULL OR Status='Application'))")
+                            //     ->select('Billing_Bills.*')
+                            //     ->orderByDesc('Billing_Bills.ServicePeriod')
+                            //     ->get();
                             $bills = DB::table('Billing_Bills')
-                                ->whereRaw("AccountNumber='" . $serviceAccount->id . "'")
-                                ->select('Billing_Bills.*',
-                                    DB::raw("(SELECT TOP 1 ORNumber FROM Cashier_PaidBills WHERE AccountNumber='" . $serviceAccount->id . "' AND (Status IS NULL OR Status='Application') AND ServicePeriod=Billing_Bills.ServicePeriod) AS ORNumber")
-                                )
+                                ->whereRaw("AccountNumber='" . $serviceAccount->id . "' AND Balance > 0")
+                                ->select('Billing_Bills.*')
                                 ->orderByDesc('Billing_Bills.ServicePeriod')
                                 ->get();
 
                             $resData = [];
 
+                            // ADD ACCOUNT DETAILS FIRST
+                            $resData['CustomerName'] = trim($serviceAccount->ServiceAccountName);
+                            $resData['AccountNumber'] = $serviceAccount->OldAccountNo;
+                            $resData['AccountID'] = $serviceAccount->id;
+                            $resData['AccountStatus'] = $serviceAccount->AccountStatus;
+                            $resData['AccountType'] = $serviceAccount->AccountType;
+
                             if ($serviceAccount->AccountStatus == 'DISCONNECTED') {
                                 array_push($resData, [
-                                    'AccountID' => $serviceAccount->id,
-                                    'AccountNumber' => $serviceAccount->OldAccountNo,
-                                    'ServiceAccountName' => $serviceAccount->ServiceAccountName,
-                                    'AccountStatus' => $serviceAccount->AccountStatus,
-                                    'AccountType' => $serviceAccount->AccountType,
                                     'Payable' => 'Reconnection Fee',
                                     'TotalAmountDue' => 60.00,
                                 ]);
-                            }
+                            }                            
+
+                            $unpaidbills = [];
+                            $totalSubTotal = 0;
+                            $totalSurcharge = 0;
+                            $totalPayable = 0;
 
                             foreach($bills as $item) {
-                                array_push($resData, [
-                                    'AccountID' => $serviceAccount->id,
-                                    'AccountNumber' => $serviceAccount->OldAccountNo,
-                                    'ServiceAccountName' => $serviceAccount->ServiceAccountName,
-                                    'AccountStatus' => $serviceAccount->AccountStatus,
-                                    'AccountType' => $serviceAccount->AccountType,
+                                array_push($unpaidbills, [
                                     'BillNumber' => $item->BillNumber,
-                                    'BillId' => $item->id,
                                     'BillingMonth' => $item->ServicePeriod,
                                     'KwhUsed' => round($item->KwhUsed, 2),
-                                    'TwoPercentWT' => round($item->Evat2Percent, 2),
-                                    'FivePercentWT' => round($item->Evat5Percent, 2),
                                     'DueDate' => $item->DueDate,
-                                    'AmountDue' => round($item->NetAmount, 2),
+                                    'AmountDue' => round($item->Balance, 2),
                                     'Surcharge' => round(Bills::getSurchargeFinal($item), 2),
-                                    'TotalAmountDue' => round(floatval($item->NetAmount) + floatval(Bills::getSurchargeFinal($item)), 2),   
-                                    'IsPaid' => $item->ORNumber==null ? 'No' : 'Yes',                             
+                                    'TotalAmountDue' => round(floatval($item->Balance) + floatval(Bills::getSurchargeFinal($item)), 2),                            
                                 ]);
+
+                                $totalSubTotal += floatval($item->Balance);
+                                $totalSurcharge += floatval(Bills::getSurchargeFinal($item));
+                                $totalPayable += (floatval($item->Balance) + floatval(Bills::getSurchargeFinal($item)));
                             }
+                            
+                            $resData['OverallSubTotal'] = round($totalSubTotal, 2);
+                            $resData['OverallSurcharges'] = round($totalSurcharge, 2);
+                            $resData['OverallAmountDue'] = round($totalPayable, 2);
+                            $resData['UnpaidBills'] = $unpaidbills;
 
                             return response()->json($resData, 200);
                         }                        
@@ -106,17 +112,44 @@ class ThirdPartyAPI extends Controller {
         }
     }
 
+    public static function getTotalBalance($accountId) {        // VALIDATE ACCOUNT NUMBER
+        if ($accountId != null) {
+            // GET ACCOUNT DETAILS
+            $serviceAccount = ServiceAccounts::find($accountId);
+
+            if ($serviceAccount != null) {
+                $bills = DB::table('Billing_Bills')
+                    ->whereRaw("AccountNumber='" . $serviceAccount->id . "' AND Balance > 0")
+                    ->select('Billing_Bills.*')
+                    ->orderByDesc('Billing_Bills.ServicePeriod')
+                    ->get();
+
+                $totalPayable = 0;
+
+                foreach($bills as $item) {
+                    $totalPayable += (floatval($item->Balance) + floatval(Bills::getSurchargeFinal($item)));
+                }                
+
+                return $totalPayable;                     
+            } else {
+                return 0;
+            }
+        } else {
+            return 0;
+        }
+    }
+
     public function attemptTransactPayment(Request $request) {
         $token = $request['_token'];
         $accountNumber = $request['AccountId'];
-        $period = $request['BillingMonth'];
+        // $period = $request['BillingMonth'];
         $orNo = $request['ORNumber'];
         $companyCode = $request['CompanyCode'];
-        $netAmount = $request['TotalAmountDue'];
-        $surcharge = $request['Surcharge'];
+        $netAmount = $request['TotalAmountPaid'];
+        // $surcharge = $request['Surcharge'];
         $teller = $request['Teller'];
-        $branchOffice = $request['Branch'];
-        $paymentUsed = $request['PaymentUsed'];
+        // $branchOffice = $request['Branch'];
+        // $paymentUsed = $request['PaymentUsed'];
         $userId = $request['UserId'];
 
         if ($token != null) {
@@ -134,698 +167,118 @@ class ThirdPartyAPI extends Controller {
 
                             // VALIDATE ACCOUNT
                             if ($account != null) {
+                                // CHECK IF TOTAL AMOUNT TENDERED IS GREATER THAN AMOUNT PAYABLE
+                                $totalPayable = ThirdPartyAPI::getTotalBalance($accountNumber);
 
-                                // check if is already paid
-                                $pbCheck = PaidBills::whereRaw("AccountNumber='" . $accountNumber . "' AND ServicePeriod='" . $period . "' AND (Status IS NULL OR Status='Application')")
-                                    ->first();
-                                
-                                if ($pbCheck != null) {
-                                    return response()->json('Consumer already paid', 403);
+                                $netAmount = floatval($netAmount);
+
+                                if ($netAmount < $totalPayable) {
+                                    return response()->json('Amount tendered should be greater than or equal to the total amount payable!', 403);
                                 } else {
-                                    // ONLY ALLOW NON 2% and 5%
-                                    if ($account->Evat5Percent != 'Yes' || $account->Ewt2Percent != 'Yes') {
-                                        // GET BILL
-                                        $bill = Bills::where('AccountNumber', $accountNumber)
-                                            ->where('ServicePeriod', $period)
+                                    // TRANSACT ALL
+                                    $bills = DB::table('Billing_Bills')
+                                        ->whereRaw("AccountNumber='" . $accountNumber . "' AND Balance > 0")
+                                        ->select('Billing_Bills.*')
+                                        ->orderByDesc('Billing_Bills.ServicePeriod')
+                                        ->get();
+
+                                    foreach ($bills as $item) {
+                                        $amountRemaining = $item->Balance;
+                                        $surcharge = floatval(Bills::getSurchargeFinal($item));
+
+                                        // SKIP PAID
+                                        // SAVE UNPAID
+                                        $paidBill = new PaidBills([
+                                            'id' => IDGenerator::generateIDandRandString(),
+                                            'BillNumber' => $item->BillNumber,
+                                            'AccountNumber' => $accountNumber,
+                                            'ServicePeriod' => $item->ServicePeriod,
+                                            'ORNumber' => $orNo,
+                                            'ORDate' => date('Y-m-d'),
+                                            'DCRNumber' => $companyCode . '-' . date('Y-m-d'),
+                                            'KwhUsed' => $item->KwhUsed,
+                                            'Teller' => $user->id,
+                                            'OfficeTransacted' => 'API',
+                                            'PostingDate' => null,
+                                            'Surcharge' => $surcharge,
+                                            'Form2307TwoPercent' => null,
+                                            'Form2307FivePercent' => null,
+                                            'AdditionalCharges' => null,
+                                            'Deductions' => null,
+                                            'NetAmount' => $item->Balance,
+                                            'Source' => 'THIRD-PARTY COLLECTION API', // THIRD PARTY COLLECTION INDICATOR
+                                            'ObjectSourceId' => $data != null ? $data->ThirdPartyCompany : '-', // THIRD PARTY COMPANY
+                                            'UserId' => $user->id,
+                                            'Status' => null,
+                                            'FiledBy' => null,
+                                            'ApprovedBy' => null,
+                                            // 'AuditedBy' => $row['account_number'], // ACCOUNT NUMBER IN THE BILL
+                                            // 'Notes' => $this->seriesNo, // SERIES REF NO
+                                            'CheckNo' => $teller, // TELLER
+                                            'CheckExpiration' => null,
+                                            'PaymentUsed' => 'API',
+                                        ]);
+    
+                                        $paidBill->save();
+    
+                                        // SAVE paidbill details
+                                        $paidBillDetails = new PaidBillsDetails([
+                                            'id' => IDGenerator::generateIDandRandString(),
+                                            'AccountNumber' => $item->AccountNumber,
+                                            'ServicePeriod' => $item->ServicePeriod,
+                                            'ORNumber' => $orNo,
+                                            'Amount' => $item->Balance,
+                                            'PaymentUsed' => 'API',
+                                            'UserId' => $user->id,
+                                            'BillId' => $paidBill->id,
+                                        ]);
+                                        $paidBillDetails->save();
+
+                                        // UPDATE BILLS BALANCE
+                                        $bill = Bills::find($item->id);
+                                        $bill->PaidAmount = $item->Balance + $bill->PaidAmount;
+                                        $bill->Balance = 0;
+                                        $bill->save();
+
+                                        // SAVE BILL MIRROR
+                                        $bm = BillMirror::where('AccountNumber', $item->AccountNumber)
+                                            ->where('ServicePeriod', $item->ServicePeriod)
                                             ->first();
-                                        
-                                        if ($bill != null) {
-                                            $billAmnt = floatval(round(floatval($bill->NetAmount) + floatval(Bills::getSurchargeFinal($bill)), 2));
 
-                                            if ($netAmount < $billAmnt) {
-                                                return response()->json('Amount provided is less than the bill amount', 403);
-                                            } else {
-                                                $paidBill = new PaidBills([
-                                                    'id' => IDGenerator::generateIDandRandString(),
-                                                    'BillNumber' => $bill->BillNumber,
-                                                    'AccountNumber' => $accountNumber,
-                                                    'ServicePeriod' => $period,
-                                                    'ORNumber' => $orNo,
-                                                    'ORDate' => date('Y-m-d'),
-                                                    'DCRNumber' => $companyCode . '-' . date('Y-m-d'),
-                                                    'KwhUsed' => $bill->KwhUsed,
-                                                    'Teller' => $user->id,
-                                                    'OfficeTransacted' => env('APP_LOCATION'),
-                                                    'PostingDate' => null,
-                                                    'Surcharge' => $surcharge,
-                                                    'Form2307TwoPercent' => null,
-                                                    'Form2307FivePercent' => null,
-                                                    'AdditionalCharges' => null,
-                                                    'Deductions' => null,
-                                                    'NetAmount' => $netAmount,
-                                                    'Source' => 'THIRD-PARTY COLLECTION API', // THIRD PARTY COLLECTION INDICATOR
-                                                    'ObjectSourceId' => $data != null ? $data->ThirdPartyCompany : '-', // THIRD PARTY COMPANY
-                                                    'UserId' => $user->id,
-                                                    'Status' => null,
-                                                    'FiledBy' => null,
-                                                    'ApprovedBy' => null,
-                                                    // 'AuditedBy' => $row['account_number'], // ACCOUNT NUMBER IN THE BILL
-                                                    // 'Notes' => $this->seriesNo, // SERIES REF NO
-                                                    'CheckNo' => $teller, // TELLER
-                                                    'Bank' => $branchOffice, // THIRD PARTY OFFICE
-                                                    'CheckExpiration' => null,
-                                                    'PaymentUsed' => $paymentUsed,
-                                                ]);
-            
-                                                $paidBill->save();
-            
-                                                // SAVE paidbill details
-                                                $paidBillDetails = new PaidBillsDetails([
-                                                    'id' => IDGenerator::generateIDandRandString(),
-                                                    'AccountNumber' => $accountNumber,
-                                                    'ServicePeriod' => $period,
-                                                    'ORNumber' => $orNo,
-                                                    'Amount' => $netAmount,
-                                                    'PaymentUsed' => $paymentUsed,
-                                                    'UserId' => $user->id,
-                                                    'BillId' => $paidBill->id,
-                                                ]);
-                                                $paidBillDetails->save();
-
-                                                /**
-                                                 * SAVE DCR AND SALES REPORT
-                                                 */
-                                                if ($account != null) {                    
-                                                    if ($account->ForDistribution == 'Yes') {
-                                                        // IF ACCOUNT IS MARKED AS FOR DISTRIBUTION
-                                                        if ($account->DistributionAccountCode != null) {
-                                                            // GET AR CONSUMERS
-                                                            $dcrSum = new DCRSummaryTransactions;
-                                                            $dcrSum->id = IDGenerator::generateIDandRandString();
-                                                            $dcrSum->GLCode = $account->DistributionAccountCode;
-                                                            $dcrSum->Amount = DCRSummaryTransactions::getARConsumersAmount($bill);
-                                                            $dcrSum->Day = date('Y-m-d');
-                                                            $dcrSum->NEACode = $bill->ServicePeriod;
-                                                            $dcrSum->Time = date('H:i:s');
-                                                            $dcrSum->Teller = $user->id;
-                                                            $dcrSum->ORNumber = $orNo;
-                                                            $dcrSum->ReportDestination = 'BOTH';
-                                                            $dcrSum->Office = env('APP_LOCATION');
-                                                            $dcrSum->AccountNumber = $bill->AccountNumber;
-                                                            $dcrSum->DCRNumber = 'API COLLECTION';
-                                                            $dcrSum->Description = $data != null ? $data->ThirdPartyCompany : '-';
-                                                            $dcrSum->save();
-                                                        }                        
-                                                    } else {
-                                                        // GET AR CONSUMERS
-                                                        $dcrSum = new DCRSummaryTransactions;
-                                                        $dcrSum->id = IDGenerator::generateIDandRandString();
-                                                        $dcrSum->GLCode = DCRSummaryTransactions::getARConsumers($account->Town);
-                                                        $dcrSum->Amount = DCRSummaryTransactions::getARConsumersAmount($bill);
-                                                        $dcrSum->Day = date('Y-m-d');
-                                                        $dcrSum->NEACode = $bill->ServicePeriod;
-                                                        $dcrSum->Time = date('H:i:s');
-                                                        $dcrSum->Teller = $user->id;
-                                                        $dcrSum->ORNumber = $orNo;
-                                                        $dcrSum->ReportDestination = 'COLLECTION';
-                                                        $dcrSum->Office = env('APP_LOCATION');
-                                                        $dcrSum->AccountNumber = $bill->AccountNumber;
-                                                        $dcrSum->DCRNumber = 'API COLLECTION';
-                                                        $dcrSum->Description = $data != null ? $data->ThirdPartyCompany : '-';
-                                                        $dcrSum->save();
-
-                                                        // GET RPT FOR DCR
-                                                        $dcrSum = new DCRSummaryTransactions;
-                                                        $dcrSum->id = IDGenerator::generateIDandRandString();
-                                                        $dcrSum->GLCode = DCRSummaryTransactions::getARConsumersRPT($account->Town);
-                                                        $dcrSum->Amount = $bill->RealPropertyTax;
-                                                        $dcrSum->Day = date('Y-m-d');
-                                                        $dcrSum->NEACode = $bill->ServicePeriod;
-                                                        $dcrSum->Time = date('H:i:s');
-                                                        $dcrSum->Teller = $user->id;
-                                                        $dcrSum->ORNumber = $orNo;
-                                                        $dcrSum->ReportDestination = 'COLLECTION';
-                                                        $dcrSum->Office = env('APP_LOCATION');
-                                                        $dcrSum->AccountNumber = $bill->AccountNumber;
-                                                        $dcrSum->DCRNumber = 'API COLLECTION';
-                                                        $dcrSum->Description = $data != null ? $data->ThirdPartyCompany : '-';
-                                                        $dcrSum->save();
-
-                                                        // GET RPT  FOR SALES
-                                                        $dcrSum = new DCRSummaryTransactions;
-                                                        $dcrSum->id = IDGenerator::generateIDandRandString();
-                                                        $dcrSum->GLCode = '140-143-30';
-                                                        $dcrSum->Amount = $bill->RealPropertyTax;
-                                                        $dcrSum->Day = date('Y-m-d');
-                                                        $dcrSum->NEACode = $bill->ServicePeriod;
-                                                        $dcrSum->Time = date('H:i:s');
-                                                        $dcrSum->Teller = $user->id;
-                                                        $dcrSum->ORNumber = $orNo;
-                                                        $dcrSum->ReportDestination = 'SALES';
-                                                        $dcrSum->Office = env('APP_LOCATION');
-                                                        $dcrSum->AccountNumber = $bill->AccountNumber;
-                                                        $dcrSum->DCRNumber = 'API COLLECTION';
-                                                        $dcrSum->Description = $data != null ? $data->ThirdPartyCompany : '-';
-                                                        $dcrSum->save();
-
-                                                        // GET FRANCHISE TAX FOR DCR
-                                                        $dcrSum = new DCRSummaryTransactions;
-                                                        $dcrSum->id = IDGenerator::generateIDandRandString();
-                                                        $dcrSum->GLCode = DCRSummaryTransactions::getARConsumersRPT($account->Town);
-                                                        $dcrSum->Amount = $bill->FranchiseTax;
-                                                        $dcrSum->Day = date('Y-m-d');
-                                                        $dcrSum->NEACode = $bill->ServicePeriod;
-                                                        $dcrSum->Time = date('H:i:s');
-                                                        $dcrSum->Teller = $user->id;
-                                                        $dcrSum->ORNumber = $orNo;
-                                                        $dcrSum->ReportDestination = 'COLLECTION';
-                                                        $dcrSum->Office = env('APP_LOCATION');
-                                                        $dcrSum->AccountNumber = $bill->AccountNumber;
-                                                        $dcrSum->DCRNumber = 'API COLLECTION';
-                                                        $dcrSum->Description = $data != null ? $data->ThirdPartyCompany : '-';
-                                                        $dcrSum->save();
-
-                                                        // GET FRANCHISE TAX FOR SALES
-                                                        $dcrSum = new DCRSummaryTransactions;
-                                                        $dcrSum->id = IDGenerator::generateIDandRandString();
-                                                        $dcrSum->GLCode = '140-143-30';
-                                                        $dcrSum->Amount = $bill->FranchiseTax;
-                                                        $dcrSum->Day = date('Y-m-d');
-                                                        $dcrSum->NEACode = $bill->ServicePeriod;
-                                                        $dcrSum->Time = date('H:i:s');
-                                                        $dcrSum->Teller = $user->id;
-                                                        $dcrSum->ORNumber = $orNo;
-                                                        $dcrSum->ReportDestination = 'SALES';
-                                                        $dcrSum->Office = env('APP_LOCATION');
-                                                        $dcrSum->AccountNumber = $bill->AccountNumber;
-                                                        $dcrSum->DCRNumber = 'API COLLECTION';
-                                                        $dcrSum->Description = $data != null ? $data->ThirdPartyCompany : '-';
-                                                        $dcrSum->save();
-
-                                                        // GET BUSINESS TAX FOR DCR
-                                                        $dcrSum = new DCRSummaryTransactions;
-                                                        $dcrSum->id = IDGenerator::generateIDandRandString();
-                                                        $dcrSum->GLCode = DCRSummaryTransactions::getARConsumersRPT($account->Town);
-                                                        $dcrSum->Amount = $bill->BusinessTax;
-                                                        $dcrSum->Day = date('Y-m-d');
-                                                        $dcrSum->NEACode = $bill->ServicePeriod;
-                                                        $dcrSum->Time = date('H:i:s');
-                                                        $dcrSum->Teller = $user->id;
-                                                        $dcrSum->ORNumber = $orNo;
-                                                        $dcrSum->ReportDestination = 'COLLECTION';
-                                                        $dcrSum->Office = env('APP_LOCATION');
-                                                        $dcrSum->AccountNumber = $bill->AccountNumber;
-                                                        $dcrSum->DCRNumber = 'API COLLECTION';
-                                                        $dcrSum->Description = $data != null ? $data->ThirdPartyCompany : '-';
-                                                        $dcrSum->save();
-
-                                                        // GET BUSINESS TAX FOR SALES
-                                                        $dcrSum = new DCRSummaryTransactions;
-                                                        $dcrSum->id = IDGenerator::generateIDandRandString();
-                                                        $dcrSum->GLCode = '140-143-30';
-                                                        $dcrSum->Amount = $bill->BusinessTax;
-                                                        $dcrSum->Day = date('Y-m-d');
-                                                        $dcrSum->NEACode = $bill->ServicePeriod;
-                                                        $dcrSum->Time = date('H:i:s');
-                                                        $dcrSum->Teller = $user->id;
-                                                        $dcrSum->ORNumber = $orNo;
-                                                        $dcrSum->ReportDestination = 'SALES';
-                                                        $dcrSum->Office = env('APP_LOCATION');
-                                                        $dcrSum->AccountNumber = $bill->AccountNumber;
-                                                        $dcrSum->DCRNumber = 'API COLLECTION';
-                                                        $dcrSum->Description = $data != null ? $data->ThirdPartyCompany : '-';
-                                                        $dcrSum->save();
-
-                                                        // GET SALES AR BY CONSUMER TYPE 
-                                                        if ($account->OrganizationParentAccount != null) {
-                                                            // GET BAPA
-                                                            $dcrSum = new DCRSummaryTransactions;
-                                                            $dcrSum->id = IDGenerator::generateIDandRandString();
-                                                            $dcrSum->GLCode = '311-448-00';
-                                                            $dcrSum->Amount = DCRSummaryTransactions::getARConsumersAmount($bill);
-                                                            $dcrSum->Day = date('Y-m-d');
-                                                            $dcrSum->NEACode = $bill->ServicePeriod;
-                                                            $dcrSum->Time = date('H:i:s');
-                                                            $dcrSum->Teller = $user->id;
-                                                            $dcrSum->ORNumber = $orNo;
-                                                            $dcrSum->ReportDestination = 'SALES';
-                                                            $dcrSum->Office = env('APP_LOCATION');
-                                                            $dcrSum->AccountNumber = $bill->AccountNumber;
-                                                            $dcrSum->DCRNumber = 'API COLLECTION';
-                                                            $dcrSum->Description = $data != null ? $data->ThirdPartyCompany : '-';
-                                                            $dcrSum->save();
-                                                        } else {
-                                                            // GET NOT BAPA
-                                                            if ($account->AccountType == 'RURAL RESIDENTIAL' || $account->AccountType == 'RESIDENTIAL') {
-                                                                // GET RESIDENTIALS
-                                                                $dcrSum = new DCRSummaryTransactions;
-                                                                $dcrSum->id = IDGenerator::generateIDandRandString();
-                                                                $dcrSum->GLCode = DCRSummaryTransactions::getARConsumers($account->Town);;
-                                                                $dcrSum->Amount = DCRSummaryTransactions::getARConsumersAmount($bill);
-                                                                $dcrSum->Day = date('Y-m-d');
-                                                                $dcrSum->NEACode = $bill->ServicePeriod;
-                                                                $dcrSum->Time = date('H:i:s');
-                                                                $dcrSum->Teller = $user->id;
-                                                                $dcrSum->ORNumber = $orNo;
-                                                                $dcrSum->ReportDestination = 'SALES';
-                                                                $dcrSum->Office = env('APP_LOCATION');
-                                                                $dcrSum->AccountNumber = $bill->AccountNumber;
-                                                                $dcrSum->DCRNumber = 'API COLLECTION';
-                                                                $dcrSum->Description = $data != null ? $data->ThirdPartyCompany : '-';
-                                                                $dcrSum->save();
-                                                            } else {
-                                                                // GET NOT RESIDENTIALS
-                                                                $dcrSum = new DCRSummaryTransactions;
-                                                                $dcrSum->id = IDGenerator::generateIDandRandString();
-                                                                $dcrSum->GLCode = DCRSummaryTransactions::getGLCodePerAccountType($account->AccountType);;
-                                                                $dcrSum->Amount = DCRSummaryTransactions::getARConsumersAmount($bill);
-                                                                $dcrSum->Day = date('Y-m-d');
-                                                                $dcrSum->NEACode = $bill->ServicePeriod;
-                                                                $dcrSum->Time = date('H:i:s');
-                                                                $dcrSum->Teller = $user->id;
-                                                                $dcrSum->ORNumber = $orNo;
-                                                                $dcrSum->ReportDestination = 'SALES';
-                                                                $dcrSum->Office = env('APP_LOCATION');
-                                                                $dcrSum->AccountNumber = $bill->AccountNumber;
-                                                                $dcrSum->DCRNumber = 'API COLLECTION';
-                                                                $dcrSum->Description = $data != null ? $data->ThirdPartyCompany : '-';
-                                                                $dcrSum->save();
-                                                            }
-                                                        }
-                                                    }
-
-                                                    // GET TERMED PAYMENT BUNDLES
-                                                    if ($bill->AdditionalCharges != null) {
-                                                        // GET TERMED PAYMENT
-                                                        $termedPayment = ArrearsLedgerDistribution::where('AccountNumber', $account->id)
-                                                            ->where('ServicePeriod', $bill->ServicePeriod)
-                                                            ->whereNull('IsPaid')
-                                                            ->first();
-
-                                                        if ($termedPayment != null) {
-                                                            $dcrSum = new DCRSummaryTransactions;
-                                                            $dcrSum->id = IDGenerator::generateIDandRandString();
-                                                            $dcrSum->GLCode = DCRSummaryTransactions::getARConsumersTermedPayments($account->Town);
-                                                            $dcrSum->Amount = $termedPayment->Amount;
-                                                            $dcrSum->Day = date('Y-m-d');
-                                                            $dcrSum->NEACode = $bill->ServicePeriod;
-                                                            $dcrSum->Time = date('H:i:s');
-                                                            $dcrSum->Teller = $user->id;
-                                                            $dcrSum->ORNumber = $orNo;
-                                                            $dcrSum->ReportDestination = 'COLLECTION';
-                                                            $dcrSum->Office = env('APP_LOCATION');
-                                                            $dcrSum->AccountNumber = $bill->AccountNumber;
-                                                            $dcrSum->DCRNumber = 'API COLLECTION';
-                                                            $dcrSum->Description = $data != null ? $data->ThirdPartyCompany : '-';
-                                                            $dcrSum->save();
-
-                                                            $termedPayment->IsPaid = 'Yes';
-                                                            $termedPayment->save();
-                                                        }
-                                                    }
-                                                }
-
-                                                // GET UC-NPC Stranded Debt COLLECTION
-                                                $dcrSum = new DCRSummaryTransactions;
-                                                $dcrSum->id = IDGenerator::generateIDandRandString();
-                                                $dcrSum->GLCode = '140-142-87';
-                                                $dcrSum->Amount = $bill->NPCStrandedDebt;
-                                                $dcrSum->Day = date('Y-m-d');
-                                                $dcrSum->NEACode = $bill->ServicePeriod;
-                                                $dcrSum->Time = date('H:i:s');
-                                                $dcrSum->Teller = $user->id;
-                                                $dcrSum->ORNumber = $orNo;
-                                                $dcrSum->ReportDestination = 'COLLECTION';
-                                                $dcrSum->Office = env('APP_LOCATION');
-                                                $dcrSum->AccountNumber = $bill->AccountNumber;
-                                                $dcrSum->DCRNumber = 'API COLLECTION';
-                                                $dcrSum->Description = $data != null ? $data->ThirdPartyCompany : '-';
-                                                $dcrSum->save();
-
-                                                // GET UC-NPC Stranded Debt Sales
-                                                $dcrSum = new DCRSummaryTransactions;
-                                                $dcrSum->id = IDGenerator::generateIDandRandString();
-                                                $dcrSum->GLCode = '230-232-65';
-                                                $dcrSum->Amount = $bill->NPCStrandedDebt;
-                                                $dcrSum->Day = date('Y-m-d');
-                                                $dcrSum->NEACode = $bill->ServicePeriod;
-                                                $dcrSum->Time = date('H:i:s');
-                                                $dcrSum->Teller = $user->id;
-                                                $dcrSum->ORNumber = $orNo;
-                                                $dcrSum->ReportDestination = 'SALES';
-                                                $dcrSum->Office = env('APP_LOCATION');
-                                                $dcrSum->AccountNumber = $bill->AccountNumber;
-                                                $dcrSum->DCRNumber = 'API COLLECTION';
-                                                $dcrSum->Description = $data != null ? $data->ThirdPartyCompany : '-';
-                                                $dcrSum->save();
-
-                                                // GET STRANDED CONTRACT COST COLLECTION
-                                                $dcrSum = new DCRSummaryTransactions;
-                                                $dcrSum->id = IDGenerator::generateIDandRandString();
-                                                $dcrSum->GLCode = '140-142-92';
-                                                $dcrSum->Amount = $bill->StrandedContractCosts;
-                                                $dcrSum->Day = date('Y-m-d');
-                                                $dcrSum->NEACode = $bill->ServicePeriod;
-                                                $dcrSum->Time = date('H:i:s');
-                                                $dcrSum->Teller = $user->id;
-                                                $dcrSum->ORNumber = $orNo;
-                                                $dcrSum->ReportDestination = 'COLLECTION';
-                                                $dcrSum->Office = env('APP_LOCATION');
-                                                $dcrSum->AccountNumber = $bill->AccountNumber;
-                                                $dcrSum->DCRNumber = 'API COLLECTION';
-                                                $dcrSum->Description = $data != null ? $data->ThirdPartyCompany : '-';
-                                                $dcrSum->save();
-
-                                                // GET STRANDED CONTRACT COST SALES
-                                                $dcrSum = new DCRSummaryTransactions;
-                                                $dcrSum->id = IDGenerator::generateIDandRandString();
-                                                $dcrSum->GLCode = '230-232-62';
-                                                $dcrSum->Amount = $bill->StrandedContractCosts;
-                                                $dcrSum->Day = date('Y-m-d');
-                                                $dcrSum->NEACode = $bill->ServicePeriod;
-                                                $dcrSum->Time = date('H:i:s');
-                                                $dcrSum->Teller = $user->id;
-                                                $dcrSum->ORNumber = $orNo;
-                                                $dcrSum->ReportDestination = 'SALES';
-                                                $dcrSum->Office = env('APP_LOCATION');
-                                                $dcrSum->AccountNumber = $bill->AccountNumber;
-                                                $dcrSum->DCRNumber = 'API COLLECTION';
-                                                $dcrSum->Description = $data != null ? $data->ThirdPartyCompany : '-';
-                                                $dcrSum->save();
-
-                                                // GET FIT ALL COLLECTION
-                                                $dcrSum = new DCRSummaryTransactions;
-                                                $dcrSum->id = IDGenerator::generateIDandRandString();
-                                                $dcrSum->GLCode = '140-142-88';
-                                                $dcrSum->Amount = $bill->FeedInTariffAllowance;
-                                                $dcrSum->Day = date('Y-m-d');
-                                                $dcrSum->NEACode = $bill->ServicePeriod;
-                                                $dcrSum->Time = date('H:i:s');
-                                                $dcrSum->Teller = $user->id;
-                                                $dcrSum->ORNumber = $orNo;
-                                                $dcrSum->ReportDestination = 'COLLECTION';
-                                                $dcrSum->Office = env('APP_LOCATION');
-                                                $dcrSum->AccountNumber = $bill->AccountNumber;
-                                                $dcrSum->DCRNumber = 'API COLLECTION';
-                                                $dcrSum->Description = $data != null ? $data->ThirdPartyCompany : '-';
-                                                $dcrSum->save();
-
-                                                // GET FIT ALL SALES
-                                                $dcrSum = new DCRSummaryTransactions;
-                                                $dcrSum->id = IDGenerator::generateIDandRandString();
-                                                $dcrSum->GLCode = '230-232-64';
-                                                $dcrSum->Amount = $bill->FeedInTariffAllowance;
-                                                $dcrSum->Day = date('Y-m-d');
-                                                $dcrSum->NEACode = $bill->ServicePeriod;
-                                                $dcrSum->Time = date('H:i:s');
-                                                $dcrSum->Teller = $user->id;
-                                                $dcrSum->ORNumber = $orNo;
-                                                $dcrSum->ReportDestination = 'SALES';
-                                                $dcrSum->Office = env('APP_LOCATION');
-                                                $dcrSum->AccountNumber = $bill->AccountNumber;
-                                                $dcrSum->DCRNumber = 'API COLLECTION';
-                                                $dcrSum->Description = $data != null ? $data->ThirdPartyCompany : '-';
-                                                $dcrSum->save();
-
-                                                // GET UCME REDCI COLLECTION
-                                                $dcrSum = new DCRSummaryTransactions;
-                                                $dcrSum->id = IDGenerator::generateIDandRandString();
-                                                $dcrSum->GLCode = '140-142-89';
-                                                $dcrSum->Amount = $bill->MissionaryElectrificationREDCI;
-                                                $dcrSum->Day = date('Y-m-d');
-                                                $dcrSum->NEACode = $bill->ServicePeriod;
-                                                $dcrSum->Time = date('H:i:s');
-                                                $dcrSum->Teller = $user->id;
-                                                $dcrSum->ORNumber = $orNo;
-                                                $dcrSum->ReportDestination = 'COLLECTION';
-                                                $dcrSum->Office = env('APP_LOCATION');
-                                                $dcrSum->AccountNumber = $bill->AccountNumber;
-                                                $dcrSum->DCRNumber = 'API COLLECTION';
-                                                $dcrSum->Description = $data != null ? $data->ThirdPartyCompany : '-';
-                                                $dcrSum->save();
-
-                                                // GET UCME REDCI SALES
-                                                $dcrSum = new DCRSummaryTransactions;
-                                                $dcrSum->id = IDGenerator::generateIDandRandString();
-                                                $dcrSum->GLCode = '230-232-63';
-                                                $dcrSum->Amount = $bill->MissionaryElectrificationREDCI;
-                                                $dcrSum->Day = date('Y-m-d');
-                                                $dcrSum->NEACode = $bill->ServicePeriod;
-                                                $dcrSum->Time = date('H:i:s');
-                                                $dcrSum->Teller = $user->id;
-                                                $dcrSum->ORNumber = $orNo;
-                                                $dcrSum->ReportDestination = 'SALES';
-                                                $dcrSum->Office = env('APP_LOCATION');
-                                                $dcrSum->AccountNumber = $bill->AccountNumber;
-                                                $dcrSum->DCRNumber = 'API COLLECTION';
-                                                $dcrSum->Description = $data != null ? $data->ThirdPartyCompany : '-';
-                                                $dcrSum->save();
-
-                                                // GET GENCO
-                                                $dcrSum = new DCRSummaryTransactions;
-                                                $dcrSum->id = IDGenerator::generateIDandRandString();
-                                                $dcrSum->GLCode = '140-142-94';
-                                                $dcrSum->Amount = $bill->GenerationVAT;
-                                                $dcrSum->Day = date('Y-m-d');
-                                                $dcrSum->NEACode = $bill->ServicePeriod;
-                                                $dcrSum->Time = date('H:i:s');
-                                                $dcrSum->Teller = $user->id;
-                                                $dcrSum->ORNumber = $orNo;
-                                                $dcrSum->ReportDestination = 'COLLECTION';
-                                                $dcrSum->Office = env('APP_LOCATION');
-                                                $dcrSum->AccountNumber = $bill->AccountNumber;
-                                                $dcrSum->DCRNumber = 'API COLLECTION';
-                                                $dcrSum->Description = $data != null ? $data->ThirdPartyCompany : '-';
-                                                $dcrSum->save();
-
-                                                // GET TRANSCO
-                                                $dcrSum = new DCRSummaryTransactions;
-                                                $dcrSum->id = IDGenerator::generateIDandRandString();
-                                                $dcrSum->GLCode = '140-142-95';
-                                                $dcrSum->Amount = $bill->TransmissionVAT;
-                                                $dcrSum->Day = date('Y-m-d');
-                                                $dcrSum->NEACode = $bill->ServicePeriod;
-                                                $dcrSum->Time = date('H:i:s');
-                                                $dcrSum->Teller = $user->id;
-                                                $dcrSum->ORNumber = $orNo;
-                                                $dcrSum->ReportDestination = 'COLLECTION';
-                                                $dcrSum->Office = env('APP_LOCATION');
-                                                $dcrSum->AccountNumber = $bill->AccountNumber;
-                                                $dcrSum->DCRNumber = 'API COLLECTION';
-                                                $dcrSum->Description = $data != null ? $data->ThirdPartyCompany : '-';
-                                                $dcrSum->save();
-
-                                                // GET SYSLOSS VAT
-                                                $dcrSum = new DCRSummaryTransactions;
-                                                $dcrSum->id = IDGenerator::generateIDandRandString();
-                                                $dcrSum->GLCode = '140-142-96';
-                                                $dcrSum->Amount = $bill->SystemLossVAT;
-                                                $dcrSum->Day = date('Y-m-d');
-                                                $dcrSum->NEACode = $bill->ServicePeriod;
-                                                $dcrSum->Time = date('H:i:s');
-                                                $dcrSum->Teller = $user->id;
-                                                $dcrSum->ORNumber = $orNo;
-                                                $dcrSum->ReportDestination = 'COLLECTION';
-                                                $dcrSum->Office = env('APP_LOCATION');
-                                                $dcrSum->AccountNumber = $bill->AccountNumber;
-                                                $dcrSum->DCRNumber = 'API COLLECTION';
-                                                $dcrSum->Description = $data != null ? $data->ThirdPartyCompany : '-';
-                                                $dcrSum->save();
-
-                                                // GET DIST/OTHERS VAT
-                                                $dcrSum = new DCRSummaryTransactions;
-                                                $dcrSum->id = IDGenerator::generateIDandRandString();
-                                                $dcrSum->GLCode = '140-142-97';
-                                                $dcrSum->Amount = $bill->DistributionVAT;
-                                                $dcrSum->Day = date('Y-m-d');
-                                                $dcrSum->NEACode = $bill->ServicePeriod;
-                                                $dcrSum->Time = date('H:i:s');
-                                                $dcrSum->Teller = $user->id;
-                                                $dcrSum->ORNumber = $orNo;
-                                                $dcrSum->ReportDestination = 'COLLECTION';
-                                                $dcrSum->Office = env('APP_LOCATION');
-                                                $dcrSum->AccountNumber = $bill->AccountNumber;
-                                                $dcrSum->DCRNumber = 'API COLLECTION';
-                                                $dcrSum->Description = $data != null ? $data->ThirdPartyCompany : '-';
-                                                $dcrSum->save();
-
-                                                // GET GENVAT, TRANSVAT, SYSLOSSVAT SALES
-                                                $dcrSum = new DCRSummaryTransactions;
-                                                $dcrSum->id = IDGenerator::generateIDandRandString();
-                                                $dcrSum->GLCode = '170-184-40';
-                                                $dcrSum->Amount = DCRSummaryTransactions::getSalesGenTransSysLossVatAmount($bill);
-                                                $dcrSum->Day = date('Y-m-d');
-                                                $dcrSum->NEACode = $bill->ServicePeriod;
-                                                $dcrSum->Time = date('H:i:s');
-                                                $dcrSum->Teller = $user->id;
-                                                $dcrSum->ORNumber = $orNo;
-                                                $dcrSum->ReportDestination = 'SALES';
-                                                $dcrSum->Office = env('APP_LOCATION');
-                                                $dcrSum->AccountNumber = $bill->AccountNumber;
-                                                $dcrSum->DCRNumber = 'API COLLECTION';
-                                                $dcrSum->Description = $data != null ? $data->ThirdPartyCompany : '-';
-                                                $dcrSum->save();
-
-                                                // GET DIST AND OTHERS SALES
-                                                $dcrSum = new DCRSummaryTransactions;
-                                                $dcrSum->id = IDGenerator::generateIDandRandString();
-                                                $dcrSum->GLCode = '250-255-00';
-                                                $dcrSum->Amount = DCRSummaryTransactions::getSalesDistOthersVatAmount($bill);
-                                                $dcrSum->Day = date('Y-m-d');
-                                                $dcrSum->NEACode = $bill->ServicePeriod;
-                                                $dcrSum->Time = date('H:i:s');
-                                                $dcrSum->Teller = $user->id;
-                                                $dcrSum->ORNumber = $orNo;
-                                                $dcrSum->ReportDestination = 'SALES';
-                                                $dcrSum->Office = env('APP_LOCATION');
-                                                $dcrSum->AccountNumber = $bill->AccountNumber;
-                                                $dcrSum->DCRNumber = 'API COLLECTION';
-                                                $dcrSum->Description = $data != null ? $data->ThirdPartyCompany : '-';
-                                                $dcrSum->save();
-
-                                                // GET UCME COLLECTION
-                                                $dcrSum = new DCRSummaryTransactions;
-                                                $dcrSum->id = IDGenerator::generateIDandRandString();
-                                                $dcrSum->GLCode = '140-142-98';
-                                                $dcrSum->Amount = $bill->MissionaryElectrificationCharge;
-                                                $dcrSum->Day = date('Y-m-d');
-                                                $dcrSum->NEACode = $bill->ServicePeriod;
-                                                $dcrSum->Time = date('H:i:s');
-                                                $dcrSum->Teller = $user->id;
-                                                $dcrSum->ORNumber = $orNo;
-                                                $dcrSum->ReportDestination = 'COLLECTION';
-                                                $dcrSum->Office = env('APP_LOCATION');
-                                                $dcrSum->AccountNumber = $bill->AccountNumber;
-                                                $dcrSum->DCRNumber = 'API COLLECTION';
-                                                $dcrSum->Description = $data != null ? $data->ThirdPartyCompany : '-';
-                                                $dcrSum->save();
-
-                                                // GET UCME SALES
-                                                $dcrSum = new DCRSummaryTransactions;
-                                                $dcrSum->id = IDGenerator::generateIDandRandString();
-                                                $dcrSum->GLCode = '230-232-60';
-                                                $dcrSum->Amount = $bill->MissionaryElectrificationCharge;
-                                                $dcrSum->Day = date('Y-m-d');
-                                                $dcrSum->NEACode = $bill->ServicePeriod;
-                                                $dcrSum->Time = date('H:i:s');
-                                                $dcrSum->Teller = $user->id;
-                                                $dcrSum->ORNumber = $orNo;
-                                                $dcrSum->ReportDestination = 'SALES';
-                                                $dcrSum->Office = env('APP_LOCATION');
-                                                $dcrSum->AccountNumber = $bill->AccountNumber;
-                                                $dcrSum->DCRNumber = 'API COLLECTION';
-                                                $dcrSum->Description = $data != null ? $data->ThirdPartyCompany : '-';
-                                                $dcrSum->save();
-
-                                                // GET EWT 2%
-                                                $dcrSum = new DCRSummaryTransactions;
-                                                $dcrSum->id = IDGenerator::generateIDandRandString();
-                                                $dcrSum->GLCode = '140-160-00';
-                                                $dcrSum->Amount = $paidBill->Form2307TwoPercent;
-                                                $dcrSum->Day = date('Y-m-d');
-                                                $dcrSum->NEACode = $bill->ServicePeriod;
-                                                $dcrSum->Time = date('H:i:s');
-                                                $dcrSum->Teller = $user->id;
-                                                $dcrSum->ORNumber = $orNo;
-                                                $dcrSum->ReportDestination = 'COLLECTION';
-                                                $dcrSum->Office = env('APP_LOCATION');
-                                                $dcrSum->AccountNumber = $bill->AccountNumber;
-                                                $dcrSum->DCRNumber = 'API COLLECTION';
-                                                $dcrSum->Description = $data != null ? $data->ThirdPartyCompany : '-';
-                                                $dcrSum->save();
-
-                                                // GET EVAT 5%
-                                                $dcrSum = new DCRSummaryTransactions;
-                                                $dcrSum->id = IDGenerator::generateIDandRandString();
-                                                $dcrSum->GLCode = '140-170-00';
-                                                $dcrSum->Amount = $paidBill->Form2307FivePercent;
-                                                $dcrSum->Day = date('Y-m-d');
-                                                $dcrSum->NEACode = $bill->ServicePeriod;
-                                                $dcrSum->Time = date('H:i:s');
-                                                $dcrSum->Teller = $user->id;
-                                                $dcrSum->ORNumber = $orNo;
-                                                $dcrSum->ReportDestination = 'COLLECTION';
-                                                $dcrSum->Office = env('APP_LOCATION');
-                                                $dcrSum->AccountNumber = $bill->AccountNumber;
-                                                $dcrSum->DCRNumber = 'API COLLECTION';
-                                                $dcrSum->Description = $data != null ? $data->ThirdPartyCompany : '-';
-                                                $dcrSum->save();
-
-                                                // GET ENVIRONMENT CHARGE COLLECTION
-                                                $dcrSum = new DCRSummaryTransactions;
-                                                $dcrSum->id = IDGenerator::generateIDandRandString();
-                                                $dcrSum->GLCode = '140-142-99';
-                                                $dcrSum->Amount = $bill->EnvironmentalCharge;
-                                                $dcrSum->Day = date('Y-m-d');
-                                                $dcrSum->NEACode = $bill->ServicePeriod;
-                                                $dcrSum->Time = date('H:i:s');
-                                                $dcrSum->Teller = $user->id;
-                                                $dcrSum->ORNumber = $orNo;
-                                                $dcrSum->ReportDestination = 'COLLECTION';
-                                                $dcrSum->Office = env('APP_LOCATION');
-                                                $dcrSum->AccountNumber = $bill->AccountNumber;
-                                                $dcrSum->DCRNumber = 'API COLLECTION';
-                                                $dcrSum->Description = $data != null ? $data->ThirdPartyCompany : '-';
-                                                $dcrSum->save();
-
-                                                // GET ENVIRONMENT CHARGE SALES
-                                                $dcrSum = new DCRSummaryTransactions;
-                                                $dcrSum->id = IDGenerator::generateIDandRandString();
-                                                $dcrSum->GLCode = '230-232-90';
-                                                $dcrSum->Amount = $bill->EnvironmentalCharge;
-                                                $dcrSum->Day = date('Y-m-d');
-                                                $dcrSum->NEACode = $bill->ServicePeriod;
-                                                $dcrSum->Time = date('H:i:s');
-                                                $dcrSum->Teller = $user->id;
-                                                $dcrSum->ORNumber = $orNo;
-                                                $dcrSum->ReportDestination = 'SALES';
-                                                $dcrSum->Office = env('APP_LOCATION');
-                                                $dcrSum->AccountNumber = $bill->AccountNumber;
-                                                $dcrSum->DCRNumber = 'API COLLECTION';
-                                                $dcrSum->Description = $data != null ? $data->ThirdPartyCompany : '-';
-                                                $dcrSum->save();
-
-                                                // GET RFSC COLLECTION
-                                                $dcrSum = new DCRSummaryTransactions;
-                                                $dcrSum->id = IDGenerator::generateIDandRandString();
-                                                $dcrSum->GLCode = '140-142-93';
-                                                $dcrSum->Amount = $bill->RFSC;
-                                                $dcrSum->Day = date('Y-m-d');
-                                                $dcrSum->NEACode = $bill->ServicePeriod;
-                                                $dcrSum->Time = date('H:i:s');
-                                                $dcrSum->Teller = $user->id;
-                                                $dcrSum->ORNumber = $orNo;
-                                                $dcrSum->ReportDestination = 'COLLECTION';
-                                                $dcrSum->Office = env('APP_LOCATION');
-                                                $dcrSum->AccountNumber = $bill->AccountNumber;
-                                                $dcrSum->DCRNumber = 'API COLLECTION';
-                                                $dcrSum->Description = $data != null ? $data->ThirdPartyCompany : '-';
-                                                $dcrSum->save();
-
-                                                // GET RFSC SALES
-                                                $dcrSum = new DCRSummaryTransactions;
-                                                $dcrSum->id = IDGenerator::generateIDandRandString();
-                                                $dcrSum->GLCode = '211-211-10';
-                                                $dcrSum->Amount = $bill->RFSC;
-                                                $dcrSum->Day = date('Y-m-d');
-                                                $dcrSum->NEACode = $bill->ServicePeriod;
-                                                $dcrSum->Time = date('H:i:s');
-                                                $dcrSum->Teller = $user->id;
-                                                $dcrSum->ORNumber = $orNo;
-                                                $dcrSum->ReportDestination = 'SALES';
-                                                $dcrSum->Office = env('APP_LOCATION');
-                                                $dcrSum->AccountNumber = $bill->AccountNumber;
-                                                $dcrSum->DCRNumber = 'API COLLECTION';
-                                                $dcrSum->Description = $data != null ? $data->ThirdPartyCompany : '-';
-                                                $dcrSum->save();
-
-                                                /**
-                                                 * NET METERING
-                                                 * EDIT IN THE FUTURE
-                                                 */
-                                                // if ($account->NetMetered == 'Yes') {
-
-                                                // }
-                                            }   
+                                        if ($bm == null) {
+                                            $bm = new BillMirror;
+                                            $bm->id = IDGenerator::generateIDandRandString();
+                                            $bm->ORNumber = $orNo;
+                                            $bm->ORDate = date('Y-m-d');
+                                            $bm->AccountNumber = $item->AccountNumber;
+                                            $bm->ServicePeriod = $item->ServicePeriod;
+                                            $bm->BillNumber = $item->BillNumber;
+                                            $bm->DueDate = $item->DueDate;
+                                            $bm->NetAmount = $item->NetAmount;
+                                            $bm->PaidBillId = $paidBill->id;
                                         } else {
-                                            return response()->json('Bill Not Found', 404);
+                                            $bm->PaidBillId = $paidBill->id;
+                                            $bm->ORNumber = $orNo;
+                                            $bm->ORDate = date('Y-m-d');
                                         }
 
-                                        return response()->json('ok', 200);
-                                    } else {
-                                        return response()->json('Only accounts with no 2% and 5% grant are allowed!', 403);
-                                    } 
-                                }                                                       
+                                        if ($item->TermedPayments != null && $item->TermedPayments > 0) {
+                                            $amountRemaining = BillMirror::populateTermedPaymentAmountUpdate($amountRemaining, $bill, $bm);
+                                        }
+
+                                        if ($amountRemaining >= Bills::getOthersAmount($bill)) {
+                                            $amountRemaining = BillMirror::populateOtherAmountUpdate($amountRemaining, $bill, $bm);
+
+                                            if ($amountRemaining > 0) {
+                                                $amountRemaining = BillMirror::populateBilledAmountUpdate($amountRemaining, $bill, $bm);
+                                            }
+                                        }
+
+                                        $bm->save();
+                                    }
+
+                                    return response()->json('ok', 200);
+                                }                                                      
                             } else {
                                 return response()->json('Account Not Found', 404);
                             }
@@ -833,10 +286,10 @@ class ThirdPartyAPI extends Controller {
                             return response()->json('Account Not Found', 404);
                         }
                     } else {
-                        return response()->json('User not found!', 401);
+                        return response()->json('User not found!', 404);
                     }                    
                 } else {
-                    return response()->json('UserID not provided', 401);
+                    return response()->json('UserID not provided', 404);
                 }                
             } else {
                 return response()->json('Unauthorized', 401);

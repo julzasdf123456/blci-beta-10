@@ -241,6 +241,8 @@ class ServiceAccountsController extends AppBaseController
             ->leftJoin('CRM_Towns', 'Billing_ServiceAccounts.Town', '=', 'CRM_Towns.id')
             ->leftJoin('CRM_Barangays', 'Billing_ServiceAccounts.Barangay', '=', 'CRM_Barangays.id')
             ->leftJoin('users', 'Billing_ServiceAccounts.MeterReader', '=', 'users.id')
+            ->leftJoin('CRM_Zones', 'Billing_ServiceAccounts.Zone', '=', 'CRM_Zones.Zone')
+            ->leftJoin('CRM_Blocks', 'Billing_ServiceAccounts.BlockCode', '=', 'CRM_Blocks.Block')
             ->select('Billing_ServiceAccounts.id',
                     'Billing_ServiceAccounts.ServiceAccountName',
                     'Billing_ServiceAccounts.OldAccountNo',
@@ -248,7 +250,10 @@ class ServiceAccountsController extends AppBaseController
                     'Billing_ServiceAccounts.Purok',
                     'Billing_ServiceAccounts.AccountType',
                     'Billing_ServiceAccounts.AccountStatus',
-                    'Billing_ServiceAccounts.AreaCode',
+                    'Billing_ServiceAccounts.Zone',
+                    'CRM_Zones.Notes AS ZoneName',
+                    'Billing_ServiceAccounts.BlockCode',
+                    'CRM_Blocks.Notes AS BlockName',
                     'Billing_ServiceAccounts.SequenceCode',
                     'Billing_ServiceAccounts.ForDistribution',
                     'Billing_ServiceAccounts.ContactNumber',
@@ -2610,6 +2615,7 @@ class ServiceAccountsController extends AppBaseController
                 ->select('Billing_ServiceAccounts.Zone', 'Billing_ServiceAccounts.BlockCode', DB::raw("COUNT(Billing_ServiceAccounts.id) AS NoOfConsumers"))
                 ->groupBy('Billing_ServiceAccounts.Zone', 'Billing_ServiceAccounts.BlockCode')
                 ->orderBy('Billing_ServiceAccounts.Zone')
+                ->orderBy('Billing_ServiceAccounts.BlockCode')
                 ->get();
         } else {
             $data = DB::table('Billing_ServiceAccounts')
@@ -2617,6 +2623,7 @@ class ServiceAccountsController extends AppBaseController
                 ->select('Billing_ServiceAccounts.Zone', 'Billing_ServiceAccounts.BlockCode', DB::raw("COUNT(Billing_ServiceAccounts.id) AS NoOfConsumers"))
                 ->groupBy('Billing_ServiceAccounts.Zone', 'Billing_ServiceAccounts.BlockCode')
                 ->orderBy('Billing_ServiceAccounts.Zone')
+                ->orderBy('Billing_ServiceAccounts.BlockCode')
                 ->get();
         }       
             

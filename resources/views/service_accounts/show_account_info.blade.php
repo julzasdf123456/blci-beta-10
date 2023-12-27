@@ -49,8 +49,12 @@
                     <th>{{ $serviceAccounts->ConnectionDate==null ? '-' : date('F d, Y', strtotime($serviceAccounts->ConnectionDate)) }}</th>
                 </tr>
                 <tr>
-                    <td class="text-muted">Area Code</td>
-                    <th>{{ $serviceAccounts->AreaCode }}</th>
+                    <td class="text-muted">Zone</td>
+                    <th>{{ $serviceAccounts->Zone }} ({{ $serviceAccounts->ZoneName }})</th>
+                </tr>
+                <tr>
+                    <td class="text-muted">BlockCode</td>
+                    <th>{{ $serviceAccounts->BlockCode }} ({{ $serviceAccounts->BlockName }})</th>
                 </tr>
                 <tr>
                     <td class="text-muted">Sequence No.</td>
