@@ -6,7 +6,13 @@
         </a>
         <div class="dropdown-menu" aria-labelledby="bills-menu">
             <a href="{{ route('serviceAccounts.update-step-one', [$serviceAccounts->id]) }}" class="dropdown-item" title="Update Consumer Info">Update Account Details</a>
-            {{-- <div class="dropdown-divider"></div> --}}
+            <div class="dropdown-divider"></div>
+            @if (Auth::user()->hasAnyRole(['Administrator', 'Heads and Managers', 'Data Administrator'])) 
+                <button class="dropdown-item" id="change-name" data-toggle="modal" data-target="#modal-change-name" title="Change Name">Change Name</button>
+            @endif
+            <button class="dropdown-item" data-toggle="modal" data-target="#modal-change-name-history" title="Change Name History">Change Name History</button>
+            <button class="dropdown-item" data-toggle="modal" data-target="#modal-relocation-history" title="Location History (Relocations)">Relocation History</button>
+            <button class="dropdown-item" data-toggle="modal" data-target="#modal-view-map" title="View in map">View Account in Map</button>
         </div>
     </li>
 

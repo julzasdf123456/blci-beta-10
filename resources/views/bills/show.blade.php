@@ -501,6 +501,12 @@
                                     <div class="col-lg-12">
                                         <table class="table table-borderless table-sm table-hover" style="width: 100%;">
                                             <tr>
+                                                <td>Billed Amount</td>
+                                                <th class="text-right">{{ number_format(Bills::getBilledAmount($bills), 2) }}</th>
+                                                <td style="padding-left: 60px;">Others Amount</td>
+                                                <th class="text-right">- {{ Bills::getOthersAmount($bills) }}</th>
+                                            </tr>
+                                            <tr>
                                                 <td>Termed Payments</td>
                                                 <th class="text-right">{{ number_format($bills->TermedPayments, 2) }}</th>
                                                 <td style="padding-left: 60px;">EWT 2%</td>
