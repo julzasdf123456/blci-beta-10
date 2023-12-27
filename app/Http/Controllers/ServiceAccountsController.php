@@ -3393,27 +3393,29 @@ class ServiceAccountsController extends AppBaseController
     }
 
     public function incrementCustomerDepositInterests(Request $request) {
-        $accounts = ServiceAccounts::whereRaw("CustomerDeposit > 0")
+        $accounts = DB::table('Billing_ServiceAccounts')
+            ->whereRaw("CustomerDeposit IS NOT NULL AND CustomerDeposit > 0")
             ->get();
 
         foreach ($accounts as $item) {
             // FILTER IF INTEREST HAS ALREADY BEEN EARNED
-            if ($item->CustomerDepositYearRenewed == null | intval($item->CustomerDepositYearRenewed) < date('Y')) {
+            $acct = ServiceAccounts::find($item->id);
+            if ($acct != null && ($item->CustomerDepositYearRenewed == null | intval($item->CustomerDepositYearRenewed) < date('Y'))) {
                 $depositBalance = floatval($item->CustomerDeposit);
                 $interest = ServiceAccounts::getCustomerDepositInterest($item);
                 $depositBalance = $depositBalance + $interest;
-                $item->CustomerDeposit = $depositBalance;
-                $item->CustomerDepositLastRenewed = date('Y-m-d');
-                $item->CustomerDepositYearRenewed = date('Y');
-                $item->save();
+                $acct->CustomerDeposit = $depositBalance;
+                $acct->CustomerDepositLastRenewed = date('Y-m-d');
+                $acct->CustomerDepositYearRenewed = date('Y');
+                $acct->save();
 
                 // SAVE LOGS
                 $logs = new CustomerDepositInterests;
                 $logs->id = IDGenerator::generateIDandRandString();
-                $logs->AccountNumber = $item->id;
+                $logs->AccountNumber = $acct->id;
                 $logs->InterestEarned = $interest;
-                $logs->CurrentAmountRemaining = $item->CustomerDeposit;
-                $logs->OriginalAmount = $item->CustomerDepositOriginalAmount;
+                $logs->CurrentAmountRemaining = $acct->CustomerDeposit;
+                $logs->OriginalAmount = $acct->CustomerDepositOriginalAmount;
                 $logs->save();
             }
         }

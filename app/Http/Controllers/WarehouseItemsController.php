@@ -163,7 +163,7 @@ class WarehouseItemsController extends AppBaseController
 
         $data = DB::connection('mysql')
                 ->select(
-                    DB::raw("Select 
+                    "Select 
                         a.it_code as itcode, 
                         b.itm_desc as itdesc,
                         a.uom as uom, 
@@ -177,7 +177,7 @@ class WarehouseItemsController extends AppBaseController
                     INNER JOIN tblitem_lgr c ON a.it_code = c.lgr_itmcode AND a.cst = c.lgr_cost and c.status = 'POSTED' 
                     WHERE (itm_desc LIKE '%" . $regex . "%' OR it_code LIKE '%" . $regex . "%')
                     GROUP BY itmno 
-                    ORDER BY itdesc, rdate DESC")
+                    ORDER BY itdesc, rdate DESC"
                 );
 
         $output = '';
@@ -206,7 +206,7 @@ class WarehouseItemsController extends AppBaseController
 
         $data = DB::connection('mysql')
                 ->select(
-                    DB::raw("Select 
+                    "Select 
                         a.it_code as itcode, 
                         b.itm_desc as itdesc,
                         a.uom as uom, 
@@ -220,7 +220,7 @@ class WarehouseItemsController extends AppBaseController
                     INNER JOIN tblitem_lgr c ON a.it_code = c.lgr_itmcode AND a.cst = c.lgr_cost and c.status = 'POSTED' 
                     WHERE (itm_desc LIKE '%" . $regex . "%' OR it_code LIKE '%" . $regex . "%')
                     GROUP BY itmno 
-                    ORDER BY itdesc, rdate DESC")
+                    ORDER BY itdesc, rdate DESC"
                 );
 
         $output = '';

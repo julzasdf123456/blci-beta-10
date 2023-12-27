@@ -45,10 +45,14 @@
             $.ajax({
                 url : "{{ route('serviceAccounts.increment-customer-deposit-interests') }}",
                 type : "GET",
+                data : {
+
+                },
                 success : function(res) {
                     console.log('customer deposits incremented!')
                 },
                 error : function(err) {
+                    console.log(err)
                     Swal.fire({
                         icon : 'error',
                         text : 'Error incrementing customer deposit interests!'

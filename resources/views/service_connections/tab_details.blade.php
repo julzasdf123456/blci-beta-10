@@ -18,13 +18,13 @@
         <td class="text-muted">Service Number</td>
         <td style="border-right: 1px solid #adadad;">{{ $serviceConnections->ServiceNumber }}</td>
         <td class="text-muted" style="padding-left: 50px;">Inspector</td>
-        <td>{{ $serviceConnectionInspections->name }}</td>
+        <td>{{ $serviceConnectionInspections != null && $serviceConnectionInspections->name != null ? $serviceConnectionInspections->name : '-' }}</td>
     </tr>
     <tr>
         <td class="text-muted">Serial Number</td>
         <td style="border-right: 1px solid #adadad;"><i class="fas fa-exclamation-circle text-danger"></i></td>
         <td class="text-muted" style="padding-left: 50px;">Date of Inspection</td>
-        <td>{{ $serviceConnectionInspections->DateOfVerification != null ? date('M d, Y', strtotime($serviceConnectionInspections->DateOfVerification)) : '-' }}</td>
+        <td>{{ $serviceConnectionInspections != null && $serviceConnectionInspections->DateOfVerification != null ? date('M d, Y', strtotime($serviceConnectionInspections->DateOfVerification)) : '-' }}</td>
     </tr>
     <tr>
         <td class="text-muted">Cert. of Conn. Issued On</td>
@@ -52,13 +52,13 @@
     </tr>
     <tr>
         <td class="text-muted">Inspection Schedule</td>
-        <td style="border-right: 1px solid #adadad;">{{ $serviceConnectionInspections->InspectionSchedule != null ? date('M d, Y', strtotime($serviceConnectionInspections->InspectionSchedule)) : '-' }}</td>
+        <td style="border-right: 1px solid #adadad;">{{ $serviceConnectionInspections != null &&$serviceConnectionInspections->InspectionSchedule != null ? date('M d, Y', strtotime($serviceConnectionInspections->InspectionSchedule)) : '-' }}</td>
         <td class="text-muted" style="padding-left: 50px;">Date of Connection</td>
         <td><i class="fas fa-exclamation-circle text-danger"></i></td>  
     </tr>
     <tr>
         <td class="text-muted">Re-Inspection Schedule</td>
-        <td style="border-right: 1px solid #adadad;">{{ $serviceConnectionInspections->ReInspectionSchedule != null ? date('M d, Y', strtotime($serviceConnectionInspections->ReInspectionSchedule)) : '-' }}</td>
+        <td style="border-right: 1px solid #adadad;">{{ $serviceConnectionInspections != null &&$serviceConnectionInspections->ReInspectionSchedule != null ? date('M d, Y', strtotime($serviceConnectionInspections->ReInspectionSchedule)) : '-' }}</td>
         <td class="text-muted" style="padding-left: 50px;">Time of Connection</td>
         <td><i class="fas fa-exclamation-circle text-danger"></i></td>  
     </tr>

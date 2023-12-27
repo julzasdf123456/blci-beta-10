@@ -42,7 +42,13 @@
                                  <strong>{{ $item->ServiceAccountName }}</strong><br>
                                  <span class="text-muted">{{ ServiceConnections::getAddress($item) }}</span>
                               </td>
-                              <td class="text-center"><span class="badge bg-success">{{ $item->Status }}</span></td>
+                              <td class="text-center">
+                                 <span class="badge bg-success">{{ $item->Status }}</span>
+                                 @if ($item->MeterId == null)
+                                     <br>
+                                     <span class="badge bg-danger">No Meter Assigned</span>
+                                 @endif
+                              </td>
                               <td>
                                  <input type='datetime-local' class='form-control form-control-sm' id='arrived-{{ $item->id }}' placeholder='Set Crew Arrival Date and Time'>
                               </td>
@@ -58,7 +64,12 @@
                                  </select>
                               </td>
                               <td class="text-right">
-                                 <button class="btn btn-sm btn-success" onclick="setSchedule(`{{ $item->id }}`)"><i class="fas fa-check-circle ico-tab-mini"></i>Save</button>
+                                 @if ($item->MeterId == null)
+                                     <a class="btn btn-sm btn-warning" href="{{ route('serviceConnectionMtrTrnsfrmrs.create-step-three', [$item->id]) }}"><i class="fas fa-tachometer-alt ico-tab-mini"></i>Assign Meter</a>
+                                 @else
+                                    <button class="btn btn-sm btn-success" onclick="setSchedule(`{{ $item->id }}`)"><i class="fas fa-check-circle ico-tab-mini"></i>Save</button>
+                                 @endif
+                                 
                               </td>
                            </tr>
                         @endforeach
