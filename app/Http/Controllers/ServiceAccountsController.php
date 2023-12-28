@@ -281,6 +281,7 @@ class ServiceAccountsController extends AppBaseController
                     'Billing_ServiceAccounts.CustomerDeposit',
                     'Billing_ServiceAccounts.AdvancedMaterialDepositStatus',
                     'Billing_ServiceAccounts.CustomerDepositStatus',
+                    'Billing_ServiceAccounts.HouseNumber',
                     'CRM_Towns.Town',
                     'CRM_Barangays.Barangay',
                     'DownloadedByDisco',

@@ -13,6 +13,7 @@ use App\Models\ServiceConnectionTotalPayments;
 use App\Models\Notifications;
 use App\Models\Zones;
 use App\Models\Blocks;
+use App\Models\SmsSettings;
 use Illuminate\Support\Facades\DB;
 use Validator;
 
@@ -168,12 +169,17 @@ class ServiceConnectionInspectionsAPI extends Controller {
         for ($i=0; $i<$len; $i++) {
             $serviceConnections = ServiceConnections::find($arr[$i]);
 
+            // SEND SMS
+            $smsSettings = SmsSettings::orderByDesc('created_at')->first();
+            // InspectionToday
             if ($serviceConnections != null) {
                 if ($serviceConnections->ContactNumber != null) {
                     if (strlen($serviceConnections->ContactNumber) > 10 && strlen($serviceConnections->ContactNumber) < 13) {
-                        $msg = "BLCI Notification\n\nHello " . $serviceConnections->ServiceAccountName . ", \nYour " . $serviceConnections->AccountApplicationType . " application with control no. " . $arr[$i] . " is due for inspection today. " .
-                            "Expect a BLCI Inspector to visit your household until 5PM. \nHave a great day!";
-                        Notifications::createFreshSms($serviceConnections->ContactNumber, $msg, 'SERVICE CONNECTION INSPECTION', $arr[$i]);
+                        if ($smsSettings != null && $smsSettings->InspectionToday=='Yes') {
+                            $msg = "BLCI Notification\n\nHello " . $serviceConnections->ServiceAccountName . ", \nYour " . $serviceConnections->AccountApplicationType . " application with control no. " . $arr[$i] . " is due for inspection today. " .
+                                "Expect a BLCI Inspector to visit your household until 5PM. \nHave a great day!";
+                            Notifications::createFreshSms($serviceConnections->ContactNumber, $msg, 'SERVICE CONNECTION INSPECTION', $arr[$i]);
+                        }
                     }                    
                 } 
             }

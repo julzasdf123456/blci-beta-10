@@ -57,6 +57,10 @@
                     <th>{{ $serviceAccounts->BlockCode }} ({{ $serviceAccounts->BlockName }})</th>
                 </tr>
                 <tr>
+                    <td class="text-muted">House Number</td>
+                    <th>{{ $serviceAccounts->HouseNumber }}</th>
+                </tr>
+                <tr>
                     <td class="text-muted">Sequence No.</td>
                     <th>{{ $serviceAccounts->SequenceCode }}</th>
                 </tr>

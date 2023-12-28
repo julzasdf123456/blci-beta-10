@@ -48,6 +48,7 @@ use App\Models\CostCenters;
 use App\Models\ProjectCodes;
 use App\Models\MeterInstallation;
 use App\Models\Notifications;
+use App\Models\SmsSettings;
 use App\Exports\ServiceConnectionApplicationsReportExport;
 use App\Exports\ServiceConnectionEnergizationReportExport;
 use App\Exports\DynamicExportsNoBillingMonth;
@@ -233,11 +234,15 @@ class ServiceConnectionsController extends AppBaseController
                 $serviceConnections = $this->serviceConnectionsRepository->create($input);
 
                 // SEND SMS
+                $smsSettings = SmsSettings::orderByDesc('created_at')->first();
+                // ServiceConnectionReception
                 if ($input['ContactNumber'] != null) {
                     if (strlen($input['ContactNumber']) > 10 && strlen($input['ContactNumber']) < 13) {
-                        $msg = "BLCI Notification\n\nHello " . $serviceConnections->ServiceAccountName . ", \nYour " . $input['AccountApplicationType'] . " application with control no. " . $input['id'] . " has been received and will be processed shortly. " .
+                        if ($smsSettings != null && $smsSettings->ServiceConnectionReception=='Yes') {
+                            $msg = "BLCI Notification\n\nHello " . $serviceConnections->ServiceAccountName . ", \nYour " . $input['AccountApplicationType'] . " application with control no. " . $input['id'] . " has been received and will be processed shortly. " .
                             "You will receive several SMS notifications in the future regarding the progress of your application. \nHave a great day!";
-                        Notifications::createFreshSms($input['ContactNumber'], $msg, 'SERVICE CONNECTIONS', $input['id']);
+                            Notifications::createFreshSms($input['ContactNumber'], $msg, 'SERVICE CONNECTIONS', $input['id']);
+                        }                        
                     }                    
                 } 
 
@@ -251,11 +256,14 @@ class ServiceConnectionsController extends AppBaseController
                 $inspection->save();
 
                 // SEND SMS
+                // InspectionCreation
                 if ($input['ContactNumber'] != null) {
                     if (strlen($input['ContactNumber']) > 10 && strlen($input['ContactNumber']) < 13) {
-                        $msg = "BLCI Notification\n\nHello " . $serviceConnections->ServiceAccountName . ", \nYour " . $input['AccountApplicationType'] . " application with control no. " . $input['id'] . " has been schedule for inspection on " . date('F d, Y', strtotime($inspection->InspectionSchedule)) . ". " .
-                            "Please make sure that your household should have at least one (1) representative during the inspection process. \nHave a great day!";
-                        Notifications::createFreshSms($input['ContactNumber'], $msg, 'SERVICE CONNECTIONS', $input['id']);
+                        if ($smsSettings != null && $smsSettings->InspectionCreation=='Yes') {
+                            $msg = "BLCI Notification\n\nHello " . $serviceConnections->ServiceAccountName . ", \nYour " . $input['AccountApplicationType'] . " application with control no. " . $input['id'] . " has been schedule for inspection on " . date('F d, Y', strtotime($inspection->InspectionSchedule)) . ". " .
+                                "Please make sure that your household should have at least one (1) representative during the inspection process. \nHave a great day!";
+                            Notifications::createFreshSms($input['ContactNumber'], $msg, 'SERVICE CONNECTIONS', $input['id']);
+                        }
                     }                    
                 } 
 
@@ -3515,11 +3523,16 @@ class ServiceConnectionsController extends AppBaseController
 
                 $paymentOrder = PaymentOrder::where('ServiceConnectionId', $id)->first();
 
+                // SEND SMS
+                $smsSettings = SmsSettings::orderByDesc('created_at')->first();
+                // PaymentApproved
                 if ($serviceConnections->ContactNumber != null) {
                     if (strlen($serviceConnections->ContactNumber) > 10 && strlen($serviceConnections->ContactNumber) < 13) {
-                        $msg = "BLCI Notification\n\nHello " . $serviceConnections->ServiceAccountName . ", \nYour " . $serviceConnections->AccountApplicationType . " application with control no. " . $id . ", amounting P " . number_format($paymentOrder->OverAllTotal, 2) . ", is approved for payment. " .
-                            "You can now pay the fees to BLCI offices. \nHave a great day!";
-                        Notifications::createFreshSms($serviceConnections->ContactNumber, $msg, 'SERVICE CONNECTION INSPECTION', $id);
+                        if ($smsSettings != null && $smsSettings->PaymentApproved=='Yes') {
+                            $msg = "BLCI Notification\n\nHello " . $serviceConnections->ServiceAccountName . ", \nYour " . $serviceConnections->AccountApplicationType . " application with control no. " . $id . ", amounting P " . number_format($paymentOrder->OverAllTotal, 2) . ", is approved for payment. " .
+                                "You can now pay the fees to BLCI offices. \nHave a great day!";
+                            Notifications::createFreshSms($serviceConnections->ContactNumber, $msg, 'SERVICE CONNECTION INSPECTION', $id);
+                        }
                     }                    
                 } 
             }

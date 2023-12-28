@@ -44,6 +44,8 @@ Route::get('/home/get-bom-large-load', [HomeController::class, 'fetchBomLargeLoa
 Route::get('/home/get-transformer-large-load', [HomeController::class, 'fetchTransformerLargeLoad'])->name('home.get-transformer-large-load');
 Route::get('/home/dash-get-collection-summary', [HomeController::class, 'dashGetCollectionSummary'])->name('home.dash-get-collection-summary');
 Route::get('/home/dash-get-collection-summary-graph', [HomeController::class, 'dashGetCollectionSummaryGraph'])->name('home.dash-get-collection-summary-graph');
+Route::get('/settings/settings', [HomeController::class, 'settings'])->name('settings.settings');
+Route::get('/settings/save-general-settings', [HomeController::class, 'saveGeneralSettings'])->name('settings.save-general-settings');
 
 // ADD PERMISSIONS TO ROLES
 Route::get('/roles/add-permissions/{id}', [RoleController::class, 'addPermissions'])->name('roles.add_permissions');
@@ -56,6 +58,7 @@ Route::get('/users/add-user-permissions/{id}', [UsersController::class, 'addUser
 Route::post('/users/create-user-permissions', [UsersController::class, 'createUserPermissions']);
 Route::get('/users/remove-permission/{id}/{permission}', [UsersController::class, 'removePermission'])->name('users.remove_permission');
 Route::get('/users/remove-roles/{id}', [UsersController::class, 'clearRoles'])->name('users.remove_roles');
+Route::get('/users/my-account', [UsersController::class, 'myAccount'])->name('users.my-account');
 
 Route::post('/users/authenticate', [UsersController::class, 'authenticate'])->name('users.authenticate');
 Route::resource('users', UsersController::class);
@@ -982,3 +985,4 @@ Route::get('/bohol_water_service_accounts/upload-file', [App\Http\Controllers\Bo
 Route::post('/bohol_water_service_accounts/validate-uploaded-file', [App\Http\Controllers\BoholWaterServiceAccountsController::class, 'validateUploadedFile'])->name('boholWaterServiceAccounts.validate-uploaded-file');
 Route::resource('boholWaterServiceAccounts', App\Http\Controllers\BoholWaterServiceAccountsController::class);
 Route::resource('bohol-water-collections', App\Http\Controllers\BoholWaterCollectionController::class);
+Route::resource('sms-settings', App\Http\Controllers\SmsSettingsController::class);

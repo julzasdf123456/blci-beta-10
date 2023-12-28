@@ -4,8 +4,11 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Str;
 use App\Models\ServiceAccounts;
+use App\Models\SmsSettings;
+use App\Models\IDGenerator;
 
 class HomeController extends Controller
 {
@@ -237,5 +240,42 @@ class HomeController extends Controller
             ->first();
 
         return response()->json($data, 200);
+    }
+
+    public function settings() {
+        if(Auth::user()->hasAnyPermission(['Super Admin'])) {
+            return view('/settings/settings', [
+                'smsSettings' => SmsSettings::orderByDesc('created_at')->first(),
+            ]);
+        } else {
+            return abort(403, "You're not authorized to create a service connection application.");
+        }
+    }
+
+    public function saveGeneralSettings(Request $request) {
+        // SMS SETTINGS
+        $smsSettings = SmsSettings::orderByDesc('created_at')->first();
+
+        if ($smsSettings != null) {
+            $smsSettings->Bills = trim($request['Bills']);
+            $smsSettings->NoticeOfDisconnection = trim($request['NoticeOfDisconnection']);
+            $smsSettings->ServiceConnectionReception = trim($request['ServiceConnectionReception']);
+            $smsSettings->InspectionCreation = trim($request['InspectionCreation']);
+            $smsSettings->PaymentApproved = trim($request['PaymentApproved']);
+            $smsSettings->InspectionToday = trim($request['InspectionToday']);
+            $smsSettings->save();
+        } else {
+            $smsSettings = new SmsSettings;
+            $smsSettings->id = IDGenerator::generateIDandRandString();
+            $smsSettings->Bills = trim($request['Bills']);
+            $smsSettings->NoticeOfDisconnection = trim($request['NoticeOfDisconnection']);
+            $smsSettings->ServiceConnectionReception = trim($request['ServiceConnectionReception']);
+            $smsSettings->InspectionCreation = trim($request['InspectionCreation']);
+            $smsSettings->PaymentApproved = trim($request['PaymentApproved']);
+            $smsSettings->InspectionToday = trim($request['InspectionToday']);
+            $smsSettings->save();
+        }
+
+        return response()->json('ok', 200);
     }
 }

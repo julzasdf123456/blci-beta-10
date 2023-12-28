@@ -39,7 +39,9 @@ class Users extends Model
         'email',
         'email_verified_at',
         'password',
-        'remember_token'
+        'remember_token',
+        'OfficeSignation',
+        'ProfilePicture',
     ];
 
     /**
@@ -53,7 +55,9 @@ class Users extends Model
         'email' => 'string',
         'email_verified_at' => 'datetime',
         'password' => 'string',
-        'remember_token' => 'string'
+        'remember_token' => 'string',
+        'OfficeSignation' => 'string',
+        'ProfilePicture' => 'string',
     ];
 
     /**
@@ -68,7 +72,9 @@ class Users extends Model
         'password' => 'required|string|max:255',
         'remember_token' => 'nullable|string|max:100',
         'created_at' => 'nullable',
-        'updated_at' => 'nullable'
+        'updated_at' => 'nullable',
+        'OfficeSignation' => 'nullable|string',
+        'ProfilePicture' => 'nullable|string',
     ];
 
     

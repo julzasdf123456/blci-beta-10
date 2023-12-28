@@ -1422,7 +1422,6 @@ use Illuminate\Support\Facades\Auth;
 
 <!-- ADMIN MENU -->
 @can('Super Admin')
-    <li class="nav-header">ADMINISTRATIVE</li>
     <li class="nav-item has-treeview">
         <a href="#" class="nav-link">
             <i class="fas fa-shield-alt nav-icon"></i>
@@ -1453,14 +1452,21 @@ use Illuminate\Support\Facades\Auth;
                 </a>
             </li>
 
-
             <li class="nav-item">
                 <a href="{{ route('permissions.index') }}"
                 class="nav-link {{ Request::is('permissions*') ? 'active' : '' }}">
                 <i class="fas fa-key nav-icon"></i><p>Permissions</p>
                 </a>
             </li>
+
+            <li class="nav-item">
+                <a href="{{ route('settings.settings') }}"
+                class="nav-link {{ Request::is('settings.settings*') ? 'active' : '' }}">
+                <i class="fas fa-cogs nav-icon"></i><p>General Settings</p>
+                </a>
+            </li>
         </ul>
     </li>
 @endcan
+
 

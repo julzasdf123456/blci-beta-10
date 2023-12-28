@@ -12,6 +12,8 @@ use App\Models\User;
 use App\Models\Users;
 use App\Models\Permission;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Auth;
 use Flash;
 use Response;
 
@@ -239,4 +241,14 @@ class UsersController extends AppBaseController
             return response()->json(['res' => 'error'], 404);
         }        
     } 
+
+    public function myAccount(Request $request) {
+        $user = User::find(Auth::id());
+        $userPermissions = $user->getAllPermissions();
+
+        return view('/users/my_account', [
+            'user' => $user,
+            'userPermissions' => $userPermissions,
+        ]);
+    }
 }

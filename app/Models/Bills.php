@@ -214,6 +214,8 @@ class Bills extends Model
         'SurchargeWaiveApprovedBy',
         'SurchargeWaiveRequestDate',
         'SurchargeWaiveApprovedDate',
+        'SMSSent',
+        'EmailSent',
     ];
 
     /**
@@ -342,6 +344,8 @@ class Bills extends Model
         'SurchargeWaiveApprovedBy' => 'string',
         'SurchargeWaiveRequestDate' => 'string',
         'SurchargeWaiveApprovedDate' => 'string',
+        'SMSSent' => 'string',
+        'EmailSent' => 'string',
     ];
 
     /**
@@ -472,6 +476,8 @@ class Bills extends Model
         'SurchargeWaiveApprovedBy' => 'nullable|string',
         'SurchargeWaiveRequestDate' => 'nullable|string',
         'SurchargeWaiveApprovedDate' => 'nullable|string',
+        'SMSSent' => 'nullable|string',
+        'EmailSent' => 'nullable|string',
     ];
 
     public static function getHighConsumptionPercentageAlert() {

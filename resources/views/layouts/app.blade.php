@@ -267,27 +267,32 @@
                 </a>
                 <ul class="dropdown-menu dropdown-menu-lg dropdown-menu-right">
                     <!-- User image -->
-                    <li class="user-header bg-primary">
+                    <li class="user-header bg-dark">
                         {{-- <img src="https://boheco1.com/wp-content/uploads/2018/06/boheco-1-1024x1012.png" class="user-image img-circle elevation-2" alt="User Image"> --}}
                         <img src="{{ URL::asset('imgs/company_logo.png'); }}"
                              class="img-circle elevation-2"
                              alt="User Image"> 
-                        <p>
-                            {{ Auth::check() ? Auth::user()->name : '' }}
-                            <small>Member since {{ Auth::check() ? Auth::user()->created_at->format('M. Y') : '' }}</small>
-                        </p>
+                        <br>
+                        <h4 style="margin-top: 10px;"> {{ Auth::check() ? Auth::user()->name : '' }} </h4>
                     </li>
-                    <!-- Menu Footer-->
-                    <li class="user-footer">
-                        <a href="#" class="btn btn-default btn-flat">Profile</a>
-                        <a href="#" class="btn btn-default btn-flat float-right"
-                           onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
-                            Sign out
-                        </a>
-                        <form id="logout-form" action="{{ route('logout') }}" method="POST" class="d-none">
-                            @csrf
-                        </form>
-                    </li>
+                    <table class="table table-borderless table-hover table-sm">
+                        <tr>
+                            <td>
+                                <a href="{{ route('users.my-account') }}" class="btn btn-link text-dark"><i class="fas fa-user-circle ico-tab"></i>My Account</a>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td style="border-top: 1px solid #e6e6e6;">
+                                <a href="#" class="btn btn-link text-dark"
+                                onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
+                                    <i class="fas fa-sign-out-alt ico-tab"></i>Sign out
+                                </a>
+                                <form id="logout-form" action="{{ route('logout') }}" method="POST" class="d-none">
+                                    @csrf
+                                </form>
+                            </td>
+                        </tr>
+                    </table>
                 </ul>
             </li>
         </ul>
