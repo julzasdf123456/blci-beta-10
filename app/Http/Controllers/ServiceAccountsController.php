@@ -3693,6 +3693,7 @@ class ServiceAccountsController extends AppBaseController
 
                                 if ($reading != null) {
                                     $reading->KwhUsed = $lastReading;
+                                    $reading->ReadingTimestamp = $period;
                                     $reading->save();
                                 } else {
                                     $reading = new Readings;
@@ -3700,6 +3701,7 @@ class ServiceAccountsController extends AppBaseController
                                     $reading->AccountNumber = $serviceAccount->id;
                                     $reading->ServicePeriod = $period;
                                     $reading->KwhUsed = $lastReading;
+                                    $reading->ReadingTimestamp = $period;
                                     $reading->save();
                                 }
                             } else {
@@ -3751,6 +3753,7 @@ class ServiceAccountsController extends AppBaseController
 
                                 if ($reading != null) {
                                     $reading->KwhUsed = $lastReading;
+                                    $reading->ReadingTimestamp = $period;
                                     $reading->save();
                                 } else {
                                     $reading = new Readings;
@@ -3758,6 +3761,7 @@ class ServiceAccountsController extends AppBaseController
                                     $reading->AccountNumber = $serviceAccount->id;
                                     $reading->ServicePeriod = $period;
                                     $reading->KwhUsed = $lastReading;
+                                    $reading->ReadingTimestamp = $period;
                                     $reading->save();
                                 }
                             }

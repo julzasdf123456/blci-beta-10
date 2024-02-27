@@ -15,6 +15,7 @@ use App\Http\Controllers\ReadingsController;
 use App\Http\Controllers\BillsController;
 use App\Http\Controllers\TransactionIndexController;
 use App\Http\Controllers\PaidBillsController;
+use App\Http\Controllers\DCRSummaryTransactionsController;
 
 /*
 |--------------------------------------------------------------------------
@@ -851,16 +852,16 @@ Route::resource('changeMeterLogs', App\Http\Controllers\ChangeMeterLogsControlle
 Route::resource('accountGLCodes', App\Http\Controllers\AccountGLCodesController::class);
 
 
-Route::resource('dCRSummaryTransactions', App\Http\Controllers\DCRSummaryTransactionsController::class);
-Route::get('/d_c_r_summary_transactions/sales-dcr-monitor', [App\Http\Controllers\DCRSummaryTransactionsController::class, 'salesDcrMonitor'])->name('dCRSummaryTransactions.sales-dcr-monitor');
-Route::get('/d_c_r_summary_transactions/print-dcr/{teller}/{day}', [App\Http\Controllers\DCRSummaryTransactionsController::class, 'printDcr'])->name('dCRSummaryTransactions.print-dcr');
-Route::get('/d_c_r_summary_transactions/dashboard', [App\Http\Controllers\DCRSummaryTransactionsController::class, 'collectionDashboard'])->name('dCRSummaryTransactions.dashboard');
-Route::get('/d_c_r_summary_transactions/get-collection-per-area', [App\Http\Controllers\DCRSummaryTransactionsController::class, 'dashboardGetCollectionPerArea'])->name('dCRSummaryTransactions.get-collection-per-area');
-Route::get('/d_c_r_summary_transactions/collection-office-expand/{office}', [App\Http\Controllers\DCRSummaryTransactionsController::class, 'collectionOfficeEpand'])->name('dCRSummaryTransactions.collection-office-expand');
-Route::get('/d_c_r_summary_transactions/get-gl-code-payment-details', [App\Http\Controllers\DCRSummaryTransactionsController::class, 'getGLCodePaymentDetails'])->name('dCRSummaryTransactions.get-gl-code-payment-details');
-Route::get('/d_c_r_summary_transactions/application-dcr-summary', [App\Http\Controllers\DCRSummaryTransactionsController::class, 'applicationDcrSummary'])->name('dCRSummaryTransactions.application-dcr-summary');
-Route::get('/d_c_r_summary_transactions/fix-dcr', [App\Http\Controllers\DCRSummaryTransactionsController::class, 'fixDcr'])->name('dCRSummaryTransactions.fix-dcr');
-
+Route::resource('dCRSummaryTransactions', DCRSummaryTransactionsController::class);
+Route::get('/d_c_r_summary_transactions/sales-dcr-monitor', [DCRSummaryTransactionsController::class, 'salesDcrMonitor'])->name('dCRSummaryTransactions.sales-dcr-monitor');
+Route::get('/d_c_r_summary_transactions/print-dcr/{teller}/{day}', [DCRSummaryTransactionsController::class, 'printDcr'])->name('dCRSummaryTransactions.print-dcr');
+Route::get('/d_c_r_summary_transactions/dashboard', [DCRSummaryTransactionsController::class, 'collectionDashboard'])->name('dCRSummaryTransactions.dashboard');
+Route::get('/d_c_r_summary_transactions/get-collection-per-area', [DCRSummaryTransactionsController::class, 'dashboardGetCollectionPerArea'])->name('dCRSummaryTransactions.get-collection-per-area');
+Route::get('/d_c_r_summary_transactions/collection-office-expand/{office}', [DCRSummaryTransactionsController::class, 'collectionOfficeEpand'])->name('dCRSummaryTransactions.collection-office-expand');
+Route::get('/d_c_r_summary_transactions/get-gl-code-payment-details', [DCRSummaryTransactionsController::class, 'getGLCodePaymentDetails'])->name('dCRSummaryTransactions.get-gl-code-payment-details');
+Route::get('/d_c_r_summary_transactions/application-dcr-summary', [DCRSummaryTransactionsController::class, 'applicationDcrSummary'])->name('dCRSummaryTransactions.application-dcr-summary');
+Route::get('/d_c_r_summary_transactions/fix-dcr', [DCRSummaryTransactionsController::class, 'fixDcr'])->name('dCRSummaryTransactions.fix-dcr');
+Route::get('/d_c_r_summary_transactions/collection-summary-per-teller', [DCRSummaryTransactionsController::class, 'collectionSummaryPerTeller'])->name('dCRSummaryTransactions.collection-summary-per-teller');
 
 Route::resource('banks', App\Http\Controllers\BanksController::class);
 

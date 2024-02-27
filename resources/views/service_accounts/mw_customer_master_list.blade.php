@@ -6,6 +6,7 @@
             <div class="row mb-2">
                 <div class="col-sm-12">
                     <h4>Upload Customer Master List Text File</h4>
+                    <span class="text-muted">The text file with the title <strong>"LISTING OF ACCOUNTS"</strong></span>
                 </div>
             </div>
         </div>

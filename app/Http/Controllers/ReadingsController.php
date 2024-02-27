@@ -917,7 +917,7 @@ class ReadingsController extends AppBaseController
             ->leftJoin('Billing_ServiceAccounts', 'Billing_Readings.AccountNumber', '=', 'Billing_ServiceAccounts.id')
             ->whereRaw("Billing_Readings.MeterReader = '" . $meterReader->id . "'")
             ->where('Billing_Readings.ServicePeriod', $period)
-            ->whereIn('Billing_ServiceAccounts.AccountStatus', ['ACTIVE', 'DISCONNECTED'])
+            ->whereRaw("Billing_ServiceAccounts.AccountStatus IN ('ACTIVE', 'DISCONNECTED', 'C', 'R', 'D', 'A')")
             ->where(function ($query) use ($town, $day, $reading, $meterReader) {
                 $query->whereRaw("Billing_Readings.AccountNumber IN (SELECT id FROM Billing_ServiceAccounts WHERE id=Billing_Readings.AccountNumber AND Town='" . $town . "' AND GroupCode='" . $day . "' AND MeterReader='" . $meterReader->id . "')")
                         ->orWhereRaw("Billing_Readings.AccountNumber IS NULL AND (ReadingTimestamp BETWEEN '" . date('Y-m-d', strtotime($reading->ReadingTimestamp)) . "' AND '" . date('Y-m-d', strtotime($reading->ReadingTimestamp . ' +1 day')) . "')");

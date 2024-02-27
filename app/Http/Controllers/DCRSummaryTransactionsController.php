@@ -995,4 +995,10 @@ class DCRSummaryTransactionsController extends AppBaseController
 
         return DCRSummaryTransactions::getARConsumersPerArea($office);
     }
+
+    public function collectionSummaryPerTeller(Request $request) {
+        return view('/d_c_r_summary_transactions/collection_summary_per_teller', [
+
+        ]);
+    }
 }

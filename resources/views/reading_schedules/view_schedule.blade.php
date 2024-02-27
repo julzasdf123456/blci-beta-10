@@ -65,7 +65,7 @@
         $(document).ready(function() {
             // QUERY SCHEDS
             $.ajax({
-                url : '/reading_schedules/get-latest-schedule',
+                url : "{{ route('readingSchedules.get-latest-schedule') }}",
                 type : 'GET',
                 data : {
                     id : "{{ $user->id }}"

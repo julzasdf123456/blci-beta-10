@@ -752,7 +752,10 @@ class BillsController extends AppBaseController
         if ($request['params'] == null) {
             $bills = DB::table('Billing_Bills')
                         ->leftJoin('Billing_ServiceAccounts', 'Billing_Bills.AccountNumber', '=', 'Billing_ServiceAccounts.id')
-                        ->leftJoin('Cashier_PaidBills', 'Billing_Bills.id', '=', 'Cashier_PaidBills.ObjectSourceId')
+                        ->leftJoin('Cashier_PaidBills', function($join) {
+                            $join->on('Cashier_PaidBills.AccountNumber', '=', 'Billing_Bills.AccountNumber')
+                                ->on('Cashier_PaidBills.ServicePeriod', '=', 'Billing_Bills.ServicePeriod');
+                        })
                         ->leftJoin('CRM_Towns', 'Billing_ServiceAccounts.Town', '=', 'CRM_Towns.id')
                         ->leftJoin('CRM_Barangays', 'Billing_ServiceAccounts.Barangay', '=', 'CRM_Barangays.id')
                         ->whereRaw("ForCancellation != 'SALES_REPORT' OR ForCancellation IS NULL")
@@ -774,7 +777,10 @@ class BillsController extends AppBaseController
             $bills = DB::table('Billing_Bills')
                         ->leftJoin('Billing_ServiceAccounts', 'Billing_Bills.AccountNumber', '=', 'Billing_ServiceAccounts.id')
                         ->leftJoin('CRM_Towns', 'Billing_ServiceAccounts.Town', '=', 'CRM_Towns.id')
-                        ->leftJoin('Cashier_PaidBills', 'Billing_Bills.id', '=', 'Cashier_PaidBills.ObjectSourceId')
+                        ->leftJoin('Cashier_PaidBills', function($join) {
+                            $join->on('Cashier_PaidBills.AccountNumber', '=', 'Billing_Bills.AccountNumber')
+                                ->on('Cashier_PaidBills.ServicePeriod', '=', 'Billing_Bills.ServicePeriod');
+                        })
                         ->leftJoin('CRM_Barangays', 'Billing_ServiceAccounts.Barangay', '=', 'CRM_Barangays.id')
                         ->whereRaw("ForCancellation != 'SALES_REPORT' OR ForCancellation IS NULL")
                         ->select('Billing_ServiceAccounts.ServiceAccountName', 

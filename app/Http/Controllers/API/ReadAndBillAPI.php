@@ -50,7 +50,7 @@ class ReadAndBillAPI extends Controller {
         $readingSchedules->Status = 'Downloaded';
         $readingSchedules->save();
 
-        return response()->json(['response' => 'ok'], $this->successStatus);
+        return response()->json($readingSchedules, $this->successStatus);
     }
 
     public function downloadAccounts(Request $request) {
@@ -71,7 +71,7 @@ class ReadAndBillAPI extends Controller {
             ->where('Billing_ServiceAccounts.Town', $request['AreaCode'])
             ->where('Billing_ServiceAccounts.GroupCode', $request['GroupCode'])
             ->where('Billing_ServiceAccounts.MeterReader', $request['MeterReader'])
-            ->whereRaw("(Billing_ServiceAccounts.NetMetered IS NULL OR Billing_ServiceAccounts.NetMetered='No') AND Billing_ServiceAccounts.AccountStatus IN ('ACTIVE', 'DISCONNECTED') 
+            ->whereRaw("(Billing_ServiceAccounts.NetMetered IS NULL OR Billing_ServiceAccounts.NetMetered='No') AND Billing_ServiceAccounts.AccountStatus IN ('ACTIVE', 'DISCONNECTED', 'C', 'R', 'D', 'A') 
                 AND Billing_ServiceAccounts.AccountType NOT IN ('PUBLIC BUILDING HIGH VOLTAGE', 'COMMERCIAL HIGH VOLTAGE', 'INDUSTRIAL HIGH VOLTAGE') 
                 AND Billing_ServiceAccounts.id NOT IN (SELECT AccountNumber FROM Billing_Readings WHERE ServicePeriod='" . $request['ServicePeriod'] . "' AND AccountNumber IS NOT NULL)")
             ->whereRaw("((Billing_ServiceAccounts.AccountExpiration > '" . date('Y-m-d') . "' AND AccountRetention='Temporary') OR AccountRetention='Permanent' OR AccountExpiration IS NULL)")

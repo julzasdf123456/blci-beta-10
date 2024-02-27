@@ -958,13 +958,7 @@ use Illuminate\Support\Facades\Auth;
                    <i class="fas fa-circle nav-icon text-primary"></i><p>Billed & Unbilled</p>
                 </a>
             </li>
-            <li class="nav-item">
-                <a href="{{ route('readings.billed-and-unbilled-reports-bapa') }}"
-                   class="nav-link {{ Request::is('readings.billed-and-unbilled-reports-bapa*') ? 'active' : '' }}">                   
-                   <i class="fas fa-circle nav-icon text-primary"></i><p>Billed & Unbilled BAPA</p>
-                </a>
-            </li>
-            <li class="nav-item">
+            {{-- <li class="nav-item">
                 <a href="{{ route('readings.efficiency-report') }}"
                    class="nav-link {{ Request::is('readings.efficiency-report*') ? 'active' : '' }}">                   
                    <i class="fas fa-chart-pie nav-icon text-primary"></i><p>Efficiency Report</p>
@@ -975,13 +969,13 @@ use Illuminate\Support\Facades\Auth;
                    class="nav-link {{ Request::is('readings.disco-per-mreader*') ? 'active' : '' }}">
                     <i class="fas fa-circle nav-icon text-primary"></i><p>Disco per M. Reader</p>
                 </a>
-            </li>
-            <li class="nav-item">
+            </li> --}}
+            {{-- <li class="nav-item">
                 <a href="{{ route('readings.disco-per-bapa') }}"
                    class="nav-link {{ Request::is('readings.disco-per-bapa*') ? 'active' : '' }}">
                     <i class="fas fa-circle nav-icon text-primary"></i><p>Disco per BAPA</p>
                 </a>
-            </li>
+            </li> --}}
             <li class="nav-item">
                 <a href="{{ route('readings.uncollected-per-mreader') }}"
                    class="nav-link {{ Request::is('readings.uncollected-per-mreader*') ? 'active' : '' }}">
@@ -994,9 +988,6 @@ use Illuminate\Support\Facades\Auth;
                     <i class="fas fa-circle nav-icon text-primary"></i><p>Excemptions per M. Reader</p>
                 </a>
             </li>
-            <li class="nav-header">                
-                CorPlan 
-            </li>
             <li class="nav-item">
                 <a href="{{ route('kwhSales.index') }}"
                    class="nav-link {{ Request::is('kwhSales.index*') ? 'active' : '' }}">                   
@@ -1008,9 +999,6 @@ use Illuminate\Support\Facades\Auth;
                    class="nav-link {{ Request::is('kwhSales.sales-distribution*') ? 'active' : '' }}">                   
                    <i class="fas fa-file nav-icon text-primary"></i><p>Sales Distribution</p>
                 </a>
-            </li>
-            <li class="nav-header">                
-                TSD 
             </li>
             <li class="nav-item">
                 <a href="{{ route('kwhSales.kwh-sales-expanded') }}"
@@ -1170,6 +1158,12 @@ use Illuminate\Support\Facades\Auth;
             </p>
         </a>
         <ul class="nav nav-treeview">
+            <li class="nav-item">
+                <a href="{{ route('dCRSummaryTransactions.collection-summary-per-teller') }}"
+                class="nav-link {{ Request::is('dCRSummaryTransactions.collection-summary-per-teller*') ? 'active' : '' }}">
+                <i class="fas fa-list nav-icon text-info"></i><p>Collection Summary</p>
+                </a>
+            </li>
             <li class="nav-item">
                 <a href="{{ route('collection-date-adjustments.index') }}"
                 class="nav-link {{ Request::is('collection-date-adjustments.index*') ? 'active' : '' }}">

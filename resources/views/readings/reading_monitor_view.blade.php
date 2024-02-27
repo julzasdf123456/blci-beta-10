@@ -62,6 +62,7 @@
                     <div class="card-footer">
                         <button class="btn btn-primary btn-sm" id="view-btn"><i class="fas fa-eye ico-tab-mini"></i>View GPS</button>
                         <button class="btn btn-warning btn-sm float-right" id="view-report-btn"><i class="fas fa-list ico-tab-mini"></i>View Report</button>
+                        <button class="btn btn-default btn-sm float-right" style="margin-right: 5px;"><i class="fas fa-download ico-tab-mini"></i>Download .txt File</button>
                     </div>
                 </div>
 
@@ -146,8 +147,8 @@
             const map = new mapboxgl.Map({
             container: 'map', // container ID
             style: 'mapbox://styles/mapbox/satellite-v9',
-            center: [123.242197, 10.844679], // starting position [lng, lat], 
-            zoom: 10 // starting zoom
+            center: [123.873378, 9.659182], // starting position [lng, lat], 
+            zoom: 13 // starting zoom
         });
 
         map.on('load', () => {
