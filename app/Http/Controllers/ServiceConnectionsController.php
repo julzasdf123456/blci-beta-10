@@ -435,8 +435,12 @@ class ServiceConnectionsController extends AppBaseController
 
         // FILES
         $path = ServiceConnections::filePath() . "$id/";
-        $fileNames = scandir($path);
-        $fileNames = array_diff($fileNames, array('.', '..'));
+        if (file_exists($path) && is_dir($path)) {
+            $fileNames = scandir($path);
+            $fileNames = array_diff($fileNames, array('.', '..'));
+        } else {
+            $fileNames = [];
+        }
 
         /**
          * ASSESS PERMISSIONS
