@@ -3,7 +3,7 @@
    <tr>
        <td>Order No :</td>
        <td>
-           <input type="text" id="OrderNo" class="form-control form-control-xs text-right" value="{{ $whHead->orderno }}" readonly>
+           <input type="text" id="OrderNo" class="form-control form-control-xs text-right" value="{{ $whHead != null ? $whHead->orderno : '' }}" readonly>
        </td>
        <td></td>
        <td></td>
