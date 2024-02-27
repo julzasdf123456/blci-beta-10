@@ -3860,12 +3860,12 @@ class ServiceConnectionsController extends AppBaseController
             $whItems->itemcd = $item->ItemCode;  
             $whItems->qty = $item->ItemQuantity;  
             $whItems->uom = $item->ItemUOM; 
-            $whItems->cst = $item->ItemUnitPrice; 
+            $whItems->cst = $item->ItemSalesPrice; 
             $whItems->amt = $item->ItemTotalCost; 
             $whItems->itemno = $item->ItemNo; 
             $whItems->rdate = date('m/d/Y');
             $whItems->rtime = date('h:i A');
-            $whItems->salesprice = $item->ItemSalesPrice;
+            $whItems->salesprice = $item->ItemUnitPrice;
             $whItems->save();
         }
 
