@@ -21,19 +21,41 @@ use Illuminate\Support\Facades\Auth;
                 </div> 
                 <div class="col-sm-6">
                     {{-- DELETE --}}
-                    {!! Form::open(['route' => ['serviceConnections.destroy', $serviceConnections->id], 'method' => 'delete']) !!}
-                        {!! Form::button('<i class="fas fa-trash"></i>', ['type' => 'submit', 'title' => 'Delete this application', 'class' => 'btn btn-sm btn-link text-danger float-right', 'onclick' => "return confirm('Are you sure you want to delete this?')"]) !!}
-                    {!! Form::close() !!}
+                    <div class="dropdown">
+                        <a class="btn btn-default btn-sm dropdown-toggle float-right" href="#" id="more-menu" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        More
+                        </a>
+                        <div class="dropdown-menu" aria-labelledby="more-menu">
+                            {!! Form::open(['route' => ['serviceConnections.destroy', $serviceConnections->id], 'method' => 'delete']) !!}
+                                {!! Form::button('<i class="fas fa-trash ico-tab"></i> Delete', ['type' => 'submit', 'title' => 'Delete this application', 'class' => 'dropdown-item', 'onclick' => "return confirm('Are you sure you want to delete this?')"]) !!}
+                            {!! Form::close() !!}
+                            {{-- <div class="dropdown-divider"></div> --}}
+                        </div>
+                    </div>
+                    
                     {{-- PAYMENT ORDER --}}
-                    @if($paymentOrder == null)
-                        <a href="{{ route('serviceConnections.payment-order', [$serviceConnections->id]) }}" class="btn btn-sm btn-link text-success float-right" title="Create Payment Order">
-                            <i class="fas fa-file-invoice-dollar"></i></a>
-                    @else
-                        <a href="{{ route('serviceConnections.update-payment-order', [$serviceConnections->id]) }}" class="btn btn-sm btn-link text-success float-right" title="Edit Payment Order">
-                            <i class="fas fa-file-invoice-dollar"></i></a>
-                    @endif
+                    {{-- DELETE --}}
+                    <div class="dropdown">
+                        <a class="btn btn-default btn-sm dropdown-toggle float-right" style="margin-right: 5px;" href="#" id="payment-order-menu" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        Payment Order
+                        </a>
+                        <div class="dropdown-menu" aria-labelledby="payment-order-menu">
+                            @if($paymentOrder == null)
+                                <a href="{{ route('serviceConnections.payment-order', [$serviceConnections->id]) }}" class="dropdown-item" title="Create Payment Order">
+                                    <i class="fas fa-file-invoice-dollar ico-tab"></i>Create Payment Order</a>
+                            @else
+                                <a href="{{ route('serviceConnections.update-payment-order', [$serviceConnections->id]) }}" class="dropdown-item" title="Edit Payment Order">
+                                    <i class="fas fa-file-invoice-dollar ico-tab"></i>Edit Payment Order</a>
+
+                                <a href="{{ route('serviceConnections.print-payment-order', [$serviceConnections->id]) }}" class="dropdown-item" title="Edit Payment Order">
+                                    <i class="fas fa-print ico-tab"></i>Print Payment Order Stub</a>
+                            @endif
+                            {{-- <div class="dropdown-divider"></div> --}}
+                        </div>
+                    </div>
+                    
                     {{-- EDIT --}}
-                    <a href="{{ route('serviceConnections.edit', [$serviceConnections->id]) }}" title="Update Application Details" class="btn btn-sm btn-link text-warning float-right"><i class="fas fa-pen"></i></a>
+                    <a href="{{ route('serviceConnections.edit', [$serviceConnections->id]) }}" style="margin-right: 5px;" title="Update Application Details" class="btn btn-sm btn-primary float-right"><i class="fas fa-pen ico-tab-mini"></i>Edit Application</a>
                 </div>
             </div>
         </div>
@@ -49,9 +71,10 @@ use Illuminate\Support\Facades\Auth;
                             <div class="col-lg-6">
                                 <h4 class="p-x0 text-primary">{{ $serviceConnections->ServiceAccountName }}</h4>
                                 <p class="p-x0">{{ strtoupper(ServiceConnections::getAddress($serviceConnections)) }}</p>
-                                <p class="p-x0"><span class="text-muted">Application No: </span>{{ $serviceConnections->id }}</p>
+                                <p class="p-x0"><span class="text-muted">Account Number: </span><strong>{{ $serviceConnections->AccountNumber }}</strong></p>
                             </div>
                             <div class="col-lg-6">
+                                <p class="p-x0"><span class="text-muted">Application No: </span>{{ $serviceConnections->id }}</p>
                                 <p class="p-x0"><span class="text-muted">Contact No:  </span> <span style="margin-left: 20px;">{{ $serviceConnections->ContactNumber }}</span></p>
                                 <p class="p-x0"><span class="text-muted">Email Add.:  </span> <span style="margin-left: 20px;">{{ $serviceConnections->EmailAddress }}</span></p>
                                 <p class="px-0">

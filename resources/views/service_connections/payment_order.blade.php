@@ -50,6 +50,13 @@
    </div>
 
    <div class="col-lg-3">
+      {{-- ACCOUNT NUMBER --}}
+      <div class="card shadow-none">
+         <div class="card-body">
+            <span class="text-muted">ACCOUNT NUMBER</span>
+            <input type="text" name="AccountNumber" id="AccountNumber" placeholder="Input Account Number Here" class="form-control" required>
+         </div>
+      </div>
       {{-- FEES --}}
      <div class="card shadow-none">
         <div class="card-header">
@@ -467,68 +474,78 @@
        * ========================
        */
       function savePaymentOrder() {
-         $('#loader').removeClass('gone')
-         $.ajax({
-            url : "{{ route('serviceConnections.save-payment-order') }}",
-            type : 'POST',
-            data : {
-               _token : "{{ csrf_token() }}",
-               MaterialItems : JSON.stringify(getMaterialItemsForPosting()),
-               MeterItems : JSON.stringify(getMetersForPosting()),
-               ServiceConnectionId : "{{ $serviceConnection->id }}",
-               MaterialDeposit : getInputAmount($('#MaterialDeposit').val()),
-               TransformerRentalFees : getInputAmount($('#TransformerRentalFees').val()),
-               Apprehension : getInputAmount($('#Apprehension').val()),
-               OverheadExpenses : getInputAmount($('#OverheadExpenses').val()),
-               CIAC : getInputAmount($('#CIAC').val()),
-               ServiceFee : getInputAmount($('#ServiceFee').val()),
-               CustomerDeposit : getInputAmount($('#CustomerDeposit').val()),
-               Others : getInputAmount($('#Others').val()),
-               LocalFTax : getInputAmount($('#LocalFTax').val()),
-               SubTotal : getInputAmount($('#SubTotal').val()),
-               VAT : getInputAmount($('#VAT').val()),
-               OthersTotal : getInputAmount($('#OthersTotal').val()),
-               OverAllTotal : getInputAmount($('#OverAllTotal').val()),
-               ORNumber : getInputAmount($('#ORNo').val()),
-               MaterialTotal : getInputAmount($('#MaterialsTotal').val()),
-               ReqNo : $('#OrderNo').val(),
-               MIRSNo : $('#MIRSNo').val(),
-               CostCenter : $('#CostCenter').val(),
-               ChargeTo : $('#ChargeTo').val(),
-               ProjectCode : $('#ProjectCode').val(),
-               RequestedBy : $('#RequestedBy').val(),
-               InvoiceNo : $('#InvoiceNo').val(),
-               CustomerName : $('#CustomerName').val(),
-               TypeOfServiceId : $('#TypeOfServiceId').val(),
-               EntryNo : $('#EntryNo').val(),
-               MeterReqNo : $('#meter-OrderNo').val(),
-               MeterMIRSNo : $('#meter-MIRSNo').val(),
-               MeterCostCenter : $('#meter-CostCenter').val(),
-               MeterChargeTo : $('#meter-ChargeTo').val(),
-               MeterProjectCode : $('#meter-ProjectCode').val(),
-               MeterRequestedBy : $('#meter-RequestedBy').val(),
-               MeterInvoiceNo : $('#meter-InvoiceNo').val(),
-               MeterCustomerName : $('#meter-CustomerName').val(),
-               MeterTypeOfServiceId : $('#meter-TypeOfServiceId').val(),
-               MeterEntryNo : $('#meter-EntryNo').val(),
-            },
-            success : function(res) {
-               Toast.fire({
-                  icon : 'success',
-                  text : 'payment saved!'
-               })
-               $('#loader').removeClass('gone')
-               window.location.href = "{{ url('/serviceConnections') }}/{{ $serviceConnection->id }}"
-            },
-            error : function(err) {
-               Toast.fire({
-                  icon : 'error',
-                  text : 'error saving payment order'
-               })
-               console.log(err)
-               $('#loader').removeClass('gone')
-            }
-         })
+         var acctNo = $('#AccountNumber').val()
+         if (jQuery.isEmptyObject(acctNo)) {
+            Toast.fire({
+               icon : 'warning',
+               text : 'Please supply account number'
+            })
+         } else {
+            $('#loader').removeClass('gone')
+            $.ajax({
+               url : "{{ route('serviceConnections.save-payment-order') }}",
+               type : 'POST',
+               data : {
+                  _token : "{{ csrf_token() }}",
+                  MaterialItems : JSON.stringify(getMaterialItemsForPosting()),
+                  MeterItems : JSON.stringify(getMetersForPosting()),
+                  ServiceConnectionId : "{{ $serviceConnection->id }}",
+                  MaterialDeposit : getInputAmount($('#MaterialDeposit').val()),
+                  TransformerRentalFees : getInputAmount($('#TransformerRentalFees').val()),
+                  Apprehension : getInputAmount($('#Apprehension').val()),
+                  OverheadExpenses : getInputAmount($('#OverheadExpenses').val()),
+                  CIAC : getInputAmount($('#CIAC').val()),
+                  ServiceFee : getInputAmount($('#ServiceFee').val()),
+                  CustomerDeposit : getInputAmount($('#CustomerDeposit').val()),
+                  Others : getInputAmount($('#Others').val()),
+                  LocalFTax : getInputAmount($('#LocalFTax').val()),
+                  SubTotal : getInputAmount($('#SubTotal').val()),
+                  VAT : getInputAmount($('#VAT').val()),
+                  OthersTotal : getInputAmount($('#OthersTotal').val()),
+                  OverAllTotal : getInputAmount($('#OverAllTotal').val()),
+                  ORNumber : getInputAmount($('#ORNo').val()),
+                  MaterialTotal : getInputAmount($('#MaterialsTotal').val()),
+                  ReqNo : $('#OrderNo').val(),
+                  MIRSNo : $('#MIRSNo').val(),
+                  CostCenter : $('#CostCenter').val(),
+                  ChargeTo : $('#ChargeTo').val(),
+                  ProjectCode : $('#ProjectCode').val(),
+                  RequestedBy : $('#RequestedBy').val(),
+                  InvoiceNo : $('#InvoiceNo').val(),
+                  CustomerName : $('#CustomerName').val(),
+                  TypeOfServiceId : $('#TypeOfServiceId').val(),
+                  EntryNo : $('#EntryNo').val(),
+                  MeterReqNo : $('#meter-OrderNo').val(),
+                  MeterMIRSNo : $('#meter-MIRSNo').val(),
+                  MeterCostCenter : $('#meter-CostCenter').val(),
+                  MeterChargeTo : $('#meter-ChargeTo').val(),
+                  MeterProjectCode : $('#meter-ProjectCode').val(),
+                  MeterRequestedBy : $('#meter-RequestedBy').val(),
+                  MeterInvoiceNo : $('#meter-InvoiceNo').val(),
+                  MeterCustomerName : $('#meter-CustomerName').val(),
+                  MeterTypeOfServiceId : $('#meter-TypeOfServiceId').val(),
+                  MeterEntryNo : $('#meter-EntryNo').val(),
+                  AccountNumber : acctNo,
+               },
+               success : function(res) {
+                  Toast.fire({
+                     icon : 'success',
+                     text : 'payment saved!'
+                  })
+                  $('#loader').removeClass('gone')
+                  window.location.href = "{{ url('/serviceConnections') }}/{{ $serviceConnection->id }}"
+               },
+               error : function(err) {
+                  Toast.fire({
+                     icon : 'error',
+                     text : 'error saving payment order'
+                  })
+                  console.log(err)
+                  $('#loader').removeClass('gone')
+               }
+            })
+         }
+         
       }
 
       function removeItem(id) {

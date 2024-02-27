@@ -350,6 +350,7 @@ class ServiceConnectionsController extends AppBaseController
                         'CRM_ServiceConnections.PoleNumber',
                         'CRM_ServiceConnections.Feeder',
                         'CRM_ServiceConnections.ChargeTo',
+                        'CRM_ServiceConnections.AccountNumber',
                         'CRM_ServiceConnections.CertificateOfConnectionIssuedOn',
                         'users.name'
                         )
@@ -3757,6 +3758,7 @@ class ServiceConnectionsController extends AppBaseController
         $meter_customerName = $request['MeterCustomerName'];
         $meter_typeOfServiceId = $request['MeterTypeOfServiceId'];
         $meter_entryNo = $request['MeterEntryNo'];
+        $acctNo = $request['AccountNumber'];
 
         $serviceConnections = DB::table('CRM_ServiceConnections')
             ->leftJoin('CRM_Barangays', 'CRM_ServiceConnections.Barangay', '=', 'CRM_Barangays.id')
@@ -3768,6 +3770,10 @@ class ServiceConnectionsController extends AppBaseController
                         )
         ->where('CRM_ServiceConnections.id', $ServiceConnectionId)
         ->first();
+
+        // UPDATE AccountNumber
+        ServiceConnections::where('id', $ServiceConnectionId)
+            ->update(['AccountNumber' => $acctNo]);
 
         $materialItems = json_decode(stripslashes($materialItems));
         $meterItems = json_decode(stripslashes($meterItems));
@@ -3829,7 +3835,7 @@ class ServiceConnectionsController extends AppBaseController
         $whHead->orno = $ORNumber;
         $whHead->purpose = 'FOR ' . strtoupper($customerName);
         $whHead->serv_code = $typeOfServiceId;
-        $whHead->account_no = $ServiceConnectionId;
+        $whHead->account_no = $acctNo;
         $whHead->cust_name = $customerName;
         $whHead->tot_amt = $MaterialTotal;
         $whHead->chkby = $requestedBy;
@@ -3879,7 +3885,7 @@ class ServiceConnectionsController extends AppBaseController
             $whHead->orno = $ORNumber;
             $whHead->purpose = 'FOR ' . strtoupper($meter_customerName);
             $whHead->serv_code = $meter_typeOfServiceId;
-            $whHead->account_no = $ServiceConnectionId;
+            $whHead->account_no = $acctNo;
             $whHead->cust_name = $meter_customerName;
             $whHead->tot_amt = $MaterialTotal;
             $whHead->chkby = $meter_requestedBy;
@@ -4433,6 +4439,64 @@ class ServiceConnectionsController extends AppBaseController
         return view('/service_connections/manual_energization', [
             'data' => $data,
             'crew' => ServiceConnectionCrew::orderBy('StationName')->get(),
+        ]);
+    }
+
+    public function printPaymentOrder($id) {
+        $serviceConnections = DB::table('CRM_ServiceConnections')
+            ->leftJoin('CRM_Barangays', 'CRM_ServiceConnections.Barangay', '=', 'CRM_Barangays.id')
+            ->leftJoin('CRM_Towns', 'CRM_ServiceConnections.Town', '=', 'CRM_Towns.id')
+            ->leftJoin('users', 'CRM_ServiceConnections.UserId', '=', 'users.id')
+            ->select('CRM_ServiceConnections.id as id',
+                        'CRM_ServiceConnections.AccountCount as AccountCount', 
+                        'CRM_ServiceConnections.ServiceAccountName as ServiceAccountName',
+                        'CRM_ServiceConnections.DateOfApplication', 
+                        'CRM_ServiceConnections.TimeOfApplication', 
+                        'CRM_ServiceConnections.ContactNumber as ContactNumber', 
+                        'CRM_ServiceConnections.EmailAddress as EmailAddress',  
+                        'CRM_ServiceConnections.AccountApplicationType as AccountApplicationType', 
+                        'CRM_ServiceConnections.AccountOrganization as AccountOrganization', 
+                        'CRM_ServiceConnections.ConnectionApplicationType as ConnectionApplicationType',
+                        'CRM_ServiceConnections.MemberConsumerId as MemberConsumerId',
+                        'CRM_ServiceConnections.Status as Status',  
+                        'CRM_ServiceConnections.Notes as Notes', 
+                        'CRM_ServiceConnections.Office', 
+                        'CRM_ServiceConnections.LongSpan', 
+                        'CRM_ServiceConnections.ORNumber as ORNumber',
+                        'CRM_ServiceConnections.ORDate', 
+                        'CRM_ServiceConnections.Sitio as Sitio', 
+                        'CRM_ServiceConnections.LoadCategory as LoadCategory', 
+                        'CRM_ServiceConnections.DateTimeOfEnergization as DateTimeOfEnergization', 
+                        'CRM_ServiceConnections.DateTimeLinemenArrived as DateTimeLinemenArrived', 
+                        'CRM_Towns.Town as Town',
+                        'CRM_Barangays.Barangay as Barangay',
+                        'CRM_ServiceConnections.AccountType',
+                        'CRM_ServiceConnections.ServiceNumber',
+                        'CRM_ServiceConnections.ConnectionSchedule',
+                        'CRM_ServiceConnections.LoadType',
+                        'CRM_ServiceConnections.Zone',
+                        'CRM_ServiceConnections.Block',
+                        'CRM_ServiceConnections.TransformerID',
+                        'CRM_ServiceConnections.LoadInKva',
+                        'CRM_ServiceConnections.PoleNumber',
+                        'CRM_ServiceConnections.Feeder',
+                        'CRM_ServiceConnections.ChargeTo',
+                        'CRM_ServiceConnections.AccountNumber',
+                        'CRM_ServiceConnections.CertificateOfConnectionIssuedOn',
+                        'users.name'
+                        )
+        ->where('CRM_ServiceConnections.id', $id)
+        ->where(function ($query) {
+            $query->where('CRM_ServiceConnections.Trash', 'No')
+                ->orWhereNull('CRM_ServiceConnections.Trash');
+        })
+        ->first(); 
+
+        $paymentOrder = PaymentOrder::where('ServiceConnectionId', $id)->first();
+
+        return view('/service_connections/print_payment_order', [
+            'serviceConnection' => $serviceConnections,
+            'paymentOrder' => $paymentOrder,
         ]);
     }
 }

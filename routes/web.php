@@ -174,6 +174,7 @@ Route::get('/service_connections/set-connection-schedule', [ServiceConnectionsCo
 Route::get('/service_connections/get-existing-accounts', [ServiceConnectionsController::class, 'getExistingAccounts'])->name('serviceConnections.get-existing-accounts');
 Route::get('/service_connections/lifeliners-view', [ServiceConnectionsController::class, 'lifelinersView'])->name('serviceConnections.lifeliners-view');
 Route::get('/service_connections/manual-energization', [ServiceConnectionsController::class, 'manualEnergization'])->name('serviceConnections.manual-energization');
+Route::get('/service_connections/print-payment-order/{id}', [ServiceConnectionsController::class, 'printPaymentOrder'])->name('serviceConnections.print-payment-order');
 Route::resource('serviceConnections', App\Http\Controllers\ServiceConnectionsController::class);
 
 
