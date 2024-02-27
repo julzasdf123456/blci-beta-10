@@ -3865,6 +3865,7 @@ class ServiceConnectionsController extends AppBaseController
             $whItems->itemno = $item->ItemNo; 
             $whItems->rdate = date('m/d/Y');
             $whItems->rtime = date('h:i A');
+            $whItems->salesprice = $item->ItemSalesPrice;
             $whItems->save();
         }
 

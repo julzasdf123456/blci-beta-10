@@ -187,7 +187,8 @@ class WarehouseItemsController extends AppBaseController
                                 data_itcode='" . $item->itcode . "'
                                 data_itdesc='" . $item->itdesc . "'
                                 data_uom='" . $item->uom . "'
-                                data_cst='" . $item->cst . "'>
+                                data_cst='" . $item->sprice . "' 
+                                data_unitprice='" . $item->cst . "'>
                             <td>" . $item->itcode . "</td>
                             <td>" . $item->itdesc . "</td>
                             <td>" . $item->uom . "</td>
@@ -230,7 +231,8 @@ class WarehouseItemsController extends AppBaseController
                                 meter_data_itcode='" . $item->itcode . "'
                                 meter_data_itdesc='" . $item->itdesc . "'
                                 meter_data_uom='" . $item->uom . "'
-                                meter_data_cst='" . $item->cst . "'>
+                                meter_data_cst='" . $item->cst . "'
+                                data_unitprice='" . $item->cst . "'>
                             <td>" . $item->itcode . "</td>
                             <td>" . $item->itdesc . "</td>
                             <td>" . $item->uom . "</td>

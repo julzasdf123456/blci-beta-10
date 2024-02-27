@@ -75,6 +75,7 @@
 
          selectedItemCost = parseFloat($('#' + id).attr('data_cst'))
          selectedUOM = $('#' + id).attr('data_uom')
+         selectedUnitPrice = parseFloat($('#' + id).attr('data_unitprice'))
 
          $('#modal-add-items').modal('hide')
          $('#Search').val('')

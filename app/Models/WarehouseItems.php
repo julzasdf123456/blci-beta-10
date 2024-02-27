@@ -53,7 +53,8 @@ class WarehouseItems extends Model
         'amt',
         'itemno',
         'rdate',
-        'rtime'
+        'rtime',
+        'salesprice'
     ];
 
     /**
@@ -74,7 +75,8 @@ class WarehouseItems extends Model
         'amt' => 'decimal:6',
         'itemno' => 'integer',
         'rdate' => 'string',
-        'rtime' => 'string'
+        'rtime' => 'string',
+        'salesprice' => 'string',
     ];
 
     /**
@@ -94,7 +96,8 @@ class WarehouseItems extends Model
         'amt' => 'nullable|numeric',
         'itemno' => 'required|integer',
         'rdate' => 'nullable|string|max:45',
-        'rtime' => 'nullable|string|max:25'
+        'rtime' => 'nullable|string|max:25',
+        'salesprice' => 'nullable|string',
     ];
 
     

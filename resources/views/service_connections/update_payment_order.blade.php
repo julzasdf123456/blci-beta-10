@@ -189,6 +189,7 @@
        **/
       var selectedItemCost = 0 // initialized in modal_payment_order_items
       var selectedUOM = '' // initialized in modal_payment_order_items
+      var selectedUnitPrice = 0 // initialized in modal_payment_order_items
 
       $(document).ready(function() {
 
@@ -280,7 +281,7 @@
                text : 'please select item first!'
             })
          } else {
-            $('#items-list tbody').append(addRowItem($('#ItemCode').val(), $('#ItemDescription').val(), $('#ItemQuantity').val(), selectedUOM, selectedItemCost, $('#ItemTotalCost').val()))
+            $('#items-list tbody').append(addRowItem($('#ItemCode').val(), $('#ItemDescription').val(), $('#ItemQuantity').val(), selectedUOM, selectedItemCost, $('#ItemTotalCost').val(), selectedUnitPrice))
             $('#MaterialsTotal').val(getItemTotal())
             $('#MaterialsTotal').change()
             clearSelection()
@@ -300,7 +301,7 @@
          }         
       }
 
-      function addRowItem(itmcode, desc, qty, uom, uprice, tcost) {
+      function addRowItem(itmcode, desc, qty, uom, uprice, tcost, selectedUnitPrice) {
          const d = new Date()
          var id = d.getTime()
          return "<tr id='" + id + "'>" +
@@ -310,6 +311,7 @@
                   "<td class='text-right'>" + qty + "</td>" +
                   "<td>" + uom + "</td>" +
                   "<td class='text-right'>" + Math.round((parseFloat(uprice) + Number.EPSILON) * 100) / 100 + "</td>" +
+                  "<td class='text-right'>" + Math.round((parseFloat(selectedUnitPrice) + Number.EPSILON) * 100) / 100 + "</td>" +
                   "<td class='text-right text-primary'>" +
                      "<strong>" + tcost + "</strong>" + 
                   "</td>" +
@@ -322,7 +324,7 @@
       function getItemTotal() {
          var total = 0
          $('#items-list tr').each(function() {
-            var obj = $('td', this).eq(6).text() // get 6th index which is the total cost
+            var obj = $('td', this).eq(7).text() // get 6th index which is the total cost
             if (!jQuery.isEmptyObject(obj)) {
                try {
                   total += parseFloat(obj)
@@ -363,7 +365,8 @@
                   ItemQuantity : $('td', this).eq(3).text(),
                   ItemUOM : $('td', this).eq(4).text(),
                   ItemUnitPrice : $('td', this).eq(5).text(),
-                  ItemTotalCost : $('td', this).eq(6).text().trim(),
+                  ItemSalesPrice : $('td', this).eq(6).text(),
+                  ItemTotalCost : $('td', this).eq(7).text().trim(),
                   ItemNo : (index + 1),
                })
             }            
