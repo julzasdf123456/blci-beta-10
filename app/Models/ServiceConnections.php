@@ -289,4 +289,8 @@ class ServiceConnections extends Model
     public static function whHeadStatus() {
         return ['Administrator', 'Heads and Managers'];
     }
+
+    public static function filePath() {
+        return public_path() . "/scfiles/";
+    }
 }

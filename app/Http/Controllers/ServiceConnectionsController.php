@@ -57,6 +57,7 @@ use Illuminate\Support\Facades\Auth;
 use Maatwebsite\Excel\Facades\Excel;
 use Flash;
 use Response;
+use File;
 
 class ServiceConnectionsController extends AppBaseController
 {
@@ -432,6 +433,11 @@ class ServiceConnectionsController extends AppBaseController
 
         $images = Signatories::where('Name', $id)->where('Notes', 'SERVICE CONNECTIONS')->get();
 
+        // FILES
+        $path = ServiceConnections::filePath() . "$id/";
+        $fileNames = scandir($path);
+        $fileNames = array_diff($fileNames, array('.', '..'));
+
         /**
          * ASSESS PERMISSIONS
          */
@@ -449,6 +455,7 @@ class ServiceConnectionsController extends AppBaseController
                             'whItems' => $whItems,
                             'whHeadMeters' => $whHeadMeters,
                             'whItemsMeters' => $whItemsMeters,
+                            'fileNames' => $fileNames,
                         ]);
         } else {
             return abort(403, "You're not authorized to view a service connection application.");
@@ -4500,5 +4507,82 @@ class ServiceConnectionsController extends AppBaseController
             'serviceConnection' => $serviceConnections,
             'paymentOrder' => $paymentOrder,
         ]);
+    }
+
+    public function uploadFiles($id) {
+        $serviceConnections = DB::table('CRM_ServiceConnections')
+            ->leftJoin('CRM_Barangays', 'CRM_ServiceConnections.Barangay', '=', 'CRM_Barangays.id')
+            ->leftJoin('CRM_Towns', 'CRM_ServiceConnections.Town', '=', 'CRM_Towns.id')
+            ->leftJoin('users', 'CRM_ServiceConnections.UserId', '=', 'users.id')
+            ->select('CRM_ServiceConnections.id as id',
+                        'CRM_ServiceConnections.AccountCount as AccountCount', 
+                        'CRM_ServiceConnections.ServiceAccountName as ServiceAccountName',
+                        'CRM_ServiceConnections.DateOfApplication', 
+                        'CRM_ServiceConnections.TimeOfApplication', 
+                        'CRM_ServiceConnections.ContactNumber as ContactNumber', 
+                        'CRM_ServiceConnections.EmailAddress as EmailAddress',  
+                        'CRM_ServiceConnections.AccountApplicationType as AccountApplicationType', 
+                        'CRM_ServiceConnections.AccountOrganization as AccountOrganization', 
+                        'CRM_ServiceConnections.ConnectionApplicationType as ConnectionApplicationType',
+                        'CRM_ServiceConnections.MemberConsumerId as MemberConsumerId',
+                        'CRM_ServiceConnections.Status as Status',  
+                        'CRM_ServiceConnections.Notes as Notes', 
+                        'CRM_ServiceConnections.Office', 
+                        'CRM_ServiceConnections.LongSpan', 
+                        'CRM_ServiceConnections.ORNumber as ORNumber',
+                        'CRM_ServiceConnections.ORDate', 
+                        'CRM_ServiceConnections.Sitio as Sitio', 
+                        'CRM_ServiceConnections.LoadCategory as LoadCategory', 
+                        'CRM_ServiceConnections.DateTimeOfEnergization as DateTimeOfEnergization', 
+                        'CRM_ServiceConnections.DateTimeLinemenArrived as DateTimeLinemenArrived', 
+                        'CRM_Towns.Town as Town',
+                        'CRM_Barangays.Barangay as Barangay',
+                        'CRM_ServiceConnections.AccountType',
+                        'CRM_ServiceConnections.ServiceNumber',
+                        'CRM_ServiceConnections.ConnectionSchedule',
+                        'CRM_ServiceConnections.LoadType',
+                        'CRM_ServiceConnections.Zone',
+                        'CRM_ServiceConnections.Block',
+                        'CRM_ServiceConnections.TransformerID',
+                        'CRM_ServiceConnections.LoadInKva',
+                        'CRM_ServiceConnections.PoleNumber',
+                        'CRM_ServiceConnections.Feeder',
+                        'CRM_ServiceConnections.ChargeTo',
+                        'CRM_ServiceConnections.AccountNumber',
+                        'CRM_ServiceConnections.CertificateOfConnectionIssuedOn',
+                        'users.name'
+                        )
+        ->where('CRM_ServiceConnections.id', $id)
+        ->where(function ($query) {
+            $query->where('CRM_ServiceConnections.Trash', 'No')
+                ->orWhereNull('CRM_ServiceConnections.Trash');
+        })
+        ->first(); 
+
+        return view('/service_connections/upload_files', [
+            'serviceConnection' => $serviceConnections,
+        ]);
+    }
+
+    public function saveUploadedFiles(Request $request) {
+        $id = $request['id'];
+        $files = $_FILES['files'];
+
+        $path = ServiceConnections::filePath() . "$id/";
+        File::makeDirectory($path, $mode = 0777, true, true);
+
+        foreach ($_FILES["files"]["name"] as $key => $fileName) {
+            $tempFileName = $_FILES["files"]["tmp_name"][$key];
+            $targetFileName = $path . basename($fileName);
+    
+            // Move the uploaded file to the target directory
+            if (move_uploaded_file($tempFileName, $targetFileName)) {
+                echo "The file " . basename($fileName) . " has been uploaded.<br>";
+            } else {
+                echo "Sorry, there was an error uploading your file.<br>";
+            }
+        }
+
+        return redirect(route('serviceConnections.show', [$id]));
     }
 }

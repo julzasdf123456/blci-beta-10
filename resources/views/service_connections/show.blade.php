@@ -114,6 +114,9 @@ use Illuminate\Support\Facades\Auth;
                             <li class="nav-item"><a class="nav-link" href="#invoice" data-toggle="tab">
                                 <i class="fas fa-file-invoice-dollar"></i>
                                 Payment Order</a></li>
+                            <li class="nav-item"><a class="nav-link" href="#files" data-toggle="tab">
+                                <i class="fas fa-paperclip"></i>
+                                Files</a></li>
                             {{-- @if ($serviceConnections->LoadCategory == 'above 5kVa' | $serviceConnections->LongSpan == 'Yes')
                             <li class="nav-item"><a class="nav-link" href="#bom" data-toggle="tab">
                                 <i class="fas fa-toolbox"></i>
@@ -140,6 +143,10 @@ use Illuminate\Support\Facades\Auth;
 
                             <div class="tab-pane" id="invoice">
                                 @include('service_connections.tab_invoice')
+                            </div>
+
+                            <div class="tab-pane" id="files">
+                                @include('service_connections.tab_files')
                             </div>
                             
                             {{-- <div class="tab-pane" id="bom">

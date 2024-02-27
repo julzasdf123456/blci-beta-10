@@ -175,6 +175,8 @@ Route::get('/service_connections/get-existing-accounts', [ServiceConnectionsCont
 Route::get('/service_connections/lifeliners-view', [ServiceConnectionsController::class, 'lifelinersView'])->name('serviceConnections.lifeliners-view');
 Route::get('/service_connections/manual-energization', [ServiceConnectionsController::class, 'manualEnergization'])->name('serviceConnections.manual-energization');
 Route::get('/service_connections/print-payment-order/{id}', [ServiceConnectionsController::class, 'printPaymentOrder'])->name('serviceConnections.print-payment-order');
+Route::get('/service_connections/upload-files/{id}', [ServiceConnectionsController::class, 'uploadFiles'])->name('serviceConnections.upload-files');
+Route::post('/service_connections/save-uploaded-files', [ServiceConnectionsController::class, 'saveUploadedFiles'])->name('serviceConnections.save-uploaded-files');
 Route::resource('serviceConnections', App\Http\Controllers\ServiceConnectionsController::class);
 
 
