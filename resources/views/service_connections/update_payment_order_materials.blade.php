@@ -9,34 +9,34 @@
        <td></td>
        <td>Entry No : </td>
        <td>
-           <input type="number" id="EntryNo" class="form-control form-control-xs text-right" value="{{ $whHead->ent_no }}" readonly>
+           <input type="number" id="EntryNo" class="form-control form-control-xs text-right" value="{{ $whHead != null ? $whHead->ent_no : '' }}" readonly>
        </td>
    </tr>
    <tr>
        <td>Date :</td>
        <td>
-           <input type="text" id="MIRSDate" class="form-control form-control-xs" value="{{ $whHead->tdate }}" readonly>
+           <input type="text" id="MIRSDate" class="form-control form-control-xs" value="{{ $whHead != null ? $whHead->tdate : '' }}" readonly>
        </td>
        <td></td>
        <td>Invoice No : </td>
        <td>
-           <input type="text" id="InvoiceNo" class="form-control form-control-xs" value="{{ $whHead->invoice }}">
+           <input type="text" id="InvoiceNo" class="form-control form-control-xs" value="{{ $whHead != null ? $whHead->invoice : '' }}">
        </td>
        <td rowspan="2">
-           <textarea name="MIRSNo" id="MIRSNo" cols="30" rows="2" class="form-control form-control-xs" placeholder="MIRS No:">{{ $whHead->misno }}</textarea>
+           <textarea name="MIRSNo" id="MIRSNo" cols="30" rows="2" class="form-control form-control-xs" placeholder="MIRS No:">{{ $whHead != null ? $whHead->misno : '' }}</textarea>
        </td>
    </tr>
    <tr>
        <td>Requisition By :</td>
        <td>
-           <input type="text" id="RequisitionById" class="form-control form-control-xs text-right" value="{{ $whHead->emp_id }}" readonly>
+           <input type="text" id="RequisitionById" class="form-control form-control-xs text-right" value="{{ $whHead != null ? $whHead->emp_id : '' }}" readonly>
        </td>
        <td>
-           <input type="text" id="RequisitionByName" class="form-control form-control-xs" value="{{ strtoupper($whHead->chkby) }}" readonly>
+           <input type="text" id="RequisitionByName" class="form-control form-control-xs" value="{{ strtoupper($whHead != null ? $whHead->chkby : '') }}" readonly>
        </td>
        <td>OR No : </td>
        <td>
-           <input type="text" id="ORNo" value="{{ $whHead->orno }}" class="form-control form-control-xs">
+           <input type="text" id="ORNo" value="{{ $whHead != null ? $whHead->orno : '' }}" class="form-control form-control-xs">
        </td>
    </tr>
    <tr>
@@ -64,7 +64,7 @@
    <tr>
        <td>Charge To :</td>
        <td>
-           <input type="text" id="ChargeTo" value="{{ $whHead->dept }}" class="form-control form-control-xs" readonly>
+           <input type="text" id="ChargeTo" value="{{ $whHead != null ? $whHead->dept : '' }}" class="form-control form-control-xs" readonly>
        </td>
        <td></td>
        <td>Type Of Service: </td>
@@ -72,7 +72,7 @@
            <input type="text" id="TypeOfService" class="form-control form-control-xs" value="NEW INSTALLATION" readonly>
        </td>
        <td>
-           <input type="text" id="TypeOfServiceId" class="form-control form-control-xs" value="{{ $whHead->serv_code }}" readonly>
+           <input type="text" id="TypeOfServiceId" class="form-control form-control-xs" value="{{ $whHead != null ? $whHead->serv_code : '' }}" readonly>
        </td>
    </tr>
    <tr>
@@ -94,7 +94,7 @@
    <tr>
        <td>Requested By :</td>
        <td colspan="2">
-           <input type="text" id="RequestedBy" class="form-control form-control-xs" value="{{ $whHead->chkby }}" readonly>
+           <input type="text" id="RequestedBy" class="form-control form-control-xs" value="{{ $whHead != null ? $whHead->chkby : '' }}" readonly>
        </td> 
    </tr>
 </table>
