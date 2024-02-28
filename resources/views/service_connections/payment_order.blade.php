@@ -269,7 +269,7 @@
       function getTotalItemCost(qty, cost) {
          var total = qty * cost
 
-         return total
+         return Math.round((parseFloat(total) + Number.EPSILON) * 100) / 100
       }
 
       function addToList() {
@@ -295,7 +295,7 @@
             })
          } else {
             var qty = $('#meter-ItemQuantity').val()
-            $('#meter-items-list tbody').append(addRowItem($('#meter-ItemCode').val(), $('#meter-ItemDescription').val(), qty, selectedUOM, selectedItemCost, $('#meter-ItemTotalCost').val()))
+            $('#meter-items-list tbody').append(addRowItem($('#meter-ItemCode').val(), $('#meter-ItemDescription').val(), qty, selectedUOM, selectedItemCost, $('#meter-ItemTotalCost').val(), selectedUnitPrice))
             clearSelection()
          }         
       }
@@ -311,8 +311,8 @@
                   "<td>" + uom + "</td>" +
                   "<td class='text-right'>" + Math.round((parseFloat(uprice) + Number.EPSILON) * 100) / 100 + "</td>" +
                   "<td class='text-right'>" + Math.round((parseFloat(selectedUnitPrice) + Number.EPSILON) * 100) / 100 + "</td>" +
-                  "<td class='text-right text-primary'>" +
-                     "<strong>" + tcost + "</strong>" + 
+                  "<td class='text-right text-primary'>" + tcost + "</td>" + 
+                  "<td class='text-right'>" +
                      "<button onclick='removeItem(`" + id + "`)' class='btn btn-xs btn-link text-danger' style='margin-left: 10px;'><i class='fas fa-trash'></i></button>" +
                   "</td>" +
                "<tr>"
@@ -333,7 +333,7 @@
             }            
          })
 
-         return total
+         return Math.round((parseFloat(total) + Number.EPSILON) * 100) / 100
       }
 
       function clearSelection() {
@@ -386,7 +386,8 @@
                   ItemQuantity : $('td', this).eq(3).text(),
                   ItemUOM : $('td', this).eq(4).text(),
                   ItemUnitPrice : $('td', this).eq(5).text(),
-                  ItemTotalCost : $('td', this).eq(6).text(),
+                  ItemSalesPrice : $('td', this).eq(6).text(),
+                  ItemTotalCost : $('td', this).eq(7).text(),
                   ItemNo : (index + 1),
                })
             }            

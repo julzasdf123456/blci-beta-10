@@ -27,6 +27,9 @@
                             @endif
                         </td>
                         <td><a href="{{ URL::asset("scfiles/" . $serviceConnections->id . "/" . $item) }}" target="_blank">{{ $item }}</a></td>
+                        <td>
+                            
+                        </td>
                     </tr>
                 @endforeach
             </tbody>

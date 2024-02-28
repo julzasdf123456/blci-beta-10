@@ -3,19 +3,19 @@
    <tr>
       <td>Order No :</td>
       <td>
-         <input type="text" id="meter-OrderNo" class="form-control form-control-xs text-right" value="{{ $whHeadMeters != null ? $whHeadMeters->orderno : '' }}" readonly>
+         <input type="text" id="meter-OrderNo" class="form-control form-control-xs text-right" value="{{ $whHeadMeters != null ? $whHeadMeters->orderno : ('M' . date('Y-m-d') . 'T' . date('H:i:s')) }}" readonly>
       </td>
       <td></td>
       <td></td>
       <td>Entry No : </td>
       <td>
-         <input type="number" id="meter-EntryNo" class="form-control form-control-xs text-right" value="{{ $whHeadMeters != null ? $whHeadMeters->ent_no : 0 }}" readonly>
+         <input type="number" id="meter-EntryNo" class="form-control form-control-xs text-right" value="{{ $whHeadMeters != null ? $whHeadMeters->ent_no : ($entNoLast != null ? (floatval($entNoLast->ent_no) + 2) : 0) }}" readonly>
       </td>
    </tr>
    <tr>
       <td>Date :</td>
       <td>
-         <input type="text" id="meter-MIRSDate" class="form-control form-control-xs" value="{{ $whHeadMeters != null ? $whHeadMeters->tdate : '' }}" readonly>
+         <input type="text" id="meter-MIRSDate" class="form-control form-control-xs" value="{{ $whHeadMeters != null ? $whHeadMeters->tdate : date('Y-m-d') }}" readonly>
       </td>
       <td></td>
       <td>Invoice No : </td>
@@ -29,14 +29,14 @@
    <tr>
       <td>Requisition By :</td>
       <td>
-         <input type="text" id="meter-RequisitionById" class="form-control form-control-xs text-right" value="{{ $whHeadMeters != null ? $whHeadMeters->emp_id : '' }}" readonly>
+         <input type="text" id="meter-RequisitionById" class="form-control form-control-xs text-right" value="{{ $whHeadMeters != null ? $whHeadMeters->emp_id : Auth::id() }}" readonly>
       </td>
       <td>
-         <input type="text" id="meter-RequisitionByName" class="form-control form-control-xs" value="{{ $whHeadMeters != null ? strtoupper($whHeadMeters->chkby) : '' }}" readonly>
+         <input type="text" id="meter-RequisitionByName" class="form-control form-control-xs" value="{{ $whHeadMeters != null ? strtoupper($whHeadMeters->chkby) : strtoupper(Auth::user()->name) }}" readonly>
       </td>
       <td>OR No : </td>
       <td>
-         <input type="text" id="meter-ORNo" class="form-control form-control-xs" value="{{ $paymentOrder->ORNumber }}">
+         <input type="text" id="meter-ORNo" class="form-control form-control-xs" value="{{ $paymentOrder != null && $paymentOrder->ORNumber != null ? $paymentOrder->ORNumber : '' }}">
       </td>
    </tr>
    <tr>
@@ -72,7 +72,7 @@
          <input type="text" id="meter-TypeOfService" class="form-control form-control-xs" value="NEW INSTALLATION" readonly>
       </td>
       <td>
-         <input type="text" id="meter-TypeOfServiceId" class="form-control form-control-xs" value="{{ $whHeadMeters != null ? $whHeadMeters->serv_code : '' }}" readonly>
+         <input type="text" id="meter-TypeOfServiceId" class="form-control form-control-xs" value="{{ $whHeadMeters != null ? $whHeadMeters->serv_code : '7' }}" readonly>
       </td>
    </tr>
    <tr>
@@ -94,7 +94,7 @@
    <tr>
       <td>Requested By :</td>
       <td colspan="2">
-         <input type="text" id="meter-RequestedBy" class="form-control form-control-xs" value="{{ $whHeadMeters != null ? $whHeadMeters->chkby : '' }}" readonly>
+         <input type="text" id="meter-RequestedBy" class="form-control form-control-xs" value="{{ $whHeadMeters != null ? $whHeadMeters->chkby : strtoupper(Auth::user()->name) }}" readonly>
       </td> 
    </tr>
 </table>
@@ -139,8 +139,10 @@
       <th>Asset Code</th>
       <th>Quantity</th>
       <th>UOM</th>
+      <th>Sales Price</th>
       <th>Unit Price</th>
       <th>Total Cost</th>
+      <th></th>
    </thead>
    <tbody>
       @php
@@ -154,8 +156,9 @@
                <td>{{ $item->ascode }}</td>
                <td class="text-right">{{ $item->qty }}</td>
                <td class="text-right">{{ $item->uom }}</td>
-               <td class="text-right">{{ is_numeric($item->cst) ? number_format($item->cst, 2) : $item->cst }}</td>
-               <td class="text-right">{{ is_numeric($item->amt) ? number_format($item->amt, 2) : $item->amt }}</td>
+               <td class="text-right">{{ is_numeric($item->salesprice) ? round($item->salesprice, 2) : $item->salesprice }}</td>
+               <td class="text-right">{{ is_numeric($item->amt) ? round($item->amt, 2) : $item->amt }}</td>
+               <td class="text-right">{{ is_numeric($item->cst) ? round($item->cst, 2) : $item->cst }}</td>
                <td>
                   <button onclick='removeItem(`{{ $item->id }}`, `OLD`)' class='btn btn-xs btn-link text-danger' style='margin-left: 10px;'><i class='fas fa-trash'></i></button>
                </td>

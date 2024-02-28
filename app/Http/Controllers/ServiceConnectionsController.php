@@ -3881,7 +3881,7 @@ class ServiceConnectionsController extends AppBaseController
         }
 
         // SAVE WAREHOUSE HEAD METERS
-        if ($meter_reqNo != null) {
+        if ($meter_reqNo != null && count($meterItems) > 0) {
             $whHead = new WarehouseHead;
             $whHead->orderno = $meter_reqNo;
             $whHead->ent_no = $meter_entryNo;
@@ -3921,12 +3921,12 @@ class ServiceConnectionsController extends AppBaseController
                 $whItems->itemcd = $item->ItemCode;  
                 $whItems->qty = $item->ItemQuantity;  
                 $whItems->uom = $item->ItemUOM; 
-                $whItems->cst = $item->ItemUnitPrice; 
+                $whItems->cst = $item->ItemSalesPrice; 
                 $whItems->amt = $item->ItemTotalCost; 
                 $whItems->itemno = $item->ItemNo; 
                 $whItems->rdate = date('m/d/Y');
                 $whItems->rtime = date('h:i A');
-                $whItems->salesprice = 0.0;
+                $whItems->salesprice = $item->ItemUnitPrice;
                 $whItems->save();
             }
         }
@@ -3938,6 +3938,12 @@ class ServiceConnectionsController extends AppBaseController
             ->table('tblor_head')
             ->whereRaw("appl_no='" . $scId . "' AND orderno NOT LIKE 'M%'")
             ->select('*')
+            ->first();
+
+        $entNoLast = DB::connection('mysql')
+            ->table('tblor_head')
+            ->select('ent_no')
+            ->orderByDesc('ent_no')
             ->first();
 
         if ($whHead != null) {
@@ -3993,6 +3999,7 @@ class ServiceConnectionsController extends AppBaseController
             'paymentOrder' => $paymentOrder,
             'costCenters' => CostCenters::orderBy('CostCode')->get(),
             'projectCodes' => ProjectCodes::orderBy('ProjectCode')->get(),
+            'entNoLast' => $entNoLast,
         ]);
     }
 

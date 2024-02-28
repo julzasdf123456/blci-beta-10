@@ -180,26 +180,26 @@ class WarehouseItemsController extends AppBaseController
                     ORDER BY itdesc, rdate DESC"
                 );
 
-        $output = '';
-        foreach($data as $item) {
-            $output .= "<tr onclick=selectMaterialItem('" . $item->itmno . "')
-                                id='" . $item->itmno . "' 
-                                data_itcode='" . $item->itcode . "'
-                                data_itdesc='" . $item->itdesc . "'
-                                data_uom='" . $item->uom . "'
-                                data_cst='" . $item->sprice . "' 
-                                data_unitprice='" . $item->cst . "'>
-                            <td>" . $item->itcode . "</td>
-                            <td>" . $item->itdesc . "</td>
-                            <td>" . $item->uom . "</td>
-                            <td class='text-right'>" . (is_numeric($item->cst) ? number_format(floatval($item->cst), 2) : $item->cst) . "</td>
-                            <td class='text-right'>" . (is_numeric($item->sprice) ? number_format(floatval($item->sprice), 2) : $item->sprice) . "</td>
-                            <td class='text-right'>" . (is_numeric($item->dprice) ? number_format(floatval($item->dprice), 2) : $item->dprice) . "</td>
-                            <td class='text-right'>" . $item->qty . "</td>
-                        </tr>";
-        }
+        // $output = '';
+        // foreach($data as $item) {
+        //     $output .= "<tr onclick=selectMaterialItem('" . $item->itmno . "')
+        //                         id='" . $item->itmno . "' 
+        //                         data_itcode='" . $item->itcode . "'
+        //                         data_itdesc='" . $item->itdesc . "'
+        //                         data_uom='" . $item->uom . "'
+        //                         data_cst='" . $item->sprice . "' 
+        //                         data_unitprice='" . $item->cst . "'>
+        //                     <td>" . $item->itcode . "</td>
+        //                     <td>" . $item->itdesc . "</td>
+        //                     <td>" . $item->uom . "</td>
+        //                     <td class='text-right'>" . (is_numeric($item->cst) ? number_format(floatval($item->cst), 2) : $item->cst) . "</td>
+        //                     <td class='text-right'>" . (is_numeric($item->sprice) ? number_format(floatval($item->sprice), 2) : $item->sprice) . "</td>
+        //                     <td class='text-right'>" . (is_numeric($item->dprice) ? number_format(floatval($item->dprice), 2) : $item->dprice) . "</td>
+        //                     <td class='text-right'>" . $item->qty . "</td>
+        //                 </tr>";
+        // }
 
-        return response()->json($output, 200);
+        return response()->json($data, 200);
     }
 
     public function getSearchedMeters(Request $request) {
@@ -224,26 +224,26 @@ class WarehouseItemsController extends AppBaseController
                     ORDER BY itdesc, rdate DESC"
                 );
 
-        $output = '';
-        foreach($data as $item) {
-            $output .= "<tr onclick=selectMaterial('" . $item->itmno . "')
-                                id='" . $item->itmno . "' 
-                                meter_data_itcode='" . $item->itcode . "'
-                                meter_data_itdesc='" . $item->itdesc . "'
-                                meter_data_uom='" . $item->uom . "'
-                                meter_data_cst='" . $item->cst . "'
-                                data_unitprice='" . $item->cst . "'>
-                            <td>" . $item->itcode . "</td>
-                            <td>" . $item->itdesc . "</td>
-                            <td>" . $item->uom . "</td>
-                            <td class='text-right'>" . (is_numeric($item->cst) ? number_format(floatval($item->cst), 2) : $item->cst) . "</td>
-                            <td class='text-right'>" . (is_numeric($item->sprice) ? number_format(floatval($item->sprice), 2) : $item->sprice) . "</td>
-                            <td class='text-right'>" . (is_numeric($item->dprice) ? number_format(floatval($item->dprice), 2) : $item->dprice) . "</td>
-                            <td class='text-right'>" . $item->qty . "</td>
-                        </tr>";
-        }
+        // $output = '';
+        // foreach($data as $item) {
+        //     $output .= "<tr onclick=selectMaterial('" . $item->itmno . "')
+        //                         id='" . $item->itmno . "' 
+        //                         meter_data_itcode='" . $item->itcode . "'
+        //                         meter_data_itdesc='" . $item->itdesc . "'
+        //                         meter_data_uom='" . $item->uom . "'
+        //                         meter_data_cst='" . $item->cst . "'
+        //                         data_unitprice='" . $item->cst . "'>
+        //                     <td>" . $item->itcode . "</td>
+        //                     <td>" . $item->itdesc . "</td>
+        //                     <td>" . $item->uom . "</td>
+        //                     <td class='text-right'>" . (is_numeric($item->cst) ? number_format(floatval($item->cst), 2) : $item->cst) . "</td>
+        //                     <td class='text-right'>" . (is_numeric($item->sprice) ? number_format(floatval($item->sprice), 2) : $item->sprice) . "</td>
+        //                     <td class='text-right'>" . (is_numeric($item->dprice) ? number_format(floatval($item->dprice), 2) : $item->dprice) . "</td>
+        //                     <td class='text-right'>" . $item->qty . "</td>
+        //                 </tr>";
+        // }
 
-        return response()->json($output, 200);
+        return response()->json($data, 200);
     }
 
     public function removeItem(Request $request) {

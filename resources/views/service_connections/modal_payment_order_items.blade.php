@@ -58,7 +58,8 @@
                Regex : regex,
             },
             success : function(res) {
-               $('#item-results tbody').append(res)
+               // $('#item-results tbody').append(res)
+               populateResults(res)
             },
             error : function(err) {
                Toast.fire({
@@ -66,6 +67,28 @@
                   text : 'error fetching search results!'
                })
             }
+         })
+      }
+
+      function populateResults(res) {
+         $.each(res, function(index, element) {
+            $('#item-results tbody').append(`
+               <tr onclick=selectMaterialItem('` + res[index]['itmno'] + `')
+                        id='` + res[index]['itmno'] + `' 
+                        data_itcode='` + res[index]['itcode'] + `'
+                        data_itdesc='` + res[index]['itdesc'] + `'
+                        data_uom='` + res[index]['uom'] + `'
+                        data_cst='` + res[index]['sprice'] + `' 
+                        data_unitprice='` + res[index]['cst'] + `'>
+                     <td>` + res[index]['itcode'] + `</td>
+                     <td>` + res[index]['itdesc'] + `</td>
+                     <td>` + res[index]['uom'] + `</td>
+                     <td class='text-right'>` + (res[index]['cst']) + `</td>
+                     <td class='text-right'>` + (res[index]['sprice']) + `</td>
+                     <td class='text-right'>` + (res[index]['dprice']) + `</td>
+                     <td class='text-right'>` + res[index]['qty'] + `</td>
+               </tr>
+            `)
          })
       }
 

@@ -139,8 +139,10 @@
       <th>Asset Code</th>
       <th>Quantity</th>
       <th>UOM</th>
+      <th>Sales Price</th>
       <th>Unit Price</th>
       <th>Total Cost</th>
+      <th></th>
    </thead>
    <tbody>
 

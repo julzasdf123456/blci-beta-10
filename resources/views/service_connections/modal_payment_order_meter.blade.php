@@ -58,7 +58,8 @@
                Regex : regex,
             },
             success : function(res) {
-               $('#meter-item-results tbody').append(res)
+               // $('#meter-item-results tbody').append(res)
+               populateMeterResults(res)
             },
             error : function(err) {
                Toast.fire({
@@ -69,12 +70,35 @@
          })
       }
 
+      function populateMeterResults(res) {
+         $.each(res, function(index, element) {
+            $('#meter-item-results tbody').append(`
+               <tr onclick=selectMaterial('` + res[index]['itmno'] + `')
+                        id='` + res[index]['itmno'] + `' 
+                        meter_data_itcode='` + res[index]['itcode'] + `'
+                        meter_data_itdesc='` + res[index]['itdesc'] + `'
+                        meter_data_uom='` + res[index]['uom'] + `'
+                        meter_data_cst='` + res[index]['sprice'] + `' 
+                        meter_data_unitprice='` + res[index]['cst'] + `'>
+                     <td>` + res[index]['itcode'] + `</td>
+                     <td>` + res[index]['itdesc'] + `</td>
+                     <td>` + res[index]['uom'] + `</td>
+                     <td class='text-right'>` + (res[index]['cst']) + `</td>
+                     <td class='text-right'>` + (res[index]['sprice']) + `</td>
+                     <td class='text-right'>` + (res[index]['dprice']) + `</td>
+                     <td class='text-right'>` + res[index]['qty'] + `</td>
+               </tr>
+            `)
+         })
+      }
+
       function selectMaterial(id) {
          $('#meter-ItemCode').val($('#' + id).attr('meter_data_itcode'))
          $('#meter-ItemDescription').val($('#' + id).attr('meter_data_itdesc'))
 
          selectedItemCost = parseFloat($('#' + id).attr('meter_data_cst'))
          selectedUOM = $('#' + id).attr('meter_data_uom')
+         selectedUnitPrice = parseFloat($('#' + id).attr('meter_data_unitprice'))
 
          $('#modal-add-meter').modal('hide')
          $('#meter-Search').val('')

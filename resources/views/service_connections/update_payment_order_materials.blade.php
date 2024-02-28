@@ -142,6 +142,7 @@
        <th>Sales Price</th>
        <th>Unit Price</th>
        <th>Total Cost</th>
+       <td></td>
    </thead>
    <tbody>
        @foreach ($whItems as $item)
@@ -151,10 +152,9 @@
                <td>{{ $item->ascode }}</td>
                <td class="text-right">{{ $item->qty }}</td>
                <td class="text-right">{{ $item->uom }}</td>
+               <td class="text-right">{{ is_numeric($item->salesprice) ? round(floatval($item->salesprice), 2) : 0 }}</td>
                <td class="text-right">{{ is_numeric($item->cst) ? round(floatval($item->cst), 2) : 0 }}</td>
-               <td class="text-right">
-                  <strong class="text-primary">{{ is_numeric($item->amt) ? round(floatval($item->amt), 2) : 0 }}</strong>
-               </td>
+               <td class="text-right text-primary">{{ is_numeric($item->amt) ? round(floatval($item->amt), 2) : 0 }}</td>
                <td>
                   <button onclick='removeItem(`{{ $item->id }}`, `OLD`)' class='btn btn-xs btn-link text-danger' style='margin-left: 10px;'><i class='fas fa-trash'></i></button>
                </td>
