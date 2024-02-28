@@ -76,7 +76,8 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
 
 // READ AND BILL
 Route::get('get-undownloaded-schedules', [ReadAndBillAPI::class, 'getUndownloadedSchedules']);
-Route::get('download-accounts', [ReadAndBillAPI::class, 'downloadAccounts']);
+// Route::get('download-accounts', [ReadAndBillAPI::class, 'downloadAccounts']); // ORIGINAL FROM SCHEDULES
+Route::get('download-accounts', [ReadAndBillAPI::class, 'downloadAccountsFromTxtFile']); // FROM TEXT FILE
 Route::get('download-rates', [ReadAndBillAPI::class, 'downloadRates']);
 Route::get('get-arrear-ledgers', [ReadAndBillAPI::class, 'getArrearLedgers']);
 Route::get('update-downloaded-status', [ReadAndBillAPI::class, 'updateDownloadedStatus']);

@@ -756,6 +756,11 @@ use Illuminate\Support\Facades\Auth;
                     <i class="fas fa-info-circle nav-icon text-primary"></i><p>RBS Notices</p>
                 </a>
             </li>
+            <li class="nav-item">
+                <a href="{{ route('readings.upload-text-file') }}" class="nav-link {{ Request::is('readings.upload-text-file*') ? 'active' : '' }}">
+                    <i class="fas fa-circle nav-icon text-primary"></i><p>Upload .txt File</p>
+                </a>
+            </li>
         </ul>
     </li>
     
@@ -1462,5 +1467,4 @@ use Illuminate\Support\Facades\Auth;
         </ul>
     </li>
 @endcan
-
 

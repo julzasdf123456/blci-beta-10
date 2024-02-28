@@ -23,10 +23,14 @@ use App\Models\KatasNgVat;
 use App\Models\PaidBills;
 use App\Models\ReadAndBillNotices;
 use App\Models\BAPAReadingSchedules;
+use App\Models\ReadingFromText;
 
 class ReadAndBillAPI extends Controller {
     public $successStatus = 200;
 
+    /**
+     * FROM READING SCHEDULES
+     */
     public function getUndownloadedSchedules(Request $request) {
         $readingSchedules = ReadingSchedules::where('MeterReader', $request['MeterReaderId'])
             // ->where('ScheduledDate', '>=', date('Y-m-d'))
@@ -53,6 +57,9 @@ class ReadAndBillAPI extends Controller {
         return response()->json($readingSchedules, $this->successStatus);
     }
 
+    /**
+     * FROM READING SCHEDULES
+     */
     public function downloadAccounts(Request $request) {
         // $accounts = ServiceAccounts::where('Town', $request['AreaCode'])
         //     ->where('GroupCode', $request['GroupCode'])
@@ -111,7 +118,7 @@ class ReadAndBillAPI extends Controller {
                 DB::raw("'0' AS ArrearsLedger"),
                 DB::raw("(SELECT TOP 1 KwhUsed FROM Billing_Readings WHERE ServicePeriod=(SELECT TOP 1 ServicePeriod FROM Billing_Readings WHERE AccountNumber=Billing_ServiceAccounts.id ORDER BY ServicePeriod DESC) AND AccountNumber=Billing_ServiceAccounts.id) AS KwhUsed"),
                 DB::raw("(SELECT TOP 1 KwhUsed FROM Billing_Bills WHERE ServicePeriod=(SELECT TOP 1 ServicePeriod FROM Billing_Bills WHERE AccountNumber=Billing_ServiceAccounts.id ORDER BY ServicePeriod DESC) AND AccountNumber=Billing_ServiceAccounts.id) AS PrevKwhUsed"),
-                DB::raw("(SELECT TOP 1 CAST(ReadingTimestamp AS DATE) FROM Billing_Readings WHERE ServicePeriod='" . $prevMonth . "' AND AccountNumber=Billing_ServiceAccounts.id) AS ReadingTimestamp"),
+                DB::raw("(SELECT TOP 1 TRY_CAST(ReadingTimestamp AS DATE) FROM Billing_Readings WHERE ServicePeriod='" . $prevMonth . "' AND AccountNumber=Billing_ServiceAccounts.id) AS ReadingTimestamp"),
                 DB::raw("Billing_ServiceAccounts.MeterDetailsId AS MeterSerial"),
                 DB::raw("(SELECT TOP 1 Balance FROM Billing_PrePaymentBalance WHERE AccountNumber=Billing_ServiceAccounts.id ORDER BY created_at DESC) AS Deposit"),
                 DB::raw("(SELECT TOP 1 AdditionalKwhForNextBilling FROM Billing_ChangeMeterLogs WHERE AccountNumber=Billing_ServiceAccounts.id AND ServicePeriod='" . $request['ServicePeriod'] . "' ORDER BY created_at DESC) AS ChangeMeterAdditionalKwh"),
@@ -189,6 +196,98 @@ class ReadAndBillAPI extends Controller {
         } else {
             return response()->json([], 404);
         }        
+    }
+
+    /**
+     * FROM TEXT FILE
+     */
+    public function downloadAccountsFromTxtFile(Request $request) {
+        $meterReader = $request['MeterReader'];
+        $servicePeriod = $request['ServicePeriod'];
+
+        $rft = DB::table('Billing_ReadingFromText')
+            ->leftJoin('Billing_ServiceAccounts', 'Billing_ReadingFromText.OldAccountNo', '=', 'Billing_ServiceAccounts.OldAccountNo')
+            ->where('Billing_ReadingFromText.MeterReader', $meterReader)
+            ->where('Billing_ReadingFromText.ServicePeriod', $servicePeriod)
+            ->whereNull('Billing_ReadingFromText.Status')
+            ->select(
+                'Billing_ReadingFromText.*',
+                'Billing_ServiceAccounts.id As AccountId',
+                'Billing_ServiceAccounts.AccountType',
+                'Billing_ServiceAccounts.AccountStatus',
+            )
+            ->get();
+
+        $notice = ReadAndBillNotices::whereRaw("ServicePeriod <= '" . $servicePeriod . "'")
+            ->orderByDesc('ServicePeriod')
+            ->first();
+
+        $rates = Rates::where('ServicePeriod', $servicePeriod) 
+            ->get();
+
+        if (count($rates) > 0) {
+            $data = [];
+            foreach($rft as $key => $item) {
+                // $unpaid = DB::table('Billing_Bills')
+                //     ->whereRaw("AccountNumber='" . $item->AccountId . "' AND Balance > 0 AND DueDate < GETDATE() AND ServicePeriod < '" . $request['ServicePeriod'] . "'")
+                //     ->get();
+                // $previousSurcharges = 0;
+                // foreach($unpaid as $itemx) {
+                //     $previousSurcharges += round(floatval(Bills::assessDueBillAndGetSurcharge($itemx)), 2);
+                // }
+
+                array_push($data, [
+                    'id' => IDGenerator::generateIDandRandString() . $key,
+                    'AccountId' => $item->AccountId != null ? $item->AccountId : IDGenerator::generateID().$key,
+                    'ServiceAccountName' => $item->ConsumerName,
+                    'Multiplier' => 1,
+                    'Coreloss' => 0,
+                    'AccountType' => $item->AccountType,
+                    'AccountStatus' => $item->AccountStatus,
+                    'AreaCode' => '01',
+                    'GroupCode' => '01',
+                    'Town' => '01',
+                    'Barangay' => null,
+                    'Latitude' => null,
+                    'Longitude' => null,
+                    'OldAccountNo' => $item->OldAccountNo,
+                    'SequenceCode' => $key,
+                    'SeniorCitizen' => null,
+                    'Evat5Percent' => null,
+                    'Ewt2Percent' => null,
+                    'Zone' => null,
+                    'BlockCode' => null,
+                    'Lifeliner' => null,
+                    'LifelinerDateExpire' => null,
+                    'AdvancedMaterialDeposit' => 0,
+                    'CustomerDeposit' => 0,
+                    'AdvancedMaterialDepositStatus' => null,
+                    'CustomerDepositStatus' => null,
+                    'ConnectionDate' => null,
+                    'TownFull' => null,
+                    'BarangayFull' => null,
+                    'Purok' => null,
+                    'Balance' => null,
+                    'KatasNgVat' => null,
+                    'ArrearsLedger' => null,
+                    'KwhUsed' => $item->LastReading,
+                    'PrevKwhUsed' => $item->LastReading,
+                    'ReadingTimestamp' => date('Y-m-d', strtotime($item->ReadingMonth . ' -1 month')),
+                    'MeterSerial' => $item->OldMeterNumber . ' - ' . $item->NewMeterNumber,
+                    'Deposit' => null,
+                    'ChangeMeterAdditionalKwh' => null,
+                    'ChangeMeterStartKwh' => null,
+                    'ArrearsTotal' => null,
+                    'PreviousSurcharges' => 0,
+                    'ServicePeriod' => $servicePeriod,
+                    'Notices' => $notice != null ? $notice->Notes : '',
+                ]);
+            }
+
+            return response()->json($data, $this->successStatus);
+        } else {
+            return response()->json([], 404);
+        } 
     }
 
     public function getArrearLedgers(Request $request) {

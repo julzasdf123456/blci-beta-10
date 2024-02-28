@@ -83,16 +83,9 @@ You can also check out our other paid products on [CodeCanyon](https://codecanyo
 
 
 ### Added New Columns
-- Billing_Bills
-    - KatasNgVat
 
 ### Added New Tables
-- KatasNgVat
-    - id
-    - AccountNumber
-    - Balance
-    - SeriesNo
-    - Notes
+- Billing_ReadingFromText
 
 - KatasNgVatTotal
     - id
@@ -104,7 +97,6 @@ You can also check out our other paid products on [CodeCanyon](https://codecanyo
     - Notes
 
 ### NEW UPDATES
-- Billing
-    - BAPA reading can now be deleted
-    - Account Excemptions
-    - Kwh Monitoring per Route
+
+### GENERATE MODELS FROM TABLE
+- php artisan infyom:scaffold Post --fromTable --table=posts --connection=server_name

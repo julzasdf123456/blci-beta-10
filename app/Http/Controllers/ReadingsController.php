@@ -21,6 +21,8 @@ use App\Models\ServiceAccounts;
 use App\Models\IDGenerator;
 use App\Models\ArrearsLedgerDistribution;
 use App\Models\CustomerDepositLogs;
+use App\Models\ReadingFromText;
+use App\Models\ReadingSchedules;
 use Flash;
 use Response;
 
@@ -5072,5 +5074,102 @@ class ReadingsController extends AppBaseController
             ->first();
 
         return response()->json($reading, 200);
+    }
+
+    public function uploadTextFile(Request $request) {
+        $meterReaders = User::role('Meter Reader Inhouse')->orderBy('name')->get();
+
+        return view('/readings/upload_text_file', [
+            'meterReaders' => $meterReaders,
+        ]);
+    }
+
+    public function processUploadedTextFile(Request $request) {
+        $file = $request->file('file');
+        $servicePeriod = $request['ServicePeriod'];
+        $meterReader = $request['MeterReader'];
+        $readingDate = $request['ReadingDate'];
+
+        if ($file->isValid()) {
+            $path = $file->path();
+            $handle = fopen($path, 'r');
+
+            if ($handle) {
+                // add reading schedule
+                $readingSched = ReadingSchedules::where('MeterReader', $meterReader)
+                    ->where('ServicePeriod', $servicePeriod)
+                    ->where('ScheduledDate', $readingDate)
+                    ->first();
+
+                if ($readingSched != null) {
+                    $readingSched->Status = null;
+                    $readingSched->AreaCode = '01';
+                    $readingSched->GroupCode = '01';
+                } else {
+                    $readingSched = new ReadingSchedules;
+                    $readingSched->id = IDGenerator::generateIDandRandString();
+                    $readingSched->Status = null;
+                    $readingSched->ServicePeriod = $servicePeriod;
+                    $readingSched->ScheduledDate = $readingDate;
+                    $readingSched->MeterReader = $meterReader;
+                    $readingSched->AreaCode = '01';
+                    $readingSched->GroupCode = '01';
+                }
+                $readingSched->save();
+
+                while (($line = fgets($handle)) !== false) {
+                    $data = explode('","', $line);
+
+                    $houseNo = str_replace('"', '', $data[0]);
+                    $consumerName = str_replace('"', '', $data[1]);
+                    $accountNumber = str_replace('"', '', $data[2]);
+                    $newMeter = str_replace('"', '', $data[3]);
+                    $newMeter = $newMeter != null ? $newMeter : '';
+                    $readingMonth = str_replace('"', '', date('Y-m-d', strtotime($data[4])));
+                    $lastReading = str_replace('"', '', $data[5]);
+                    $oldMeter = str_replace('"', '', $data[6]);
+
+                    if (strlen(trim($line)) > 0 | trim($line) != null) {
+                        $rft = ReadingFromText::where('OldAccountNo', $accountNumber)
+                            ->where('ReadingMonth', $readingMonth)
+                            ->first();
+
+                        if ($rft != null) {
+                            $rft->NewMeterNumber = $newMeter;
+                            $rft->LastReading = $lastReading;
+                            $rft->OldMeterNumber = $oldMeter;
+                            $rft->ServicePeriod = $servicePeriod;
+                            $rft->MeterReader = $meterReader;
+                            $rft->ReadingScheduleDate = $readingDate;
+                        } else {
+                            $rft = new ReadingFromText;
+                            $rft->id = IDGenerator::generateIDandRandString();
+                            $rft->HouseNumber = $houseNo;
+                            $rft->ConsumerName = $consumerName;
+                            $rft->OldAccountNo = $accountNumber;
+                            $rft->NewMeterNumber = $newMeter;
+                            $rft->ReadingMonth = $readingMonth;
+                            $rft->LastReading = $lastReading;
+                            $rft->OldMeterNumber = $oldMeter;
+                            $rft->ServicePeriod = $servicePeriod;
+                            $rft->MeterReader = $meterReader;
+                            $rft->ReadingScheduleDate = $readingDate;
+                        }
+                        $rft->save();
+                    }
+                }
+
+                fclose($handle);
+            } else {
+                // Handle error opening the file
+                return abort(403, 'Error opening the file');
+            }
+        } else {
+            // Handle invalid file
+            return abort(400, 'Invalid file!');
+        }
+
+        Flash::success('Reading .txt file uploaded!');
+        return redirect(route('home'));
     }
 }
