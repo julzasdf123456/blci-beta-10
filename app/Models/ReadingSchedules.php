@@ -42,7 +42,9 @@ class ReadingSchedules extends Model
         'ServicePeriod',
         'ScheduledDate',
         'MeterReader',
-        'Status'
+        'Status',
+        'Zone',
+        'Block',
     ];
 
     /**
@@ -57,7 +59,9 @@ class ReadingSchedules extends Model
         'ServicePeriod' => 'string',
         'ScheduledDate' => 'string',
         'MeterReader' => 'string',
-        'Status' => 'string'
+        'Status' => 'string',
+        'Zone' => 'string',
+        'Block' => 'string',
     ];
 
     /**
@@ -74,7 +78,9 @@ class ReadingSchedules extends Model
         'MeterReader' => 'nullable|string|max:255',
         'created_at' => 'nullable',
         'updated_at' => 'nullable',
-        'Status' => 'nullable|string'
+        'Status' => 'nullable|string',
+        'Zone' => 'nullable|string',
+        'Block' => 'nullable|string',
     ];
 
 }

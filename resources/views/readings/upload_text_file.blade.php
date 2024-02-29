@@ -58,6 +58,25 @@
                     </div>
 
                     <div class="form-group col-lg-8 offset-lg-2 col-md-12 col-sm-12">
+                        {!! Form::label('GroupCode', 'Reading Day:') !!}
+                        <select name="GroupCode" id="GroupCode" class="form-control">
+                            <option value="01">01</option>
+                            <option value="02">02</option>
+                            <option value="03">03</option>
+                            <option value="04">04</option>
+                            <option value="05">05</option>
+                            <option value="06">06</option>
+                            <option value="07">07</option>
+                            <option value="08">08</option>
+                            <option value="09">09</option>
+                            <option value="10">10</option>
+                            <option value="11">11</option>
+                            <option value="12">12</option>
+                        </select>
+                        <span class="text-danger">{{ $errors->first('GroupCode') }}</span>
+                    </div>
+
+                    <div class="form-group col-lg-8 offset-lg-2 col-md-12 col-sm-12">
                         {!! Form::label('ReadingDate', 'Set Reading Date:') !!}
                         <input type="text" class="form-control" name="ReadingDate" id="ReadingDate">
                         @push('page_scripts')

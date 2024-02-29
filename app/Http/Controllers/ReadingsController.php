@@ -5107,6 +5107,9 @@ class ReadingsController extends AppBaseController
         $servicePeriod = $request['ServicePeriod'];
         $meterReader = $request['MeterReader'];
         $readingDate = $request['ReadingDate'];
+        $groupCode = $request['GroupCode'];
+
+        $fileName = $file->getClientOriginalName();
 
         if ($file->isValid()) {
             $path = $file->path();
@@ -5122,7 +5125,7 @@ class ReadingsController extends AppBaseController
                 if ($readingSched != null) {
                     $readingSched->Status = null;
                     $readingSched->AreaCode = '01';
-                    $readingSched->GroupCode = '01';
+                    $readingSched->GroupCode = $groupCode;
                 } else {
                     $readingSched = new ReadingSchedules;
                     $readingSched->id = IDGenerator::generateIDandRandString();
@@ -5131,7 +5134,8 @@ class ReadingsController extends AppBaseController
                     $readingSched->ScheduledDate = $readingDate;
                     $readingSched->MeterReader = $meterReader;
                     $readingSched->AreaCode = '01';
-                    $readingSched->GroupCode = '01';
+                    $readingSched->GroupCode = $groupCode;
+                    $readingSched->Zone = $fileName;
                 }
                 $readingSched->save();
 
