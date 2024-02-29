@@ -62,7 +62,7 @@
                     <div class="card-footer">
                         <button class="btn btn-primary btn-sm" id="view-btn"><i class="fas fa-eye ico-tab-mini"></i>View GPS</button>
                         <button class="btn btn-warning btn-sm float-right" id="view-report-btn"><i class="fas fa-list ico-tab-mini"></i>View Report</button>
-                        <button class="btn btn-default btn-sm float-right" style="margin-right: 5px;"><i class="fas fa-download ico-tab-mini"></i>Download .txt File</button>
+                        <button onclick="downloadTxt()" class="btn btn-default btn-sm float-right" style="margin-right: 5px;"><i class="fas fa-download ico-tab-mini"></i>Download .txt File</button>
                     </div>
                 </div>
 
@@ -307,6 +307,11 @@
         $('#view-report-btn').on('click', function() {
             window.location.href  = "{{ url('/readings/view-full-report') }}" + "/{{ $servicePeriod }}/" + $('#MeterReader').val() + "/" + $('#Day').val() + "/" + $('#Town').val()
         })
+
+
+        function downloadTxt() {
+            window.location.href = "{{ url('/readings/download-text-file') }}/{{ $servicePeriod }}/" + $('#MeterReader').val() + "/" + $('#Day').val() + "/" + $('#Town').val()
+        }
     </script>
 @endpush
 

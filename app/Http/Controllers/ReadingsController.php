@@ -196,15 +196,33 @@ class ReadingsController extends AppBaseController
     }
 
     public function getReadingsFromMeterReader(Request $request) {
+        /**
+         * ACTUAL RBS
+         * Re activate if RBS is already implemented
+         */
+        // $readings = DB::table('Billing_Readings')
+        //     ->leftJoin('Billing_ServiceAccounts', 'Billing_Readings.AccountNumber', '=', 'Billing_ServiceAccounts.id')
+        //     ->where('Billing_Readings.MeterReader', $request['MeterReader'])
+        //     ->where('Billing_Readings.ServicePeriod', $request['ServicePeriod'])
+        //     ->where('Billing_ServiceAccounts.GroupCode', $request['Day'])
+        //     ->where('Billing_ServiceAccounts.Town', $request['Town'])
+        //     ->select('Billing_Readings.*',
+        //         'Billing_ServiceAccounts.ServiceAccountName',
+        //         'Billing_ServiceAccounts.SequenceCode')
+        //     ->orderBy('Billing_Readings.ReadingTimestamp')
+        //     ->get();
+
+        /**
+         * Reading from text
+         */
         $readings = DB::table('Billing_Readings')
-            ->leftJoin('Billing_ServiceAccounts', 'Billing_Readings.AccountNumber', '=', 'Billing_ServiceAccounts.id')
             ->where('Billing_Readings.MeterReader', $request['MeterReader'])
             ->where('Billing_Readings.ServicePeriod', $request['ServicePeriod'])
-            ->where('Billing_ServiceAccounts.GroupCode', $request['Day'])
-            ->where('Billing_ServiceAccounts.Town', $request['Town'])
+            ->where('Billing_Readings.GroupCode', $request['Day'])
+            ->where('Billing_Readings.AreaCode', $request['Town'])
             ->select('Billing_Readings.*',
-                'Billing_ServiceAccounts.ServiceAccountName',
-                'Billing_ServiceAccounts.SequenceCode')
+                'Billing_Readings.ConsumerName as ServiceAccountName',
+                'Billing_Readings.HouseNumber as SequenceCode')
             ->orderBy('Billing_Readings.ReadingTimestamp')
             ->get();
 
@@ -5171,5 +5189,46 @@ class ReadingsController extends AppBaseController
 
         Flash::success('Reading .txt file uploaded!');
         return redirect(route('home'));
+    }
+
+    public function downloadTextFile($servicePeriod, $meterReader, $groupCode, $areaCode) {
+        $text = "";
+
+        $readings = DB::table('Billing_Readings')
+            ->where('Billing_Readings.MeterReader', $meterReader)
+            ->where('Billing_Readings.ServicePeriod', $servicePeriod)
+            ->where('Billing_Readings.GroupCode', $groupCode)
+            ->where('Billing_Readings.AreaCode', $areaCode)
+            ->select('Billing_Readings.*')
+            ->orderBy('Billing_Readings.ReadingTimestamp')
+            ->get();
+
+        foreach($readings as $item) {
+            $text .= Readings::trailSpaceAfter(8, $item->HouseNumber) . 
+                    Readings::trailSpaceAfter(30, substr($item->ConsumerName, 0, 30)) .
+                    Readings::trailSpaceAfter(8, $item->OldAccountNo) . 
+                    Readings::trailSpaceAfter(15, substr($item->MeterNumber, 0, 15)) . 
+                    Readings::trailSpaceAfter(10, substr(date('m/d/Y', strtotime($item->PreviousReadingDate)), 0, 10)) . 
+                    Readings::trailSpaceBefore(10, substr($item->PreviousReading, 0, 10)) . 
+                    Readings::trailSpaceBefore(1, substr($item->ReadingErrorCode, 0, 1)) . 
+                    Readings::trailSpaceAfter(10, substr(date('m/d/Y', strtotime($item->ReadingTimestamp)), 0, 10)) . 
+                    Readings::trailSpaceBefore(8, substr($item->KwhUsed, 0, 8)) . 
+                    Readings::trailSpaceBefore(8, substr($item->KwhConsumed, 0, 8)) . 
+                    Readings::trailSpaceAfter(20, substr($item->ReadingErrorRemarks, 0, 20)) . 
+                    Readings::trailSpaceAfter(2, substr('21', 0, 2)) . 
+                    Readings::trailSpaceBefore(5, substr('1', 0, 5)) . 
+                    Readings::trailSpaceBefore(9, substr(date('H:i:s', strtotime($item->ReadingTimestamp)), 0, 9)) . 
+                "\n";
+        }
+
+        // File name
+        $filename =  $servicePeriod . ".txt";
+
+        // Set appropriate headers
+        header("Content-Type: text/plain");
+        header("Content-Disposition: attachment; filename=$filename");
+
+        // Output the content
+        echo $text;
     }
 }

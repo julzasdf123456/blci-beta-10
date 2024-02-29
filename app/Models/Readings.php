@@ -54,6 +54,17 @@ class Readings extends Model
         'Item1',
         'Item2',
         'Item3',
+        'PreviousReadingDate',
+        'PreviousReading',
+        'KwhConsumed',
+        'ReadingErrorCode',
+        'ReadingErrorRemarks',
+        'HouseNumber',
+        'ConsumerName',
+        'OldAccountNo',
+        'AreaCode',
+        'GroupCode',
+        'MeterNumber',
     ];
 
     /**
@@ -77,6 +88,17 @@ class Readings extends Model
         'Item1' => 'string',
         'Item2' => 'string',
         'Item3' => 'string',
+        'PreviousReadingDate' => 'string',
+        'PreviousReading' => 'string',
+        'KwhConsumed' => 'string',
+        'ReadingErrorCode' => 'string',
+        'ReadingErrorRemarks' => 'string',
+        'HouseNumber' => 'string',
+        'ConsumerName' => 'string',
+        'OldAccountNo' => 'string',
+        'AreaCode' => 'string',
+        'GroupCode' => 'string',
+        'MeterNumber' => 'string',
     ];
 
     /**
@@ -102,6 +124,17 @@ class Readings extends Model
         'Item1' => 'nullable|string',
         'Item2' => 'nullable|string',
         'Item3' => 'nullable|string',
+        'PreviousReadingDate' => 'nullable|string',
+        'PreviousReading' => 'nullable|string',
+        'KwhConsumed' => 'nullable|string',
+        'ReadingErrorCode' => 'nullable|string',
+        'ReadingErrorRemarks' => 'nullable|string',
+        'HouseNumber' => 'nullable|string',
+        'ConsumerName' => 'nullable|string',
+        'OldAccountNo' => 'nullable|string',
+        'AreaCode' => 'nullable|string',
+        'GroupCode' => 'nullable|string',
+        'MeterNumber' => 'nullable|string',
     ];
 
     public static function getDaysBetweenDates($from, $to) {
@@ -122,5 +155,37 @@ class Readings extends Model
                 return 0;
             }            
         }
+    }
+
+    public static function trailSpaceAfter($charCount, $value) {
+        if ($value != null) {
+            $len = strlen($value);
+            $spaceCount = $charCount - $len;
+
+            return $value . Readings::loopSpace($spaceCount);
+        } else {
+            return Readings::loopSpace($charCount);
+        }
+        
+    }
+
+    public static function trailSpaceBefore($charCount, $value) {
+        if ($value != null) {
+            $len = strlen($value);
+            $spaceCount = $charCount - $len;
+
+            return Readings::loopSpace($spaceCount) . $value;
+        } else {
+            return Readings::loopSpace($charCount);
+        }
+        
+    }
+
+    public static function loopSpace($spaceCount) {
+        $spaces = "";
+        for ($i=0; $i<$spaceCount; $i++) {
+            $spaces .= " ";
+        }
+        return $spaces;
     }
 }

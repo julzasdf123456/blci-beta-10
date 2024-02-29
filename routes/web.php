@@ -554,6 +554,7 @@ Route::get('/readings/disco-per-bapa', [ReadingsController::class, 'discoPerBapa
 Route::get('/readings/get-previous-reading', [ReadingsController::class, 'getPreviousReading'])->name('readings.get-previous-reading');
 Route::get('/readings/upload-text-file', [ReadingsController::class, 'uploadTextFile'])->name('readings.upload-text-file');
 Route::post('/readings/process-uploaded-text-file', [ReadingsController::class, 'processUploadedTextFile'])->name('readings.process-uploaded-text-file');
+Route::get('/readings/download-text-file/{svcPeriod}/{meterReader}/{groupCode}/{areaCode}', [ReadingsController::class, 'downloadTextFile'])->name('readings.download-text-file');
 Route::resource('readings', ReadingsController::class);
 
 Route::get('/bills/unbilled-readings', [BillsController::class, 'unbilledReadings'])->name('bills.unbilled-readings');

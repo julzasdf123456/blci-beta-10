@@ -110,6 +110,7 @@ class ReadAndBillAPI extends Controller {
                 'Billing_ServiceAccounts.AdvancedMaterialDepositStatus',
                 'Billing_ServiceAccounts.CustomerDepositStatus',
                 'Billing_ServiceAccounts.ConnectionDate',
+                'Billing_ServiceAccounts.HouseNumber',
                 'CRM_Towns.Town as TownFull',
                 'CRM_Barangays.Barangay as BarangayFull',
                 'Billing_ServiceAccounts.Purok',
@@ -189,6 +190,8 @@ class ReadAndBillAPI extends Controller {
                     'PreviousSurcharges' => $previousSurcharges,
                     'ServicePeriod' => $request['ServicePeriod'],
                     'Notices' => $notice != null ? $notice->Notes : '',
+                    'LastReadingDate' => $item->ReadingTimestamp,
+                    'HouseNumber' => $item->HouseNumber,
                 ]);
             }
 
@@ -281,6 +284,8 @@ class ReadAndBillAPI extends Controller {
                     'PreviousSurcharges' => 0,
                     'ServicePeriod' => $servicePeriod,
                     'Notices' => $notice != null ? $notice->Notes : '',
+                    'LastReadingDate' => $item->ReadingMonth,
+                    'HouseNumber' => $item->HouseNumber,
                 ]);
             }
 
@@ -323,6 +328,10 @@ class ReadAndBillAPI extends Controller {
 
     public function receiveReadings(Request $request) {
         $input = $request->all();
+
+        $input['MeterNumber'] = trim(preg_replace('/\s+/', ' ', $input['MeterNumber']));
+        $input['MeterNumber'] = str_replace("-", "", $input['MeterNumber']);
+        $input['MeterNumber'] = str_replace(" ", "", $input['MeterNumber']);
 
         $readingsOg = Readings::find($request['id']);
 
