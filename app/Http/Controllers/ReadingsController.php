@@ -5132,6 +5132,7 @@ class ReadingsController extends AppBaseController
         $groupCode = $request['GroupCode'];
 
         $fileName = $file->getClientOriginalName();
+        $fileName = explode(".", $fileName)[0] != null ? explode(".", $fileName)[0] : 'zzz';
 
         if ($file->isValid()) {
             $path = $file->path();
@@ -5193,13 +5194,13 @@ class ReadingsController extends AppBaseController
                         } else {
                             $rft = new ReadingFromText;
                             $rft->id = IDGenerator::generateIDandRandString();
-                            $rft->HouseNumber = $houseNo;
-                            $rft->ConsumerName = $consumerName;
-                            $rft->OldAccountNo = $accountNumber;
-                            $rft->NewMeterNumber = $newMeter;
-                            $rft->ReadingMonth = $readingMonth;
+                            $rft->HouseNumber = utf8_encode($houseNo);
+                            $rft->ConsumerName = utf8_encode($consumerName);
+                            $rft->OldAccountNo = utf8_encode($accountNumber);
+                            $rft->NewMeterNumber = utf8_encode($newMeter);
+                            $rft->ReadingMonth = utf8_encode($readingMonth);
                             $rft->LastReading = $lastReading;
-                            $rft->OldMeterNumber = $oldMeter;
+                            $rft->OldMeterNumber = utf8_encode($oldMeter);
                             $rft->ServicePeriod = $servicePeriod;
                             $rft->MeterReader = $meterReader;
                             $rft->ReadingScheduleDate = $readingDate;
@@ -5235,6 +5236,12 @@ class ReadingsController extends AppBaseController
             ->orderBy('Billing_Readings.HouseNumber')
             ->get();
 
+        $sched = ReadingSchedules::where('MeterReader', $meterReader)
+            ->where('ServicePeriod', $servicePeriod)
+            ->where('GroupCode', $groupCode)
+            ->where('AreaCode', $areaCode)
+            ->first();
+
         foreach($readings as $item) {
             $text .= Readings::trailSpaceAfter(8, $item->HouseNumber) . 
                     Readings::trailSpaceAfter(30, substr($item->ConsumerName, 0, 30)) .
@@ -5254,7 +5261,12 @@ class ReadingsController extends AppBaseController
         }
 
         // File name
-        $filename =  $servicePeriod . ".txt";
+        if ($sched != null) {
+            $filename =  $sched->Zone . "Z.txt";
+        } else {
+            $filename =  $servicePeriod . ".txt";
+        }
+        
 
         // Set appropriate headers
         header("Content-Type: text/plain");
