@@ -96,6 +96,9 @@ You can also check out our other paid products on [CodeCanyon](https://codecanyo
     - MeterNumber
    ** ALSO, Change the KwhUsed type to Decimal(13,2)
 
+- Billing_ReadingsFromText
+    - GroupCode (varchar)
+
 ### Added New Tables
 - 
 

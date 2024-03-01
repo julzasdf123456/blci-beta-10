@@ -933,32 +933,54 @@ class ReadingsController extends AppBaseController
             $summary = null;
         } 
 
+        /**
+         * FROM DEFAULT READING MONITOR
+         */
+        // $readingReport = DB::table('Billing_Readings')
+        //     ->leftJoin('Billing_ServiceAccounts', 'Billing_Readings.AccountNumber', '=', 'Billing_ServiceAccounts.id')
+        //     ->whereRaw("Billing_Readings.MeterReader = '" . $meterReader->id . "'")
+        //     ->where('Billing_Readings.ServicePeriod', $period)
+        //     ->whereRaw("Billing_ServiceAccounts.AccountStatus IN ('ACTIVE', 'DISCONNECTED', 'C', 'R', 'D', 'A')")
+        //     ->where(function ($query) use ($town, $day, $reading, $meterReader) {
+        //         $query->whereRaw("Billing_Readings.AccountNumber IN (SELECT id FROM Billing_ServiceAccounts WHERE id=Billing_Readings.AccountNumber AND Town='" . $town . "' AND GroupCode='" . $day . "' AND MeterReader='" . $meterReader->id . "')")
+        //                 ->orWhereRaw("Billing_Readings.AccountNumber IS NULL AND (ReadingTimestamp BETWEEN '" . date('Y-m-d', strtotime($reading->ReadingTimestamp)) . "' AND '" . date('Y-m-d', strtotime($reading->ReadingTimestamp . ' +1 day')) . "')");
+        //     })
+        //     ->select('Billing_Readings.*',
+        //         'Billing_ServiceAccounts.id AS AccountId',
+        //         'Billing_ServiceAccounts.OldAccountNo',
+        //         'Billing_ServiceAccounts.ServiceAccountName',
+        //         'Billing_ServiceAccounts.SequenceCode',
+        //         'Billing_ServiceAccounts.AccountStatus',
+        //         'Billing_ServiceAccounts.Multiplier',
+        //         DB::raw("(SELECT TOP 1 ReadingTimestamp FROM Billing_Readings WHERE AccountNumber=Billing_ServiceAccounts.id AND ServicePeriod='" . date('Y-m-01', strtotime($period . ' -1 month')) . "' ORDER BY ServicePeriod DESC) AS PrevReadingTimestamp"),
+        //         DB::raw("(SELECT TOP 1 TRY_CAST(KwhUsed AS DECIMAL(15,2)) FROM Billing_Readings WHERE AccountNumber=Billing_ServiceAccounts.id AND ServicePeriod='" . date('Y-m-01', strtotime($period . ' -1 month')) . "' ORDER BY ServicePeriod DESC) AS PrevReading"),
+        //         DB::raw("(SELECT TOP 1 TRY_CAST(KwhUsed AS DECIMAL(15,2)) FROM Billing_Bills WHERE AccountNumber=Billing_ServiceAccounts.id AND ServicePeriod='" . $period . "') AS CurrentKwh"),
+        //         DB::raw("(SELECT TOP 1 TRY_CAST(KwhUsed AS DECIMAL(15,2)) FROM Billing_Bills WHERE AccountNumber=Billing_ServiceAccounts.id AND ServicePeriod='" . date('Y-m-01', strtotime($period . ' -1 month')) . "') AS PrevKwh"),
+        //         DB::raw("(SELECT TOP 1 SerialNumber FROM Billing_Meters WHERE ServiceAccountId=Billing_ServiceAccounts.id ORDER BY created_at DESC) AS MeterNumber"),
+        //         DB::raw("(SELECT TOP 1 id FROM Billing_Bills WHERE AccountNumber=Billing_ServiceAccounts.id AND ServicePeriod='" . $period . "') AS BillId"),
+        //         )
+        //     ->orderBy('AccountStatus')
+        //     ->orderBy('CurrentKwh')
+        //     ->orderBy('FieldStatus')
+        //     ->get();
+
+        /**
+         * FROM READING VIA TEXT
+         */
         $readingReport = DB::table('Billing_Readings')
-            ->leftJoin('Billing_ServiceAccounts', 'Billing_Readings.AccountNumber', '=', 'Billing_ServiceAccounts.id')
             ->whereRaw("Billing_Readings.MeterReader = '" . $meterReader->id . "'")
             ->where('Billing_Readings.ServicePeriod', $period)
-            ->whereRaw("Billing_ServiceAccounts.AccountStatus IN ('ACTIVE', 'DISCONNECTED', 'C', 'R', 'D', 'A')")
-            ->where(function ($query) use ($town, $day, $reading, $meterReader) {
-                $query->whereRaw("Billing_Readings.AccountNumber IN (SELECT id FROM Billing_ServiceAccounts WHERE id=Billing_Readings.AccountNumber AND Town='" . $town . "' AND GroupCode='" . $day . "' AND MeterReader='" . $meterReader->id . "')")
-                        ->orWhereRaw("Billing_Readings.AccountNumber IS NULL AND (ReadingTimestamp BETWEEN '" . date('Y-m-d', strtotime($reading->ReadingTimestamp)) . "' AND '" . date('Y-m-d', strtotime($reading->ReadingTimestamp . ' +1 day')) . "')");
-            })
             ->select('Billing_Readings.*',
-                'Billing_ServiceAccounts.id AS AccountId',
-                'Billing_ServiceAccounts.OldAccountNo',
-                'Billing_ServiceAccounts.ServiceAccountName',
-                'Billing_ServiceAccounts.SequenceCode',
-                'Billing_ServiceAccounts.AccountStatus',
-                'Billing_ServiceAccounts.Multiplier',
-                DB::raw("(SELECT TOP 1 ReadingTimestamp FROM Billing_Readings WHERE AccountNumber=Billing_ServiceAccounts.id AND ServicePeriod='" . date('Y-m-01', strtotime($period . ' -1 month')) . "' ORDER BY ServicePeriod DESC) AS PrevReadingTimestamp"),
-                DB::raw("(SELECT TOP 1 TRY_CAST(KwhUsed AS DECIMAL(15,2)) FROM Billing_Readings WHERE AccountNumber=Billing_ServiceAccounts.id AND ServicePeriod='" . date('Y-m-01', strtotime($period . ' -1 month')) . "' ORDER BY ServicePeriod DESC) AS PrevReading"),
-                DB::raw("(SELECT TOP 1 TRY_CAST(KwhUsed AS DECIMAL(15,2)) FROM Billing_Bills WHERE AccountNumber=Billing_ServiceAccounts.id AND ServicePeriod='" . $period . "') AS CurrentKwh"),
-                DB::raw("(SELECT TOP 1 TRY_CAST(KwhUsed AS DECIMAL(15,2)) FROM Billing_Bills WHERE AccountNumber=Billing_ServiceAccounts.id AND ServicePeriod='" . date('Y-m-01', strtotime($period . ' -1 month')) . "') AS PrevKwh"),
-                DB::raw("(SELECT TOP 1 SerialNumber FROM Billing_Meters WHERE ServiceAccountId=Billing_ServiceAccounts.id ORDER BY created_at DESC) AS MeterNumber"),
-                DB::raw("(SELECT TOP 1 id FROM Billing_Bills WHERE AccountNumber=Billing_ServiceAccounts.id AND ServicePeriod='" . $period . "') AS BillId"),
+                'Billing_Readings.AccountNumber AS AccountId',
+                'Billing_Readings.OldAccountNo',
+                'Billing_Readings.ConsumerName AS ServiceAccountName',
+                'Billing_Readings.HouseNumber AS SequenceCode',
+                DB::raw("'-' AS AccountStatus"),
+                DB::raw("'1' AS Multiplier"),
+                DB::raw("'' AS BillId"),
                 )
-            ->orderBy('AccountStatus')
-            ->orderBy('CurrentKwh')
-            ->orderBy('FieldStatus')
+            ->orderBy('HouseNumber')
+            // ->orderBy('FieldStatus')
             ->get();
         
         return view('/readings/view_full_report', [
@@ -5151,6 +5173,10 @@ class ReadingsController extends AppBaseController
                     $lastReading = str_replace('"', '', $data[5]);
                     $oldMeter = str_replace('"', '', $data[6]);
 
+                    $oldMeter = trim(preg_replace('/\s+/', ' ', $oldMeter));
+                    $oldMeter = str_replace("-", "", $oldMeter);
+                    $oldMeter = str_replace(" ", "", $oldMeter);
+
                     if (strlen(trim($line)) > 0 | trim($line) != null) {
                         $rft = ReadingFromText::where('OldAccountNo', $accountNumber)
                             ->where('ReadingMonth', $readingMonth)
@@ -5163,6 +5189,7 @@ class ReadingsController extends AppBaseController
                             $rft->ServicePeriod = $servicePeriod;
                             $rft->MeterReader = $meterReader;
                             $rft->ReadingScheduleDate = $readingDate;
+                            $rft->GroupCode = $groupCode;
                         } else {
                             $rft = new ReadingFromText;
                             $rft->id = IDGenerator::generateIDandRandString();
@@ -5176,6 +5203,7 @@ class ReadingsController extends AppBaseController
                             $rft->ServicePeriod = $servicePeriod;
                             $rft->MeterReader = $meterReader;
                             $rft->ReadingScheduleDate = $readingDate;
+                            $rft->GroupCode = $groupCode;
                         }
                         $rft->save();
                     }
@@ -5204,7 +5232,7 @@ class ReadingsController extends AppBaseController
             ->where('Billing_Readings.GroupCode', $groupCode)
             ->where('Billing_Readings.AreaCode', $areaCode)
             ->select('Billing_Readings.*')
-            ->orderBy('Billing_Readings.ReadingTimestamp')
+            ->orderBy('Billing_Readings.HouseNumber')
             ->get();
 
         foreach($readings as $item) {

@@ -20,7 +20,8 @@ class ReadingFromText extends Model
         'OldMeterNumber',
         'MeterReader',
         'Status',
-        'ReadingScheduleDate'
+        'ReadingScheduleDate',
+        'GroupCode',
     ];
 
     protected $casts = [
@@ -36,6 +37,7 @@ class ReadingFromText extends Model
         'MeterReader' => 'string',
         'Status' => 'string',
         'ReadingScheduleDate' => 'string',
+        'GroupCode' => 'string',
     ];
 
     public static array $rules = [
@@ -52,6 +54,7 @@ class ReadingFromText extends Model
         'created_at' => 'nullable',
         'updated_at' => 'nullable',
         'ReadingScheduleDate' => 'nullable|string',
+        'GroupCode' => 'nullable|string',
     ];
 
     

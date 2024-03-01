@@ -43,6 +43,8 @@ class ReadAndBillAPI extends Controller {
                     'MeterReader',
                     'created_at',
                     'updated_at',
+                    'Zone',
+                    'Block',
                     'Status')
             ->get();
 
@@ -248,7 +250,7 @@ class ReadAndBillAPI extends Controller {
                     'AccountType' => $item->AccountType,
                     'AccountStatus' => $item->AccountStatus,
                     'AreaCode' => '01',
-                    'GroupCode' => '01',
+                    'GroupCode' => $item->GroupCode,
                     'Town' => '01',
                     'Barangay' => null,
                     'Latitude' => null,
@@ -276,7 +278,7 @@ class ReadAndBillAPI extends Controller {
                     'KwhUsed' => $item->LastReading,
                     'PrevKwhUsed' => $item->LastReading,
                     'ReadingTimestamp' => date('Y-m-d', strtotime($item->ReadingMonth . ' -1 month')),
-                    'MeterSerial' => $item->OldMeterNumber . ' - ' . $item->NewMeterNumber,
+                    'MeterSerial' => $item->OldMeterNumber,
                     'Deposit' => null,
                     'ChangeMeterAdditionalKwh' => null,
                     'ChangeMeterStartKwh' => null,

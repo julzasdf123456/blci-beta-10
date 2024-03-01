@@ -98,8 +98,8 @@
                             {{-- <th class="text-center">Daily <br>Average</th> --}}
                             {{-- <th class="text-center"># of Days</th> --}}
                             <th class="text-center">Meter #</th>
-                            <th class="text-center">Field <br>Findings</th>
-                            <th class="text-center">Remarks</th>
+                            <th class="text-center">Reading <br>Code</th>
+                            <th class="text-center">Reading<br>Remarks</th>
                             <th class="text-center"></th>
                         </thead>
                         <tbody>
@@ -109,25 +109,25 @@
                             @foreach ($readingReport as $item)
                                 @php
                                     // NUMBER OF DAYS
-                                    // $noOfDays = Readings::getDaysBetweenDates($item->PrevReadingTimestamp, $item->ReadingTimestamp);
+                                    // $noOfDays = Readings::getDaysBetweenDates($item->PreviousReadingTimestamp, $item->ReadingTimestamp);
 
                                     // COMPUTE PERCENTAGE
-                                    $currentKwh = ($item->CurrentKwh != null ? $item->CurrentKwh : (round(floatval($item->KwhUsed) - floatval($item->PrevReading), 2)));
-                                    $currentKwh = floatval(trim($currentKwh));
+                                    // $KwhConsumed = ($item->KwhConsumed != null ? $item->KwhConsumed : (round(floatval($item->KwhUsed) - floatval($item->PreviousReading), 2)));
+                                    // $KwhConsumed = floatval(trim($KwhConsumed));
                                     // $prevKwh = $item->PrevKwh != null ? $item->PrevKwh : 0;
-                                    // $diffKwh = $currentKwh - $prevKwh;
-                                    // if ($currentKwh != 0) {
-                                    //     $percentage = $diffKwh/$currentKwh;
+                                    // $diffKwh = $KwhConsumed - $prevKwh;
+                                    // if ($KwhConsumed != 0) {
+                                    //     $percentage = $diffKwh/$KwhConsumed;
                                     // } else {
                                     //     $percentage = 0;
                                     // }
-                                    // $percentage = $item->CurrentKwh != null ? round($percentage, 4) : 0;                                    
+                                    // $percentage = $item->KwhConsumed != null ? round($percentage, 4) : 0;                                    
 
                                 @endphp
-                                <tr title="{{ $item->CurrentKwh != null ? '' : 'No Bill' }}">
+                                <tr title="{{ $item->KwhConsumed != null ? '' : 'No Bill' }}">
                                     <td>{{ $i }}</td>
                                     @if ($item->AccountStatus == 'ACTIVE')
-                                        <td><i class="fas {{ $item->CurrentKwh != null ? 'fa-check-circle ico-tab text-success' : 'fa-exclamation-circle ico-tab text-danger' }}"></i><a href="{{ route('serviceAccounts.show', [$item->AccountId]) }}">{{ $item->OldAccountNo }}</a></td>
+                                        <td><i class="fas {{ $item->KwhConsumed != null ? 'fa-check-circle ico-tab text-success' : 'fa-exclamation-circle ico-tab text-danger' }}"></i><a href="{{ route('serviceAccounts.show', [$item->AccountId]) }}">{{ $item->OldAccountNo }}</a></td>
                                     @else
                                         <td><i class="fas fa-info-circle ico-tab text-muted"></i><a href="{{ $item->AccountId != null ? route('serviceAccounts.show', [$item->AccountId]) : '' }}">{{ $item->OldAccountNo }}</a></td>
                                     @endif
@@ -137,30 +137,30 @@
                                     <td>{{ $item->AccountStatus }}</td>
                                     <td>{{ date('Y-m-d h:i:s A', strtotime($item->ReadingTimestamp )) }}</td>
                                     <td class="text-right">{{ $item->KwhUsed }}</td>
-                                    <td class="text-right">{{ $item->PrevReading }}</td>
-                                    @if ($item->CurrentKwh != null)
-                                        <td class="{{ $item->CurrentKwh != null ? 'text-success' : 'text-danger' }} text-right">{{ $item->CurrentKwh != null ? $item->CurrentKwh : (round(floatval($item->KwhUsed) - floatval($item->PrevReading), 2)) }}</td>
+                                    <td class="text-right">{{ $item->PreviousReading }}</td>
+                                    @if ($item->KwhConsumed != null)
+                                        <td class="{{ $item->KwhConsumed != null ? 'text-success' : 'text-danger' }} text-right">{{ $item->KwhConsumed != null ? $item->KwhConsumed : (round(floatval($item->KwhUsed) - floatval($item->PreviousReading), 2)) }}</td>
                                     @else
-                                        <th class="{{ $item->CurrentKwh != null ? 'text-success' : 'text-danger' }} text-right">{{ $item->CurrentKwh != null ? $item->CurrentKwh : (round(floatval($item->KwhUsed) - floatval($item->PrevReading), 2)) }}</th>
+                                        <th class="{{ $item->KwhConsumed != null ? 'text-success' : 'text-danger' }} text-right">{{ $item->KwhConsumed != null ? $item->KwhConsumed : (round(floatval($item->KwhUsed) - floatval($item->PreviousReading), 2)) }}</th>
                                     @endif
                                     {{-- <td class="text-right text-info">{{ $item->PrevKwh != null ? $item->PrevKwh : '0' }}</td> --}}
-                                    {{-- @if ($item->CurrentKwh != null)
-                                        <td class="text-right {{ floatval($percentage) < 0 ? 'text-success' : 'text-danger' }}"><i class="float-left fas {{ floatval($percentage) < 0 ? 'fa-caret-down' : 'fa-caret-up' }}"></i>{{ $item->CurrentKwh != null ? ($percentage * 100) . '%' : '-' }}</td>
+                                    {{-- @if ($item->KwhConsumed != null)
+                                        <td class="text-right {{ floatval($percentage) < 0 ? 'text-success' : 'text-danger' }}"><i class="float-left fas {{ floatval($percentage) < 0 ? 'fa-caret-down' : 'fa-caret-up' }}"></i>{{ $item->KwhConsumed != null ? ($percentage * 100) . '%' : '-' }}</td>
                                     @else
                                         <td class="text-right">-</td>
                                     @endif    --}}
-                                    {{-- <td class="text-right">{{ $item->CurrentKwh != null ? round(floatval($item->CurrentKwh) / floatval($noOfDays), 2) : '-' }}</td>                                  --}}
+                                    {{-- <td class="text-right">{{ $item->KwhConsumed != null ? round(floatval($item->KwhConsumed) / floatval($noOfDays), 2) : '-' }}</td>                                  --}}
                                     {{-- <td class="text-right">{{ $noOfDays }}</td> --}}
                                     <td class="text-right">{{ $item->MeterNumber }}</td>
-                                    <td>{{ $item->FieldStatus }}</td>
-                                    <td>{{ $item->Notes }}</td>
+                                    <td>{{ $item->ReadingErrorCode }}</td>
+                                    <td>{{ $item->ReadingErrorRemarks }}</td>
                                     <td class="text-right">
-                                        @if ($item->CurrentKwh == null && $item->AccountStatus == 'ACTIVE')
+                                        @if ($item->KwhConsumed == null && $item->AccountStatus == 'ACTIVE')
                                             {{-- <a href="{{ route('bills.zero-readings-view', [$item->id]) }}"><i class="fas fa-pen"></i></a> --}}
                                             <button class="btn btn-link text-primary btn-xs float-right" 
                                                 acctno="{{ $item->OldAccountNo }}" 
                                                 reading="{{ $item->KwhUsed }}" 
-                                                prevreading="{{ $item->PrevReading }}" 
+                                                prevreading="{{ $item->PreviousReading }}" 
                                                 fieldfindings="{{ $item->FieldStatus }}" 
                                                 remarks="{{ $item->Notes }}" 
                                                 meternumber="{{ $item->MeterNumber }}"
