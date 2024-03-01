@@ -203,7 +203,6 @@ class ReadingSchedulesController extends AppBaseController
 
     public function readingScheduleIndex() {
         $periods = DB::table('Billing_ReadingSchedules')
-            ->where('AreaCode', env("APP_AREA_CODE"))
             ->select('ServicePeriod',
                 DB::raw("COUNT(id) AS SchedulesCreated"))
             ->groupBy('ServicePeriod')
