@@ -62,6 +62,7 @@ Route::get('/users/remove-roles/{id}', [UsersController::class, 'clearRoles'])->
 Route::get('/users/my-account', [UsersController::class, 'myAccount'])->name('users.my-account');
 
 Route::post('/users/authenticate', [UsersController::class, 'authenticate'])->name('users.authenticate');
+Route::get('/users/switch-color-modes', [UsersController::class, 'switchColorModes'])->name('users.switch-color-modes');
 Route::resource('users', UsersController::class);
 
 Route::resource('roles', App\Http\Controllers\RoleController::class);

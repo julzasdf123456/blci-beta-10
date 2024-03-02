@@ -251,4 +251,18 @@ class UsersController extends AppBaseController
             'userPermissions' => $userPermissions,
         ]);
     }
+    
+    public function switchColorModes(Request $request) {
+        $id = $request['id'];
+        $color = $request['Color'];
+
+        $user = User::find($id);
+
+        if ($user != null) {
+            $user->ColorProfile = $color;
+            $user->save();
+        }
+
+        return response()->json($user, 200);
+    }
 }

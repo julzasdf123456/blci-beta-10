@@ -83,21 +83,9 @@ You can also check out our other paid products on [CodeCanyon](https://codecanyo
 
 
 ### Added New Columns
-- Billing_Readings
-    - PreviousReadingDate (date)
-    - PreviousReading (decimal - 13,2)
-    - KwhConsumed - (decimal - 13, 2)
-    - ReadingErrorCode - (varchar)
-    - ReadingErrorRemarks (varchar)
-    - ConsumerName (varchar)
-    - OldAccountNo (varchar)
-    - AreaCode (varchar)
-    - GroupCode (varchar)
-    - MeterNumber
-   ** ALSO, Change the KwhUsed type to Decimal(13,2)
-
-- Billing_ReadingsFromText
-    - GroupCode (varchar)
+- users
+    - ColorProfile
+    
 
 ### Added New Tables
 - 

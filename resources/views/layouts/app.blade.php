@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <title>{{ config('app.name') }}</title>
     <meta content='width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no' name='viewport'>
+    <meta name="color-profile" content="{{ Auth::user()->ColorProfile }}">
 
     {{-- <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700&amp;display=fallback"> --}}
     <link rel="stylesheet" href="{{ URL::asset('css/source_sans_pro.css'); }} ">
@@ -50,6 +51,7 @@
     <link rel="stylesheet" href="{{ URL::asset('css/sweetalert2.min.css'); }}">
 
     <link rel="stylesheet" href="{{ URL::asset('css/styles.css'); }}">
+    <link rel="stylesheet" href="{{ URL::asset('css/style.css'); }}">
 
     <style>
         :root {
@@ -204,11 +206,13 @@
 
     @stack('page_css')
 </head>
-
-<body class="hold-transition sidebar-mini layout-fixed layout-navbar-fixed"> {{--  sidebar-collapse --}}
+@php
+    $userCache = Auth::user();
+@endphp
+<body class="hold-transition sidebar-mini layout-fixed {{ $userCache->ColorProfile }}"> {{--  sidebar-collapse --}}
 <div class="wrapper">
     <!-- Main Header -->
-    <nav class="main-header navbar navbar-expand navbar-white navbar-light border-bottom-0">
+    <nav class="main-header navbar navbar-expand  {{ $userCache->ColorProfile != null ? 'navbar-dark' : 'navbar-light' }}">
         <!-- Left navbar links -->
         <ul class="navbar-nav">
             <li class="nav-item">
@@ -262,15 +266,15 @@
                 <a href="#" class="nav-link dropdown-toggle" data-toggle="dropdown">
                     {{-- <img src="https://boheco1.com/wp-content/uploads/2018/06/boheco-1-1024x1012.png" class="user-image img-circle elevation-2" alt="User Image"> --}}
                     <img src="{{ URL::asset('imgs/company_logo.png'); }}"
-                         class="user-image img-circle elevation-2" alt="User Image"> 
+                         class="user-image img-circle" alt="User Image"> 
                     <span class="d-none d-md-inline">{{ Auth::check() ? Auth::user()->name : '' }}</span>
                 </a>
                 <ul class="dropdown-menu dropdown-menu-lg dropdown-menu-right">
                     <!-- User image -->
-                    <li class="user-header bg-dark">
-                        {{-- <img src="https://boheco1.com/wp-content/uploads/2018/06/boheco-1-1024x1012.png" class="user-image img-circle elevation-2" alt="User Image"> --}}
+                    <li class="user-header">
+                        {{-- <img src="https://boheco1.com/wp-content/uploads/2018/06/boheco-1-1024x1012.png" class="user-image img-circle" alt="User Image"> --}}
                         <img src="{{ URL::asset('imgs/company_logo.png'); }}"
-                             class="img-circle elevation-2"
+                             class="img-circle"
                              alt="User Image"> 
                         <br>
                         <h4 style="margin-top: 10px;"> {{ Auth::check() ? Auth::user()->name : '' }} </h4>
@@ -278,12 +282,25 @@
                     <table class="table table-borderless table-hover table-sm">
                         <tr>
                             <td>
-                                <a href="{{ route('users.my-account') }}" class="btn btn-link text-dark"><i class="fas fa-user-circle ico-tab"></i>My Account</a>
+                                <a href="{{ route('users.my-account') }}" class="btn btn-link {{ $userCache->ColorProfile != null ? 'text-light' : 'text-dark' }}"><i class="fas fa-user-circle ico-tab"></i>My Account</a>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                {{-- <div class="custom-control custom-switch">
+                                    <label class="custom-control-label" for="color-modes" id="color-modes">Dark Mode</label>
+                                    <input type="checkbox" class="custom-control-input" id="color-modes">
+                                </div> --}}
+                                <div class="custom-control custom-switch" style="margin-left: 10px; margin-top: 6px; margin-bottom: 6px;">
+                                    <input type="checkbox" {{ $userCache->ColorProfile != null ? 'checked' : '' }} class="custom-control-input" id="color-switch">
+                                    <label style="font-weight: normal;" class="custom-control-label" for="color-switch" id="color-switchLabel">Dark Mode</label>
+                                </div>
+                                
                             </td>
                         </tr>
                         <tr>
                             <td style="border-top: 1px solid #e6e6e6;">
-                                <a href="#" class="btn btn-link text-dark"
+                                <a href="#" class="btn btn-link {{ $userCache->ColorProfile != null ? 'text-light' : 'text-dark' }}"
                                 onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
                                     <i class="fas fa-sign-out-alt ico-tab"></i>Sign out
                                 </a>
@@ -544,6 +561,36 @@
         $('#search-consumer-global').on('click', function() {
             performSearch($('#search').val())
         })
+
+         /**
+         * COLOR MODES CONTROLLER 
+         **/
+         $('#color-switch').on('change', function(e) {
+            var col = ''
+            if (e.target.checked) {
+               col = 'dark-mode'
+            } else {
+               col = null
+            }
+
+            $.ajax({
+                url : "{{ route('users.switch-color-modes') }}",
+                type : "GET",
+                data : {
+                    id : "{{ Auth::id() }}",
+                    Color : col,
+                },
+                success : function(res) {
+                    location.reload()
+                },
+                error : function(err) {
+                    Swal.fire({
+                        icon : 'error',
+                        text : 'Error changing color profile'
+                    })
+                }
+            })
+         })
         
     });
 
