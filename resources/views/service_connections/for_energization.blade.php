@@ -38,18 +38,18 @@
                      <tbody>
                         @foreach ($data as $item)
                            <tr id="{{ $item->id }}">
-                              <td><a target="_blank" href="{{ route('serviceConnections.show', [$item->id]) }}">{{ $item->id }}</a></td>
-                              <td>
+                              <td class="v-align"><a target="_blank" href="{{ route('serviceConnections.show', [$item->id]) }}">{{ $item->id }}</a></td>
+                              <td class="v-align">
                                  <strong>{{ $item->ServiceAccountName }}</strong><br>
                                  <span class="text-muted">{{ ServiceConnections::getAddress($item) }}</span>
                               </td>
-                              <td class="text-center"><span class="badge bg-success">{{ $item->Status }}</span></td>
-                              <td>{{ $item->name }}</td>
-                              <td>{{ $item->DateOfVerification != null ? date('M d, Y', strtotime($item->DateOfVerification)) : 'n/a' }}</td>
-                              <td>
+                              <td class="text-center v-align"><span class="badge bg-success">{{ $item->Status }}</span></td>
+                              <td class="v-align">{{ $item->name }}</td>
+                              <td class="v-align">{{ $item->DateOfVerification != null ? date('M d, Y', strtotime($item->DateOfVerification)) : 'n/a' }}</td>
+                              <td class="v-align">
                                  <input type='date' class='form-control form-control-sm' id='date-{{ $item->id }}' placeholder='Set Connection Date' value="{{ $item->ConnectionSchedule != null ? $item->ConnectionSchedule : '' }}">
                               </td>
-                              <td>
+                              <td class="v-align">
                                  <select name="crew" id="crew-{{ $item->id }}" class='form-control form-control-sm'>
                                     <option value="">-</option>
                                     @foreach ($crew as $itemx)
@@ -57,7 +57,7 @@
                                     @endforeach
                                  </select>
                               </td>
-                              <td class="text-right">
+                              <td class="v-align text-right">
                                  <button class="btn btn-sm btn-success" onclick="setSchedule(`{{ $item->id }}`)"><i class="fas fa-check-circle ico-tab-mini"></i>Save</button>
                               </td>
                            </tr>
@@ -65,6 +65,7 @@
                      </tbody>
                   </table>
                </div>
+               <div class="card-footer"></div>
             </div>
         </div>
     </div>

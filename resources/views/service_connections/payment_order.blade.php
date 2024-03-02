@@ -25,10 +25,10 @@
       <div class="card shadow-none">
          <div class="card-header p-2">
             <ul class="nav nav-pills">
-               <li class="nav-item"><a class="nav-link active" href="#materials" data-toggle="tab">
+               <li class="nav-item"><a class="nav-link custom-tab active" href="#materials" data-toggle="tab">
                    <i class="fas fa-info-circle"></i>
                    Materials</a></li>
-               <li class="nav-item"><a class="nav-link" href="#meter" data-toggle="tab">
+               <li class="nav-item"><a class="nav-link custom-tab" href="#meter" data-toggle="tab">
                    <i class="fas fa-tachometer-alt"></i>
                    Meter</a></li>
             <ul>

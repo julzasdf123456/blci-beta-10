@@ -93,6 +93,7 @@
                </tbody>
             </table>
          </div>
+         <div class="card-footer"></div>
       </div>
    </div>
 
@@ -119,6 +120,7 @@
           <div class="card-body">
               <div id="calendar" style="height: 400px;"></div>
           </div>
+          <div class="card-footer"></div>
       </div>
    </div>
 
@@ -151,6 +153,7 @@
                     </tbody>
                 </table>
             </div>
+            <div class="card-footer"></div>
         </div>        
     </div>
 </div>

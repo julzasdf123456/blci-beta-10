@@ -908,3 +908,21 @@ body.dark-mode .tree-view li:hover {
 .fade-leave-to /* .fade-leave-active in <2.1.8 */ {
     opacity: 0 !important;
 }
+
+/**
+ * NAV PILLS
+ */
+.nav-pills .nav-item .custom-tab.active {
+    border-radius: 14px !important;
+    background-color: #1ebd7b !important;
+}
+
+body.dark-mode .nav-pills .nav-item .custom-tab.active {
+    background-color: rgba(255, 255, 255, .2) !important;
+}
+
+body.dark-mode .nav-pills .nav-item .custom-tab:hover {
+    border-radius: 14px !important;
+    background-color: rgba(255, 255, 255, .05) !important;
+    color: #f1f1f1 !important;
+}

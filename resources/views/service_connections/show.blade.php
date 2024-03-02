@@ -65,7 +65,7 @@ use Illuminate\Support\Facades\Auth;
         <div class="row">
             {{-- HEADER DETAILS --}}
             <div class="col-lg-12">
-                <div class="card card-primary card-outline shadow-none">
+                <div class="card shadow-none">
                     <div class="card-body">
                         <div class="row">
                             <div class="col-lg-6">
@@ -82,7 +82,8 @@ use Illuminate\Support\Facades\Auth;
                                         <button id="override" class="btn btn-danger btn-sm float-right" style="margin-left: 10px;">Override Status</button>
                                         <select name="Status" id="Status" class="form-control form-control-sm float-right" style="width: 200px;">
                                             <option {{ $serviceConnections->Status=="Approved" ? 'selected' : '' }} value="Approved">Approved</option>
-                                            <option {{ $serviceConnections->Status=="Approved For Change Name" ? 'selected' : '' }} value="Approved For Change Name">Approved For Change Name</option>
+                                            <option {{ $serviceConnections->Status=="Payment Approved" ? 'selected' : '' }} value="Payment Approved">Payment Approved</option>
+                                            <option {{ $serviceConnections->Status=="Approved for Energization" ? 'selected' : '' }} value="Approved for Energization">Approved for Energization</option>
                                             <option {{ $serviceConnections->Status=="Closed" ? 'selected' : '' }} value="Closed">Closed</option>
                                             <option {{ $serviceConnections->Status=="Downloaded by Crew" ? 'selected' : '' }} value="Downloaded by Crew">Downloaded by Crew</option>
                                             <option {{ $serviceConnections->Status=="Energized" ? 'selected' : '' }} value="Energized">Energized</option>
@@ -102,27 +103,27 @@ use Illuminate\Support\Facades\Auth;
                 <div class="card shadow-none">
                     <div class="card-header p-2">
                         <ul class="nav nav-pills">
-                            <li class="nav-item"><a class="nav-link active" href="#details" data-toggle="tab">
+                            <li class="nav-item"><a class="nav-link custom-tab active" href="#details" data-toggle="tab">
                                 <i class="fas fa-info-circle"></i>
                                 Application Basic Details</a></li>
-                            <li class="nav-item"><a class="nav-link" href="#verification" data-toggle="tab">
+                            <li class="nav-item"><a class="nav-link custom-tab" href="#verification" data-toggle="tab">
                                 <i class="fas fa-clipboard-check"></i>
                                 Verification</a></li>
-                            <li class="nav-item"><a class="nav-link" href="#metering" data-toggle="tab">
+                            <li class="nav-item"><a class="nav-link custom-tab" href="#metering" data-toggle="tab">
                                 <i class="fas fa-tachometer-alt"></i>
                                 Metering and Transformer</a></li>
-                            <li class="nav-item"><a class="nav-link" href="#invoice" data-toggle="tab">
+                            <li class="nav-item"><a class="nav-link custom-tab" href="#invoice" data-toggle="tab">
                                 <i class="fas fa-file-invoice-dollar"></i>
                                 Payment Order</a></li>
-                            <li class="nav-item"><a class="nav-link" href="#files" data-toggle="tab">
+                            <li class="nav-item"><a class="nav-link custom-tab" href="#files" data-toggle="tab">
                                 <i class="fas fa-paperclip"></i>
                                 Files</a></li>
                             {{-- @if ($serviceConnections->LoadCategory == 'above 5kVa' | $serviceConnections->LongSpan == 'Yes')
-                            <li class="nav-item"><a class="nav-link" href="#bom" data-toggle="tab">
+                            <li class="nav-item"><a class="nav-link custom-tab" href="#bom" data-toggle="tab">
                                 <i class="fas fa-toolbox"></i>
                                 Bill of Materials</a></li>
                             @endif --}}
-                            <li class="nav-item"><a class="nav-link" href="#logs" data-toggle="tab">
+                            <li class="nav-item"><a class="nav-link custom-tab" href="#logs" data-toggle="tab">
                                 <i class="fas fa-list"></i>
                                 Logs</a></li>
                         </ul>

@@ -112,7 +112,6 @@ use Illuminate\Support\Facades\Auth;
             </li>
             @endif
 
-            @canany(['Super Admin', 'sc view'])
             <li class="nav-item">
                 <a href="#" class="nav-link">
                     <p>
@@ -121,34 +120,61 @@ use Illuminate\Support\Facades\Auth;
                     </p>
                 </a>
                 <ul class="nav nav-treeview" style="display: none;">
+                    @canany(['Super Admin', 'sc view'])
                     <li class="nav-item">
                         <a href="{{ route('serviceConnections.daily-monitor') }}"
                         class="nav-link {{ Request::is('serviceConnections.daily-monitor*') ? 'active' : '' }}">
                         <i class="fas fa-clipboard-check nav-icon text-warning"></i><p>Daily Monitor</p>
                         </a>
                     </li>
+                    @endcanany
 
+                    @canany(['Super Admin', 'sc view'])
                     <li class="nav-item">
                         <a href="{{ route('serviceConnections.inspection-monitor') }}"
                         class="nav-link {{ Request::is('serviceConnections.inspection-monitor*') ? 'active' : '' }}">
                         <i class="fas fa-circle nav-icon text-warning"></i><p>Inspections</p>
                         </a>
                     </li>
+                    @endcanany
 
+                    @canany(['Super Admin', 'sc view'])
+                    <li class="nav-item">
+                        <a href="{{ route('serviceConnections.payment-approvals') }}"
+                        class="nav-link {{ Request::is('serviceConnections.payment-approvals*') ? 'active' : '' }}">
+                        <i class="fas fa-circle nav-icon text-warning"></i><p>Payment Approvals</p>
+                        </a>
+                    </li>
+                    @endcanany
+
+                    @canany(['Super Admin', 'sc view'])
                     <li class="nav-item">
                         <a href="{{ route('serviceConnections.for-payment') }}"
                         class="nav-link {{ Request::is('serviceConnections.for-payment*') ? 'active' : '' }}">
-                        <i class="fas fa-circle nav-icon text-warning"></i><p>For Payment</p>
+                        <i class="fas fa-circle nav-icon text-warning"></i><p>For Payment Order</p>
                         </a>
                     </li>
+                    @endcanany
 
+                    @canany(['Super Admin', 'turn-on approval'])
+                    <li class="nav-item">
+                        <a href="{{ route('serviceConnections.turn-on-approvals') }}"
+                        class="nav-link {{ Request::is('serviceConnections.turn-on-approvals*') ? 'active' : '' }}">
+                        <i class="fas fa-circle nav-icon text-warning"></i><p>Turn-on Approvals</p>
+                        </a>
+                    </li>
+                    @endcanany
+
+                    @canany(['Super Admin', 'turn-on assigning'])
                     <li class="nav-item">
                         <a href="{{ route('serviceConnections.for-energization') }}"
                         class="nav-link {{ Request::is('serviceConnections.for-energization*') ? 'active' : '' }}">
                         <i class="fas fa-circle nav-icon text-warning"></i><p>For Energization</p>
                         </a>
                     </li>
+                    @endcanany
 
+                    @canany(['Super Admin', 'sc view'])
                     {{-- FLOW --}}
                     <li class="nav-item">
                         <a href="{{ route('serviceConnectionMtrTrnsfrmrs.assigning') }}"
@@ -156,13 +182,16 @@ use Illuminate\Support\Facades\Auth;
                         <i class="fas fa-tachometer-alt nav-icon text-warning"></i><p>For Meter Assigning</p>
                         </a>
                     </li>
+                    @endcanany
                     
+                    @canany(['Super Admin', 'sc view'])
                     <li class="nav-item">
                         <a href="{{ route('serviceConnections.manual-energization') }}"
                         class="nav-link {{ Request::is('serviceConnections.manual-energization*') ? 'active' : '' }}">
                         <i class="fas fa-circle nav-icon text-warning"></i><p>Manual Energization</p>
                         </a>
                     </li>
+                    @endcanany
 {{-- 
                     <li class="nav-item">
                         <a href="{{ route('serviceConnections.energization') }}"
@@ -172,7 +201,6 @@ use Illuminate\Support\Facades\Auth;
                     </li> --}}
                 </ul>
             </li>
-            @endcanany
 
             @canany(['Super Admin', 'sc create'])
             <li class="nav-item">

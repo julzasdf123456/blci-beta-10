@@ -178,6 +178,8 @@ Route::get('/service_connections/manual-energization', [ServiceConnectionsContro
 Route::get('/service_connections/print-payment-order/{id}', [ServiceConnectionsController::class, 'printPaymentOrder'])->name('serviceConnections.print-payment-order');
 Route::get('/service_connections/upload-files/{id}', [ServiceConnectionsController::class, 'uploadFiles'])->name('serviceConnections.upload-files');
 Route::post('/service_connections/save-uploaded-files', [ServiceConnectionsController::class, 'saveUploadedFiles'])->name('serviceConnections.save-uploaded-files');
+Route::get('/service_connections/turn-on-approvals', [ServiceConnectionsController::class, 'turnOnApprovals'])->name('serviceConnections.turn-on-approvals');
+Route::get('/service_connections/payment-approvals', [ServiceConnectionsController::class, 'paymentApprovals'])->name('serviceConnections.payment-approvals');
 Route::resource('serviceConnections', App\Http\Controllers\ServiceConnectionsController::class);
 
 

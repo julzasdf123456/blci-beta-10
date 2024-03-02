@@ -38,16 +38,16 @@
                      <tbody>
                         @foreach ($data as $item)
                            <tr id="{{ $item->id }}">
-                              <td><a href="{{ route('serviceConnections.show', [$item->id]) }}">{{ $item->id }}</a></td>
-                              <td>{{ $item->ServiceAccountName }}</td>
-                              <td>{{ ServiceConnections::getAddress($item) }}</td>
-                              <td>{{ $item->Status }}</td>
-                              <td>{{ $item->name }}</td>
-                              <td>{{ $item->DateOfVerification != null ? date('M d, Y', strtotime($item->DateOfVerification)) : 'n/a' }}</td>
-                              <td class="text-right">{{ is_numeric($item->OverAllTotal) ? number_format($item->OverAllTotal, 2) : $item->OverAllTotal }}</td>
-                              <td class="text-right">
+                              <td class="v-align"><a href="{{ route('serviceConnections.show', [$item->id]) }}">{{ $item->id }}</a></td>
+                              <td class="v-align">{{ $item->ServiceAccountName }}</td>
+                              <td class="v-align">{{ ServiceConnections::getAddress($item) }}</td>
+                              <td class="v-align text-center"><span class="badge bg-success">{{ $item->Status }}</span></td>
+                              <td class="v-align">{{ $item->name }}</td>
+                              <td class="v-align">{{ $item->DateOfVerification != null ? date('M d, Y', strtotime($item->DateOfVerification)) : 'n/a' }}</td>
+                              <td class="v-align text-right">{{ is_numeric($item->OverAllTotal) ? number_format($item->OverAllTotal, 2) : $item->OverAllTotal }}</td>
+                              <td class="v-align text-right">
                                  @if ($item->OverAllTotal != null)
-                                    <button class="btn btn-sm btn-success" onclick="approvePayment(`{{ $item->id }}`)"><i class="fas fa-check-circle ico-tab-mini"></i>Approve For Payment</button>
+                                    <button class="btn btn-sm btn-success" disabled><i class="fas fa-info-circle ico-tab-mini"></i>Waiting for Payment</button>
                                  @else
                                     <a class="btn btn-sm btn-warning" target="_blank" href="{{ route('serviceConnections.payment-order', [$item->id]) }}"><i class="fas fa-file-invoice-dollar ico-tab-mini"></i>Create Payment Order</a>
                                  @endif
@@ -57,6 +57,7 @@
                      </tbody>
                   </table>
                </div>
+               <div class="card-footer"></div>
             </div>
         </div>
     </div>
