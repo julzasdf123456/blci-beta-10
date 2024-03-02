@@ -4,6 +4,7 @@ use Illuminate\Support\Facades\Auth;
 
 @endphp
 
+<li class="nav-header">CRM</li>
 <!-- MEMBERSHIP MENU -->
 {{-- @canany(['Super Admin', 'view membership'])
     <li class="nav-header">CRM</li>

@@ -4,6 +4,7 @@
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <title>{{ config('app.name') }}</title>
+    <link rel="stylesheet" href="{{ URL::asset('css/style.css'); }}">
 
     <!-- Tell the browser to be responsive to screen width -->
     <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
@@ -42,8 +43,8 @@
     <!-- /.login-logo -->
 
     <!-- /.login-box-body -->
-    <div class="card">
-        <div class="card-body login-card-body">
+    <div class="card shadow-none shadow-soft">
+        <div class="card-body">
             <p class="login-box-msg">Sign in to start your session</p>
 
             <form method="post" action="{{ url('/login') }}">
@@ -55,9 +56,6 @@
                            value="{{ old('username') }}"
                            placeholder="Username"
                            class="form-control @error('username') is-invalid @enderror">
-                    <div class="input-group-append">
-                        <div class="input-group-text"><span class="fas fa-envelope"></span></div>
-                    </div>
                     @error('username')
                     <span class="error invalid-feedback">{{ $message }}</span>
                     @enderror
@@ -68,11 +66,6 @@
                            name="password"
                            placeholder="Password"
                            class="form-control @error('password') is-invalid @enderror">
-                    <div class="input-group-append">
-                        <div class="input-group-text">
-                            <span class="fas fa-lock"></span>
-                        </div>
-                    </div>
                     @error('password')
                     <span class="error invalid-feedback">{{ $message }}</span>
                     @enderror
@@ -80,19 +73,22 @@
                 </div>
 
                 <div class="row">
-                    <div class="col-4">
-                        <button type="submit" class="btn btn-primary btn-block">Sign In</button>
+                    <div class="col-12">
+                        <button type="submit" class="btn btn-primary" style="width: 100%;">Sign In</button>
                     </div>
 
                 </div>
             </form>
 
+            <p class="text-center text-muted" style="margin-top: 12px;">or</p>
+            <p class="text-center">
+                <a href="{{ route('register') }}">Create a New Account</a>
             {{-- <p class="mb-1">
                 <a href="{{ route('password.request') }}">I forgot my password</a>
             </p> --}}
-            <p class="mb-0">
+            {{-- <p class="mb-0">
                 <a href="{{ route('register') }}" class="text-center">Register a new membership</a>
-            </p>
+            </p> --}}
         </div>
         <!-- /.login-card-body -->
     </div>

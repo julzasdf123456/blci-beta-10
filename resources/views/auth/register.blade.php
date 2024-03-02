@@ -5,6 +5,9 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <title>{{ config('app.name') }} | Registration Page</title>
 
+    
+    <link rel="stylesheet" href="{{ URL::asset('css/style.css'); }}">
+
     <!-- Tell the browser to be responsive to screen width -->
     <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
 
@@ -36,8 +39,8 @@
         <a href="{{ url('/home') }}"><b>{{ config('app.name') }}</b></a>
     </div>
 
-    <div class="card">
-        <div class="card-body register-card-body">
+    <div class="card shadow-soft">
+        <div class="card-body">
             <p class="login-box-msg">Register a new membership</p>
 
             <form method="post" action="{{ route('register') }}">
@@ -55,9 +58,6 @@
                         <option value="TOBOSO" {{ env("APP_LOCATION")=='TOBOSO' ? 'selected' : '' }}>TOBOSO</option>
                         <option value="VICTORIAS" {{ env("APP_LOCATION")=='VICTORIAS' ? 'selected' : '' }}>VICTORIAS</option>
                     </select>
-                    <div class="input-group-append">
-                        <div class="input-group-text"><span class="fas fa-user"></span></div>
-                    </div>
                     @error('remember_token')
                     <span class="error invalid-feedback">{{ $message }}</span>
                     @enderror
@@ -71,9 +71,6 @@
                            class="form-control @error('name') is-invalid @enderror"
                            value="{{ old('name') }}"
                            placeholder="Full name">
-                    <div class="input-group-append">
-                        <div class="input-group-text"><span class="fas fa-user"></span></div>
-                    </div>
                     @error('name')
                     <span class="error invalid-feedback">{{ $message }}</span>
                     @enderror
@@ -85,9 +82,6 @@
                            class="form-control @error('username') is-invalid @enderror"
                            value="{{ old('username') }}"
                            placeholder="Username">
-                    <div class="input-group-append">
-                        <div class="input-group-text"><span class="fas fa-user"></span></div>
-                    </div>
                     @error('username')
                     <span class="error invalid-feedback">{{ $message }}</span>
                     @enderror
@@ -99,9 +93,6 @@
                            value="{{ old('email') }}"
                            class="form-control @error('email') is-invalid @enderror"
                            placeholder="Email">
-                    <div class="input-group-append">
-                        <div class="input-group-text"><span class="fas fa-envelope"></span></div>
-                    </div>
                     @error('email')
                     <span class="error invalid-feedback">{{ $message }}</span>
                     @enderror
@@ -112,9 +103,6 @@
                            name="password"
                            class="form-control @error('password') is-invalid @enderror"
                            placeholder="Password">
-                    <div class="input-group-append">
-                        <div class="input-group-text"><span class="fas fa-lock"></span></div>
-                    </div>
                     @error('password')
                     <span class="error invalid-feedback">{{ $message }}</span>
                     @enderror
@@ -125,9 +113,6 @@
                            name="password_confirmation"
                            class="form-control"
                            placeholder="Retype password">
-                    <div class="input-group-append">
-                        <div class="input-group-text"><span class="fas fa-lock"></span></div>
-                    </div>
                 </div>
 
                 <div class="row">
@@ -140,14 +125,16 @@
                         </div>
                     </div> --}}
                     <!-- /.col -->
-                    <div class="col-4">
+                    <div class="col-12">
                         <button type="submit" class="btn btn-primary btn-block">Register</button>
                     </div>
                     <!-- /.col -->
                 </div>
             </form>
 
-            <a href="{{ route('login') }}" class="text-center">I already have a membership</a>
+            <p class="text-center" style="margin-top: 16px;">
+                <a href="{{ route('login') }}" class="text-muted">Go back to Login</a>
+            </p>
         </div>
         <!-- /.form-box -->
     </div><!-- /.card -->
