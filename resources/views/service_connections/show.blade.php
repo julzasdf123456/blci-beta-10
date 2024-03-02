@@ -19,7 +19,7 @@ use Illuminate\Support\Facades\Auth;
                         <span class="badge-lg bg-warning"><strong>{{ $timeFrame->first()==null ? 'Timeframe not recorded' : $timeFrame->first()->Status; }}</strong></span>
                     @endif --}}
                 </div> 
-                <div class="col-col-11">
+                <div class="col-lg-11">
                     {{-- DELETE --}}
                     <div class="dropdown">
                         <a class="btn btn-default btn-sm dropdown-toggle float-right" href="#" id="more-menu" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
