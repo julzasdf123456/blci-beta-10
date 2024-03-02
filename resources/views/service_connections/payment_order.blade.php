@@ -120,7 +120,7 @@
               <tr>
                  <td>Others</td>
                  <td>
-                    <input type="number" step="any" id="Others" name="Others" class="form-control form-control-sm text-right" autofocus>
+                    <input type="number" step="any" onchange="validateTotalInputs()" onkeyup="validateTotalInputs()" id="Others" name="Others" class="form-control form-control-sm text-right" autofocus>
                  </td>
               </tr>
               <tr>
@@ -424,8 +424,9 @@
          var apprehension = getLocalFTax($('#Apprehension').val())
          var serviceFee = getLocalFTax($('#ServiceFee').val())
          var materialsTotal = getLocalFTax($('#MaterialsTotal').val())
+         var others = getLocalFTax($('#Others').val())
 
-         var total = overheadExpenses + transformerRentalFees + apprehension + serviceFee + materialsTotal       
+         var total = overheadExpenses + transformerRentalFees + apprehension + serviceFee + materialsTotal + others
 
          return Math.round((parseFloat(total) + Number.EPSILON) * 100) / 100
       }
@@ -438,10 +439,11 @@
          var customerDeposit = getInputAmount($('#CustomerDeposit').val())
          var ciac = getInputAmount($('#CIAC').val())
          var serviceFee = getInputAmount($('#ServiceFee').val())
-         var others = getInputAmount($('#OthersTotal').val())
+         var others = getInputAmount($('#Others').val())
+         var othersTotal = getInputAmount($('#OthersTotal').val())
          var materialsTotal = getInputAmount($('#MaterialsTotal').val())
 
-         var total = materialDeposit + overheadExpenses + transformerRentalFees + apprehension + customerDeposit + ciac + serviceFee + others + materialsTotal  
+         var total = materialDeposit + overheadExpenses + transformerRentalFees + apprehension + customerDeposit + others + ciac + serviceFee + othersTotal + materialsTotal  
 
          return Math.round((parseFloat(total) + Number.EPSILON) * 100) / 100
       }
