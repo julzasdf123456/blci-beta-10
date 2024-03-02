@@ -3783,8 +3783,14 @@ class ServiceConnectionsController extends AppBaseController
         ->first();
 
         // UPDATE AccountNumber
-        ServiceConnections::where('id', $ServiceConnectionId)
-            ->update(['AccountNumber' => $acctNo]);
+        if ($ORNumber != null && $ORNumber !== 0) {
+            ServiceConnections::where('id', $ServiceConnectionId)
+                ->update(['AccountNumber' => $acctNo, 'ORNumber' => $ORNumber, 'Status' => 'For Energization']);
+        } else {
+            ServiceConnections::where('id', $ServiceConnectionId)
+                ->update(['AccountNumber' => $acctNo]);
+        }
+        
 
         $materialItems = json_decode(stripslashes($materialItems));
         $meterItems = json_decode(stripslashes($meterItems));
