@@ -11,7 +11,7 @@ use Illuminate\Support\Facades\Auth;
     <section class="content-header">
         <div class="container-fluid">
             <div class="row">
-                <div class="col-sm-6">
+                <div class="col-lg-1">
                     <span class="badge-md bg-warning"><strong>{{ $serviceConnections->Status }}</strong></span>
                     {{-- @if (empty($timeFrame) | $timeFrame == null)
                         <span><i>Timeframe not recorded</i></span>
@@ -19,7 +19,7 @@ use Illuminate\Support\Facades\Auth;
                         <span class="badge-lg bg-warning"><strong>{{ $timeFrame->first()==null ? 'Timeframe not recorded' : $timeFrame->first()->Status; }}</strong></span>
                     @endif --}}
                 </div> 
-                <div class="col-sm-6">
+                <div class="col-col-11">
                     {{-- DELETE --}}
                     <div class="dropdown">
                         <a class="btn btn-default btn-sm dropdown-toggle float-right" href="#" id="more-menu" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
