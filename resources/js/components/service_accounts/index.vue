@@ -60,13 +60,14 @@ export default {
             search : '',
             isEditMode : false,
             accounts : {},
-            baseURL : axios.defaults.baseURL,
+            // baseURL : axios.defaults.baseURL,
+            baseURL : window.location.origin + axios.defaults.baseURL
         }
     },
     methods : {
         view (page = 1) {
             // axios.get(`/service_accounts/search-account-ajax?page=${page}&search=${this.search}`) // IF PORT 8000
-            axios.get(`${ axios.defaults.baseURL }/service_accounts/search-account-ajax?page=${page}&search=${this.search}`) // IF PORT 80 DIRECT FROM APACHE
+            axios.get(`${ this.baseURL }/service_accounts/search-account-ajax?page=${page}&search=${this.search}`) // IF PORT 80 DIRECT FROM APACHE
             .then(response => {
                 this.accounts = response.data
             })
@@ -79,7 +80,7 @@ export default {
         this.view()
     },
     mounted() {
-        console.log('page mounted')
+  
     }
 }
 

@@ -26,7 +26,7 @@
                 </thead>
                 <tbody>
                     <tr v-for="account in accounts.data" :key="account.id">
-                        <td><a :href="'/serviceAccounts/' + account.id"><strong>{{ account.OldAccountNo }}</strong></a></td>
+                        <td><a :href="baseURL + '/serviceAccounts/' + account.id"><strong>{{ account.OldAccountNo }}</strong></a></td>
                         <td>{{ account.ServiceAccountName }}</td>
                         <td>{{ account.Barangay }}</td>
                         <td>{{ account.Purok }}</td>
@@ -60,13 +60,14 @@ export default {
             search : '',
             isEditMode : false,
             accounts : {},
-            baseURL : axios.defaults.baseURL,
+            // baseURL : axios.defaults.baseURL,
+            baseURL : window.location.origin + axios.defaults.baseURL
         }
     },
     methods : {
         view (page = 1) {
             // axios.get(`/service_accounts/search-account-ajax?page=${page}&search=${this.search}`) // IF PORT 8000
-            axios.get(`${ axios.defaults.baseURL }/service_accounts/search-account-ajax?page=${page}&search=${this.search}`) // IF PORT 80 DIRECT
+            axios.get(`${ this.baseURL }/service_accounts/search-account-ajax?page=${page}&search=${this.search}`) // IF PORT 80 DIRECT
             .then(response => {
                 this.accounts = response.data
             })
@@ -79,7 +80,7 @@ export default {
         this.view()
     },
     mounted() {
-        console.log('page mounted')
+        // console.log('page mounted')
     }
 }
 
