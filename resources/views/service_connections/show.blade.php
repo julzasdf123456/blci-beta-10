@@ -53,6 +53,7 @@ use Illuminate\Support\Facades\Auth;
             </div>
         </div>
     </section>
+    <meta name="scId" content="{{ $serviceConnections->id }}">
 
     <div class="content px-1">
         <div class="row">
@@ -111,6 +112,9 @@ use Illuminate\Support\Facades\Auth;
                             <li class="nav-item"><a class="nav-link custom-tab" href="#files" data-toggle="tab">
                                 <i class="fas fa-paperclip"></i>
                                 Files</a></li>
+                            <li class="nav-item"><a class="nav-link custom-tab" href="#photos" data-toggle="tab">
+                                <i class="fas fa-images"></i>
+                                Photos</a></li>
                             {{-- @if ($serviceConnections->LoadCategory == 'above 5kVa' | $serviceConnections->LongSpan == 'Yes')
                             <li class="nav-item"><a class="nav-link custom-tab" href="#bom" data-toggle="tab">
                                 <i class="fas fa-toolbox"></i>
@@ -141,6 +145,10 @@ use Illuminate\Support\Facades\Auth;
 
                             <div class="tab-pane" id="files">
                                 @include('service_connections.tab_files')
+                            </div>
+
+                            <div class="tab-pane" id="photos">
+                                @include('service_connections.tab_photos')
                             </div>
                             
                             {{-- <div class="tab-pane" id="bom">

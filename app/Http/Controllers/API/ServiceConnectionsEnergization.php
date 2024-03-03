@@ -3,9 +3,9 @@
 namespace App\Http\Controllers\API;
 use Illuminate\Http\Request; 
 use App\Http\Controllers\Controller; 
-use App\Models\ServiceConnections;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use App\Models\ServiceConnections;
 use App\Models\ServiceConnectionTimeframes;
 use App\Models\ServiceConnectionImages;
 use App\Models\ServiceConnectionCrew;
@@ -13,6 +13,7 @@ use App\Models\MastPoles;
 use App\Models\IDGenerator;
 use App\Models\MeterReaders;
 use App\Models\MeterInstallation;
+use File;
 
 class ServiceConnectionsEnergization extends Controller {
 
@@ -130,27 +131,20 @@ class ServiceConnectionsEnergization extends Controller {
     }
 
     public function saveUploadedImages(Request $request) {
-        if ($files = $request->file('file')) {
-            
-            $path = $request->file->storeAs('public/documents/' . $request['svcId'] . '/images', $request->file->getClientOriginalName() . '.' . $request->file->extension());
+        $files = $_FILES['files'];
+
+        $path = ServiceConnections::filePath() . $request['svcId'] . "/images/";
+        File::makeDirectory($path, $mode = 0777, true, true);
+
+        foreach ($_FILES["files"]["name"] as $key => $fileName) {
+            $tempFileName = $_FILES["files"]["tmp_name"][$key];
+            $targetFileName = $path . basename($fileName);
     
-            $imgs = new ServiceConnectionImages;
-            $imgs->id = IDGenerator::generateRandString(90);
-            $imgs->Photo = $request->file->getClientOriginalName() . '.' . $request->file->extension();
-            $imgs->ServiceConnectionId = $request['svcId'];
-            $imgs->save();
-                
-            return response()->json([
-                "success" => true,
-                "file" => $path
-            ], 200);
-    
-        } else {
-            return response()->json([
-                "success" => false,
-                "file" => ''
-          ], 401);
+            // Move the uploaded file to the target directory
+            move_uploaded_file($tempFileName, $targetFileName);
         }
+
+        return response()->json('ok', 200);
     }
 
     public function receiveMastPoles(Request $request) {

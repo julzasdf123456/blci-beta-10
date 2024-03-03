@@ -93,6 +93,13 @@ body.dark-mode .divider {
     text-overflow: ellipsis;
 }
 
+.ellipsize-auto {
+    width: inherit;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
 .radio-group-horizontal {
     border: 1px solid #dcdcdc;
     display: flex;
@@ -983,4 +990,21 @@ body.dark-mode .text-success {
 
 body.dark-mode .bg-success {
     background-color: #3a9971 !important;
+}
+
+/**
+ * GALLERY
+ */
+.gallery-flex {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: flex-start; /* This will distribute space around items */
+}
+
+.gallery-flex .card {
+    flex: 1 1 280px; /* Grow and shrink starting at 200px */
+    max-width: 320px;
+    height: auto;
+    margin: 8px;
+    object-fit: cover; /* Adjusts the object fit */
 }

@@ -4741,4 +4741,56 @@ class ServiceConnectionsController extends AppBaseController
 
         return response()->json($data, 200);
     }
+
+    public function fetchImages(Request $request) {
+        $id = $request['ServiceConnectionId'];
+
+        // FILES
+        $path = ServiceConnections::filePath() . $id . "/images/";
+        if (file_exists($path) && is_dir($path)) {
+            $fileNames = scandir($path);
+            $fileNames = array_diff($fileNames, array('.', '..'));
+            sort($fileNames);
+        } else {
+            $fileNames = [];
+        }
+
+        $files = [];
+        foreach($fileNames as $file) {
+            if (in_array($file, ['trash'])) {
+
+            } else {
+                $lastModified = filemtime($path . '/' . $file);
+                $formattedDate = date('Y/m/d h:i A', $lastModified);
+
+                array_push($files, [
+                    'file' => $file,
+                    'dateModified' => $formattedDate
+                ]);
+            }
+        }
+
+        return response()->json($files, 200);
+    }
+
+    public function trashFile(Request $request) {
+        $id = $request['ServiceConnectionId'];
+        $currentFile = $request['CurrentFile'];
+
+        $current = ServiceConnections::filePath() . $id . "/images/" . $currentFile;
+
+        $path = ServiceConnections::filePath() . $id . "/images/trash/";
+        File::makeDirectory($path, $mode = 0777, true, true);
+        $trash = $path . date('Y_m_d_H_i_') . $currentFile;
+
+        if (file_exists($current)) {
+            if (rename($current, $trash)) {
+                return response()->json('ok', 200);
+            } else {
+                return response()->json('Unable to trash file!', 403);
+            }
+        } else {
+            return response()->json('File not found!', 404);
+        }
+    }
 }
