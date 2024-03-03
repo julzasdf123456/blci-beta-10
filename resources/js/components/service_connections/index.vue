@@ -146,19 +146,21 @@ export default {
                 return 1;
             } else {
                 if (status === 'For Inspection' | status === 'Re-Inspection') {
-                    return 14.285;
+                    return ((1/8) * 100);
                 } else if (status === 'Approved') {
-                    return 28.57;
+                    return ((2/8) * 100);
                 } else if (status === 'Payment Approved') {
-                    return 42.855;
+                    return ((3/8) * 100);
+                } else if (status === 'For Payment') {
+                    return ((4/8) * 100);
                 } else if (status === 'For Energization') {
-                    return 57.14;
+                    return ((5/8) * 100);
                 } else if (status === 'Approved for Energization') {
-                    return 71.425;
+                    return ((6/8) * 100);
                 } else if (status === 'Energized') {
-                    return 85.71;
+                    return ((7/8) * 100);
                 } else if (status === 'Closed') {
-                    return 100;
+                    return ((8/8) * 100);
                 } else {
                     return 1;
                 }
@@ -176,6 +178,8 @@ export default {
                     return 'bg-primary';
                 } else if (status === 'Payment Approved') {
                     return 'bg-primary';
+                } else if (status === 'For Payment') {
+                    return 'bg-info';
                 } else if (status === 'For Energization') {
                     return 'bg-info';
                 } else if (status === 'Approved for Energization') {
