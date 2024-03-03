@@ -185,6 +185,7 @@ Route::get('/service_connections/turn-on-approvals', [ServiceConnectionsControll
 Route::get('/service_connections/payment-approvals', [ServiceConnectionsController::class, 'paymentApprovals'])->name('serviceConnections.payment-approvals');
 Route::get('/service_connections/all-applications', [ServiceConnectionsController::class, 'allApplications'])->name('serviceConnections.all-applications');
 Route::get('/service_connections/search', [ServiceConnectionsController::class, 'search'])->name('serviceConnections.search');
+Route::get('/service_connections/move-to-trash-ajax', [ServiceConnectionsController::class, 'moveToTrashAjax'])->name('serviceConnections.move-to-trash-ajax');
 Route::resource('serviceConnections', App\Http\Controllers\ServiceConnectionsController::class);
 
 

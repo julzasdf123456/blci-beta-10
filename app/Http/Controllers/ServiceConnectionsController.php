@@ -575,6 +575,20 @@ class ServiceConnectionsController extends AppBaseController
         }          
     }
 
+    public function moveToTrashAjax(Request $request) {
+        $id = $request['id'];
+        if(Auth::user()->hasAnyPermission(['delete membership', 'sc delete', 'Super Admin'])) {
+            $serviceConnections = $this->serviceConnectionsRepository->find($id);
+
+            $serviceConnections->Trash='Yes';
+            $serviceConnections->save();
+
+            return response()->json($serviceConnections, 200);
+        } else {
+            return abort(403, "You're not authorized to delete a service connection application.");
+        }          
+    }
+
     public function selectMembership() {
         /**
          * ASSESS PERMISSIONS

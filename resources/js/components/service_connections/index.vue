@@ -20,10 +20,11 @@
                 <th>Application</th>
                 <th>Status</th>
                 <th><!-- OR Number --></th>
+                <th><!-- TRASH --></th>
             </thead>
             <tbody>
-                <tr v-for="item in results.data" :key="item.ConsumerId" style="cursor: pointer;" @click="goToApplication(item.ConsumerId)">
-                    <td class="v-align">
+                <tr v-for="item in results.data" :key="item.ConsumerId" style="cursor: pointer;" :id="item.ConsumerId">
+                    <td @click="goToApplication(item.ConsumerId)" class="v-align">
                         <div style="display: inline-block; vertical-align: middle;">
                             <img src="../../../../public/imgs/prof-icon.png" style="width: 40px; margin-right: 15px;" class="img-circle" alt="profile">
                         </div>
@@ -34,20 +35,31 @@
                             <p class="no-pads text-muted">{{ (isNull(item.Sitio) ? '' : (item.Sitio.toUpperCase() + ', ')) + (isNull(item.Barangay) ? '' : (item.Barangay.toUpperCase() + ', ')) + item.Town.toUpperCase() }}</p>
                         </div>
                     </td>
-                    <td class="v-align">{{ item.ConsumerId }}</td>
-                    <td class="v-align">
+                    <td @click="goToApplication(item.ConsumerId)" class="v-align">{{ item.ConsumerId }}</td>
+                    <td @click="goToApplication(item.ConsumerId)" class="v-align">
                         {{ item.AccountApplicationType }}
                         <br>
                         <span class="text-muted">Date Applied: {{ isNull(item.DateOfApplication) ? '-' : moment(item.DateOfApplication).format("MMM DD, YYYY") }}</span>
                     </td>
-                    <td class="v-align">
+                    <td @click="goToApplication(item.ConsumerId)" class="v-align">
                         {{ item.Status }} ({{ getProgressIncFromStatus(item.Status) }} %)
                         <div class="progress" style="height: 5px;">
                             <div class="progress-bar progress-bar-striped" :class="getProgressBgFromStatus(item.Status)" role="progressbar" :style="{width: getProgressIncFromStatus(item.Status) + '%'}" aria-valuenow="50" aria-valuemin="0" aria-valuemax="100"></div>
                         </div>
                     </td>
-                    <td class="v-align text-right" 
-                        v-html="isNull(item.ORNumber) ? '' : `<span class='badge bg-warning'>${item.ORNumber}</span>`"></td>
+                    <td @click="goToApplication(item.ConsumerId)" class="v-align text-right" 
+                        v-html="isNull(item.ORNumber) ? '' : `<span class='badge bg-warning'>${item.ORNumber}</span>`">
+                    </td>
+                    <td class="v-align text-right">
+                        <div class="dropdown" style="display: inline;">
+                            <a class="btn btn-link-muted btn-sm float-right" href="#" id="more-menu" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                <i class="fas fa-ellipsis-v"></i>
+                            </a>
+                            <div class="dropdown-menu" aria-labelledby="more-menu">
+                                <button @click="moveToTrash(item.ConsumerId)" class="dropdown-item"><i class="fas fa-trash ico-tab"></i> Move to Trash</button>
+                            </div>
+                        </div>
+                    </td>
                 </tr>
             </tbody>
         </table>
@@ -195,6 +207,38 @@ export default {
         },
         goToApplication(id) {
             window.location.href = this.baseURL + '/serviceConnections/' + id
+        },
+        moveToTrash(id) {
+            Swal.fire({
+                title: "Trash this Application?",
+                text : 'You can always find this in the trash section. Proceed with caution.',
+                showCancelButton: true,
+                confirmButtonText: "Delete",
+                confirmButtonColor : "#e03822"
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    axios.get(`${ this.baseURL }/service_connections/move-to-trash-ajax`, {
+                        params : {
+                            id : id
+                        }
+                    })
+                    .then(response => {
+                        this.results.data = this.results.data.filter(obj => obj.ConsumerId !== id)
+
+                        this.toast.fire({
+                            icon : 'success',
+                            text : 'Application moved to trash!'
+                        })
+                    })
+                    .catch(error => {
+                        console.log(error)
+                        this.toast.fire({
+                            icon : 'error',
+                            text : 'Error trashing application'
+                        })
+                    })
+                }
+            });
         }
     },
     created() {
