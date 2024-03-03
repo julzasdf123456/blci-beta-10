@@ -1,46 +1,90 @@
 <div>
    <span class="text-muted" style="margin-left: 3px;"><i class="fas fa-hard-hat ico-tab-mini"></i><strong>Service Connections</strong> Statistics</span>
-   <div class="row">
-       {{-- STATUS COUNT --}}
+   <div class="row mt-3">
+       {{-- new Applications --}}
+       @canany(['Super Admin', 'sc view'])
        <div class="col-lg-3">                
-           <div class="small-box bg-info">
-               <div class="inner">
-                   <h3 id="new-applications">...</h3>
-                   <p>New Applications</p>
-               </div>
-               <div class="icon">
-                   <i class="fas fa-file"></i>
-               </div>
-               <a href="#" id="new-applications-btn" class="small-box-footer" title="New Applications for Inspection"  data-toggle="modal" data-target="#modal-stats">View <i class="fas fa-arrow-circle-right"></i></a>
+           <div class="card shadow-none">
+                <div class="card-body p-0 mt-3 mb-2">
+                    <div class="inner">
+                        <p class="no-pads text-muted text-center">New Applications</p>
+                        <h1 class="text-center strong text-xxl text-success mt-3" id="new-applications">...</h1>
+                    </div>
+                    <div class="px-3">
+                        <a href="#" id="new-applications-btn" class="btn btn-block btn-transparent" title="New Applications for Inspection"  data-toggle="modal" data-target="#modal-stats">View <i class="fas fa-arrow-circle-right ico-tab-left-mini"></i></a>
+                    </div>
+                </div>               
            </div>
        </div>
+       @endcanany
 
-       <div class="col-lg-3">                
-           <div class="small-box bg-warning">
-               <div class="inner">
-                   <h3 id="for-meter-assigning">...</h3>
-                   <p>For Meter Assigning</p>
-               </div>
-               <div class="icon">
-                   <i class="fas fa-forward"></i>
-               </div>
-               <a href="{{ route('serviceConnectionMtrTrnsfrmrs.assigning') }}" class="small-box-footer" title="Tickets Sent To Crew" >View <i class="fas fa-arrow-circle-right"></i></a>
-           </div>
-       </div>
+       {{-- For Payment Approvals --}}
+       @canany(['Super Admin', 'payment approval'])
+        <div class="col-lg-3">                
+            <div class="card shadow-none">
+                <div class="card-body p-0 mt-3 mb-2">
+                    <div class="inner">
+                        <p class="no-pads text-muted text-center">For Payment Approvals</p>
+                        <h1 class="text-center strong text-xxl text-success mt-3" id="for-payment-approvals">...</h1>
+                    </div>
+                    <div class="px-3">
+                        <a href="{{ route('serviceConnections.payment-approvals') }}" class="btn btn-block btn-transparent" title="Approved applications for payment approval">View <i class="fas fa-arrow-circle-right ico-tab-left-mini"></i></a>
+                    </div>
+                </div>               
+            </div>
+        </div>
+        @endcanany
 
-       <div class="col-lg-3">                
-           <div class="small-box bg-success">
-               <div class="inner">
-                   <h3 id="for-energization">...</h3>
-                   <p>For Energization</p>
-               </div>
-               <div class="icon">
-                   <i class="fas fa-calendar-check"></i>
-               </div>
-               <a href="{{ route('serviceConnections.energization') }}" id="for-energization-btn" class="small-box-footer" title="Tickets Executed This Month">View <i class="fas fa-arrow-circle-right"></i></a>
-           </div>
-       </div>
+        {{-- For Payment Orders --}}
+        @canany(['Super Admin', 'sc view'])
+        <div class="col-lg-3">                
+            <div class="card shadow-none">
+                <div class="card-body p-0 mt-3 mb-2">
+                    <div class="inner">
+                        <p class="no-pads text-muted text-center">For Payments</p>
+                        <h1 class="text-center strong text-xxl text-success mt-3" id="for-payment-orders">...</h1>
+                    </div>
+                    <div class="px-3">
+                        <a href="{{ route('serviceConnections.for-payment') }}" class="btn btn-block btn-transparent" title="Approved applications for payment order creation">View <i class="fas fa-arrow-circle-right ico-tab-left-mini"></i></a>
+                    </div>
+                </div>               
+            </div>
+        </div>
+        @endcanany
 
+        {{-- For Turn-on Approvals --}}
+        @canany(['Super Admin', 'turn-on approval'])
+        <div class="col-lg-3">                
+            <div class="card shadow-none">
+                <div class="card-body p-0 mt-3 mb-2">
+                    <div class="inner">
+                        <p class="no-pads text-muted text-center">For Turn-on Approvals</p>
+                        <h1 class="text-center strong text-xxl text-success mt-3" id="for-turn-on-approvals">...</h1>
+                    </div>
+                    <div class="px-3">
+                        <a href="{{ route('serviceConnections.turn-on-approvals') }}" class="btn btn-block btn-transparent" title="Paid applications for turn-on approvals">View <i class="fas fa-arrow-circle-right ico-tab-left-mini"></i></a>
+                    </div>
+                </div>               
+            </div>
+        </div>
+        @endcanany
+
+        {{-- For Energization --}}
+        @canany(['Super Admin', 'turn-on assigning'])
+        <div class="col-lg-3">                
+            <div class="card shadow-none">
+                <div class="card-body p-0 mt-3 mb-2">
+                    <div class="inner">
+                        <p class="no-pads text-muted text-center">For Energization</p>
+                        <h1 class="text-center strong text-xxl text-success mt-3" id="for-energization">...</h1>
+                    </div>
+                    <div class="px-3">
+                        <a href="{{ route('serviceConnections.for-energization') }}" class="btn btn-block btn-transparent" title="Paid applications for turn-on approvals">View <i class="fas fa-arrow-circle-right ico-tab-left-mini"></i></a>
+                    </div>
+                </div>               
+            </div>
+        </div>
+        @endcanany
    </div>
 </div>
 
@@ -117,6 +161,51 @@
                        })
                    }
                })
+           })
+
+           /**
+            * FOR PAYMENT APPROVALS
+            */
+            $.ajax({
+               url : '{{ route("home.fetch-for-payment-approvals") }}',
+               type: "GET",
+               success : function(response) {
+                   $('#for-payment-approvals').text(response.length)
+               },
+               error : function(error) {
+                    $('#for-payment-approvals').text('error')
+                   console.log(error)
+               }
+           })
+
+           /**
+            * FOR PAYMENT ORDERS
+            */
+            $.ajax({
+               url : '{{ route("home.fetch-for-payment-orders") }}',
+               type: "GET",
+               success : function(response) {
+                   $('#for-payment-orders').text(response.length)
+               },
+               error : function(error) {
+                    $('#for-payment-orders').text('error')
+                   console.log(error)
+               }
+           })
+
+           /**
+            * FOR TURN ON APPROVALS
+            */
+            $.ajax({
+               url : '{{ route("home.fetch-for-turn-on-approvals") }}',
+               type: "GET",
+               success : function(response) {
+                   $('#for-turn-on-approvals').text(response.length)
+               },
+               error : function(error) {
+                    $('#for-turn-on-approvals').text('error')
+                   console.log(error)
+               }
            })
 
            /**

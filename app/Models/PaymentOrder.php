@@ -100,6 +100,7 @@ class PaymentOrder extends Model
         'Notes',
         'MaterialTotal',
         'AmountPaid',
+        'SaleOfMaterials',
     ];
 
     /**
@@ -129,6 +130,7 @@ class PaymentOrder extends Model
         'Notes' => 'string',
         'MaterialTotal' => 'string',
         'AmountPaid' => 'string',
+        'SaleOfMaterials' => 'string',
     ];
 
     /**
@@ -162,6 +164,7 @@ class PaymentOrder extends Model
         'updated_at' => 'nullable',
         'MaterialTotal' => 'nullable|string',
         'AmountPaid' => 'nullable|string',
+        'SaleOfMaterials' => 'nullable|string',
     ];
 
     

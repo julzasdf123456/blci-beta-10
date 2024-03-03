@@ -147,6 +147,10 @@ p {
                             <td class="text-right"><strong>{{ $paymentOrder != null && $paymentOrder->Others != null ? number_format($paymentOrder->Others, 2) : '-' }}</strong></td>
                         </tr>
                         <tr>
+                            <td>Sale of Materials</td>
+                            <td class="text-right"><strong>{{ $paymentOrder != null && $paymentOrder->SaleOfMaterials != null ? number_format($paymentOrder->SaleOfMaterials, 2) : '-' }}</strong></td>
+                        </tr>
+                        <tr>
                             <td>Materials Total</td>
                             <td class="text-right"><strong>{{ $paymentOrder != null && $paymentOrder->MaterialTotal != null ? number_format($paymentOrder->MaterialTotal, 2) : '-' }}</strong></td>
                         </tr>

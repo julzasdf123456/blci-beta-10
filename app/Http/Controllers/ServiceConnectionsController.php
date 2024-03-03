@@ -77,9 +77,10 @@ class ServiceConnectionsController extends AppBaseController
      *
      * @return Response
      */
-    public function index(Request $request)
-    {
-        if ($request['params'] == null) {
+    public function index(Request $request) {
+        $params = $request['params'];
+
+        if ($params == null) {
             $data = DB::table('CRM_ServiceConnections')
                 ->leftJoin('CRM_Barangays', 'CRM_ServiceConnections.Barangay', '=', 'CRM_Barangays.id')                    
                 ->leftJoin('CRM_Towns', 'CRM_ServiceConnections.Town', '=', 'CRM_Towns.id')
@@ -100,12 +101,9 @@ class ServiceConnectionsController extends AppBaseController
                                 'CRM_ServiceConnections.LoadCategory',
                                 'CRM_Barangays.Barangay as Barangay',
                                 'CRM_ServiceConnectionMeterAndTransformer.MeterSerialNumber')
-                ->where(function ($query) {
-                                    $query->where('CRM_ServiceConnections.Trash', 'No')
-                                        ->orWhereNull('CRM_ServiceConnections.Trash');
-                                })
+                ->whereRaw("(CRM_ServiceConnections.Trash IS NULL OR CRM_ServiceConnections.Trash='No')")
                 ->orderByDesc('CRM_ServiceConnections.created_at')
-                ->paginate(16);
+                ->paginate(15);
         } else {
             $data = DB::table('CRM_ServiceConnections')
                 ->leftJoin('CRM_Barangays', 'CRM_ServiceConnections.Barangay', '=', 'CRM_Barangays.id')                    
@@ -127,15 +125,10 @@ class ServiceConnectionsController extends AppBaseController
                                 'CRM_ServiceConnections.LoadCategory',
                                 'CRM_Barangays.Barangay as Barangay',
                                 'CRM_ServiceConnectionMeterAndTransformer.MeterSerialNumber')
-                ->where(function ($query) {
-                                    $query->where('CRM_ServiceConnections.Trash', 'No')
-                                        ->orWhereNull('CRM_ServiceConnections.Trash');
-                                })
-                ->where('CRM_ServiceConnections.ServiceAccountName', 'LIKE', '%' . $request['params'] . '%')
-                ->orWhere('CRM_ServiceConnections.Id', 'LIKE', '%' . $request['params'] . '%')
-                ->orWhere('CRM_ServiceConnectionMeterAndTransformer.MeterSerialNumber', 'LIKE', '%' . $request['params'] . '%')
-                ->orderBy('CRM_ServiceConnections.ServiceAccountName')
-                ->paginate(16);
+                ->whereRaw("(CRM_ServiceConnections.Trash IS NULL OR CRM_ServiceConnections.Trash='No') 
+                    AND (ServiceAccountName LIKE '%" . $params . "%' OR CRM_ServiceConnections.id LIKE '%" . $params . "%' OR CRM_ServiceConnectionMeterAndTransformer.MeterSerialNumber LIKE '%" . $params . "%')")
+                ->orderBy('CRM_ServiceConnections.created_at')
+                ->paginate(15);
         }
 
         return view('/service_connections/search_applications', [
@@ -3742,6 +3735,7 @@ class ServiceConnectionsController extends AppBaseController
         $ServiceFee = $request['ServiceFee'];
         $CustomerDeposit = $request['CustomerDeposit'];
         $Others = $request['Others'];
+        $SaleOfMaterials = $request['SaleOfMaterials'];
         $LocalFTax = $request['LocalFTax'];
         $SubTotal = $request['SubTotal'];
         $VAT = $request['VAT'];
@@ -3820,6 +3814,7 @@ class ServiceConnectionsController extends AppBaseController
         $paymentOrder->ORNumber = $ORNumber;
         $paymentOrder->ORDate = date('Y-m-d');
         $paymentOrder->MaterialTotal = $MaterialTotal;
+        $paymentOrder->SaleOfMaterials = $SaleOfMaterials;
         $paymentOrder->save();
 
         // DELETE WAREHOUSE HEAD
@@ -4664,5 +4659,68 @@ class ServiceConnectionsController extends AppBaseController
         return view('/service_connections/payment_approvals', [
             'data' => $data,
         ]);
+    }
+
+    public function allApplications(Request $request) {
+        return view('/service_connections/all_applications', [
+
+        ]);
+    }
+
+    public function search(Request $request) {
+        $params = $request['params'];
+
+        if ($params == null) {
+            $data = DB::table('CRM_ServiceConnections')
+                ->leftJoin('CRM_Barangays', 'CRM_ServiceConnections.Barangay', '=', 'CRM_Barangays.id')                    
+                ->leftJoin('CRM_Towns', 'CRM_ServiceConnections.Town', '=', 'CRM_Towns.id')
+                ->leftJoin('CRM_ServiceConnectionMeterAndTransformer', 'CRM_ServiceConnections.id', '=', 'CRM_ServiceConnectionMeterAndTransformer.ServiceConnectionId')
+                ->select('CRM_ServiceConnections.id as ConsumerId',
+                                'CRM_ServiceConnections.ServiceAccountName as ServiceAccountName',
+                                'CRM_ServiceConnections.Status as Status',
+                                'CRM_ServiceConnections.DateOfApplication as DateOfApplication', 
+                                'CRM_ServiceConnections.ContactNumber as ContactNumber', 
+                                'CRM_ServiceConnections.EmailAddress as EmailAddress',  
+                                'CRM_ServiceConnections.AccountCount as AccountCount',  
+                                'CRM_ServiceConnections.ConnectionApplicationType',
+                                'CRM_ServiceConnections.Office',
+                                'CRM_ServiceConnections.AccountApplicationType',
+                                'CRM_ServiceConnections.Sitio as Sitio', 
+                                'CRM_Towns.Town as Town',
+                                'CRM_ServiceConnections.ORNumber',
+                                'CRM_ServiceConnections.LoadCategory',
+                                'CRM_Barangays.Barangay as Barangay',
+                                'CRM_ServiceConnectionMeterAndTransformer.MeterSerialNumber')
+                ->whereRaw("(CRM_ServiceConnections.Trash IS NULL OR CRM_ServiceConnections.Trash='No')")
+                ->orderByDesc('CRM_ServiceConnections.created_at')
+                ->paginate(15);
+        } else {
+            $data = DB::table('CRM_ServiceConnections')
+                ->leftJoin('CRM_Barangays', 'CRM_ServiceConnections.Barangay', '=', 'CRM_Barangays.id')                    
+                ->leftJoin('CRM_Towns', 'CRM_ServiceConnections.Town', '=', 'CRM_Towns.id')
+                ->leftJoin('CRM_ServiceConnectionMeterAndTransformer', 'CRM_ServiceConnections.id', '=', 'CRM_ServiceConnectionMeterAndTransformer.ServiceConnectionId')
+                ->select('CRM_ServiceConnections.id as ConsumerId',
+                                'CRM_ServiceConnections.ServiceAccountName as ServiceAccountName',
+                                'CRM_ServiceConnections.Status as Status',
+                                'CRM_ServiceConnections.DateOfApplication as DateOfApplication', 
+                                'CRM_ServiceConnections.ContactNumber as ContactNumber', 
+                                'CRM_ServiceConnections.EmailAddress as EmailAddress',  
+                                'CRM_ServiceConnections.AccountCount as AccountCount',  
+                                'CRM_ServiceConnections.ConnectionApplicationType',
+                                'CRM_ServiceConnections.Office',
+                                'CRM_ServiceConnections.AccountApplicationType',
+                                'CRM_ServiceConnections.Sitio as Sitio', 
+                                'CRM_Towns.Town as Town',
+                                'CRM_ServiceConnections.ORNumber',
+                                'CRM_ServiceConnections.LoadCategory',
+                                'CRM_Barangays.Barangay as Barangay',
+                                'CRM_ServiceConnectionMeterAndTransformer.MeterSerialNumber')
+                ->whereRaw("(CRM_ServiceConnections.Trash IS NULL OR CRM_ServiceConnections.Trash='No') 
+                    AND (ServiceAccountName LIKE '%" . $params . "%' OR CRM_ServiceConnections.id LIKE '%" . $params . "%' OR CRM_ServiceConnectionMeterAndTransformer.MeterSerialNumber LIKE '%" . $params . "%')")
+                ->orderBy('CRM_ServiceConnections.created_at')
+                ->paginate(15);
+        }
+
+        return response()->json($data, 200);
     }
 }

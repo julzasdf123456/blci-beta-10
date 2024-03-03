@@ -78,6 +78,10 @@
                      <td class="text-right"><strong>P {{ is_numeric($paymentOrder->ServiceFee) ? number_format($paymentOrder->ServiceFee, 2) : $paymentOrder->ServiceFee }}</strong></td>
                   </tr>
                   <tr>
+                     <td>Sale Of Materials</td>
+                     <td class="text-right"><strong>P {{ is_numeric($paymentOrder->SaleOfMaterials) ? number_format($paymentOrder->SaleOfMaterials, 2) : $paymentOrder->SaleOfMaterials }}</strong></td>
+                  </tr>
+                  <tr>
                      <td>Others</td>
                      <td class="text-right"><strong>P {{ is_numeric($paymentOrder->OthersTotal) ? number_format($paymentOrder->OthersTotal, 2) : $paymentOrder->OthersTotal }}</strong></td>
                   </tr>

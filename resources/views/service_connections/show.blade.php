@@ -11,17 +11,10 @@ use Illuminate\Support\Facades\Auth;
     <section class="content-header">
         <div class="container-fluid">
             <div class="row">
-                <div class="col-lg-1">
-                    <span class="badge-md bg-warning"><strong>{{ $serviceConnections->Status }}</strong></span>
-                    {{-- @if (empty($timeFrame) | $timeFrame == null)
-                        <span><i>Timeframe not recorded</i></span>
-                    @else
-                        <span class="badge-lg bg-warning"><strong>{{ $timeFrame->first()==null ? 'Timeframe not recorded' : $timeFrame->first()->Status; }}</strong></span>
-                    @endif --}}
-                </div> 
-                <div class="col-lg-11">
+                <div class="col-lg-12">
+                    <p class="badge-md bg-warning" style="display: inline;"><strong>{{ $serviceConnections->Status }}</strong></p>
                     {{-- DELETE --}}
-                    <div class="dropdown">
+                    <div class="dropdown" style="display: inline;">
                         <a class="btn btn-default btn-sm dropdown-toggle float-right" href="#" id="more-menu" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                         More
                         </a>
@@ -35,7 +28,7 @@ use Illuminate\Support\Facades\Auth;
                     
                     {{-- PAYMENT ORDER --}}
                     {{-- DELETE --}}
-                    <div class="dropdown">
+                    <div class="dropdown" style="display: inline;">
                         <a class="btn btn-default btn-sm dropdown-toggle float-right" style="margin-right: 5px;" href="#" id="payment-order-menu" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                         Payment Order
                         </a>

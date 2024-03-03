@@ -66,7 +66,6 @@ export default {
     },
     methods : {
         view (page = 1) {
-            // axios.get(`/service_accounts/search-account-ajax?page=${page}&search=${this.search}`) // IF PORT 8000
             axios.get(`${ this.baseURL }/service_accounts/search-account-ajax?page=${page}&search=${this.search}`) // IF PORT 80 DIRECT
             .then(response => {
                 this.accounts = response.data

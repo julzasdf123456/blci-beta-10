@@ -81,9 +81,16 @@ use Illuminate\Support\Facades\Auth;
             @endcanany
 
             @canany(['Super Admin', 'sc view'])
-                <li class="nav-item">
+                {{-- <li class="nav-item">
                     <a href="{{ route('serviceConnections.index') }}"
                     class="nav-link {{ Request::is('serviceConnections*') ? 'active' : '' }}">
+                        <i class="fas fa-bolt nav-icon text-warning"></i>
+                        <p>All Applications</p>
+                    </a>
+                </li> --}}
+                <li class="nav-item">
+                    <a href="{{ route('serviceConnections.all-applications') }}"
+                    class="nav-link {{ Request::is('serviceConnections.all-applications*') ? 'active' : '' }}">
                         <i class="fas fa-bolt nav-icon text-warning"></i>
                         <p>All Applications</p>
                     </a>
@@ -138,7 +145,7 @@ use Illuminate\Support\Facades\Auth;
                     </li>
                     @endcanany
 
-                    @canany(['Super Admin', 'sc view'])
+                    @canany(['Super Admin', 'payment approval'])
                     <li class="nav-item">
                         <a href="{{ route('serviceConnections.payment-approvals') }}"
                         class="nav-link {{ Request::is('serviceConnections.payment-approvals*') ? 'active' : '' }}">

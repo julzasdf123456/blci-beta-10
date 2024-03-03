@@ -91,7 +91,7 @@
               <tr>
                  <td>Customer Deposit</td>
                  <td>
-                    <input type="number" step="any" value="{{ $paymentOrder->CustomerDeposit }}" onkeyup="validateTotalInputs()" id="CustomerDeposit" name="CustomerDeposit" class="form-control form-control-sm text-right" autofocus>
+                    <input readonly type="number" step="any" value="{{ $paymentOrder->CustomerDeposit }}" onkeyup="validateTotalInputs()" id="CustomerDeposit" name="CustomerDeposit" class="form-control form-control-sm text-right" autofocus>
                  </td>
               </tr>
               <tr>
@@ -111,59 +111,69 @@
      </div>
 
      {{-- SUMMARY --}}
-     <div class="card shadow-none card-success">
+     <div class="card shadow-none">
         <div class="card-header">
            <span class="card-title">Summary</span>
         </div>
         <div class="card-body table-responsive">
            <table class="table table-hover table-borderless table-sm">
-              <tr>
-                 <td>Others</td>
-                 <td>
-                    <input type="number" step="any" value="{{ $paymentOrder->Others }}" onchange="validateTotalInputs()" onkeyup="validateTotalInputs()" id="Others" name="Others" class="form-control form-control-sm text-right" autofocus>
-                 </td>
-              </tr>
-              <tr>
-               <td>Materials Total</td>
-               <td>
-                  <input type="number" step="any" value="{{ $paymentOrder->MaterialTotal }}" onchange="validateTotalInputs()" onkeyup="validateTotalInputs()" id="MaterialsTotal" name="MaterialsTotal" class="form-control form-control-sm text-right" autofocus>
-               </td>
-            </tr>
+               <tbody>
+                  <tr>
+                     <td>Sale of Materials</td>
+                     <td>
+                        <input type="number" step="any" value="{{ $paymentOrder->SaleOfMaterials }}" onchange="validateTotalInputs()" onkeyup="validateTotalInputs()" id="SaleOfMaterials" name="SaleOfMaterials" class="form-control form-control-sm text-right" autofocus>
+                     </td>
+                  </tr>
+                 <tr>
+                    <td>Others</td>
+                    <td>
+                       <input type="number" step="any" value="{{ $paymentOrder->Others }}" onchange="validateTotalInputs()" onkeyup="validateTotalInputs()" id="Others" name="Others" class="form-control form-control-sm text-right" autofocus>
+                    </td>
+                 </tr>
+                 <tr>
+                     <td>Materials Total</td>
+                     <td>
+                        <input type="number" step="any" value="{{ $paymentOrder->MaterialTotal }}" onchange="validateTotalInputs()" onkeyup="validateTotalInputs()" id="MaterialsTotal" name="MaterialsTotal" class="form-control form-control-sm text-right" autofocus>
+                     </td>
+                  </tr>
+               </tbody>
            </table>
 
            <div class="divider"></div>
 
            <table class="table table-hover table-borderless table-sm">
-              <tr>
-                 <th>Local F. Tax</th>
-                 <th>
-                    <input type="number" step="any" value="{{ $paymentOrder->LocalFTax }}" id="LocalFTax" name="LocalFTax" class="form-control form-control-sm text-right" autofocus>
-                 </th>
-              </tr>
-              <tr>
-                 <th>Sub-total w/o VAT</th>
-                 <th>
-                    <input type="number" step="any" value="{{ $paymentOrder->SubTotal }}" id="SubTotal" name="SubTotal" class="form-control form-control-sm text-right" autofocus>
-                 </th>
-              </tr>
-              <tr>
-                 <th>VAT</th>
-                 <th>
-                    <input type="number" step="any" value="{{ $paymentOrder->VAT }}" id="VAT" name="VAT" class="form-control form-control-sm text-right" autofocus>
-                 </th>
-              </tr>
-              <tr>
-                 <th>Others</th>
-                 <th>
-                    <input type="number" step="any" value="{{ $paymentOrder->OthersTotal }}" onkeyup="validateTotalInputs()" id="OthersTotal" name="OthersTotal" class="form-control form-control-sm text-right" autofocus>
-                 </th>
-              </tr>
-              <tr>
-                 <th><h4>TOTAL</h4></th>
-                 <th>
-                    <input type="number" step="any" value="{{ $paymentOrder->OverAllTotal }}" style="font-size: 1.3em;" id="OverAllTotal" name="OverAllTotal" class="form-control form-control-sm text-right" autofocus>
-                 </th>
-              </tr>
+              <tbody>
+                  <tr>
+                     <th>Local F. Tax</th>
+                     <th>
+                        <input type="number" step="any" value="{{ $paymentOrder->LocalFTax }}" id="LocalFTax" name="LocalFTax" class="form-control form-control-sm text-right" autofocus>
+                     </th>
+                  </tr>
+                  <tr>
+                     <th>Sub-total w/o VAT</th>
+                     <th>
+                        <input type="number" step="any" value="{{ $paymentOrder->SubTotal }}" id="SubTotal" name="SubTotal" class="form-control form-control-sm text-right" autofocus>
+                     </th>
+                  </tr>
+                  <tr>
+                     <th>VAT</th>
+                     <th>
+                        <input type="number" step="any" value="{{ $paymentOrder->VAT }}" id="VAT" name="VAT" class="form-control form-control-sm text-right" autofocus>
+                     </th>
+                  </tr>
+                  <tr>
+                     <th>Others</th>
+                     <th>
+                        <input type="number" step="any" value="{{ $paymentOrder->OthersTotal }}" onkeyup="validateTotalInputs()" id="OthersTotal" name="OthersTotal" class="form-control form-control-sm text-right" autofocus>
+                     </th>
+                  </tr>
+                  <tr>
+                     <th><h4>TOTAL</h4></th>
+                     <th>
+                        <input type="number" step="any" value="{{ $paymentOrder->OverAllTotal }}" style="font-size: 1.3em;" id="OverAllTotal" name="OverAllTotal" class="form-control form-control-sm text-right" autofocus>
+                     </th>
+                  </tr>
+              </tbody>
            </table>
         </div>
      </div>
@@ -192,9 +202,18 @@
       var selectedUnitPrice = 0 // initialized in modal_payment_order_items
 
       $(document).ready(function() {
+         $('body').addClass('sidebar-collapse')
 
          $('#modal-add-items').on('hidden.bs.modal', function() {
-            $('#ItemQuantity').focus()
+            setTimeout(function (){
+               $('#ItemQuantity').focus();
+            }, 90);
+         });
+
+         $('#modal-add-meter').on('hidden.bs.modal', function() {
+            setTimeout(function (){
+               $('#meter-ItemQuantity').focus();
+            }, 90);
          });
 
          $('#CostCenterDescription').val($('#CostCenter option:selected', this).attr('data_desc'))
@@ -257,6 +276,20 @@
             $('#CostCenterDescription').val($('option:selected', this).attr('data_desc'))
             $('#ChargeTo').val($('option:selected', this).attr('data_dept'))
          })
+
+         $('#ItemQuantity').on('keydown', function(event) {
+            if (event.which == 13 || event.keyCode == 13) {
+               event.preventDefault();
+               addToList()
+            }
+         });
+
+         $('#meter-ItemQuantity').on('keydown', function(event) {
+            if (event.which == 13 || event.keyCode == 13) {
+               event.preventDefault();
+               addToListMeter()
+            }
+         });
 
          /** 
           * FEES AREA
@@ -425,8 +458,9 @@
          var serviceFee = getLocalFTax($('#ServiceFee').val())
          var materialsTotal = getLocalFTax($('#MaterialsTotal').val())
          var others = getLocalFTax($('#Others').val())
+         var saleOfMaterials = getLocalFTax($('#SaleOfMaterials').val())
 
-         var total = overheadExpenses + transformerRentalFees + apprehension + serviceFee + materialsTotal + others     
+         var total = overheadExpenses + transformerRentalFees + apprehension + serviceFee + materialsTotal + others + saleOfMaterials
 
          return Math.round((parseFloat(total) + Number.EPSILON) * 100) / 100
       }
@@ -441,9 +475,10 @@
          var serviceFee = getInputAmount($('#ServiceFee').val())
          var others = getInputAmount($('#Others').val())
          var othersTotal = getInputAmount($('#OthersTotal').val())
+         var saleOfMaterials = getLocalFTax($('#SaleOfMaterials').val())
          var materialsTotal = getInputAmount($('#MaterialsTotal').val())
 
-         var total = materialDeposit + overheadExpenses + transformerRentalFees + apprehension + customerDeposit + ciac + serviceFee + others + othersTotal + materialsTotal  
+         var total = materialDeposit + overheadExpenses + transformerRentalFees + apprehension + customerDeposit + ciac + serviceFee + others + othersTotal + materialsTotal + saleOfMaterials 
 
          return Math.round((parseFloat(total) + Number.EPSILON) * 100) / 100
       }
@@ -454,8 +489,10 @@
          var apprehension = (getInputAmount($('#Apprehension').val()) + getLocalFTax($('#Apprehension').val())) * .12
          var serviceFee = (getInputAmount($('#ServiceFee').val()) + getLocalFTax($('#ServiceFee').val())) * .12
          var materialsTotal = (getInputAmount($('#MaterialsTotal').val()) + getLocalFTax($('#MaterialsTotal').val())) * .12
+         var others = (getInputAmount($('#Others').val()) + getLocalFTax($('#Others').val())) * .12
+         var saleOfMaterials = (getInputAmount($('#SaleOfMaterials').val()) + getLocalFTax($('#SaleOfMaterials').val())) * .12
 
-         var total = overheadExpenses + transformerRentalFees + apprehension + serviceFee + materialsTotal     
+         var total = overheadExpenses + transformerRentalFees + apprehension + serviceFee + materialsTotal + others + saleOfMaterials
 
          return Math.round((parseFloat(total) + Number.EPSILON) * 100) / 100
       }
@@ -502,6 +539,7 @@
                   CIAC : getInputAmount($('#CIAC').val()),
                   ServiceFee : getInputAmount($('#ServiceFee').val()),
                   CustomerDeposit : getInputAmount($('#CustomerDeposit').val()),
+                  SaleOfMaterials : getInputAmount($('#SaleOfMaterials').val()),
                   Others : getInputAmount($('#Others').val()),
                   LocalFTax : getInputAmount($('#LocalFTax').val()),
                   SubTotal : getInputAmount($('#SubTotal').val()),

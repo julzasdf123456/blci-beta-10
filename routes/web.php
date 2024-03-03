@@ -45,6 +45,9 @@ Route::get('/home/get-bom-large-load', [HomeController::class, 'fetchBomLargeLoa
 Route::get('/home/get-transformer-large-load', [HomeController::class, 'fetchTransformerLargeLoad'])->name('home.get-transformer-large-load');
 Route::get('/home/dash-get-collection-summary', [HomeController::class, 'dashGetCollectionSummary'])->name('home.dash-get-collection-summary');
 Route::get('/home/dash-get-collection-summary-graph', [HomeController::class, 'dashGetCollectionSummaryGraph'])->name('home.dash-get-collection-summary-graph');
+Route::get('/home/fetch-for-payment-approvals', [HomeController::class, 'fetchForPaymentApprovals'])->name('home.fetch-for-payment-approvals');
+Route::get('/home/fetch-for-payment-orders', [HomeController::class, 'fetchForPaymentOrders'])->name('home.fetch-for-payment-orders');
+Route::get('/home/fetch-for-turn-on-approvals', [HomeController::class, 'fetchForTurnOnApprovals'])->name('home.fetch-for-turn-on-approvals');
 Route::get('/settings/settings', [HomeController::class, 'settings'])->name('settings.settings');
 Route::get('/settings/save-general-settings', [HomeController::class, 'saveGeneralSettings'])->name('settings.save-general-settings');
 
@@ -180,6 +183,8 @@ Route::get('/service_connections/upload-files/{id}', [ServiceConnectionsControll
 Route::post('/service_connections/save-uploaded-files', [ServiceConnectionsController::class, 'saveUploadedFiles'])->name('serviceConnections.save-uploaded-files');
 Route::get('/service_connections/turn-on-approvals', [ServiceConnectionsController::class, 'turnOnApprovals'])->name('serviceConnections.turn-on-approvals');
 Route::get('/service_connections/payment-approvals', [ServiceConnectionsController::class, 'paymentApprovals'])->name('serviceConnections.payment-approvals');
+Route::get('/service_connections/all-applications', [ServiceConnectionsController::class, 'allApplications'])->name('serviceConnections.all-applications');
+Route::get('/service_connections/search', [ServiceConnectionsController::class, 'search'])->name('serviceConnections.search');
 Route::resource('serviceConnections', App\Http\Controllers\ServiceConnectionsController::class);
 
 

@@ -95,21 +95,120 @@ class HomeController extends Controller
         }
     }
 
-    public function fetchForEnergization(Request $request) {
-        if ($request->ajax()) {            
-            $data = DB::table('CRM_ServiceConnections')
-                    ->whereNotNull('ORNumber')
-                    ->where(function ($query) {
-                        $query->where('Status', 'Approved')
-                            ->orWhere('Status', 'Not Energized');
-                    })
-                    ->whereIn('id', DB::table('CRM_ServiceConnectionMeterAndTransformer')->pluck('ServiceConnectionId'))
-                    ->select('*')
-                    ->orderBy('ServiceAccountName')
-                    ->get();
+    public function fetchForPaymentApprovals(Request $request) {
+        $data = DB::table('CRM_ServiceConnections')
+            ->leftJoin('CRM_ServiceConnectionInspections', 'CRM_ServiceConnectionInspections.ServiceConnectionId', '=', 'CRM_ServiceConnections.id')
+            ->leftJoin('CRM_PaymentOrder', 'CRM_PaymentOrder.ServiceConnectionId', '=', 'CRM_ServiceConnections.id')
+            ->leftJoin('CRM_Towns', 'CRM_ServiceConnections.Town', '=', 'CRM_Towns.id')
+            ->leftJoin('CRM_Barangays', 'CRM_ServiceConnections.Barangay', '=', 'CRM_Barangays.id')
+            ->leftJoin('users', 'CRM_ServiceConnectionInspections.Inspector', '=', 'users.id')
+            ->whereRaw("(Trash IS NULL OR Trash='No')")
+            ->whereRaw("CRM_ServiceConnections.Status='Approved' AND CRM_ServiceConnections.ORNumber IS NULL")
+            ->select(
+                'CRM_ServiceConnections.id',
+                'CRM_ServiceConnections.ServiceAccountName',
+                'CRM_ServiceConnections.Sitio',
+                'CRM_ServiceConnections.Status',
+                'CRM_Towns.Town',
+                'CRM_Barangays.Barangay',
+                'CRM_ServiceConnections.DateOfApplication',
+                'CRM_ServiceConnections.AccountApplicationType',
+                'CRM_ServiceConnectionInspections.DateOfVerification',
+                'users.name',
+                'CRM_PaymentOrder.OverAllTotal'
+            )
+            ->orderBy('ServiceAccountName')
+            ->get();
 
-            echo json_encode($data);
-        }
+        return response()->json($data);
+    }
+
+    public function fetchForPaymentOrders(Request $request) {
+        $data = DB::table('CRM_ServiceConnections')
+            ->leftJoin('CRM_ServiceConnectionInspections', 'CRM_ServiceConnectionInspections.ServiceConnectionId', '=', 'CRM_ServiceConnections.id')
+            ->leftJoin('CRM_PaymentOrder', 'CRM_PaymentOrder.ServiceConnectionId', '=', 'CRM_ServiceConnections.id')
+            ->leftJoin('CRM_Towns', 'CRM_ServiceConnections.Town', '=', 'CRM_Towns.id')
+            ->leftJoin('CRM_Barangays', 'CRM_ServiceConnections.Barangay', '=', 'CRM_Barangays.id')
+            ->leftJoin('users', 'CRM_ServiceConnectionInspections.Inspector', '=', 'users.id')
+            ->whereRaw("(Trash IS NULL OR Trash='No')")
+            ->whereRaw("CRM_ServiceConnections.Status='Payment Approved' AND (CRM_ServiceConnections.ORNumber IS NULL OR CRM_ServiceConnections.ORNumber = 0)")
+            ->select(
+                'CRM_ServiceConnections.id',
+                'CRM_ServiceConnections.ServiceAccountName',
+                'CRM_ServiceConnections.Sitio',
+                'CRM_ServiceConnections.Status',
+                'CRM_Towns.Town',
+                'CRM_Barangays.Barangay',
+                'CRM_ServiceConnections.DateOfApplication',
+                'CRM_ServiceConnections.AccountApplicationType',
+                'CRM_ServiceConnectionInspections.DateOfVerification',
+                'users.name',
+                'CRM_PaymentOrder.OverAllTotal'
+            )
+            ->orderBy('ServiceAccountName')
+            ->get();
+
+        return response()->json($data);
+    }
+
+    public function fetchForTurnOnApprovals(Request $request) {
+        $data = DB::table('CRM_ServiceConnections')
+            ->leftJoin('CRM_ServiceConnectionInspections', 'CRM_ServiceConnectionInspections.ServiceConnectionId', '=', 'CRM_ServiceConnections.id')
+            ->leftJoin('CRM_Towns', 'CRM_ServiceConnections.Town', '=', 'CRM_Towns.id')
+            ->leftJoin('CRM_Barangays', 'CRM_ServiceConnections.Barangay', '=', 'CRM_Barangays.id')
+            ->leftJoin('users', 'CRM_ServiceConnectionInspections.Inspector', '=', 'users.id')
+            ->whereRaw("(Trash IS NULL OR Trash='No')")
+            ->whereRaw("CRM_ServiceConnections.Status='For Energization' AND CRM_ServiceConnections.ORNumber IS NOT NULL")
+            ->select(
+                'CRM_ServiceConnections.id',
+                'CRM_ServiceConnections.ServiceAccountName',
+                'CRM_ServiceConnections.Sitio',
+                'CRM_ServiceConnections.Status',
+                'CRM_ServiceConnections.ORNumber',
+                'CRM_ServiceConnections.ORDate',
+                'CRM_Towns.Town',
+                'CRM_Barangays.Barangay',
+                'CRM_ServiceConnections.DateOfApplication',
+                'CRM_ServiceConnections.AccountApplicationType',
+                'CRM_ServiceConnectionInspections.DateOfVerification',
+                'CRM_ServiceConnections.ConnectionSchedule',
+                'CRM_ServiceConnections.StationCrewAssigned',
+                'users.name',
+            )
+            ->orderBy('ConnectionSchedule')
+            ->orderBy('ServiceAccountName')
+            ->get();
+
+        return response()->json($data);
+    }
+
+    public function fetchForEnergization(Request $request) {
+       $data = DB::table('CRM_ServiceConnections')
+        ->leftJoin('CRM_ServiceConnectionInspections', 'CRM_ServiceConnectionInspections.ServiceConnectionId', '=', 'CRM_ServiceConnections.id')
+        ->leftJoin('CRM_Towns', 'CRM_ServiceConnections.Town', '=', 'CRM_Towns.id')
+        ->leftJoin('CRM_Barangays', 'CRM_ServiceConnections.Barangay', '=', 'CRM_Barangays.id')
+        ->leftJoin('users', 'CRM_ServiceConnectionInspections.Inspector', '=', 'users.id')
+        ->whereRaw("(Trash IS NULL OR Trash='No')")
+        ->whereRaw("CRM_ServiceConnections.Status='Approved for Energization' AND CRM_ServiceConnections.ORNumber IS NOT NULL")
+        ->select(
+            'CRM_ServiceConnections.id',
+            'CRM_ServiceConnections.ServiceAccountName',
+            'CRM_ServiceConnections.Sitio',
+            'CRM_ServiceConnections.Status',
+            'CRM_Towns.Town',
+            'CRM_Barangays.Barangay',
+            'CRM_ServiceConnections.DateOfApplication',
+            'CRM_ServiceConnections.AccountApplicationType',
+            'CRM_ServiceConnectionInspections.DateOfVerification',
+            'CRM_ServiceConnections.ConnectionSchedule',
+            'CRM_ServiceConnections.StationCrewAssigned',
+            'users.name',
+        )
+        ->orderBy('ConnectionSchedule')
+        ->orderBy('ServiceAccountName')
+        ->get();
+        
+        return response()->json($data);
     }
 
     public function fetchInspectionReport(Request $request) {

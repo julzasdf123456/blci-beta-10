@@ -229,18 +229,30 @@
             format: 'YYYY-MM-DD',
             useCurrent: true,
             sideBySide: true,
+            icons : {
+                previous : 'fas fa-caret-left',
+                next : 'fas fa-caret-right',
+            }
         })
 
         $('#ConnectionSchedule').datetimepicker({
             format: 'YYYY-MM-DD',
             useCurrent: true,
             sideBySide: true,
+            icons : {
+                previous : 'fas fa-caret-left',
+                next : 'fas fa-caret-right',
+            }
         })
 
         $('#CertificateOfConnectionIssuedOn').datetimepicker({
             format: 'YYYY-MM-DD',
             useCurrent: true,
             sideBySide: true,
+            icons : {
+                previous : 'fas fa-caret-left',
+                next : 'fas fa-caret-right',
+            }
         })
 
         $(document).ready(function() {
