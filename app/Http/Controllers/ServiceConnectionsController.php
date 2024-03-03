@@ -178,7 +178,7 @@ class ServiceConnectionsController extends AppBaseController
                 if (empty($serviceConnections)) {
                     Flash::error('Service Connections not found');
         
-                    return redirect(route('serviceConnections.index'));
+                    return redirect(route('serviceConnections.all-applications'));
                 }
         
                 $serviceConnections = $this->serviceConnectionsRepository->update($request->all(), $sc->id);
@@ -381,7 +381,7 @@ class ServiceConnectionsController extends AppBaseController
         if (empty($serviceConnections)) {
             Flash::error('Service Connections not found');
 
-            return redirect(route('serviceConnections.index'));
+            return redirect(route('serviceConnections.all-applications'));
         }
 
         $paymentOrder = PaymentOrder::where('ServiceConnectionId', $id)->first();
@@ -485,7 +485,7 @@ class ServiceConnectionsController extends AppBaseController
         if (empty($serviceConnections)) {
             Flash::error('Service Connections not found');
 
-            return redirect(route('serviceConnections.index'));
+            return redirect(route('serviceConnections.all-applications'));
         }
 
         /**
@@ -521,7 +521,7 @@ class ServiceConnectionsController extends AppBaseController
         if (empty($serviceConnections)) {
             Flash::error('Service Connections not found');
 
-            return redirect(route('serviceConnections.index'));
+            return redirect(route('serviceConnections.all-applications'));
         }
 
         $serviceConnections = $this->serviceConnectionsRepository->update($request->all(), $id);
@@ -560,7 +560,7 @@ class ServiceConnectionsController extends AppBaseController
             if (empty($serviceConnections)) {
                 Flash::error('Service Connections not found');
 
-                return redirect(route('serviceConnections.index'));
+                return redirect(route('serviceConnections.all-applications'));
             }
 
             // $this->serviceConnectionsRepository->delete($id);
@@ -569,7 +569,7 @@ class ServiceConnectionsController extends AppBaseController
 
             Flash::success('Service Connections deleted successfully.');
 
-            return redirect(route('serviceConnections.index'));
+            return redirect(route('serviceConnections.all-applications'));
         } else {
             return abort(403, "You're not authorized to delete a service connection application.");
         }          
@@ -970,7 +970,7 @@ class ServiceConnectionsController extends AppBaseController
     
             $serviceConnections->save();
     
-            return redirect(route('serviceConnections.index'));
+            return redirect(route('serviceConnections.all-applications'));
         } else {
             return abort(403, "You're not authorized to delete a service connection application.");
         }          
