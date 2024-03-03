@@ -29,17 +29,28 @@
             <div class="card shadow-none">
                 <div class="card-body table-responsive p-0">
                     <table class="table table-sm table-borderless">
-                        <tr style="border-bottom: 1px solid #9a9a9a">
+                        <tr style="border-bottom: 1px solid #9a9a9a;">
+                            {{-- <div class="input-group-radio">
+                                <input type="radio" id="Bonus" name="For" value="Bonus" class="custom-radio" required>
+                                <label for="Bonus" class="custom-radio-label">Bonus</label>
+            
+                                <input type="radio" id="Payroll" name="For" value="Payroll" class="custom-radio" required>
+                                <label for="Payroll" class="custom-radio-label">Payroll</label>
+                            </div> --}}
                             <td>
-                                <div class="form-check">
-                                    <input class="form-check-input" type="radio" name="customer-profile" id="new-inst" checked value="New Installation">
-                                    <label class="form-check-label" for="new-inst"><strong>New Installation</strong></label>
+                                <div class="form-check pt-1">
+                                    <input type="radio" id="new-inst" name="customer-profile" value="New Installation" class="custom-radio" checked>
+                                    <label for="new-inst" class="custom-radio-label">New Installation</label>
+                                    {{-- <input class="form-check-input" type="radio" name="customer-profile" id="new-inst" checked value="New Installation">
+                                    <label class="form-check-label" for="new-inst"><strong>New Installation</strong></label> --}}
                                 </div>
                             </td>
                             <td>
-                                <div class="form-check">
-                                    <input class="form-check-input" type="radio" name="customer-profile" id="existing" value="Existing">
-                                    <label class="form-check-label" for="existing"><strong>Existing</strong></label>
+                                <div class="form-check pt-1">
+                                    <input type="radio" id="existing" name="customer-profile" value="Existing" class="custom-radio">
+                                    <label for="existing" class="custom-radio-label">Existing</label>
+                                    {{-- <input class="form-check-input" type="radio" name="customer-profile" id="existing" value="Existing">
+                                    <label class="form-check-label" for="existing"><strong>Existing</strong></label> --}}
                                 </div>
                             </td>
                             <td></td>

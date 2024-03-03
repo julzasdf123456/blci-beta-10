@@ -98,6 +98,7 @@ class ServiceConnectionsController extends AppBaseController
                                 'CRM_ServiceConnections.Sitio as Sitio', 
                                 'CRM_Towns.Town as Town',
                                 'CRM_ServiceConnections.ORNumber',
+                                'CRM_ServiceConnections.AccountNumber',
                                 'CRM_ServiceConnections.LoadCategory',
                                 'CRM_Barangays.Barangay as Barangay',
                                 'CRM_ServiceConnectionMeterAndTransformer.MeterSerialNumber')
@@ -122,6 +123,7 @@ class ServiceConnectionsController extends AppBaseController
                                 'CRM_ServiceConnections.Sitio as Sitio', 
                                 'CRM_Towns.Town as Town',
                                 'CRM_ServiceConnections.ORNumber',
+                                'CRM_ServiceConnections.AccountNumber',
                                 'CRM_ServiceConnections.LoadCategory',
                                 'CRM_Barangays.Barangay as Barangay',
                                 'CRM_ServiceConnectionMeterAndTransformer.MeterSerialNumber')
@@ -4702,6 +4704,7 @@ class ServiceConnectionsController extends AppBaseController
                                 'CRM_ServiceConnections.Sitio as Sitio', 
                                 'CRM_Towns.Town as Town',
                                 'CRM_ServiceConnections.ORNumber',
+                                'CRM_ServiceConnections.AccountNumber',
                                 'CRM_ServiceConnections.LoadCategory',
                                 'CRM_Barangays.Barangay as Barangay',
                                 'CRM_ServiceConnectionMeterAndTransformer.MeterSerialNumber')
@@ -4726,6 +4729,7 @@ class ServiceConnectionsController extends AppBaseController
                                 'CRM_ServiceConnections.Sitio as Sitio', 
                                 'CRM_Towns.Town as Town',
                                 'CRM_ServiceConnections.ORNumber',
+                                'CRM_ServiceConnections.AccountNumber',
                                 'CRM_ServiceConnections.LoadCategory',
                                 'CRM_Barangays.Barangay as Barangay',
                                 'CRM_ServiceConnectionMeterAndTransformer.MeterSerialNumber')

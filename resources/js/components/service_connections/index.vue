@@ -35,7 +35,11 @@
                             <p class="no-pads text-muted">{{ (isNull(item.Sitio) ? '' : (item.Sitio.toUpperCase() + ', ')) + (isNull(item.Barangay) ? '' : (item.Barangay.toUpperCase() + ', ')) + item.Town.toUpperCase() }}</p>
                         </div>
                     </td>
-                    <td @click="goToApplication(item.ConsumerId)" class="v-align">{{ item.ConsumerId }}</td>
+                    <td @click="goToApplication(item.ConsumerId)" class="v-align">
+                        {{ item.ConsumerId }}
+                        <br>
+                        <span class="text-muted">Account No: {{ item.AccountNumber }}</span>
+                    </td>
                     <td @click="goToApplication(item.ConsumerId)" class="v-align">
                         {{ item.AccountApplicationType }}
                         <br>
