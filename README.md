@@ -23,10 +23,6 @@
 
 
 ### Added New Columns
-- CRM_ServiceAccounts
-    - TIN (varchar)
-- users
-    - HRUserId (varchar)
 
 ### Added New Tables
 - 

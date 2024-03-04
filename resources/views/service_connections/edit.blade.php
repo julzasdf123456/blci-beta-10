@@ -145,7 +145,7 @@
                             </td>
                             <td>TIN</td>
                             <td>
-                                <input type="number" step="any" class="form-control form-control-sm" name="TIN" id="TIN" value="{{ $serviceConnections->TIN }}">
+                                <input type="text" class="form-control form-control-sm" name="TIN" id="TIN" value="{{ $serviceConnections->TIN }}">
                             </td>
                         </tr>
                         {{-- ROW 8 --}}

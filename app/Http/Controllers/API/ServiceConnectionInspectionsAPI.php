@@ -255,4 +255,8 @@ class ServiceConnectionInspectionsAPI extends Controller {
     public function getBlocks() {
         return response()->json(Blocks::all(), 200);
     }
+
+    public function getFiles(Request $request) {
+        
+    }
 }

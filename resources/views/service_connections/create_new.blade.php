@@ -183,7 +183,7 @@
                             </td>
                             <td>TIN</td>
                             <td>
-                                <input type="number" step="any" class="form-control form-control-sm" name="TIN" id="TIN">
+                                <input type="text" class="form-control form-control-sm" name="TIN" id="TIN">
                             </td>
                         </tr>
                         {{-- ROW 8 --}}
