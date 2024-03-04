@@ -37,3 +37,9 @@
     {!! Form::label('remember_token', 'Remember Token:') !!}
     {!! Form::text('remember_token', null, ['class' => 'form-control','maxlength' => 100,'maxlength' => 100]) !!}
 </div>
+
+<!-- HR USER ID -->
+<div class="form-group col-sm-6">
+    {!! Form::label('HRUserId', 'HR System User ID:') !!}
+    {!! Form::text('HRUserId', null, ['class' => 'form-control','id'=>'HRUserId']) !!}
+</div>

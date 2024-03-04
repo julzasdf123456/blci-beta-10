@@ -23,7 +23,7 @@
         </tr>
         <tr>
             <td class="text-muted">Serial Number</td>
-            <td style="border-right: 1px solid #adadad;"><i class="fas fa-exclamation-circle text-danger"></i></td>
+            <td style="border-right: 1px solid #adadad;">{{ $serviceConnectionMeter != null ? $serviceConnectionMeter->NewMeterNumber : '-' }}</td>
             <td class="text-muted" style="padding-left: 50px;">Date of Inspection</td>
             <td>{{ $serviceConnectionInspections != null && $serviceConnectionInspections->DateOfVerification != null ? date('M d, Y', strtotime($serviceConnectionInspections->DateOfVerification)) : '-' }}</td>
         </tr>
@@ -55,13 +55,13 @@
             <td class="text-muted">Inspection Schedule</td>
             <td style="border-right: 1px solid #adadad;">{{ $serviceConnectionInspections != null &&$serviceConnectionInspections->InspectionSchedule != null ? date('M d, Y', strtotime($serviceConnectionInspections->InspectionSchedule)) : '-' }}</td>
             <td class="text-muted" style="padding-left: 50px;">Date of Connection</td>
-            <td><i class="fas fa-exclamation-circle text-danger"></i></td>  
+            <td>{{ $serviceConnections->DateTimeOfEnergization != null ? date('F d, Y', strtotime($serviceConnections->DateTimeOfEnergization)) : '-' }}</td>  
         </tr>
         <tr>
             <td class="text-muted">Re-Inspection Schedule</td>
             <td style="border-right: 1px solid #adadad;">{{ $serviceConnectionInspections != null &&$serviceConnectionInspections->ReInspectionSchedule != null ? date('M d, Y', strtotime($serviceConnectionInspections->ReInspectionSchedule)) : '-' }}</td>
             <td class="text-muted" style="padding-left: 50px;">Time of Connection</td>
-            <td><i class="fas fa-exclamation-circle text-danger"></i></td>  
+            <td>{{ $serviceConnections->DateTimeOfEnergization != null ? date('h:i A', strtotime($serviceConnections->DateTimeOfEnergization)) : '-' }}</td>  
         </tr>
         <tr>
             <td class="text-muted">Load Type</td>
@@ -77,15 +77,15 @@
         </tr>
         <tr>
             <td class="text-muted">Transformer ID</td>
-            <td style="border-right: 1px solid #adadad;">{{ $serviceConnections->TransformerID }}</td>
+            <td style="border-right: 1px solid #adadad;">{{ $serviceConnectionInspections->TransformerNo==null ? '-' : $serviceConnectionInspections->TransformerNo }}</td>
             <td class="text-muted" style="padding-left: 50px;">Installed By</td>
-            <td><i class="fas fa-exclamation-circle text-danger"></i></td>  
+            <td>{{ $serviceConnections->StationName }}</td>  
         </tr>
         <tr>
             <td class="text-muted">Transformer Load (kVa)</td>
-            <td style="border-right: 1px solid #adadad;">{{ $serviceConnections->LoadInKva }}</td>
-            <td class="text-muted" style="padding-left: 50px;"></td>
-            <td></td>  
+            <td style="border-right: 1px solid #adadad;">{{ $serviceConnectionInspections->SizeOfTransformer==null ? '-' : $serviceConnectionInspections->SizeOfTransformer }}</td>
+            <td class="text-muted" style="padding-left: 50px;">TIN</td>
+            <td>{{ $serviceConnections->TIN }}</td> 
         </tr>
         <tr>
             <td class="text-muted">Pole Number</td>

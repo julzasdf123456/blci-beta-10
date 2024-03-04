@@ -137,23 +137,16 @@
                                 <input type="number" step="any" class="form-control form-control-sm" name="LoadInKva" id="LoadInKva" value="{{ $serviceConnections->LoadInKva }}">
                             </td>
                         </tr>
-                        {{-- ROW 6 --}}
-                        <tr>
-                            <td>Zone and Block: </td>
-                            <td>
-                                <input type="text" class="form-control form-control-sm" name="ZoneAndBlock" id="ZoneAndBlock" value="{{ $serviceConnections->ZoneAndBlock }}">
-                            </td>
-                            <td></td>
-                            <td></td>
-                        </tr>
                         {{-- ROW 7 --}}
                         <tr>
                             <td>Transformer ID: </td>
                             <td>
                                 <input type="text" class="form-control form-control-sm" name="TransformerID" id="TransformerID" value="{{ $serviceConnections->TransformerID }}">
                             </td>
-                            <td></td>
-                            <td></td>
+                            <td>TIN</td>
+                            <td>
+                                <input type="number" step="any" class="form-control form-control-sm" name="TIN" id="TIN" value="{{ $serviceConnections->TIN }}">
+                            </td>
                         </tr>
                         {{-- ROW 8 --}}
                         <tr>

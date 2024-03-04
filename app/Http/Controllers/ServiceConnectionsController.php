@@ -312,6 +312,7 @@ class ServiceConnectionsController extends AppBaseController
             ->leftJoin('CRM_Barangays', 'CRM_ServiceConnections.Barangay', '=', 'CRM_Barangays.id')
             ->leftJoin('CRM_Towns', 'CRM_ServiceConnections.Town', '=', 'CRM_Towns.id')
             ->leftJoin('users', 'CRM_ServiceConnections.UserId', '=', 'users.id')
+            ->leftJoin('CRM_ServiceConnectionCrew', 'CRM_ServiceConnections.StationCrewAssigned', '=', 'CRM_ServiceConnectionCrew.id')
             ->select('CRM_ServiceConnections.id as id',
                         'CRM_ServiceConnections.AccountCount as AccountCount', 
                         'CRM_ServiceConnections.ServiceAccountName as ServiceAccountName',
@@ -347,8 +348,10 @@ class ServiceConnectionsController extends AppBaseController
                         'CRM_ServiceConnections.Feeder',
                         'CRM_ServiceConnections.ChargeTo',
                         'CRM_ServiceConnections.AccountNumber',
+                        'CRM_ServiceConnections.TIN',
                         'CRM_ServiceConnections.CertificateOfConnectionIssuedOn',
-                        'users.name'
+                        'users.name',
+                        'CRM_ServiceConnectionCrew.StationName'
                         )
         ->where('CRM_ServiceConnections.id', $id)
         ->where(function ($query) {
@@ -3764,6 +3767,7 @@ class ServiceConnectionsController extends AppBaseController
         $CostCenter = $request['CostCenter'];
         $chargeTo = $request['ChargeTo'];
         $projectCode = $request['ProjectCode'];
+        $requestedById = $request['RequisitionById'];
         $requestedBy = $request['RequestedBy'];
         $invoiceNo = $request['InvoiceNo'];
         $customerName = $request['CustomerName'];
@@ -3774,6 +3778,7 @@ class ServiceConnectionsController extends AppBaseController
         $meter_CostCenter = $request['MeterCostCenter'];
         $meter_chargeTo = $request['MeterChargeTo'];
         $meter_projectCode = $request['MeterProjectCode'];
+        $meter_requestedById = $request['MeterRequestedById'];
         $meter_requestedBy = $request['MeterRequestedBy'];
         $meter_invoiceNo = $request['MeterInvoiceNo'];
         $meter_customerName = $request['MeterCustomerName'];
@@ -3846,6 +3851,13 @@ class ServiceConnectionsController extends AppBaseController
         }
         // WarehouseHead::where('appl_no', $ServiceConnectionId)->delete();
         // WarehouseItems::where('reqno', $whHead->orderno)->delete();
+        $entNoLast = DB::connection('mysql')
+            ->table('tblor_head')
+            ->select('ent_no')
+            ->orderByDesc('ent_no')
+            ->first();
+
+        $entryNo = $entNoLast != null ? (floatval($entNoLast->ent_no) + 1) : 0;
 
         // SAVE WAREHOUSE HEAD ITEMS
         $whHead = new WarehouseHead;
@@ -3854,7 +3866,7 @@ class ServiceConnectionsController extends AppBaseController
         $whHead->misno = $mirsNo;
         $whHead->address = ServiceConnections::getAddress($serviceConnections);
         $whHead->tdate = date('m/d/Y');
-        $whHead->emp_id = Auth::id();
+        $whHead->emp_id = $requestedById;
         $whHead->ccode = $CostCenter;
         $whHead->dept = $chargeTo;
         $whHead->pcode = $projectCode;
@@ -3901,11 +3913,11 @@ class ServiceConnectionsController extends AppBaseController
         if ($meter_reqNo != null && count($meterItems) > 0) {
             $whHead = new WarehouseHead;
             $whHead->orderno = $meter_reqNo;
-            $whHead->ent_no = $meter_entryNo;
+            $whHead->ent_no = ($entryNo + 1);
             $whHead->misno = $meter_mirsNo;
             $whHead->address = ServiceConnections::getAddress($serviceConnections);
             $whHead->tdate = date('m/d/Y');
-            $whHead->emp_id = Auth::id();
+            $whHead->emp_id = $meter_requestedById;
             $whHead->ccode = $CostCenter;
             $whHead->dept = $meter_chargeTo;
             $whHead->pcode = $meter_projectCode;

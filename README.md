@@ -23,15 +23,16 @@
 
 
 ### Added New Columns
-
+- CRM_ServiceAccounts
+    - TIN (varchar)
+- users
+    - HRUserId (varchar)
 
 ### Added New Tables
 - 
 
 ### New Permissions
-- turn-on approval
-- turn-on assigning
-- payment approval
+
 
 ### GENERATE MODELS FROM TABLE
 - php artisan infyom:scaffold Post --fromTable --table=posts --connection=server_name

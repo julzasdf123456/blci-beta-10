@@ -175,23 +175,16 @@
                                 <input type="number" step="any" class="form-control form-control-sm" name="LoadInKva" id="LoadInKva">
                             </td>
                         </tr>
-                        {{-- ROW 6 --}}
-                        <tr>
-                            <td>Zone and Block: </td>
-                            <td>
-                                <input type="number" step="any" class="form-control form-control-sm" name="ZoneAndBlock" id="ZoneAndBlock">
-                            </td>
-                            <td></td>
-                            <td></td>
-                        </tr>
                         {{-- ROW 7 --}}
                         <tr>
                             <td>Transformer ID: </td>
                             <td>
                                 <input type="number" step="any" class="form-control form-control-sm" name="TransformerID" id="TransformerID">
                             </td>
-                            <td></td>
-                            <td></td>
+                            <td>TIN</td>
+                            <td>
+                                <input type="number" step="any" class="form-control form-control-sm" name="TIN" id="TIN">
+                            </td>
                         </tr>
                         {{-- ROW 8 --}}
                         <tr>

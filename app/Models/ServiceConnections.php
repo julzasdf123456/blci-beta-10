@@ -96,6 +96,7 @@ class ServiceConnections extends Model
         'Feeder',
         'ChargeTo',
         'Block',
+        'TIN',
     ];
 
     /**
@@ -151,6 +152,7 @@ class ServiceConnections extends Model
         'Feeder' => 'string',
         'ChargeTo' => 'string',
         'Block' => 'string',
+        'TIN' => 'string',
     ];
 
     /**
@@ -208,6 +210,7 @@ class ServiceConnections extends Model
         'Feeder' => 'nullable|string',
         'ChargeTo' => 'nullable|string',
         'Block' => 'nullable|string',
+        'TIN' => 'nullable|string',
     ];
 
     public static function getAccountCount($consumerId) {

@@ -47,7 +47,7 @@
                                     <div class="card-header border-0">
                                         <span>CRM</span>
                                         <div class="card-tools">
-                                            <a href="{{ url('/users/add-user-roles/' . $users->id) }}" title="Edit Permissions" class="btn btn-sm btn-link"><i class="fas fa-key"></i></a>
+                                            <a href="{{ route('users.add_user_roles', [$users->id]) }}" title="Edit Permissions" class="btn btn-sm btn-link"><i class="fas fa-key"></i></a>
                                             <a href="{{ route('users.remove_roles', ['id' => $users->id]) }}" class="btn btn-tool btn-sm" title="Clear all permissions">
                                                 <i class="fas fa-trash"></i>
                                             </a>

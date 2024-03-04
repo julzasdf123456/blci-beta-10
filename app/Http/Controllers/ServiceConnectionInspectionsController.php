@@ -17,6 +17,8 @@ use App\Models\ServiceConnectionPayTransaction;
 use App\Models\ServiceConnectionInspections;
 use App\Models\IDGenerator;
 use App\Models\Signatories;
+use App\Models\Zones;
+use App\Models\Blocks;
 use Illuminate\Support\Facades\Auth;
 use Flash;
 use Response;
@@ -267,6 +269,7 @@ class ServiceConnectionInspectionsController extends AppBaseController
     public function edit($id)
     {
         $serviceConnectionInspections = $this->serviceConnectionInspectionsRepository->find($id);
+        $serviceConnection = ServiceConnections::find($serviceConnectionInspections->ServiceConnectionId);
 
         if (env('APP_AREA_CODE') == 15) {
             $inspectors = Signatories::where('Notes', 'INSPECTOR')
@@ -286,7 +289,10 @@ class ServiceConnectionInspectionsController extends AppBaseController
 
         return view('service_connection_inspections.edit', [
             'serviceConnectionInspections' => $serviceConnectionInspections, 
-            'inspectors' => $inspectors
+            'inspectors' => $inspectors,
+            'serviceConnection' => $serviceConnection,
+            'zones' => Zones::orderBy('Zone')->get(),
+            'blocks' => Blocks::orderBy('Block')->get(),
         ]);
     }
 
@@ -309,6 +315,16 @@ class ServiceConnectionInspectionsController extends AppBaseController
         }
 
         $serviceConnectionInspections = $this->serviceConnectionInspectionsRepository->update($request->all(), $id);
+
+        $serviceConnection = ServiceConnections::find($serviceConnectionInspections->ServiceConnectionId);
+        if ($serviceConnection != null) {
+            $serviceConnection->Zone = $request['Zone'];
+            $serviceConnection->Block = $request['Block'];
+            $serviceConnection->Feeder = $request['Feeder'];
+            $serviceConnection->LoadType = $request['LoadType'];
+            $serviceConnection->PoleNumber = $request['PoleNo'];
+            $serviceConnection->save();
+        }
 
         Flash::success('Service Connection Inspections updated successfully.');
 

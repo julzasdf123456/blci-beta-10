@@ -29,7 +29,7 @@
    <tr>
       <td>Requisition By :</td>
       <td>
-         <input type="text" id="RequisitionById" class="form-control form-control-xs text-right" value="{{ Auth::id() }}" readonly>
+         <input type="text" id="RequisitionById" class="form-control form-control-xs text-right" value="{{ Auth::user()->HRUserId != null ? Auth::user()->HRUserId : Auth::id() }}" readonly>
       </td>
       <td>
          <input type="text" id="RequisitionByName" class="form-control form-control-xs" value="{{ strtoupper(Auth::user()->name) }}" readonly>
@@ -109,7 +109,7 @@
          <input type="text" id="ItemCode" class="form-control form-control-xs" value="" readonly>
       </td>
       <td>
-         <button class="btn btn-xs btn-info" data-toggle="modal" data-target="#modal-add-items"><i class="fas fa-plus-circle ico-tab-mini"></i>Add Items</button>
+         <button class="btn btn-sm btn-info" data-toggle="modal" data-target="#modal-add-items"><i class="fas fa-plus-circle ico-tab-mini"></i>Add Items</button>
       </td>
       <td>Quantity : </td>
       <td>

@@ -110,6 +110,7 @@ class ServiceConnectionInspectionsAPI extends Controller {
         $serviceConnections->LoadType = $request['LoadType'];
         $serviceConnections->PoleNumber = $request['PoleNo'];
         
+        $serviceConnectionInspections->Rate = $request['Rate'];
         $serviceConnectionInspections->LightingOutlets = $request['LightingOutlets'];
         $serviceConnectionInspections->ConvenienceOutlets = $request['ConvenienceOutlets'];
         $serviceConnectionInspections->Motor = $request['Motor'];

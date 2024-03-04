@@ -42,6 +42,7 @@ class Users extends Model
         'remember_token',
         'OfficeSignation',
         'ProfilePicture',
+        'HRUserId',
     ];
 
     /**
@@ -58,6 +59,7 @@ class Users extends Model
         'remember_token' => 'string',
         'OfficeSignation' => 'string',
         'ProfilePicture' => 'string',
+        'HRUserId' => 'string',
     ];
 
     /**
@@ -75,6 +77,7 @@ class Users extends Model
         'updated_at' => 'nullable',
         'OfficeSignation' => 'nullable|string',
         'ProfilePicture' => 'nullable|string',
+        'HRUserId' => 'nullable|string',
     ];
 
     
