@@ -91,7 +91,7 @@
               <tr>
                  <td>Customer Deposit</td>
                  <td>
-                    <input readonly type="number" step="any" value="{{ $paymentOrder->CustomerDeposit }}" onkeyup="validateTotalInputs()" id="CustomerDeposit" name="CustomerDeposit" class="form-control form-control-sm text-right" autofocus>
+                    <inpu type="number" step="any" value="{{ $paymentOrder->CustomerDeposit }}" onkeyup="validateTotalInputs()" id="CustomerDeposit" name="CustomerDeposit" class="form-control form-control-sm text-right" autofocus>
                  </td>
               </tr>
               <tr>

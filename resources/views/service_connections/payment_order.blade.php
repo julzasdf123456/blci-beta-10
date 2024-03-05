@@ -91,7 +91,7 @@
               <tr>
                  <td>Customer Deposit</td>
                  <td>
-                    <input readonly type="number" step="any" onkeyup="validateTotalInputs()" id="CustomerDeposit" name="CustomerDeposit" class="form-control form-control-sm text-right">
+                    <input type="number" step="any" onkeyup="validateTotalInputs()" id="CustomerDeposit" name="CustomerDeposit" class="form-control form-control-sm text-right">
                  </td>
               </tr>
               <tr>
