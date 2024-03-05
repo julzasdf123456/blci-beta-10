@@ -69,7 +69,7 @@
        <td></td>
        <td>Type Of Service: </td>
        <td>
-           <input type="text" id="TypeOfService" class="form-control form-control-xs" value="NEW INSTALLATION" readonly>
+           <input type="text" id="TypeOfService" class="form-control form-control-xs" value="{{ $serviceConnection->AccountApplicationType }}" readonly>
        </td>
        <td>
            <input type="text" id="TypeOfServiceId" class="form-control form-control-xs" value="{{ $whHead != null ? $whHead->serv_code : '' }}" readonly>

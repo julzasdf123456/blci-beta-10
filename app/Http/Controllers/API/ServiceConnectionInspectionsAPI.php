@@ -257,6 +257,47 @@ class ServiceConnectionInspectionsAPI extends Controller {
     }
 
     public function getFiles(Request $request) {
-        
+        $id = $request['id'];
+
+        $folderPath  = ServiceConnections::filePath() . $id;
+        $zipFileName = $id . '.zip';
+        $tempZipPath = tempnam(sys_get_temp_dir(), $zipFileName);
+
+        if (file_exists($folderPath) && is_dir($folderPath)) {
+            $zip = new \ZipArchive();
+            if ($zip->open($tempZipPath, \ZipArchive::CREATE) === TRUE) {
+                // Add files to the ZIP file
+                $files = new \RecursiveIteratorIterator(
+                    new \RecursiveDirectoryIterator($folderPath),
+                    \RecursiveIteratorIterator::LEAVES_ONLY
+                );
+            
+                foreach ($files as $name => $file) {
+                    // Skip directories (they would be added automatically)
+                    if (!$file->isDir()) {
+                        // Get real and relative path for current file
+                        $filePath = $file->getRealPath();
+                        $relativePath = substr($filePath, strlen($folderPath) + 1);
+            
+                        // Add current file to archive
+                        $zip->addFile($filePath, $relativePath);
+                    }
+                }
+                // Zip archive will be created only after closing object
+                $zip->close();
+            
+                // Send the file to the client
+                header('Content-Type: application/zip');
+                header('Content-Disposition: attachment; filename="' . basename($zipFileName) . '"');
+                header('Content-Length: ' . filesize($tempZipPath));
+                readfile($tempZipPath);
+                // Delete the temporary file
+                unlink($tempZipPath);
+            } else {
+                return response()->json('Error zipping file', 403);
+            }
+        } else {
+            return response()->json('File folder not found', 200);
+        }
     }
 }

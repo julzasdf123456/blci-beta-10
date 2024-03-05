@@ -3729,6 +3729,8 @@ class ServiceConnectionsController extends AppBaseController
             ->select('*')
             ->first();
 
+        $serviceAppliedFor = ServiceAppliedFor::where('ServiceAppliedFor', $serviceConnection->AccountApplicationType)->first();
+
         $inspection = ServiceConnectionInspections::where('ServiceConnectionId', $scId)->first();
         
         return view('/service_connections/payment_order', [
@@ -3739,6 +3741,7 @@ class ServiceConnectionsController extends AppBaseController
             'costCenters' => CostCenters::orderBy('CostCode')->get(),
             'projectCodes' => ProjectCodes::orderBy('ProjectCode')->get(),
             'inspection' => $inspection,
+            'serviceAppliedFor' => $serviceAppliedFor,
         ]);
     }
 
@@ -4019,6 +4022,8 @@ class ServiceConnectionsController extends AppBaseController
 
         $paymentOrder = PaymentOrder::where("ServiceConnectionId", $scId)->first();
 
+        $serviceAppliedFor = ServiceAppliedFor::where('ServiceAppliedFor', $serviceConnection->AccountApplicationType)->first();
+
         return view('/service_connections/update_payment_order', [
             'whHead' => $whHead,
             'whItems' => $whItems,
@@ -4029,6 +4034,7 @@ class ServiceConnectionsController extends AppBaseController
             'costCenters' => CostCenters::orderBy('CostCode')->get(),
             'projectCodes' => ProjectCodes::orderBy('ProjectCode')->get(),
             'entNoLast' => $entNoLast,
+            'serviceAppliedFor' => $serviceAppliedFor,
         ]);
     }
 

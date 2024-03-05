@@ -26,7 +26,7 @@ use App\Http\Controllers\API\SMSNotificationsAPI;
 |
 */
 
-// VERIFIES
+// INSPECTIONS
 // DOWNLOAD DATA
 Route::get('get-service-connections/', [ServiceConnectionInspectionsAPI::class, 'getServiceConnections']);
 Route::get('get-service-inspections/', [ServiceConnectionInspectionsAPI::class, 'getServiceInspections']);
@@ -35,6 +35,7 @@ Route::post('receive-bill-deposits', [ServiceConnectionInspectionsAPI::class, 'r
 Route::get('get-zones', [ServiceConnectionInspectionsAPI::class, 'getZones']);
 Route::get('get-blocks', [ServiceConnectionInspectionsAPI::class, 'getBlocks']);
 Route::get('update-downloaded-inspection', [ServiceConnectionInspectionsAPI::class, 'updateDownloadedInspection']);
+Route::get('get-files', [ServiceConnectionInspectionsAPI::class, 'getFiles']);
 
 Route::get('get-payment-queues/', [TelleringController::class, 'fetchApprovedServiceConnections']);
 
