@@ -26,7 +26,7 @@ class ServiceConnectionsEnergization extends Controller {
                 ->leftJoin('CRM_ServiceConnectionInspections', 'CRM_ServiceConnections.id', '=', 'CRM_ServiceConnectionInspections.ServiceConnectionId')
                 ->leftJoin('users', 'users.id', '=', 'CRM_ServiceConnectionInspections.Inspector')
                 ->whereRaw("(Trash IS NULL OR Trash='No')")
-                ->whereRaw("(CRM_ServiceConnections.Status='For Energization' OR CRM_ServiceConnections.Status='For Re-Energization') AND CRM_ServiceConnections.StationCrewAssigned='" . $crew . "'")
+                ->whereRaw("(CRM_ServiceConnections.Status='Approved for Energization' OR CRM_ServiceConnections.Status='For Re-Energization') AND CRM_ServiceConnections.StationCrewAssigned='" . $crew . "'")
                 ->select(
                     'CRM_ServiceConnections.*', 
                     'users.name AS Verifier',
