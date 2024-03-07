@@ -40,8 +40,11 @@ use Illuminate\Support\Facades\Auth;
                                 <a href="{{ route('serviceConnections.update-payment-order', [$serviceConnections->id]) }}" class="dropdown-item" title="Edit Payment Order">
                                     <i class="fas fa-file-invoice-dollar ico-tab"></i>Edit Payment Order</a>
 
-                                <a href="{{ route('serviceConnections.print-payment-order', [$serviceConnections->id]) }}" class="dropdown-item" title="Edit Payment Order">
+                                <a href="{{ route('serviceConnections.print-payment-order', [$serviceConnections->id]) }}" class="dropdown-item" title="Print Payment Order Stub">
                                     <i class="fas fa-print ico-tab"></i>Print Payment Order Stub</a>
+                                    
+                                <a href="{{ route('serviceConnections.print-order-materials', [$serviceConnections->id]) }}" class="dropdown-item" title="Print Payment Order Materials">
+                                    <i class="fas fa-print ico-tab"></i>Print Order Materials</a>
                             @endif
                             {{-- <div class="dropdown-divider"></div> --}}
                         </div>

@@ -126,7 +126,7 @@ class MeterInstallationController extends AppBaseController
 
         Flash::success('Meter Installation updated successfully.');
 
-        return redirect(route('meterInstallations.index'));
+        return redirect(route('serviceConnections.show', [$meterInstallation->ServiceConnectionId]));
     }
 
     /**

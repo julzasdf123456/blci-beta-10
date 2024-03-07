@@ -15,62 +15,71 @@
 <div class="content px-3">
     <div class="row">
         {{-- PARAMS --}}
-        <div class="col-lg-3 col-md-4">
-            <div class="card card-primary card-outline">
+        <div class="col-lg-12">
+            <div class="card shadow-none">
                 {!! Form::open(['route' => 'serviceConnections.download-energization-report']) !!}
-                <div class="card-header">
-                    <span class="card-title">Config</span>
-                </div>
                 <div class="card-body">
-                    <div class="form-group">
-                        {!! Form::label('From', 'From') !!}
-                        {!! Form::text('From', isset($_GET['From']) ? $_GET['From'] : '', ['class' => 'form-control','id'=>'From']) !!}
-                    </div>
-                    @push('page_scripts')
-                        <script type="text/javascript">
-                            $('#From').datetimepicker({
-                                format: 'YYYY-MM-DD',
-                                useCurrent: true,
-                                sideBySide: true
-                            })
-                        </script>
-                    @endpush
+                    <div class="row">
+                        <div class="form-group col-lg-2">
+                            {!! Form::label('From', 'From') !!}
+                            {!! Form::text('From', isset($_GET['From']) ? $_GET['From'] : '', ['class' => 'form-control','id'=>'From']) !!}
+                        </div>
+                        @push('page_scripts')
+                            <script type="text/javascript">
+                                $('#From').datetimepicker({
+                                    format: 'YYYY-MM-DD',
+                                    useCurrent: true,
+                                    sideBySide: true,
+                                    icons : {
+                                        previous : 'fas fa-caret-left',
+                                        next : 'fas fa-caret-right',
+                                    }
+                                })
+                            </script>
+                        @endpush
 
-                    <div class="form-group">
-                        {!! Form::label('To', 'To') !!}
-                        {!! Form::text('To', isset($_GET['To']) ? $_GET['To'] : '', ['class' => 'form-control','id'=>'To']) !!}
-                    </div>
-                    @push('page_scripts')
-                        <script type="text/javascript">
-                            $('#To').datetimepicker({
-                                format: 'YYYY-MM-DD',
-                                useCurrent: true,
-                                sideBySide: true
-                            })
-                        </script>
-                    @endpush
+                        <div class="form-group col-lg-2">
+                            {!! Form::label('To', 'To') !!}
+                            {!! Form::text('To', isset($_GET['To']) ? $_GET['To'] : '', ['class' => 'form-control','id'=>'To']) !!}
+                        </div>
+                        @push('page_scripts')
+                            <script type="text/javascript">
+                                $('#To').datetimepicker({
+                                    format: 'YYYY-MM-DD',
+                                    useCurrent: true,
+                                    sideBySide: true,
+                                    icons : {
+                                        previous : 'fas fa-caret-left',
+                                        next : 'fas fa-caret-right',
+                                    }
+                                })
+                            </script>
+                        @endpush
 
-                    <div class="form-group">
-                        {!! Form::label('Office', 'Office') !!}
-                        <select name="Office" id="Office" class="form-control">
-                            <option value="All">All</option>
-                            @foreach ($towns as $item)
-                                <option value="{{ $item->id }}">{{ $item->Town }}</option>
-                            @endforeach
-                        </select>
+                        <div class="form-group col-lg-2">
+                            {!! Form::label('Office', 'Office') !!}
+                            <select name="Office" id="Office" class="form-control">
+                                <option value="All">All</option>
+                                @foreach ($towns as $item)
+                                    <option value="{{ $item->id }}">{{ $item->Town }}</option>
+                                @endforeach
+                            </select>
+                        </div>
+                        <div class="col-lg-3">
+                            <label>Actions</label>
+                            <br>
+                            <button id="show-results" class="btn btn-default" title="Show Results"><i class="fas fa-check-circle ico-tab-mini"></i>Show</button>
+                            <button type="submit" class="btn btn-primary" title="Download in Excel File"><i class="fas fa-file-download ico-tab-mini"></i>Download .xlsx</button>
+                        </div>
                     </div>
-                </div>
-                <div class="card-footer">
-                    <button id="show-results" class="btn btn-link" title="Show Results"><i class="fas fa-check-circle"></i></button>
-                    <button type="submit" class="btn btn-link text-success" title="Download in Excel File"><i class="fas fa-file-download"></i></button>
                 </div>
                 {!! Form::close() !!}
             </div>
         </div>
         
         {{-- CONTENT --}}
-        <div class="col-lg-9 col-md-8">
-            <div class="card">
+        <div class="col-lg-12">
+            <div class="card shadow-none">
                 <div class="card-body table-responsive px-0">
                     <table id="content-table" class="table table-hover table-sm">
                         <thead>
@@ -79,7 +88,7 @@
                             <th>Applicant Name</th>
                             <th>Address</th>
                             <th>Office</th>
-                            <th>Application Date</th>
+                            <th>Energization Date</th>
                             <th>Meter No</th>                            
                             <th>Remarks</th>
                         </thead>
@@ -88,6 +97,7 @@
                         </tbody>
                     </table>
                 </div>
+                <div class="card-footer"></div>
             </div>
         </div>
     </div>

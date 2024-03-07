@@ -2,6 +2,9 @@
     <p class="text-danger"><i class="fas fa-info-circle ico-tab"></i> <i>No meter information assigned yet!</i></p>
 @else
     <div class="row p-3">
+        <div class="col-lg-12 mb-2">            
+            <a href="{{ route('meterInstallations.edit', [$serviceConnectionMeter->id]) }}" class="btn btn-primary-skinny float-right btn-sm"><i class="fas fa-pen ico-tab-mini"></i>Update Meter Data</a>
+        </div>
         {{-- METER --}}
         <div class="col-lg-6">
             <div class="card">

@@ -45,7 +45,8 @@ class ServiceConnectionEnergizationReportExport implements FromArray, ShouldAuto
             'Barangay',
             'Town',
             'Request',
-            'Status'
+            'Status',
+            'Meter Number',
         ];
     }
 
@@ -80,10 +81,10 @@ class ServiceConnectionEnergizationReportExport implements FromArray, ShouldAuto
     public function registerEvents(): array {
         return [
             AfterSheet::class => function(AfterSheet $event) { 
-                $event->sheet->mergeCells(sprintf('A1:I1'));
-                $event->sheet->mergeCells(sprintf('A2:I2'));
+                $event->sheet->mergeCells(sprintf('A1:J1'));
+                $event->sheet->mergeCells(sprintf('A2:J2'));
 
-                $event->sheet->mergeCells(sprintf('A4:I4'));
+                $event->sheet->mergeCells(sprintf('A4:J4'));
                 
                 $event->sheet->setCellValue('A1', env('APP_COMPANY'));
                 $event->sheet->setCellValue('A2', env('APP_ADDRESS'));

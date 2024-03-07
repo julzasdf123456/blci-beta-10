@@ -2318,51 +2318,51 @@ class ServiceConnectionsController extends AppBaseController
     public function fetchEnergizationReport(Request $request) {
         if ($request['Office'] == 'All') {
             $serviceConnections = DB::table('CRM_ServiceConnections')
-            ->leftJoin('CRM_Barangays', 'CRM_ServiceConnections.Barangay', '=', 'CRM_Barangays.id')
-            ->leftJoin('CRM_Towns', 'CRM_ServiceConnections.Town', '=', 'CRM_Towns.id')
-            ->leftJoin('CRM_ServiceConnectionAccountTypes', 'CRM_ServiceConnections.AccountType', '=', 'CRM_ServiceConnectionAccountTypes.id')
-            ->leftJoin('CRM_ServiceConnectionCrew', 'CRM_ServiceConnections.StationCrewAssigned', '=', 'CRM_ServiceConnectionCrew.id')
-            ->leftJoin('CRM_ServiceConnectionMeterAndTransformer', 'CRM_ServiceConnections.id', '=', 'CRM_ServiceConnectionMeterAndTransformer.ServiceConnectionId')
-            ->select('CRM_ServiceConnections.id as id',
-                        'CRM_ServiceConnections.ServiceAccountName as ServiceAccountName',
-                        'CRM_ServiceConnections.DateTimeOfEnergization',
-                        'CRM_ServiceConnections.Sitio as Sitio', 
-                        'CRM_ServiceConnections.Office', 
-                        'CRM_ServiceConnections.Notes', 
-                        'CRM_Towns.Town as Town',
-                        'CRM_Barangays.Barangay as Barangay',
-                        'CRM_ServiceConnectionMeterAndTransformer.MeterSerialNumber')
-            ->whereBetween('CRM_ServiceConnections.DateTimeOfEnergization', [$request['From'], $request['To']])
-            ->where(function ($query) {
-                $query->where('CRM_ServiceConnections.Trash', 'No')
-                    ->orWhereNull('CRM_ServiceConnections.Trash');
-            })
-            ->orderByDesc('DateTimeOfEnergization')
-            ->get();
+                ->leftJoin('CRM_Barangays', 'CRM_ServiceConnections.Barangay', '=', 'CRM_Barangays.id')
+                ->leftJoin('CRM_Towns', 'CRM_ServiceConnections.Town', '=', 'CRM_Towns.id')
+                ->leftJoin('CRM_ServiceConnectionAccountTypes', 'CRM_ServiceConnections.AccountType', '=', 'CRM_ServiceConnectionAccountTypes.id')
+                ->leftJoin('CRM_ServiceConnectionCrew', 'CRM_ServiceConnections.StationCrewAssigned', '=', 'CRM_ServiceConnectionCrew.id')
+                ->leftJoin('CRM_MeterInstallation', 'CRM_ServiceConnections.id', '=', 'CRM_MeterInstallation.ServiceConnectionId')
+                ->select('CRM_ServiceConnections.id as id',
+                            'CRM_ServiceConnections.ServiceAccountName as ServiceAccountName',
+                            'CRM_ServiceConnections.DateTimeOfEnergization',
+                            'CRM_ServiceConnections.Sitio as Sitio', 
+                            'CRM_ServiceConnections.Office', 
+                            'CRM_ServiceConnections.Notes', 
+                            'CRM_Towns.Town as Town',
+                            'CRM_Barangays.Barangay as Barangay',
+                            'CRM_MeterInstallation.NewMeterNumber')
+                ->whereBetween('CRM_ServiceConnections.DateTimeOfEnergization', [$request['From'], $request['To']])
+                ->where(function ($query) {
+                    $query->where('CRM_ServiceConnections.Trash', 'No')
+                        ->orWhereNull('CRM_ServiceConnections.Trash');
+                })
+                ->orderByDesc('DateTimeOfEnergization')
+                ->get();
         } else {
             $serviceConnections = DB::table('CRM_ServiceConnections')
-            ->leftJoin('CRM_Barangays', 'CRM_ServiceConnections.Barangay', '=', 'CRM_Barangays.id')
-            ->leftJoin('CRM_Towns', 'CRM_ServiceConnections.Town', '=', 'CRM_Towns.id')
-            ->leftJoin('CRM_ServiceConnectionAccountTypes', 'CRM_ServiceConnections.AccountType', '=', 'CRM_ServiceConnectionAccountTypes.id')
-            ->leftJoin('CRM_ServiceConnectionCrew', 'CRM_ServiceConnections.StationCrewAssigned', '=', 'CRM_ServiceConnectionCrew.id')
-            ->leftJoin('CRM_ServiceConnectionMeterAndTransformer', 'CRM_ServiceConnections.id', '=', 'CRM_ServiceConnectionMeterAndTransformer.ServiceConnectionId')
-            ->select('CRM_ServiceConnections.id as id',
-                        'CRM_ServiceConnections.ServiceAccountName as ServiceAccountName',
-                        'CRM_ServiceConnections.DateTimeOfEnergization',
-                        'CRM_ServiceConnections.Sitio as Sitio', 
-                        'CRM_ServiceConnections.Office',
-                        'CRM_ServiceConnections.Notes', 
-                        'CRM_Towns.Town as Town',
-                        'CRM_Barangays.Barangay as Barangay',
-                        'CRM_ServiceConnectionMeterAndTransformer.MeterSerialNumber')
-            ->whereBetween('CRM_ServiceConnections.DateTimeOfEnergization', [$request['From'], $request['To']])
-            ->where('CRM_ServiceConnections.Town', $request['Office'])
-            ->where(function ($query) {
-                $query->where('CRM_ServiceConnections.Trash', 'No')
-                    ->orWhereNull('CRM_ServiceConnections.Trash');
-            })
-            ->orderByDesc('DateTimeOfEnergization')
-            ->get();
+                ->leftJoin('CRM_Barangays', 'CRM_ServiceConnections.Barangay', '=', 'CRM_Barangays.id')
+                ->leftJoin('CRM_Towns', 'CRM_ServiceConnections.Town', '=', 'CRM_Towns.id')
+                ->leftJoin('CRM_ServiceConnectionAccountTypes', 'CRM_ServiceConnections.AccountType', '=', 'CRM_ServiceConnectionAccountTypes.id')
+                ->leftJoin('CRM_ServiceConnectionCrew', 'CRM_ServiceConnections.StationCrewAssigned', '=', 'CRM_ServiceConnectionCrew.id')
+                ->leftJoin('CRM_MeterInstallation', 'CRM_ServiceConnections.id', '=', 'CRM_MeterInstallation.ServiceConnectionId')
+                ->select('CRM_ServiceConnections.id as id',
+                            'CRM_ServiceConnections.ServiceAccountName as ServiceAccountName',
+                            'CRM_ServiceConnections.DateTimeOfEnergization',
+                            'CRM_ServiceConnections.Sitio as Sitio', 
+                            'CRM_ServiceConnections.Office',
+                            'CRM_ServiceConnections.Notes', 
+                            'CRM_Towns.Town as Town',
+                            'CRM_Barangays.Barangay as Barangay',
+                            'CRM_MeterInstallation.NewMeterNumber')
+                ->whereBetween('CRM_ServiceConnections.DateTimeOfEnergization', [$request['From'], $request['To']])
+                ->where('CRM_ServiceConnections.Town', $request['Office'])
+                ->where(function ($query) {
+                    $query->where('CRM_ServiceConnections.Trash', 'No')
+                        ->orWhereNull('CRM_ServiceConnections.Trash');
+                })
+                ->orderByDesc('DateTimeOfEnergization')
+                ->get();
         }
         
             
@@ -2378,7 +2378,7 @@ class ServiceConnectionsController extends AppBaseController
                         <td>' . ServiceConnections::getAddress($row) . '</td>
                         <td>' . $row->Office . '</td>
                         <td>' . date('F d, Y @ h:i:s A', strtotime($row->DateTimeOfEnergization)) . '</td>
-                        <td>' . $row->MeterSerialNumber . '</td>
+                        <td>' . $row->NewMeterNumber . '</td>
                         <td>' . $row->Notes . '</td>
                     </tr>   
                 ';
@@ -2398,6 +2398,7 @@ class ServiceConnectionsController extends AppBaseController
             ->leftJoin('CRM_Towns', 'CRM_ServiceConnections.Town', '=', 'CRM_Towns.id')
             ->leftJoin('CRM_ServiceConnectionAccountTypes', 'CRM_ServiceConnections.AccountType', '=', 'CRM_ServiceConnectionAccountTypes.id')
             ->leftJoin('CRM_ServiceConnectionCrew', 'CRM_ServiceConnections.StationCrewAssigned', '=', 'CRM_ServiceConnectionCrew.id')
+            ->leftJoin('CRM_MeterInstallation', 'CRM_ServiceConnections.id', '=', 'CRM_MeterInstallation.ServiceConnectionId')
             ->select(DB::raw("CONCAT(CRM_ServiceConnections.id, ' ') as id"),
                         'CRM_ServiceConnections.ServiceAccountName as ServiceAccountName',
                         'CRM_ServiceConnections.DateTimeOfEnergization',
@@ -2406,7 +2407,8 @@ class ServiceConnectionsController extends AppBaseController
                         'CRM_Barangays.Barangay as Barangay',
                         'CRM_Towns.Town as Town',
                         'CRM_ServiceConnections.ConnectionApplicationType',
-                        'CRM_ServiceConnections.Status')
+                        'CRM_ServiceConnections.Status',
+                        'CRM_MeterInstallation.NewMeterNumber')
             ->whereBetween('CRM_ServiceConnections.DateTimeOfEnergization', [$request['From'], $request['To']])
             ->where(function ($query) {
                 $query->where('CRM_ServiceConnections.Trash', 'No')
@@ -2420,6 +2422,7 @@ class ServiceConnectionsController extends AppBaseController
             ->leftJoin('CRM_Towns', 'CRM_ServiceConnections.Town', '=', 'CRM_Towns.id')
             ->leftJoin('CRM_ServiceConnectionAccountTypes', 'CRM_ServiceConnections.AccountType', '=', 'CRM_ServiceConnectionAccountTypes.id')
             ->leftJoin('CRM_ServiceConnectionCrew', 'CRM_ServiceConnections.StationCrewAssigned', '=', 'CRM_ServiceConnectionCrew.id')
+            ->leftJoin('CRM_MeterInstallation', 'CRM_ServiceConnections.id', '=', 'CRM_MeterInstallation.ServiceConnectionId')
             ->select(DB::raw("CONCAT(CRM_ServiceConnections.id, ' ') as id"),
                         'CRM_ServiceConnections.ServiceAccountName as ServiceAccountName',
                         'CRM_ServiceConnections.DateTimeOfEnergization',
@@ -2428,7 +2431,8 @@ class ServiceConnectionsController extends AppBaseController
                         'CRM_Barangays.Barangay as Barangay', 
                         'CRM_Towns.Town as Town',
                         'CRM_ServiceConnections.ConnectionApplicationType',
-                        'CRM_ServiceConnections.Status')
+                        'CRM_ServiceConnections.Status',
+                        'CRM_MeterInstallation.NewMeterNumber')
             ->whereBetween('CRM_ServiceConnections.DateTimeOfEnergization', [$request['From'], $request['To']])
             ->where('CRM_ServiceConnections.Town', $request['Office'])
             ->where(function ($query) {
@@ -4810,5 +4814,82 @@ class ServiceConnectionsController extends AppBaseController
         } else {
             return response()->json('File not found!', 404);
         }
+    }
+
+    public function printOrderMaterials($id) {
+        $serviceConnections = DB::table('CRM_ServiceConnections')
+            ->leftJoin('CRM_Barangays', 'CRM_ServiceConnections.Barangay', '=', 'CRM_Barangays.id')
+            ->leftJoin('CRM_Towns', 'CRM_ServiceConnections.Town', '=', 'CRM_Towns.id')
+            ->leftJoin('users', 'CRM_ServiceConnections.UserId', '=', 'users.id')
+            ->select('CRM_ServiceConnections.id as id',
+                        'CRM_ServiceConnections.AccountCount as AccountCount', 
+                        'CRM_ServiceConnections.ServiceAccountName as ServiceAccountName',
+                        'CRM_ServiceConnections.DateOfApplication', 
+                        'CRM_ServiceConnections.TimeOfApplication', 
+                        'CRM_ServiceConnections.ContactNumber as ContactNumber', 
+                        'CRM_ServiceConnections.EmailAddress as EmailAddress',  
+                        'CRM_ServiceConnections.AccountApplicationType as AccountApplicationType', 
+                        'CRM_ServiceConnections.AccountOrganization as AccountOrganization', 
+                        'CRM_ServiceConnections.ConnectionApplicationType as ConnectionApplicationType',
+                        'CRM_ServiceConnections.MemberConsumerId as MemberConsumerId',
+                        'CRM_ServiceConnections.Status as Status',  
+                        'CRM_ServiceConnections.Notes as Notes', 
+                        'CRM_ServiceConnections.Office', 
+                        'CRM_ServiceConnections.LongSpan', 
+                        'CRM_ServiceConnections.ORNumber as ORNumber',
+                        'CRM_ServiceConnections.ORDate', 
+                        'CRM_ServiceConnections.Sitio as Sitio', 
+                        'CRM_ServiceConnections.LoadCategory as LoadCategory', 
+                        'CRM_ServiceConnections.DateTimeOfEnergization as DateTimeOfEnergization', 
+                        'CRM_ServiceConnections.DateTimeLinemenArrived as DateTimeLinemenArrived', 
+                        'CRM_Towns.Town as Town',
+                        'CRM_Barangays.Barangay as Barangay',
+                        'CRM_ServiceConnections.AccountType',
+                        'CRM_ServiceConnections.ServiceNumber',
+                        'CRM_ServiceConnections.ConnectionSchedule',
+                        'CRM_ServiceConnections.LoadType',
+                        'CRM_ServiceConnections.Zone',
+                        'CRM_ServiceConnections.Block',
+                        'CRM_ServiceConnections.TransformerID',
+                        'CRM_ServiceConnections.LoadInKva',
+                        'CRM_ServiceConnections.PoleNumber',
+                        'CRM_ServiceConnections.Feeder',
+                        'CRM_ServiceConnections.ChargeTo',
+                        'CRM_ServiceConnections.AccountNumber',
+                        'CRM_ServiceConnections.CertificateOfConnectionIssuedOn',
+                        'users.name'
+                        )
+        ->where('CRM_ServiceConnections.id', $id)
+        ->where(function ($query) {
+            $query->where('CRM_ServiceConnections.Trash', 'No')
+                ->orWhereNull('CRM_ServiceConnections.Trash');
+        })
+        ->first(); 
+
+        $paymentOrder = PaymentOrder::where('ServiceConnectionId', $id)->first();
+
+        // ITEMS
+        $whHead = WarehouseHead::where('appl_no', $id)->whereRaw("orderno NOT LIKE 'M%'")->first();
+        if ($whHead != null) {
+            $whItems = DB::connection('mysql')
+                ->table('tblor_line')
+                ->leftJoin('tblitems', 'tblor_line.itemcd', '=', 'tblitems.itm_code')
+                ->whereRaw("reqno='" . $whHead->orderno . "'")
+                ->select(
+                    'tblor_line.*', 
+                    'tblitems.itm_desc'
+                    )
+                ->orderBy('itemno')
+                ->get();
+        } else {
+            $whItems = [];
+        }
+        
+        return view('/service_connections/print_order_materials', [
+            'serviceConnection' => $serviceConnections,
+            'paymentOrder' => $paymentOrder,
+            'whHead' => $whHead,
+            'whItems' => $whItems,
+        ]);
     }
 }

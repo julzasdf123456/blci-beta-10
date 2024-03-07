@@ -188,6 +188,7 @@ Route::get('/service_connections/search', [ServiceConnectionsController::class, 
 Route::get('/service_connections/move-to-trash-ajax', [ServiceConnectionsController::class, 'moveToTrashAjax'])->name('serviceConnections.move-to-trash-ajax');
 Route::get('/service_connections/fetch-images', [ServiceConnectionsController::class, 'fetchImages'])->name('serviceConnections.fetch-images');
 Route::post('/service_connections/trash-file', [ServiceConnectionsController::class, 'trashFile'])->name('serviceConnections.trash-file');
+Route::get('/service_connections/print-order-materials/{id}', [ServiceConnectionsController::class, 'printOrderMaterials'])->name('serviceConnections.print-order-materials');
 Route::resource('serviceConnections', App\Http\Controllers\ServiceConnectionsController::class);
 
 
