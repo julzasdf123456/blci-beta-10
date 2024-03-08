@@ -364,7 +364,7 @@
                                                     <input type="radio" id="StatusApproved" name="Status" value="Approved" class="custom-radio" {{ $serviceConnectionInspections->Status != null && $serviceConnectionInspections->Status == 'Approved' ? 'checked' : '' }}>
                                                     <label for="StatusApproved" class="custom-radio-label">Approved</label>
                                 
-                                                    <input type="radio" id="StatusReInspection" name="Status" value="ReInspection" class="custom-radio"  {{ $serviceConnectionInspections->Status != null && $serviceConnectionInspections->Status == 'Re-Inspection' ? 'checked' : '' }}>
+                                                    <input type="radio" id="StatusReInspection" name="Status" value="Re-Inspection" class="custom-radio"  {{ $serviceConnectionInspections->Status != null && $serviceConnectionInspections->Status == 'Re-Inspection' ? 'checked' : '' }}>
                                                     <label for="StatusReInspection" class="custom-radio-label">Re-Inspection</label>
                                                 </div> 
                                             </td>
