@@ -342,9 +342,9 @@
                   "<td></td>" +                  
                   "<td class='text-right'>" + qty + "</td>" +
                   "<td>" + uom + "</td>" +
-                  "<td class='text-right'>" + Math.round((parseFloat(uprice) + Number.EPSILON) * 100) / 100 + "</td>" +
-                  "<td class='text-right'>" + Math.round((parseFloat(selectedUnitPrice) + Number.EPSILON) * 100) / 100 + "</td>" +
-                  "<td class='text-right text-primary'>" + tcost + "</td>" + 
+                  "<td class='text-right'>" + Number(parseFloat(uprice)).toFixed(6) + "</td>" +
+                  "<td class='text-right'>" + Number(parseFloat(selectedUnitPrice)).toFixed(6) + "</td>" +
+                  "<td class='text-right text-primary'>" + Number(parseFloat(tcost)).toFixed(6) + "</td>" + 
                   "<td class='text-right'>" +
                      "<button onclick='removeItem(`" + id + "`)' class='btn btn-xs btn-link text-danger' style='margin-left: 10px;'><i class='fas fa-trash'></i></button>" +
                   "</td>" +
