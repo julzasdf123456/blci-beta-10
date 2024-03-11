@@ -189,6 +189,8 @@ Route::get('/service_connections/move-to-trash-ajax', [ServiceConnectionsControl
 Route::get('/service_connections/fetch-images', [ServiceConnectionsController::class, 'fetchImages'])->name('serviceConnections.fetch-images');
 Route::post('/service_connections/trash-file', [ServiceConnectionsController::class, 'trashFile'])->name('serviceConnections.trash-file');
 Route::get('/service_connections/print-order-materials/{id}', [ServiceConnectionsController::class, 'printOrderMaterials'])->name('serviceConnections.print-order-materials');
+Route::get('/service_connections/revalidate-payment-order-materials', [ServiceConnectionsController::class, 'revalidatePaymentOrderMaterials'])->name('serviceConnections.revalidate-payment-order-materials');
+Route::get('/service_connections/print-order-meters/{id}', [ServiceConnectionsController::class, 'printOrderMeters'])->name('serviceConnections.print-order-meters');
 Route::resource('serviceConnections', App\Http\Controllers\ServiceConnectionsController::class);
 
 
@@ -1007,3 +1009,5 @@ Route::resource('bohol-water-collections', App\Http\Controllers\BoholWaterCollec
 Route::resource('sms-settings', App\Http\Controllers\SmsSettingsController::class);
 
 Route::resource('readingFromTexts', App\Http\Controllers\ReadingFromTextController::class);
+Route::resource('local-warehouse-heads', App\Http\Controllers\LocalWarehouseHeadController::class);
+Route::resource('local-warehouse-items', App\Http\Controllers\LocalWarehouseItemsController::class);

@@ -70,6 +70,10 @@
                                 <td>{{ $serviceConnectionInspections->Rate != null ? number_format($serviceConnectionInspections->Rate, 2) : 0 }}</td>
                             </tr>
                             <tr>
+                                <td>MeteringType</td>
+                                <td>{{ $serviceConnectionInspections->MeteringType != null ? $serviceConnectionInspections->MeteringType : '-' }}</td>
+                            </tr>
+                            <tr>
                                 <td>Notes and Remarks</td>
                                 <td>{{ $serviceConnectionInspections->Notes }}</td>
                             </tr>

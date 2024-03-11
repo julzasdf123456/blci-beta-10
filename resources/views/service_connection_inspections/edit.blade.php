@@ -1,3 +1,7 @@
+@php
+    use App\Models\ServiceConnectionInspections;
+@endphp
+
 @extends('layouts.app')
 
 @section('content')
@@ -36,7 +40,7 @@
                                         <tr>
                                             <td class="v-align">Current Rate</td>
                                             <td class="v-align" colspan="3">
-                                                <input type="number" step="any" name="Rate" id="Rate" value="{{ $serviceConnectionInspections->Rate }}" class="form-control fom-control-sm">
+                                                <input type="number" onkeyup="updateDeposit()" step="any" name="Rate" id="Rate" value="{{ $serviceConnectionInspections->Rate }}" class="form-control fom-control-sm">
                                             </td>
                                         </tr>
                                         <tr>
@@ -60,7 +64,7 @@
                                         <tr>
                                             <td class="v-align">Total Load</td>
                                             <td class="v-align" colspan="3">
-                                                <input type="number" step="any" name="TotalLoad" id="TotalLoad" value="{{ $serviceConnectionInspections->TotalLoad }}" class="form-control fom-control-sm">
+                                                <input type="number" onkeyup="updateDeposit()" step="any" name="TotalLoad" id="TotalLoad" value="{{ $serviceConnectionInspections->TotalLoad }}" class="form-control fom-control-sm">
                                             </td>
                                         </tr>
                                         <tr>
@@ -103,6 +107,17 @@
                                                     <input type="radio" id="COMMON" name="LoadType" value="COMMON" class="custom-radio"  {{ $serviceConnection->LoadType != null && $serviceConnection->LoadType == 'COMMON' ? 'checked' : '' }}>
                                                     <label for="COMMON" class="custom-radio-label">COMMON</label>
                                                 </div> 
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td class="v-align">MeteringType</td>
+                                            <td class="v-align" colspan="3">
+                                                <select name="MeteringType" id="MeteringType" class="form-control form-control-sm">
+                                                    <option value="RESIDENTIAL" {{ $serviceConnectionInspections->MeteringType != null && $serviceConnectionInspections->MeteringType== 'RESIDENTIAL' ? 'selected' : '' }}>RESIDENTIAL</option>
+                                                    <option value="COMMERCIAL LV" {{ $serviceConnectionInspections->MeteringType != null && $serviceConnectionInspections->MeteringType== 'COMMERCIAL LV' ? 'selected' : '' }}>COMMERCIAL LV</option>
+                                                    <option value="INDUSTRIAL LV" {{ $serviceConnectionInspections->MeteringType != null && $serviceConnectionInspections->MeteringType== 'INDUSTRIAL LV' ? 'selected' : '' }}>INDUSTRIAL LV</option>
+                                                    <option value="INDUSTRIAL HV" {{ $serviceConnectionInspections->MeteringType != null && $serviceConnectionInspections->MeteringType== 'INDUSTRIAL HV' ? 'selected' : '' }}>INDUSTRIAL HV</option>
+                                                </select>
                                             </td>
                                         </tr>
                                         <tr>
@@ -394,3 +409,83 @@
         
     </div>
 @endsection
+
+@push('page_scripts')
+    <script>
+        function updateDeposit() {
+            getContractedDemand()
+            getContractedEnergy()
+            getBillDeposit()
+        }
+
+        function getContractedDemand() {
+            var totalLoad = $('#TotalLoad').val()
+
+            if (isNull(totalLoad)) {
+                $('#ContractedDemand').val(0)
+            } else {
+                var demand = parseFloat(totalLoad) * parseFloat('{{ ServiceConnectionInspections::df() }}') * parseFloat('{{ ServiceConnectionInspections::df() }}')
+                $('#ContractedDemand').val(round(demand))
+            }
+        }
+
+        function getContractedEnergy() {
+            var rate = $('#Rate').val()
+            var totalLoad = $('#TotalLoad').val()
+
+            if (isNull(rate) | isNull(totalLoad)) {
+                $('#ContractedEnergy').val(0)
+            } else {
+                var demand = parseFloat(totalLoad) * parseFloat('{{ ServiceConnectionInspections::df() }}') * parseFloat('{{ ServiceConnectionInspections::df() }}')
+                var energy = (demand / 1000) * (8 * 30 * parseFloat(rate))
+                $('#ContractedEnergy').val(round(energy))
+            }
+        }
+
+        function getBillDeposit() {
+            var pfCom = parseFloat('{{ ServiceConnectionInspections::pfCommercial() }}')
+            var pfRes = parseFloat('{{ ServiceConnectionInspections::pfResidential() }}')
+            var df = parseFloat('{{ ServiceConnectionInspections::df() }}')
+            var commercialThreshold = parseFloat('{{ ServiceConnectionInspections::commercialThreshold() }}')
+            var residentialThreshold = parseFloat('{{ ServiceConnectionInspections::resdidentialThreshold() }}')
+            var type = '{{ $serviceConnection->AccountType }}'
+            var totalLoad = $('#TotalLoad').val()
+            var rate = $('#Rate').val()
+           
+            if (isNull(totalLoad) | isNull(rate)) {
+                $('#BillDeposit').val('0')
+            } else {
+                totalLoad = parseFloat(totalLoad)
+                rate = parseFloat(rate)
+
+                if (!isNull(type) && type === 'COMMERCIAL') {
+                    if (totalLoad > commercialThreshold) {
+                        var excess = totalLoad - commercialThreshold
+                        var excessPf = excess * pfCom
+                        var wattage = (excessPf + commercialThreshold) * df
+                        var deposit = (wattage * rate * 8 * 26) / 1000
+                        $('#BillDeposit').val(round(deposit))
+                    } else {
+                        var wattage = totalLoad * df
+                        var deposit = (wattage * rate * 8 * 26) / 1000
+                        $('#BillDeposit').val(round(deposit))
+                    }
+                } else if (!isNull(type) && type === 'RESIDENTIAL') {
+                    if (totalLoad > residentialThreshold) {
+                        var excess = totalLoad - residentialThreshold
+                        var excessPf = excess * pfRes
+                        var wattage = (excessPf + residentialThreshold) * df
+                        var deposit = (wattage * rate * 8 * 30) / 1000
+                        $('#BillDeposit').val(round(deposit))
+                    } else {
+                        var wattage = totalLoad * df
+                        var deposit = (wattage * rate * 8 * 30) / 1000
+                        $('#BillDeposit').val(round(deposit))
+                    }
+                } else {
+                    $('#BillDeposit').val('0')
+                }
+            }
+        }
+    </script>
+@endpush

@@ -138,7 +138,8 @@ class ServiceConnectionInspections extends Model
         'Recommendation',
         'ForPayment',
         'Rate',
-        'BillDeposit'
+        'BillDeposit',
+        'MeteringType',
     ];
 
     /**
@@ -215,7 +216,8 @@ class ServiceConnectionInspections extends Model
         'Recommendation' => 'string',
         'ForPayment' => 'string',
         'Rate' => 'string',
-        'BillDeposit' => 'string'
+        'BillDeposit' => 'string',
+        'MeteringType' => 'string',
     ];
 
     /**
@@ -294,8 +296,31 @@ class ServiceConnectionInspections extends Model
         'Recommendation' => 'nullable|string',
         'ForPayment' => 'nullable|string',
         'Rate' => 'nullable|string',
-        'BillDeposit' => 'nullable|string'
+        'BillDeposit' => 'nullable|string',
+        'MeteringType' => 'nullable|string',
     ];
 
-    
+    public static function df() {
+        return .8;
+    }
+
+    public static function pf() {
+        return .8;
+    }
+
+    public static function pfCommercial() {
+        return .5;
+    }
+
+    public static function pfResidential() {
+        return .35;
+    }
+
+    public static function commercialThreshold() {
+        return 10000;
+    }
+
+    public static function resdidentialThreshold() {
+        return 3000;
+    }
 }

@@ -86,6 +86,10 @@
                      <td>Others</td>
                      <td class="text-right"><strong>P {{ is_numeric($paymentOrder->OthersTotal) ? number_format($paymentOrder->OthersTotal, 2) : $paymentOrder->OthersTotal }}</strong></td>
                   </tr>
+                  <tr>
+                     <td>Materials Total</td>
+                     <td class="text-right"><strong>P {{ is_numeric($paymentOrder->MaterialTotal) ? number_format($paymentOrder->MaterialTotal, 2) : $paymentOrder->MaterialTotal }}</strong></td>
+                  </tr>
                </table>
             </div>
         </div>

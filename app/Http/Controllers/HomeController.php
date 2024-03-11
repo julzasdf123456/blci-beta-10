@@ -52,8 +52,10 @@ class HomeController extends Controller
     public function fetchNewServiceConnections(Request $request) {
         if ($request->ajax()) {            
             $data = DB::table('CRM_ServiceConnections')
-                    ->join('CRM_Barangays', 'CRM_ServiceConnections.Barangay', '=', 'CRM_Barangays.id')
-                    ->join('CRM_Towns', 'CRM_ServiceConnections.Town', '=', 'CRM_Towns.id')
+                    ->leftJoin('CRM_Barangays', 'CRM_ServiceConnections.Barangay', '=', 'CRM_Barangays.id')
+                    ->leftJoin('CRM_Towns', 'CRM_ServiceConnections.Town', '=', 'CRM_Towns.id')
+                    ->leftJoin('CRM_ServiceConnectionInspections', 'CRM_ServiceConnectionInspections.ServiceConnectionId', '=', 'CRM_ServiceConnections.id')
+                    ->leftJoin('users', 'CRM_ServiceConnectionInspections.Inspector', '=', 'users.id')
                     ->where(function($query) {
                         $query->where('CRM_ServiceConnections.Status', "For Inspection")
                             ->orWhere('CRM_ServiceConnections.Status', "For Re-Inspection");
@@ -64,7 +66,9 @@ class HomeController extends Controller
                     })
                     ->select('CRM_ServiceConnections.id as id',
                         'CRM_ServiceConnections.ServiceAccountName as ServiceAccountName', 
+                        'CRM_ServiceConnections.AccountApplicationType', 
                         'CRM_Towns.Town as Town',
+                        'users.name',
                         'CRM_Barangays.Barangay as Barangay',)
                     ->orderBy('CRM_ServiceConnections.ServiceAccountName')
                     ->get();

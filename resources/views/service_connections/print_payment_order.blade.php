@@ -5,6 +5,27 @@
 @endphp
 
 <style>
+    @font-face {
+        font-family: 'sax-mono';
+        src: url('/fonts/saxmono.ttf');
+    }
+
+    html, body {
+        font-family: sax-mono, Consolas, Menlo, Monaco, Lucida Console, Liberation Mono, DejaVu Sans Mono, Bitstream Vera Sans Mono, Courier New, monospace, serif;
+        /* font-family: sans-serif; */
+        /* font-stretch: condensed; */
+        font-size: .85em;
+    }
+
+    table tbody th,td,
+    table thead th {
+        /* font-family: sans-serif; */
+        font-family: sax-mono, Consolas, Menlo, Monaco, Lucida Console, Liberation Mono, DejaVu Sans Mono, Bitstream Vera Sans Mono, Courier New, monospace, serif;
+        /* font-stretch: condensed; */
+        /* , Consolas, Menlo, Monaco, Lucida Console, Liberation Mono, DejaVu Sans Mono, Bitstream Vera Sans Mono, Courier New, monospace, serif; */
+        font-size: .72em;
+    }
+
     @media print {
     @page {
         /* size: landscape !important; */
@@ -77,9 +98,26 @@ p {
     padding: 0px !important;
     margin: 0px !important;
 }
-</style>
 
-<link rel="stylesheet" href="{{ URL::asset('adminlte.min.css') }}">
+.row {
+    width: 100%;
+}
+
+.col-sm-4 {
+    width: 33%;
+    display: inline-block;    
+}
+
+.col-sm-6 {
+    width: 48%;
+    display: inline-block;    
+}
+
+.col-sm-12 {
+    width: 95%;
+    display: inline-block;    
+}
+</style>
 
 @for ($i = 0; $i < 2; $i++)
     <div  class="content" style="margin: 15px;">
@@ -93,7 +131,7 @@ p {
             <div class="col-sm-12">
                 <p class="text-center" style="font-size: 1em;"><strong>SERVICE CONNECTION PAYMENT ORDER STUB</strong></p>
                 <br>
-                <table class="table table-sm">
+                <table class="table table-sm" style="width: 100%;">
                     <tbody>
                         <tr>
                             <td>Customer Name:</td>

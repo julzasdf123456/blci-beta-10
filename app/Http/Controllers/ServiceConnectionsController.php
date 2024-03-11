@@ -49,6 +49,8 @@ use App\Models\ProjectCodes;
 use App\Models\MeterInstallation;
 use App\Models\Notifications;
 use App\Models\SmsSettings;
+use App\Models\LocalWarehouseHead;
+use App\Models\LocalWarehouseItems;
 use App\Exports\ServiceConnectionApplicationsReportExport;
 use App\Exports\ServiceConnectionEnergizationReportExport;
 use App\Exports\DynamicExportsNoBillingMonth;
@@ -3813,7 +3815,6 @@ class ServiceConnectionsController extends AppBaseController
                 ->update(['AccountNumber' => $acctNo,  'ORNumber' => null]);
         }
         
-
         $materialItems = json_decode(stripslashes($materialItems));
         $meterItems = json_decode(stripslashes($meterItems));
 
@@ -3899,7 +3900,77 @@ class ServiceConnectionsController extends AppBaseController
         $whHead->appby = ' ';
         $whHead->save();
 
+        
+        /**
+         * ===============================================
+         * SAVE LOCAL WH_HEAD
+         * ===============================================
+         */
+        // DELETE WAREHOUSE HEAD FIRST
+        $whHeadLocal = LocalWarehouseHead::where('appl_no', $ServiceConnectionId)->get();
+        if ($whHeadLocal != null) {
+            foreach($whHeadLocal as $item) {
+                $item->delete();
+
+                // DELETE MATERIAL ITEMS FIRST
+                $whItemsLocal = LocalWarehouseItems::where('reqno', $item->orderno)->delete();
+            }            
+        }
+
+        $whHeadLocal = new LocalWarehouseHead;
+        $whHeadLocal->id = IDGenerator::generateIDandRandString();
+        $whHeadLocal->orderno = $reqNo;
+        $whHeadLocal->ent_no = $entryNo;
+        $whHeadLocal->misno = $mirsNo;
+        $whHeadLocal->address = ServiceConnections::getAddress($serviceConnections);
+        $whHeadLocal->tdate = date('m/d/Y');
+        $whHeadLocal->emp_id = $requestedById;
+        $whHeadLocal->ccode = $CostCenter;
+        $whHeadLocal->dept = $chargeTo;
+        $whHeadLocal->pcode = $projectCode;
+        $whHeadLocal->reqby = $requestedBy;
+        $whHeadLocal->invoice = $invoiceNo;
+        $whHeadLocal->orno = $ORNumber;
+        $whHeadLocal->purpose = 'FOR ' . strtoupper($customerName);
+        $whHeadLocal->serv_code = $typeOfServiceId;
+        $whHeadLocal->account_no = $acctNo;
+        $whHeadLocal->cust_name = $customerName;
+        $whHeadLocal->tot_amnt = $MaterialTotal;
+        $whHeadLocal->chkby = $requestedBy;
+        if (Auth::user()->hasAnyRole(ServiceConnections::whHeadStatus())) {
+            $whHeadLocal->stat = 'Checked';
+        } else {
+            $whHeadLocal->stat = 'Pending';
+        }
+        
+        $whHeadLocal->rdate = date('m/d/Y');
+        $whHeadLocal->rtime = date('h:i A');
+        $whHeadLocal->walk_in = 0;
+        $whHeadLocal->appl_no = $ServiceConnectionId;
+        $whHeadLocal->appby = ' ';
+        $whHeadLocal->Type = 'MATERIALS';
+        $whHeadLocal->save();
+
+        // SAVE WAREHOUSE HEAD ITEMS
         foreach($materialItems as $item) {
+            // TO MSSQL Local
+            $whItemsLocal = new LocalWarehouseItems;
+            $whItemsLocal->id = IDGenerator::generateIDandRandString();
+            $whItemsLocal->reqno = $item->ReqNo;
+            $whItemsLocal->ent_no = $item->EntryNo;            
+            $whItemsLocal->tdate = date('m/d/Y');
+            $whItemsLocal->itemcd = $item->ItemCode;  
+            $whItemsLocal->qty = $item->ItemQuantity;  
+            $whItemsLocal->uom = $item->ItemUOM; 
+            $whItemsLocal->cst = $item->ItemSalesPrice; 
+            $whItemsLocal->amnt = $item->ItemTotalCost; 
+            $whItemsLocal->itemno = $item->ItemNo; 
+            $whItemsLocal->rdate = date('m/d/Y');
+            $whItemsLocal->rtime = date('h:i A');
+            $whItemsLocal->salesprice = $item->ItemUnitPrice;
+            $whItemsLocal->save();
+
+            // TO MYSQL
             $whItems = new WarehouseItems;
             $whItems->reqno = $item->ReqNo;
             $whItems->ent_no = $item->EntryNo;            
@@ -3949,7 +4020,64 @@ class ServiceConnectionsController extends AppBaseController
             $whHead->appby = ' ';
             $whHead->save();
 
+            /**
+             * ===============================================
+             * SAVE LOCAL WH_HEAD METERS
+             * ===============================================
+             */
+
+            $whHeadLocalMeters = new LocalWarehouseHead;
+            $whHeadLocalMeters->id = IDGenerator::generateIDandRandString();
+            $whHeadLocalMeters->orderno = $meter_reqNo;
+            $whHeadLocalMeters->ent_no = ($entryNo + 1);
+            $whHeadLocalMeters->misno = $meter_mirsNo;
+            $whHeadLocalMeters->address = ServiceConnections::getAddress($serviceConnections);
+            $whHeadLocalMeters->tdate = date('m/d/Y');
+            $whHeadLocalMeters->emp_id = $meter_requestedById;
+            $whHeadLocalMeters->ccode = $CostCenter;
+            $whHeadLocalMeters->dept = $meter_chargeTo;
+            $whHeadLocalMeters->pcode = $meter_projectCode;
+            $whHeadLocalMeters->reqby = $meter_requestedBy;
+            $whHeadLocalMeters->invoice = $meter_invoiceNo;
+            $whHeadLocalMeters->orno = $ORNumber;
+            $whHeadLocalMeters->purpose = 'FOR ' . strtoupper($meter_customerName);
+            $whHeadLocalMeters->serv_code = $meter_typeOfServiceId;
+            $whHeadLocalMeters->account_no = $acctNo;
+            $whHeadLocalMeters->cust_name = $meter_customerName;
+            $whHeadLocalMeters->tot_amnt = $MaterialTotal;
+            $whHeadLocalMeters->chkby = $meter_requestedBy;
+            if (Auth::user()->hasAnyRole(ServiceConnections::whHeadStatus())) {
+                $whHeadLocalMeters->stat = 'Checked';
+            } else {
+                $whHeadLocalMeters->stat = 'Pending';
+            }
+            $whHeadLocalMeters->rdate = date('m/d/Y');
+            $whHeadLocalMeters->rtime = date('h:i A');
+            $whHeadLocalMeters->walk_in = 0;
+            $whHeadLocalMeters->appl_no = $ServiceConnectionId;
+            $whHeadLocalMeters->appby = ' ';
+            $whHeadLocalMeters->Type = 'METER';
+            $whHeadLocalMeters->save();
+
             foreach($meterItems as $item) {
+                // TO MSSQL Local
+                $whItemsLocalMeters = new LocalWarehouseItems;
+                $whItemsLocalMeters->id = IDGenerator::generateIDandRandString();
+                $whItemsLocalMeters->reqno = $item->ReqNo;
+                $whItemsLocalMeters->ent_no = $item->EntryNo;            
+                $whItemsLocalMeters->tdate = date('m/d/Y');
+                $whItemsLocalMeters->itemcd = $item->ItemCode;  
+                $whItemsLocalMeters->qty = $item->ItemQuantity;  
+                $whItemsLocalMeters->uom = $item->ItemUOM; 
+                $whItemsLocalMeters->cst = $item->ItemSalesPrice; 
+                $whItemsLocalMeters->amnt = $item->ItemTotalCost; 
+                $whItemsLocalMeters->itemno = $item->ItemNo; 
+                $whItemsLocalMeters->rdate = date('m/d/Y');
+                $whItemsLocalMeters->rtime = date('h:i A');
+                $whItemsLocalMeters->salesprice = $item->ItemUnitPrice;
+                $whItemsLocalMeters->save();
+
+                // TO MY SQL
                 $whItems = new WarehouseItems;
                 $whItems->reqno = $item->ReqNo;
                 $whItems->ent_no = $item->EntryNo;            
@@ -4886,6 +5014,211 @@ class ServiceConnectionsController extends AppBaseController
         }
         
         return view('/service_connections/print_order_materials', [
+            'serviceConnection' => $serviceConnections,
+            'paymentOrder' => $paymentOrder,
+            'whHead' => $whHead,
+            'whItems' => $whItems,
+        ]);
+    }
+
+    public function revalidatePaymentOrderMaterials(Request $request) {
+        $id = $request['id'];
+        // DELETE WAREHOUSE HEAD
+        $whHead = WarehouseHead::where('appl_no', $id)->get();
+
+        if ($whHead != null) {
+            foreach($whHead as $item) {
+                $item->delete();
+
+                // DELETE MATERIAL ITEMS FIRST
+                $whItems = WarehouseItems::where('reqno', $item->orderno)->delete();
+            }            
+        }
+
+        /**
+         * ===========================================
+         * MATERIALS 
+         * ===========================================
+         */
+        $localHead = LocalWarehouseHead::where('appl_no', $id)
+            ->where('Type', 'MATERIALS')
+            ->first();
+
+        if ($localHead != null) {
+            $whHead = new WarehouseHead;
+            $whHead->orderno = $localHead->orderno;
+            $whHead->ent_no = $localHead->ent_no;
+            $whHead->misno = $localHead->misno;
+            $whHead->address = $localHead->address;
+            $whHead->tdate = $localHead->tdate;
+            $whHead->emp_id = $localHead->emp_id;
+            $whHead->ccode = $localHead->ccode;
+            $whHead->dept = $localHead->dept;
+            $whHead->pcode = $localHead->pcode;
+            $whHead->reqby = $localHead->reqby;
+            $whHead->invoice = $localHead->invoice;
+            $whHead->orno = $localHead->orno;
+            $whHead->purpose = $localHead->purpose;
+            $whHead->serv_code = $localHead->serv_code;
+            $whHead->account_no = $localHead->account_no;
+            $whHead->cust_name = $localHead->cust_name;
+            $whHead->tot_amt = $localHead->tot_amnt;
+            $whHead->chkby = $localHead->chkby;
+            $whHead->stat = $localHead->stat;
+            $whHead->rdate = $localHead->rdate;
+            $whHead->rtime = $localHead->rtime;
+            $whHead->walk_in = $localHead->walk_in;
+            $whHead->appl_no = $localHead->appl_no;
+            $whHead->appby = $localHead->appby;
+            $whHead->save();
+
+            $localItems = LocalWarehouseItems::where('reqno', $localHead->orderno)->get();
+            foreach($localItems as $item) {
+                $whItems = new WarehouseItems;
+                $whItems->reqno = $item->reqno;
+                $whItems->ent_no = $item->ent_no;
+                $whItems->tdate = $item->tdate;
+                $whItems->itemcd = $item->itemcd;
+                $whItems->qty = $item->qty;
+                $whItems->uom = $item->uom;
+                $whItems->cst = $item->cst;
+                $whItems->amt = $item->amnt;
+                $whItems->itemno = $item->itemno;
+                $whItems->rdate = $item->rdate;
+                $whItems->rtime = $item->rtime;
+                $whItems->salesprice = $item->salesprice;
+                $whItems->save();
+            }
+        }
+
+        /**
+         * ===========================================
+         * METERS 
+         * ===========================================
+         */
+        $localHeadMeter = LocalWarehouseHead::where('appl_no', $id)
+            ->where('Type', 'METER')
+            ->first();
+
+        if ($localHeadMeter != null) {
+            $whHead = new WarehouseHead;
+            $whHead->orderno = $localHeadMeter->orderno;
+            $whHead->ent_no = $localHeadMeter->ent_no;
+            $whHead->misno = $localHeadMeter->misno;
+            $whHead->address = $localHeadMeter->address;
+            $whHead->tdate = $localHeadMeter->tdate;
+            $whHead->emp_id = $localHeadMeter->emp_id;
+            $whHead->ccode = $localHeadMeter->ccode;
+            $whHead->dept = $localHeadMeter->dept;
+            $whHead->pcode = $localHeadMeter->pcode;
+            $whHead->reqby = $localHeadMeter->reqby;
+            $whHead->invoice = $localHeadMeter->invoice;
+            $whHead->orno = $localHeadMeter->orno;
+            $whHead->purpose = $localHeadMeter->purpose;
+            $whHead->serv_code = $localHeadMeter->serv_code;
+            $whHead->account_no = $localHeadMeter->account_no;
+            $whHead->cust_name = $localHeadMeter->cust_name;
+            $whHead->tot_amt = $localHeadMeter->tot_amnt;
+            $whHead->chkby = $localHeadMeter->chkby;
+            $whHead->stat = $localHeadMeter->stat;
+            $whHead->rdate = $localHeadMeter->rdate;
+            $whHead->rtime = $localHeadMeter->rtime;
+            $whHead->walk_in = $localHeadMeter->walk_in;
+            $whHead->appl_no = $localHeadMeter->appl_no;
+            $whHead->appby = $localHeadMeter->appby;
+            $whHead->save();
+
+            $localItemsMeters = LocalWarehouseItems::where('reqno', $localHeadMeter->orderno)->get();
+            foreach($localItemsMeters as $item) {
+                $whItems = new WarehouseItems;
+                $whItems->reqno = $item->reqno;
+                $whItems->ent_no = $item->ent_no;
+                $whItems->tdate = $item->tdate;
+                $whItems->itemcd = $item->itemcd;
+                $whItems->qty = $item->qty;
+                $whItems->uom = $item->uom;
+                $whItems->cst = $item->cst;
+                $whItems->amt = $item->amnt;
+                $whItems->itemno = $item->itemno;
+                $whItems->rdate = $item->rdate;
+                $whItems->rtime = $item->rtime;
+                $whItems->salesprice = $item->salesprice;
+                $whItems->save();
+            }
+        }
+    }
+
+    
+    public function printOrderMeters($id) {
+        $serviceConnections = DB::table('CRM_ServiceConnections')
+            ->leftJoin('CRM_Barangays', 'CRM_ServiceConnections.Barangay', '=', 'CRM_Barangays.id')
+            ->leftJoin('CRM_Towns', 'CRM_ServiceConnections.Town', '=', 'CRM_Towns.id')
+            ->leftJoin('users', 'CRM_ServiceConnections.UserId', '=', 'users.id')
+            ->select('CRM_ServiceConnections.id as id',
+                        'CRM_ServiceConnections.AccountCount as AccountCount', 
+                        'CRM_ServiceConnections.ServiceAccountName as ServiceAccountName',
+                        'CRM_ServiceConnections.DateOfApplication', 
+                        'CRM_ServiceConnections.TimeOfApplication', 
+                        'CRM_ServiceConnections.ContactNumber as ContactNumber', 
+                        'CRM_ServiceConnections.EmailAddress as EmailAddress',  
+                        'CRM_ServiceConnections.AccountApplicationType as AccountApplicationType', 
+                        'CRM_ServiceConnections.AccountOrganization as AccountOrganization', 
+                        'CRM_ServiceConnections.ConnectionApplicationType as ConnectionApplicationType',
+                        'CRM_ServiceConnections.MemberConsumerId as MemberConsumerId',
+                        'CRM_ServiceConnections.Status as Status',  
+                        'CRM_ServiceConnections.Notes as Notes', 
+                        'CRM_ServiceConnections.Office', 
+                        'CRM_ServiceConnections.LongSpan', 
+                        'CRM_ServiceConnections.ORNumber as ORNumber',
+                        'CRM_ServiceConnections.ORDate', 
+                        'CRM_ServiceConnections.Sitio as Sitio', 
+                        'CRM_ServiceConnections.LoadCategory as LoadCategory', 
+                        'CRM_ServiceConnections.DateTimeOfEnergization as DateTimeOfEnergization', 
+                        'CRM_ServiceConnections.DateTimeLinemenArrived as DateTimeLinemenArrived', 
+                        'CRM_Towns.Town as Town',
+                        'CRM_Barangays.Barangay as Barangay',
+                        'CRM_ServiceConnections.AccountType',
+                        'CRM_ServiceConnections.ServiceNumber',
+                        'CRM_ServiceConnections.ConnectionSchedule',
+                        'CRM_ServiceConnections.LoadType',
+                        'CRM_ServiceConnections.Zone',
+                        'CRM_ServiceConnections.Block',
+                        'CRM_ServiceConnections.TransformerID',
+                        'CRM_ServiceConnections.LoadInKva',
+                        'CRM_ServiceConnections.PoleNumber',
+                        'CRM_ServiceConnections.Feeder',
+                        'CRM_ServiceConnections.ChargeTo',
+                        'CRM_ServiceConnections.AccountNumber',
+                        'CRM_ServiceConnections.CertificateOfConnectionIssuedOn',
+                        'users.name'
+                        )
+        ->where('CRM_ServiceConnections.id', $id)
+        ->where(function ($query) {
+            $query->where('CRM_ServiceConnections.Trash', 'No')
+                ->orWhereNull('CRM_ServiceConnections.Trash');
+        })
+        ->first(); 
+
+        $paymentOrder = PaymentOrder::where('ServiceConnectionId', $id)->first();
+
+        // ITEMS
+        $whHead = WarehouseHead::where('appl_no', $id)->whereRaw("orderno LIKE 'M%'")->first();
+        if ($whHead != null) {
+            $whItems = DB::connection('mysql')
+                ->table('tblor_line')
+                ->leftJoin('tblitems', 'tblor_line.itemcd', '=', 'tblitems.itm_code')
+                ->whereRaw("reqno='" . $whHead->orderno . "'")
+                ->select(
+                    'tblor_line.*', 
+                    'tblitems.itm_desc'
+                    )
+                ->orderBy('itemno')
+                ->get();
+        } else {
+            $whItems = [];
+        }
+        
+        return view('/service_connections/print_order_meters', [
             'serviceConnection' => $serviceConnections,
             'paymentOrder' => $paymentOrder,
             'whHead' => $whHead,

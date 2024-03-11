@@ -105,7 +105,7 @@
                        <th>Service Account Name</th>
                        <th>Type</th>
                        <th>Address</th>
-                       <th>Verifier</th>
+                       <th>Inspector</th>
                    </thead>
                    <tbody>
 
@@ -150,7 +150,7 @@
                        $('#approved-table tbody tr').remove();
                        $.each(response, function(index, element) {
                            console.log(response[index]['id']);
-                           $('#approved-table tbody').append(`<tr><td><a href="{{ url('/serviceConnections')}}/` + response[index]["id"] + `">` + response[index]['id'] + `</a></td><td>` + response[index]['ServiceAccountName'] + `</td><td>` + response[index]['ConnectionApplicationType'] + `</td><td>` + response[index]['Barangay'] + `, ` + response[index]['Town'] + `</td><td>` + (jQuery.isEmptyObject(response[index]['name']) ? 'n/a' : response[index]['name']) + `</td></tr>`);
+                           $('#approved-table tbody').append(`<tr><td><a href="{{ url('/serviceConnections')}}/` + response[index]["id"] + `">` + response[index]['id'] + `</a></td><td>` + response[index]['ServiceAccountName'] + `</td><td>` + response[index]['AccountApplicationType'] + `</td><td>` + response[index]['Barangay'] + `, ` + response[index]['Town'] + `</td><td>` + (jQuery.isEmptyObject(response[index]['name']) ? 'n/a' : response[index]['name']) + `</td></tr>`);
                        });
                    },
                    error : function(error) {

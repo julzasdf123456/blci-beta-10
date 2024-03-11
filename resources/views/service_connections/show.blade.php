@@ -44,7 +44,13 @@ use Illuminate\Support\Facades\Auth;
                                     <i class="fas fa-print ico-tab"></i>Print Payment Order Stub</a>
                                     
                                 <a href="{{ route('serviceConnections.print-order-materials', [$serviceConnections->id]) }}" class="dropdown-item" title="Print Payment Order Materials">
-                                    <i class="fas fa-print ico-tab"></i>Print Order Materials</a>
+                                    <i class="fas fa-print ico-tab"></i>Print Order - Materials</a>
+
+                                <a href="{{ route('serviceConnections.print-order-meters', [$serviceConnections->id]) }}" class="dropdown-item" title="Print Payment Order Materials">
+                                    <i class="fas fa-print ico-tab"></i>Print Order - Meter</a>
+    
+                                <button onclick="revalidatePayment(`{{ $serviceConnections->id }}`)" class="dropdown-item" title="Re-flush payment order materials to warehouse database">
+                                    <i class="fas fa-file-invoice-dollar ico-tab"></i>Revalidate Payment Order Materials</button>
                             @endif
                             {{-- <div class="dropdown-divider"></div> --}}
                         </div>
@@ -208,5 +214,40 @@ use Illuminate\Support\Facades\Auth;
                 })
             })
         });
+
+        function revalidatePayment(id) {
+            Swal.fire({
+                title: "Re-validate Order Materials",
+                text: "This will re-insert the payment order with all materials to warehouse database. Proceed?",
+                icon: "warning",
+                showCancelButton: true,
+                confirmButtonColor: "#3085d6",
+                cancelButtonColor: "#d33",
+                confirmButtonText: "Yes"
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    $.ajax({
+                        url : "{{ route('serviceConnections.revalidate-payment-order-materials') }}",
+                        type : "GET",
+                        data : {
+                            id : id,
+                        },
+                        success : function(res) {
+                            Toast.fire({
+                                icon : 'success',
+                                text : 'Payment order revalidated!'
+                            })
+                            location.reload()
+                        },
+                        error : function(err) {
+                            Swal.fire({
+                                icon : 'error',
+                                text : 'Error revalidating payment order'
+                            })
+                        }
+                    })      
+                }
+            })
+        }
     </script>
 @endpush

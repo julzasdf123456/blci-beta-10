@@ -137,6 +137,7 @@ class ServiceConnectionInspectionsAPI extends Controller {
         $serviceConnectionInspections->Recommendation = $request['Recommendation'];
         $serviceConnectionInspections->ForPayment = $request['ForPayment'];
         $serviceConnectionInspections->BillDeposit = $request['BillDeposit'];
+        $serviceConnectionInspections->MeteringType = $request['MeteringType'];
 
         if ($serviceConnectionInspections->save()) {
             $serviceConnections->save();

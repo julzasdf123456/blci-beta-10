@@ -675,6 +675,22 @@
             text : message
         })
     }
+
+    function isNull(regex) {
+        if (jQuery.isEmptyObject(regex)) {
+            return true
+        } else {
+            return false
+        }
+    }
+
+    function toMoney(value) {
+        return Number(parseFloat(value).toFixed(2)).toLocaleString("en-US", { maximumFractionDigits: 2, minimumFractionDigits: 2 })
+    }
+
+    function round(value) {
+        return Math.round((value + Number.EPSILON) * 100) / 100
+    }
 </script>
 
 @yield('third_party_scripts')

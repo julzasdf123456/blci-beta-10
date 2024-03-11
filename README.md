@@ -23,9 +23,8 @@
 
 
 ### Added New Columns
-
+ 
 ### Added New Tables
-- 
 
 ### New Permissions
 
