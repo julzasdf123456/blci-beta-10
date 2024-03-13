@@ -221,11 +221,6 @@ class ServiceConnectionsController extends AppBaseController
                 $timeFrame->Notes = 'Data Updated';
                 $timeFrame->save();
                 
-                // CREATE FOLDER FIRST
-                // if (!file_exists('/CRM_FILES//' . $input['id'])) {
-                //     mkdir('/CRM_FILES//' . $input['id'], 0777, true);
-                // }
-
                 Flash::success('Service Connections saved successfully.');
 
                 return redirect(route('serviceConnections.show', [$input['id']]));
@@ -310,8 +305,7 @@ class ServiceConnectionsController extends AppBaseController
      *
      * @return Response
      */
-    public function show($id)
-    {
+    public function show($id) {
         $serviceConnections = DB::table('CRM_ServiceConnections')
             ->leftJoin('CRM_Barangays', 'CRM_ServiceConnections.Barangay', '=', 'CRM_Barangays.id')
             ->leftJoin('CRM_Towns', 'CRM_ServiceConnections.Town', '=', 'CRM_Towns.id')
