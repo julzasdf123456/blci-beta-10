@@ -14,7 +14,7 @@
         </tr>
         <tr>
             <td class="text-muted">Type of Customer</td>
-            <td style="border-right: 1px solid #adadad;">{{ $serviceConnections->TypeOfCustomer != null ? $typesOfCustomer[$serviceConnections->TypeOfCustomer] : '-' }}</td>
+            <td style="border-right: 1px solid #adadad;">{{ $serviceConnections->TypeOfCustomer != null ? isset($typesOfCustomer[$serviceConnections->TypeOfCustomer]) ? $typesOfCustomer[$serviceConnections->TypeOfCustomer] : '-' : '-' }}</td>
             <td class="text-muted" style="padding-left: 50px;">Status</td>
             <td>{{ $serviceConnections->Status }}</td>
         </tr>
