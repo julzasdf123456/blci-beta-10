@@ -6,8 +6,8 @@
 
 <!-- Townid Field -->
 <div class="col-sm-12">
-    {!! Form::label('TownId', 'Townid:') !!}
-    <p>{{ $barangays->TownId }}</p>
+    {!! Form::label('BarangayCode', 'BarangayCode:') !!}
+    <p>{{ $barangays->BarangayCode }}</p>
 </div>
 
 <!-- Notes Field -->

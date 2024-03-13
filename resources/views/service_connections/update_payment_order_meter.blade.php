@@ -29,7 +29,7 @@
    <tr>
       <td>Requisition By :</td>
       <td>
-         <input type="text" id="meter-RequisitionById" class="form-control form-control-xs text-right" value="{{ $whHeadMeters != null ? $whHeadMeters->emp_id : Auth::id() }}" readonly>
+         <input type="text" id="meter-RequisitionById" class="form-control form-control-xs text-right" value="{{ $whHeadMeters != null ? ($whHeadMeters->emp_id != null ? $whHeadMeters->emp_id : Auth::user()->HRUserId) : Auth::user()->HRUserId }}" readonly>
       </td>
       <td>
          <input type="text" id="meter-RequisitionByName" class="form-control form-control-xs" value="{{ $whHeadMeters != null ? strtoupper($whHeadMeters->chkby) : strtoupper(Auth::user()->name) }}">

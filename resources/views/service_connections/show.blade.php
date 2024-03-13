@@ -74,7 +74,7 @@ use Illuminate\Support\Facades\Auth;
                             <div class="col-lg-6">
                                 <h4 class="p-x0 text-primary">{{ $serviceConnections->ServiceAccountName }}</h4>
                                 <p class="p-x0">{{ strtoupper(ServiceConnections::getAddress($serviceConnections)) }}</p>
-                                <p class="p-x0"><span class="text-muted">Account Number: </span><strong>{{ $serviceConnections->AccountNumber }}</strong></p>
+                                <p class="p-x0"><span class="text-muted">Account Number: </span><strong>{{ $serviceConnections->BarangayCode }}-{{ $serviceConnections->TypeOfCustomer }}-{{ $serviceConnections->AccountNumber }}-{{ $serviceConnections->NumberOfAccounts }}</strong></p>
                             </div>
                             <div class="col-lg-6">
                                 <p class="p-x0"><span class="text-muted">Application No: </span>{{ $serviceConnections->id }}</p>

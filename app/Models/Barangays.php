@@ -34,7 +34,8 @@ class Barangays extends Model
     public $fillable = [
         'Barangay',
         'TownId',
-        'Notes'
+        'Notes',
+        'BarangayCode',
     ];
 
     /**
@@ -46,7 +47,8 @@ class Barangays extends Model
         'id' => 'integer',
         'Barangay' => 'string',
         'TownId' => 'string',
-        'Notes' => 'string'
+        'Notes' => 'string',
+        'BarangayCode' => 'string',
     ];
 
     /**
@@ -59,7 +61,8 @@ class Barangays extends Model
         'TownId' => 'nullable|string|max:255',
         'Notes' => 'nullable|string|max:1000',
         'created_at' => 'nullable',
-        'updated_at' => 'nullable'
+        'updated_at' => 'nullable',
+        'BarangayCode' => 'nullable|string',
     ];
 
     

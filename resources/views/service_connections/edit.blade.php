@@ -1,6 +1,7 @@
 @php
     use Illuminate\Support\Facades\Auth;
     use App\Models\IDGenerator;
+    use App\Models\ServiceConnections;
 @endphp
 
 @extends('layouts.app')
@@ -87,11 +88,15 @@
                         </tr>
                         {{-- ROW 2 --}}
                         <tr>
-                            <td>Service Applied For: </td>
+                            <td>Type of Customer:   <strong class="text-danger">*</strong></td>
                             <td>
-                                <select name="AccountApplicationType" id="AccountApplicationType" class="form-control form-control-sm">
-                                    @foreach ($serviceAppliedFor as $item)
-                                        <option value="{{ $item->ServiceAppliedFor }}" {{ $serviceConnections->AccountApplicationType==$item->ServiceAppliedFor ? 'selected' : '' }}>{{ $item->ServiceAppliedFor }}</option>
+                                <select name="TypeOfCustomer" id="TypeOfCustomer" class="form-control form-control-sm" required>
+                                    @php
+                                        $typeOfCustomer = ServiceConnections::typesOfConsumer();
+                                    @endphp
+                                    <option value="">--Select--</option>
+                                    @foreach ($typeOfCustomer as $key => $item)
+                                        <option value="{{ $key }}" {{ $key==$serviceConnections->TypeOfCustomer ? 'selected' : '' }}>{{ $item }}</option>
                                     @endforeach
                                 </select>
                             </td>
@@ -102,9 +107,13 @@
                         </tr>
                         {{-- ROW 3 --}}
                         <tr>
-                            <td>Service Number: </td>
+                            <td>Service Applied For: </td>
                             <td>
-                                <input type="text" class="form-control form-control-sm" name="ServiceNumber" id="ServiceNumber" value="{{ $serviceConnections->ServiceNumber }}">
+                                <select name="AccountApplicationType" id="AccountApplicationType" class="form-control form-control-sm">
+                                    @foreach ($serviceAppliedFor as $item)
+                                        <option value="{{ $item->ServiceAppliedFor }}" {{ $serviceConnections->AccountApplicationType==$item->ServiceAppliedFor ? 'selected' : '' }}>{{ $item->ServiceAppliedFor }}</option>
+                                    @endforeach
+                                </select>
                             </td>
                             <td>Connection Schedule: </td>
                             <td style="position: relative;">
@@ -113,9 +122,9 @@
                         </tr>
                         {{-- ROW 4 --}}
                         <tr>
-                            <td>Cert. Of Conn. Issued On: </td>
-                            <td style="position: relative;">
-                                <input type="text" class="form-control form-control-sm" name="CertificateOfConnectionIssuedOn" id="CertificateOfConnectionIssuedOn" value="{{ $serviceConnections->CertificateOfConnectionIssuedOn }}"> 
+                            <td>Service Number: </td>
+                            <td>
+                                <input type="text" class="form-control form-control-sm" name="ServiceNumber" id="ServiceNumber" value="{{ $serviceConnections->ServiceNumber }}">
                             </td>
                             <td>Remarks: </td>
                             <td>
@@ -123,6 +132,17 @@
                             </td>
                         </tr>
                         {{-- ROW 5 --}}
+                        <tr>
+                            <td>Cert. Of Conn. Issued On: </td>
+                            <td style="position: relative;">
+                                <input type="text" class="form-control form-control-sm" name="CertificateOfConnectionIssuedOn" id="CertificateOfConnectionIssuedOn" value="{{ $serviceConnections->CertificateOfConnectionIssuedOn }}"> 
+                            </td>
+                            <td>Load in kVa (Trans. kVa): </td>
+                            <td>
+                                <input type="number" step="any" class="form-control form-control-sm" name="LoadInKva" id="LoadInKva" value="{{ $serviceConnections->LoadInKva }}">
+                            </td>
+                        </tr>
+                        {{-- ROW 7 --}}
                         <tr>
                             <td>Load Type: </td>
                             <td>
@@ -132,23 +152,21 @@
                                     <option value="COMMON" {{ $serviceConnections->LoadType=='COMMON' ? 'selected' : '' }}>COMMON</option>
                                 </select>
                             </td>
-                            <td>Load in kVa (Trans. kVa): </td>
-                            <td>
-                                <input type="number" step="any" class="form-control form-control-sm" name="LoadInKva" id="LoadInKva" value="{{ $serviceConnections->LoadInKva }}">
-                            </td>
-                        </tr>
-                        {{-- ROW 7 --}}
-                        <tr>
-                            <td>Transformer ID: </td>
-                            <td>
-                                <input type="text" class="form-control form-control-sm" name="TransformerID" id="TransformerID" value="{{ $serviceConnections->TransformerID }}">
-                            </td>
                             <td>TIN</td>
                             <td>
                                 <input type="text" class="form-control form-control-sm" name="TIN" id="TIN" value="{{ $serviceConnections->TIN }}">
                             </td>
                         </tr>
                         {{-- ROW 8 --}}
+                        <tr>
+                            <td>Transformer ID: </td>
+                            <td>
+                                <input type="text" class="form-control form-control-sm" name="TransformerID" id="TransformerID" value="{{ $serviceConnections->TransformerID }}">
+                            </td>
+                            <td></td>
+                            <td></td>
+                        </tr>
+                        {{-- ROW 9 --}}
                         <tr>
                             <td>Pole Number: </td>
                             <td>
@@ -157,7 +175,7 @@
                             <td></td>
                             <td></td>
                         </tr>
-                        {{-- ROW 9 --}}
+                        {{-- ROW 10 --}}
                         <tr>
                             <td>Feeder: </td>
                             <td>
@@ -166,7 +184,6 @@
                             <td></td>
                             <td></td>
                         </tr>
-                        {{-- ROW 10 --}}
                         <tr>
                             <td>Charge To: </td>
                             <td>

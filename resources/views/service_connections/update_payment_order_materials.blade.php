@@ -29,7 +29,7 @@
    <tr>
        <td>Requisition By :</td>
        <td>
-           <input type="text" id="RequisitionById" class="form-control form-control-xs text-right" value="{{ $whHead != null ? $whHead->emp_id : '' }}" readonly>
+           <input type="text" id="RequisitionById" class="form-control form-control-xs text-right" value="{{ $whHead != null ? ($whHead->emp_id != null ? $whHead->emp_id : Auth::user()->HRUserId) : '' }}" readonly>
        </td>
        <td>
            <input type="text" id="RequisitionByName" class="form-control form-control-xs" value="{{ strtoupper($whHead != null ? $whHead->chkby : '') }}">

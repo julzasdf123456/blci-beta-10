@@ -3,8 +3,8 @@
         <thead>
         <tr>
             <th>Barangay</th>
-        <th>Townid</th>
-        <th>Notes</th>
+            <th>Barangay Code</th>
+            <th>Notes</th>
             <th colspan="3">Action</th>
         </tr>
         </thead>
@@ -12,7 +12,7 @@
         @foreach($barangays as $barangays)
             <tr>
                 <td>{{ $barangays->Barangay }}</td>
-            <td>{{ $barangays->TownId }}</td>
+            <td>{{ $barangays->BarangayCode }}</td>
             <td>{{ $barangays->Notes }}</td>
                 <td width="120">
                     {!! Form::open(['route' => ['barangays.destroy', $barangays->id], 'method' => 'delete']) !!}

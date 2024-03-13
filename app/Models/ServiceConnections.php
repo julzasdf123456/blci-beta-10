@@ -97,6 +97,9 @@ class ServiceConnections extends Model
         'ChargeTo',
         'Block',
         'TIN',
+        'BarangayCode',
+        'TypeOfCustomer',
+        'NumberOfAccounts',
     ];
 
     /**
@@ -153,6 +156,9 @@ class ServiceConnections extends Model
         'ChargeTo' => 'string',
         'Block' => 'string',
         'TIN' => 'string',
+        'BarangayCode' => 'string',
+        'TypeOfCustomer' => 'string',
+        'NumberOfAccounts' => 'string',
     ];
 
     /**
@@ -211,6 +217,9 @@ class ServiceConnections extends Model
         'ChargeTo' => 'nullable|string',
         'Block' => 'nullable|string',
         'TIN' => 'nullable|string',
+        'BarangayCode' => 'nullable|string',
+        'TypeOfCustomer' => 'nullable|string',
+        'NumberOfAccounts' => 'nullable|string',
     ];
 
     public static function getAccountCount($consumerId) {
@@ -295,5 +304,17 @@ class ServiceConnections extends Model
 
     public static function filePath() {
         return public_path() . "/scfiles/";
+    }
+
+    public static function typesOfConsumer() {
+        return [
+            '01' => 'Residential',
+            '02' => 'Commercial-LV',
+            '03' => 'Commercial-HV',
+            '04' => 'Public Building-LV',
+            '05' => 'Public Building-HV',
+            '06' => 'Hospitals and Radio Stations-LV',
+            '06' => 'Hospitals and Radio Stations-HV',
+        ];
     }
 }

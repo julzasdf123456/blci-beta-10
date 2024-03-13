@@ -6,8 +6,8 @@
 
 <!-- Townid Field -->
 <div class="form-group col-sm-6">
-    {!! Form::label('TownId', 'Townid:') !!}
-    {!! Form::text('TownId', null, ['class' => 'form-control','maxlength' => 255,'maxlength' => 255]) !!}
+    {!! Form::label('BarangayCode', 'BarangayCode:') !!}
+    {!! Form::text('BarangayCode', null, ['class' => 'form-control','maxlength' => 255,'maxlength' => 255]) !!}
 </div>
 
 <!-- Notes Field -->

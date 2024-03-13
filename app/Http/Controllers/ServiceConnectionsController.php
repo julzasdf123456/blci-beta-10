@@ -172,6 +172,8 @@ class ServiceConnectionsController extends AppBaseController
     public function store(CreateServiceConnectionsRequest $request)
     {
         $input = $request->all();
+        $brgy = Barangays::find($input['Barangay']);
+        $input['BarangayCode'] = $brgy != null ? $brgy->BarangayCode : '';
 
         if ($input['id'] != null) {
             $sc = ServiceConnections::find($input['id']);
@@ -351,6 +353,9 @@ class ServiceConnectionsController extends AppBaseController
                         'CRM_ServiceConnections.ChargeTo',
                         'CRM_ServiceConnections.AccountNumber',
                         'CRM_ServiceConnections.TIN',
+                        'CRM_ServiceConnections.TypeOfCustomer',
+                        'CRM_ServiceConnections.BarangayCode',
+                        'CRM_ServiceConnections.NumberOfAccounts',
                         'CRM_ServiceConnections.CertificateOfConnectionIssuedOn',
                         'users.name',
                         'CRM_ServiceConnectionCrew.StationName'
@@ -3794,6 +3799,9 @@ class ServiceConnectionsController extends AppBaseController
         $meter_typeOfServiceId = $request['MeterTypeOfServiceId'];
         $meter_entryNo = $request['MeterEntryNo'];
         $acctNo = $request['AccountNumber'];
+        $typeOfCustomer = $request['TypeOfCustomer'];
+        $barangayCode = $request['BarangayCode'];
+        $numberOfAccounts = $request['NumberOfAccounts'];
 
         $serviceConnections = DB::table('CRM_ServiceConnections')
             ->leftJoin('CRM_Barangays', 'CRM_ServiceConnections.Barangay', '=', 'CRM_Barangays.id')
@@ -3809,10 +3817,20 @@ class ServiceConnectionsController extends AppBaseController
         // UPDATE AccountNumber
         if ($ORNumber != null && $ORNumber !== '0') {
             ServiceConnections::where('id', $ServiceConnectionId)
-                ->update(['AccountNumber' => $acctNo, 'ORNumber' => $ORNumber, 'Status' => 'For Energization']);
+                ->update(['AccountNumber' => $acctNo, 
+                'ORNumber' => $ORNumber, 
+                'TypeOfCustomer' => $typeOfCustomer,
+                'BarangayCode' => $barangayCode,
+                'NumberOfAccounts' => $numberOfAccounts,
+                'Status' => 'For Energization']);
         } else {
             ServiceConnections::where('id', $ServiceConnectionId)
-                ->update(['AccountNumber' => $acctNo,  'ORNumber' => null]);
+                ->update(['AccountNumber' => $acctNo,  
+                'ORNumber' => null,
+                'TypeOfCustomer' => $typeOfCustomer,
+                'BarangayCode' => $barangayCode,
+                'NumberOfAccounts' => $numberOfAccounts
+            ]);
         }
         
         $materialItems = json_decode(stripslashes($materialItems));
@@ -3883,7 +3901,7 @@ class ServiceConnectionsController extends AppBaseController
         $whHead->orno = $ORNumber;
         $whHead->purpose = 'FOR ' . strtoupper($customerName);
         $whHead->serv_code = $typeOfServiceId;
-        $whHead->account_no = $acctNo;
+        $whHead->account_no = $barangayCode . "-" . $typeOfCustomer . "-" . $acctNo . "-" . $numberOfAccounts;
         $whHead->cust_name = $customerName;
         $whHead->tot_amt = $MaterialTotal;
         $whHead->chkby = $requestedBy;
@@ -3933,7 +3951,7 @@ class ServiceConnectionsController extends AppBaseController
         $whHeadLocal->orno = $ORNumber;
         $whHeadLocal->purpose = 'FOR ' . strtoupper($customerName);
         $whHeadLocal->serv_code = $typeOfServiceId;
-        $whHeadLocal->account_no = $acctNo;
+        $whHeadLocal->account_no = $barangayCode . "-" . $typeOfCustomer . "-" . $acctNo . "-" . $numberOfAccounts;
         $whHeadLocal->cust_name = $customerName;
         $whHeadLocal->tot_amnt = $MaterialTotal;
         $whHeadLocal->chkby = $requestedBy;
@@ -3957,7 +3975,7 @@ class ServiceConnectionsController extends AppBaseController
             $whItemsLocal = new LocalWarehouseItems;
             $whItemsLocal->id = IDGenerator::generateIDandRandString();
             $whItemsLocal->reqno = $item->ReqNo;
-            $whItemsLocal->ent_no = $item->EntryNo;            
+            $whItemsLocal->ent_no = $entryNo;            
             $whItemsLocal->tdate = date('m/d/Y');
             $whItemsLocal->itemcd = $item->ItemCode;  
             $whItemsLocal->qty = $item->ItemQuantity;  
@@ -3973,7 +3991,7 @@ class ServiceConnectionsController extends AppBaseController
             // TO MYSQL
             $whItems = new WarehouseItems;
             $whItems->reqno = $item->ReqNo;
-            $whItems->ent_no = $item->EntryNo;            
+            $whItems->ent_no = $entryNo;            
             $whItems->tdate = date('m/d/Y');
             $whItems->itemcd = $item->ItemCode;  
             $whItems->qty = $item->ItemQuantity;  
@@ -4004,7 +4022,7 @@ class ServiceConnectionsController extends AppBaseController
             $whHead->orno = $ORNumber;
             $whHead->purpose = 'FOR ' . strtoupper($meter_customerName);
             $whHead->serv_code = $meter_typeOfServiceId;
-            $whHead->account_no = $acctNo;
+            $whHead->account_no = $barangayCode . "-" . $typeOfCustomer . "-" . $acctNo . "-" . $numberOfAccounts;
             $whHead->cust_name = $meter_customerName;
             $whHead->tot_amt = $MaterialTotal;
             $whHead->chkby = $meter_requestedBy;
@@ -4042,7 +4060,7 @@ class ServiceConnectionsController extends AppBaseController
             $whHeadLocalMeters->orno = $ORNumber;
             $whHeadLocalMeters->purpose = 'FOR ' . strtoupper($meter_customerName);
             $whHeadLocalMeters->serv_code = $meter_typeOfServiceId;
-            $whHeadLocalMeters->account_no = $acctNo;
+            $whHeadLocalMeters->account_no = $barangayCode . "-" . $typeOfCustomer . "-" . $acctNo . "-" . $numberOfAccounts;
             $whHeadLocalMeters->cust_name = $meter_customerName;
             $whHeadLocalMeters->tot_amnt = $MaterialTotal;
             $whHeadLocalMeters->chkby = $meter_requestedBy;
@@ -4064,7 +4082,7 @@ class ServiceConnectionsController extends AppBaseController
                 $whItemsLocalMeters = new LocalWarehouseItems;
                 $whItemsLocalMeters->id = IDGenerator::generateIDandRandString();
                 $whItemsLocalMeters->reqno = $item->ReqNo;
-                $whItemsLocalMeters->ent_no = $item->EntryNo;            
+                $whItemsLocalMeters->ent_no = ($entryNo + 1);            
                 $whItemsLocalMeters->tdate = date('m/d/Y');
                 $whItemsLocalMeters->itemcd = $item->ItemCode;  
                 $whItemsLocalMeters->qty = $item->ItemQuantity;  
@@ -4080,7 +4098,7 @@ class ServiceConnectionsController extends AppBaseController
                 // TO MY SQL
                 $whItems = new WarehouseItems;
                 $whItems->reqno = $item->ReqNo;
-                $whItems->ent_no = $item->EntryNo;            
+                $whItems->ent_no = ($entryNo + 1);            
                 $whItems->tdate = date('m/d/Y');
                 $whItems->itemcd = $item->ItemCode;  
                 $whItems->qty = $item->ItemQuantity;  

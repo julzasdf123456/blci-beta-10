@@ -1,3 +1,8 @@
+@php
+   use App\Models\Barangays;
+   use App\Models\ServiceConnections;
+@endphp
+
 @extends('layouts.app')
 
 @section('content')
@@ -52,9 +57,19 @@
    <div class="col-lg-3">
       {{-- ACCOUNT NUMBER --}}
       <div class="card shadow-none">
+         @php
+            $barangay = Barangays::find($serviceConnection->Barangay);
+         @endphp
          <div class="card-body">
             <span class="text-muted">ACCOUNT NUMBER</span>
-            <input type="text" name="AccountNumber" id="AccountNumber" placeholder="Input Account Number Here" class="form-control" required value="{{ $serviceConnection->AccountNumber }}">
+            <br>
+            <input title="Type of Customer" maxlength="2" type="text" name="BarangayCode" id="BarangayCode" class="form-control" required value="{{ $serviceConnection->BarangayCode != null ? $serviceConnection->BarangayCode : ($barangay != null ? $barangay->BarangayCode : '') }}" style="width: 46px; display: inline;">
+            <span>-</span>
+            <input title="Type of Customer" maxlength="2" type="text" name="TypeOfCustomer" id="TypeOfCustomer" class="form-control" required value="{{ $serviceConnection->TypeOfCustomer }}" style="width: 46px; display: inline;">
+            <span>-</span>
+            <input type="text" name="AccountNumber" maxlength="5" id="AccountNumber" placeholder="Input Account Number Here" class="form-control" required style="width: 100px; display: inline;" value="{{ $serviceConnection->AccountNumber }}">
+            <span>-</span>
+            <input title="Number of Accounts" maxlength="2" type="text" name="NumberOfAccounts" id="NumberOfAccounts" class="form-control" required style="width: 46px; display: inline;" value="{{ $serviceConnection->NumberOfAccounts }}">
          </div>
       </div>
       {{-- FEES --}}
@@ -516,8 +531,11 @@
        * ========================
        */
       function savePaymentOrder() {
+         var brgyCode = $('#BarangayCode').val()
+         var typeOfCustomer = $('#TypeOfCustomer').val()
          var acctNo = $('#AccountNumber').val()
-         if (jQuery.isEmptyObject(acctNo)) {
+         var noOfAccounts = $('#NumberOfAccounts').val()
+         if (jQuery.isEmptyObject(acctNo) | jQuery.isEmptyObject(brgyCode) | jQuery.isEmptyObject(typeOfCustomer) | jQuery.isEmptyObject(noOfAccounts)) {
             Toast.fire({
                icon : 'warning',
                text : 'Please supply account number'
@@ -571,6 +589,9 @@
                   MeterTypeOfServiceId : $('#meter-TypeOfServiceId').val(),
                   MeterEntryNo : $('#meter-EntryNo').val(),
                   AccountNumber : acctNo,
+                  TypeOfCustomer : typeOfCustomer,
+                  BarangayCode : brgyCode,
+                  NumberOfAccounts : noOfAccounts,
                },
                success : function(res) {
                   Toast.fire({
