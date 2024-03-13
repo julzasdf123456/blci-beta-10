@@ -65,7 +65,7 @@
                               </td>
                               <td class="text-right">
                                  @if ($item->MeterId == null)
-                                     <a class="btn btn-sm btn-warning" href="{{ route('serviceConnectionMtrTrnsfrmrs.create-step-three', [$item->id]) }}"><i class="fas fa-tachometer-alt ico-tab-mini"></i>Assign Meter</a>
+                                     <a class="btn btn-sm btn-warning" href="{{ route('meterInstallations.create-meter-installation', [$item->id]) }}"><i class="fas fa-tachometer-alt ico-tab-mini"></i>Assign Meter</a>
                                  @else
                                     <button class="btn btn-sm btn-success" onclick="setSchedule(`{{ $item->id }}`)"><i class="fas fa-check-circle ico-tab-mini"></i>Save</button>
                                  @endif

@@ -16,6 +16,7 @@ use App\Http\Controllers\BillsController;
 use App\Http\Controllers\TransactionIndexController;
 use App\Http\Controllers\PaidBillsController;
 use App\Http\Controllers\DCRSummaryTransactionsController;
+use App\Http\Controllers\MeterInstallationController;
 
 /*
 |--------------------------------------------------------------------------
@@ -990,7 +991,8 @@ Route::resource('zones', App\Http\Controllers\ZonesController::class);
 Route::resource('blocks', App\Http\Controllers\BlocksController::class);
 
 
-Route::resource('meterInstallations', App\Http\Controllers\MeterInstallationController::class);
+Route::get('/meter_installations/create-meter-installation/{id}', [MeterInstallationController::class, 'createMeterInstallation'])->name('meterInstallations.create-meter-installation');
+Route::resource('meterInstallations', MeterInstallationController::class);
 
 
 Route::resource('notifications', App\Http\Controllers\NotificationsController::class);

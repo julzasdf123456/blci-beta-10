@@ -4617,7 +4617,7 @@ class ServiceConnectionsController extends AppBaseController
             ->leftJoin('CRM_ServiceConnectionInspections', 'CRM_ServiceConnectionInspections.ServiceConnectionId', '=', 'CRM_ServiceConnections.id')
             ->leftJoin('CRM_Towns', 'CRM_ServiceConnections.Town', '=', 'CRM_Towns.id')
             ->leftJoin('CRM_Barangays', 'CRM_ServiceConnections.Barangay', '=', 'CRM_Barangays.id')
-            ->leftJoin('CRM_ServiceConnectionMeterAndTransformer', 'CRM_ServiceConnectionMeterAndTransformer.ServiceConnectionId', '=', 'CRM_ServiceConnections.id')
+            ->leftJoin('CRM_MeterInstallation', 'CRM_MeterInstallation.ServiceConnectionId', '=', 'CRM_ServiceConnections.id')
             ->leftJoin('users', 'CRM_ServiceConnectionInspections.Inspector', '=', 'users.id')
             ->whereRaw("(Trash IS NULL OR Trash='No') AND ConnectionSchedule IS NOT NULL")
             ->whereRaw("CRM_ServiceConnections.Status='Approved for Energization' AND CRM_ServiceConnections.ORNumber IS NOT NULL")
@@ -4634,8 +4634,8 @@ class ServiceConnectionsController extends AppBaseController
                 'CRM_ServiceConnections.ConnectionSchedule',
                 'CRM_ServiceConnections.StationCrewAssigned',
                 'users.name',
-                'CRM_ServiceConnectionMeterAndTransformer.MeterSerialNumber',
-                'CRM_ServiceConnectionMeterAndTransformer.id AS MeterId',
+                'CRM_MeterInstallation.NewMeterNumber AS MeterSerialNumber',
+                'CRM_MeterInstallation.id AS MeterId',
             )
             ->orderBy('ConnectionSchedule')
             ->orderBy('ServiceAccountName')

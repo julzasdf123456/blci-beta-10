@@ -7,6 +7,7 @@ use App\Http\Requests\UpdateMeterInstallationRequest;
 use App\Repositories\MeterInstallationRepository;
 use App\Http\Controllers\AppBaseController;
 use Illuminate\Http\Request;
+use App\Models\ServiceConnections;
 use Flash;
 use Response;
 
@@ -61,7 +62,7 @@ class MeterInstallationController extends AppBaseController
 
         Flash::success('Meter Installation saved successfully.');
 
-        return redirect(route('meterInstallations.index'));
+        return redirect(route('serviceConnections.manual-energization'));
     }
 
     /**
@@ -153,5 +154,13 @@ class MeterInstallationController extends AppBaseController
         Flash::success('Meter Installation deleted successfully.');
 
         return redirect(route('meterInstallations.index'));
+    }
+
+    public function createMeterInstallation($id) {
+        $serviceConnection = ServiceConnections::find($id);
+
+        return view('meter_installations.create', [
+            'serviceConnection' => $serviceConnection,
+        ]);
     }
 }
