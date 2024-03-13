@@ -40,7 +40,11 @@
                             $('#From').datetimepicker({
                                 format: 'YYYY-MM-DD',
                                 useCurrent: true,
-                                sideBySide: true
+                                sideBySide: true,
+                                icons :{
+                                    next : 'fas fa-caret-right',
+                                    previous : 'fas fa-caret-left'
+                                }
                             })
                         </script>
                     @endpush
@@ -54,15 +58,19 @@
                             $('#To').datetimepicker({
                                 format: 'YYYY-MM-DD',
                                 useCurrent: true,
-                                sideBySide: true
+                                sideBySide: true,
+                                icons :{
+                                    next : 'fas fa-caret-right',
+                                    previous : 'fas fa-caret-left'
+                                }
                             })
                         </script>
                     @endpush
 
                     <div class="form-group col-lg-2">
                         <label for="">Action</label><br>
-                        <button type="submit" class="btn btn-sm btn-primary" title="Show Results"><i class="fas fa-check-circle"></i></button>
-                        <button id="download" class="btn btn-sm btn-success" title="Download in Excel File"><i class="fas fa-file-download"></i></button>
+                        <button type="submit" class="btn btn-sm btn-default" title="Show Results"><i class="fas fa-check-circle ico-tab-mini"></i>View</button>
+                        <button id="download" class="btn btn-sm btn-primary" title="Download in Excel File"><i class="fas fa-file-download ico-tab-mini"></i>Download .xlsx</button>
                     </div>
                 </div>
             </div>
@@ -83,6 +91,8 @@
                         <th>Office</th>
                         <th>Status</th>
                         <th>Application Date</th>
+                        <th>Inspector</th>
+                        <th>Inspection Date</th>
                         <th>Date of Energization</th>
                         <th>Meter No.</th>
                         <th>Date Installed</th>
@@ -102,6 +112,8 @@
                                 <td>{{ $item->Office }}</td>
                                 <td>{{ $item->Status }}</td>
                                 <td>{{ $item->DateOfApplication != null ? date('M d, Y', strtotime($item->DateOfApplication)) : '-' }}</td>
+                                <td>{{ $item->name }}</td>
+                                <td>{{ $item->DateOfVerification != null ? date('M d, Y', strtotime($item->DateOfVerification)) : '-' }}</td>
                                 <td>{{ $item->DateTimeOfEnergization != null ? date('M d, Y', strtotime($item->DateTimeOfEnergization)) : '-' }}</td>
                                 <td>{{ $item->MeterSerialNumber }}</td>
                                 <td>{{ $item->DateTimeOfEnergization != null ? date('M d, Y', strtotime($item->DateTimeOfEnergization)) : '-' }}</td>

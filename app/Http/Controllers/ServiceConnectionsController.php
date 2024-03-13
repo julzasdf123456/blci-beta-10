@@ -3154,10 +3154,12 @@ class ServiceConnectionsController extends AppBaseController
 
         if ($status == 'All') {
             $data = DB::table('CRM_ServiceConnections')
-                ->leftJoin('CRM_ServiceConnectionMeterAndTransformer', 'CRM_ServiceConnectionMeterAndTransformer.ServiceConnectionId', '=', 'CRM_ServiceConnections.id')
+                ->leftJoin('CRM_MeterInstallation', 'CRM_MeterInstallation.ServiceConnectionId', '=', 'CRM_ServiceConnections.id')
                 ->leftJoin('CRM_Barangays', 'CRM_ServiceConnections.Barangay', '=', 'CRM_Barangays.id')
                 ->leftJoin('CRM_Towns', 'CRM_ServiceConnections.Town', '=', 'CRM_Towns.id')
                 ->leftJoin('CRM_ServiceConnectionCrew', 'CRM_ServiceConnections.StationCrewAssigned', '=', 'CRM_ServiceConnectionCrew.id')
+                ->leftJoin('CRM_ServiceConnectionInspections', 'CRM_ServiceConnections.id', '=', 'CRM_ServiceConnectionInspections.ServiceConnectionId')
+                ->leftJoin('users', 'CRM_ServiceConnectionInspections.Inspector', '=', 'users.id')
                 ->whereRaw("(TRY_CAST(CRM_ServiceConnections.DateOfApplication AS DATE) BETWEEN '" . $from . "' AND '" . $to . "')")
                 ->select(
                     'CRM_ServiceConnections.id',
@@ -3169,19 +3171,23 @@ class ServiceConnectionsController extends AppBaseController
                     'CRM_ServiceConnections.Office',
                     'CRM_ServiceConnections.DateOfApplication',
                     'CRM_ServiceConnections.DateTimeOfEnergization',
-                    'CRM_ServiceConnectionMeterAndTransformer.MeterSerialNumber',
-                    'CRM_ServiceConnectionMeterAndTransformer.created_at',
+                    'CRM_MeterInstallation.NewMeterNumber AS MeterSerialNumber',
+                    'CRM_MeterInstallation.created_at',
                     'CRM_ServiceConnectionCrew.StationName',
                     'CRM_ServiceConnections.Notes',
+                    'CRM_ServiceConnectionInspections.DateOfVerification',
+                    'users.name',
                 )
                 ->orderBy('CRM_ServiceConnections.ServiceAccountName')
                 ->get();
         } else {
             $data = DB::table('CRM_ServiceConnections')
-                ->leftJoin('CRM_ServiceConnectionMeterAndTransformer', 'CRM_ServiceConnectionMeterAndTransformer.ServiceConnectionId', '=', 'CRM_ServiceConnections.id')
+                ->leftJoin('CRM_MeterInstallation', 'CRM_MeterInstallation.ServiceConnectionId', '=', 'CRM_ServiceConnections.id')
                 ->leftJoin('CRM_Barangays', 'CRM_ServiceConnections.Barangay', '=', 'CRM_Barangays.id')
                 ->leftJoin('CRM_Towns', 'CRM_ServiceConnections.Town', '=', 'CRM_Towns.id')
                 ->leftJoin('CRM_ServiceConnectionCrew', 'CRM_ServiceConnections.StationCrewAssigned', '=', 'CRM_ServiceConnectionCrew.id')
+                ->leftJoin('CRM_ServiceConnectionInspections', 'CRM_ServiceConnections.id', '=', 'CRM_ServiceConnectionInspections.ServiceConnectionId')
+                ->leftJoin('users', 'CRM_ServiceConnectionInspections.Inspector', '=', 'users.id')
                 ->whereRaw("CRM_ServiceConnections.Status='" . $status . "' AND (TRY_CAST(CRM_ServiceConnections.DateOfApplication AS DATE) BETWEEN '" . $from . "' AND '" . $to . "')")
                 ->select(
                     'CRM_ServiceConnections.id',
@@ -3193,10 +3199,12 @@ class ServiceConnectionsController extends AppBaseController
                     'CRM_ServiceConnections.Office',
                     'CRM_ServiceConnections.DateOfApplication',
                     'CRM_ServiceConnections.DateTimeOfEnergization',
-                    'CRM_ServiceConnectionMeterAndTransformer.MeterSerialNumber',
-                    'CRM_ServiceConnectionMeterAndTransformer.created_at',
+                    'CRM_MeterInstallation.NewMeterNumber AS MeterSerialNumber',
+                    'CRM_MeterInstallation.created_at',
                     'CRM_ServiceConnectionCrew.StationName',
                     'CRM_ServiceConnections.Notes',
+                    'CRM_ServiceConnectionInspections.DateOfVerification',
+                    'users.name',
                 )
                 ->orderBy('CRM_ServiceConnections.ServiceAccountName')
                 ->get();
@@ -3214,13 +3222,15 @@ class ServiceConnectionsController extends AppBaseController
         ]);
     }
 
-    public function downloadDetailedSummary($town, $from, $to) {
-        if ($town == 'All') {
+    public function downloadDetailedSummary($status, $from, $to) {
+        if ($status == 'All') {
             $data = DB::table('CRM_ServiceConnections')
-                ->leftJoin('CRM_ServiceConnectionMeterAndTransformer', 'CRM_ServiceConnectionMeterAndTransformer.ServiceConnectionId', '=', 'CRM_ServiceConnections.id')
+                ->leftJoin('CRM_MeterInstallation', 'CRM_MeterInstallation.ServiceConnectionId', '=', 'CRM_ServiceConnections.id')
                 ->leftJoin('CRM_Barangays', 'CRM_ServiceConnections.Barangay', '=', 'CRM_Barangays.id')
                 ->leftJoin('CRM_Towns', 'CRM_ServiceConnections.Town', '=', 'CRM_Towns.id')
                 ->leftJoin('CRM_ServiceConnectionCrew', 'CRM_ServiceConnections.StationCrewAssigned', '=', 'CRM_ServiceConnectionCrew.id')
+                ->leftJoin('CRM_ServiceConnectionInspections', 'CRM_ServiceConnections.id', '=', 'CRM_ServiceConnectionInspections.ServiceConnectionId')
+                ->leftJoin('users', 'CRM_ServiceConnectionInspections.Inspector', '=', 'users.id')
                 ->whereRaw("(TRY_CAST(CRM_ServiceConnections.DateOfApplication AS DATE) BETWEEN '" . $from . "' AND '" . $to . "')")
                 ->select(
                     'CRM_ServiceConnections.id',
@@ -3232,21 +3242,24 @@ class ServiceConnectionsController extends AppBaseController
                     'CRM_ServiceConnections.Office',
                     'CRM_ServiceConnections.DateOfApplication',
                     'CRM_ServiceConnections.DateTimeOfEnergization',
-                    'CRM_ServiceConnectionMeterAndTransformer.MeterSerialNumber',
-                    'CRM_ServiceConnectionMeterAndTransformer.created_at',
+                    'CRM_MeterInstallation.NewMeterNumber AS MeterSerialNumber',
+                    'CRM_MeterInstallation.created_at',
                     'CRM_ServiceConnectionCrew.StationName',
                     'CRM_ServiceConnections.Notes',
+                    'CRM_ServiceConnectionInspections.DateOfVerification',
+                    'users.name',
                 )
-                ->orderBy('CRM_Towns.Town')
                 ->orderBy('CRM_ServiceConnections.ServiceAccountName')
                 ->get();
         } else {
             $data = DB::table('CRM_ServiceConnections')
-                ->leftJoin('CRM_ServiceConnectionMeterAndTransformer', 'CRM_ServiceConnectionMeterAndTransformer.ServiceConnectionId', '=', 'CRM_ServiceConnections.id')
+                ->leftJoin('CRM_MeterInstallation', 'CRM_MeterInstallation.ServiceConnectionId', '=', 'CRM_ServiceConnections.id')
                 ->leftJoin('CRM_Barangays', 'CRM_ServiceConnections.Barangay', '=', 'CRM_Barangays.id')
                 ->leftJoin('CRM_Towns', 'CRM_ServiceConnections.Town', '=', 'CRM_Towns.id')
                 ->leftJoin('CRM_ServiceConnectionCrew', 'CRM_ServiceConnections.StationCrewAssigned', '=', 'CRM_ServiceConnectionCrew.id')
-                ->whereRaw("CRM_ServiceConnections.Town='" . $town . "' AND (TRY_CAST(CRM_ServiceConnections.DateOfApplication AS DATE) BETWEEN '" . $from . "' AND '" . $to . "')")
+                ->leftJoin('CRM_ServiceConnectionInspections', 'CRM_ServiceConnections.id', '=', 'CRM_ServiceConnectionInspections.ServiceConnectionId')
+                ->leftJoin('users', 'CRM_ServiceConnectionInspections.Inspector', '=', 'users.id')
+                ->whereRaw("CRM_ServiceConnections.Status='" . $status . "' AND (TRY_CAST(CRM_ServiceConnections.DateOfApplication AS DATE) BETWEEN '" . $from . "' AND '" . $to . "')")
                 ->select(
                     'CRM_ServiceConnections.id',
                     'CRM_ServiceConnections.ServiceAccountName',
@@ -3257,12 +3270,13 @@ class ServiceConnectionsController extends AppBaseController
                     'CRM_ServiceConnections.Office',
                     'CRM_ServiceConnections.DateOfApplication',
                     'CRM_ServiceConnections.DateTimeOfEnergization',
-                    'CRM_ServiceConnectionMeterAndTransformer.MeterSerialNumber',
-                    'CRM_ServiceConnectionMeterAndTransformer.created_at',
+                    'CRM_MeterInstallation.NewMeterNumber AS MeterSerialNumber',
+                    'CRM_MeterInstallation.created_at',
                     'CRM_ServiceConnectionCrew.StationName',
                     'CRM_ServiceConnections.Notes',
+                    'CRM_ServiceConnectionInspections.DateOfVerification',
+                    'users.name',
                 )
-                ->orderBy('CRM_Towns.Town')
                 ->orderBy('CRM_ServiceConnections.ServiceAccountName')
                 ->get();
         }
@@ -3274,10 +3288,12 @@ class ServiceConnectionsController extends AppBaseController
             'Office',
             'Status',
             'Date of Application',
+            'Inspector',
+            'Date of Inspection',
             'Date of Energization',
             'Meter Serial Number',
             'Date Installed',
-            'Station Name',
+            'Crew',
             'Notes/Remarks',
         ];
 
@@ -3289,7 +3305,9 @@ class ServiceConnectionsController extends AppBaseController
                 'Address' => ServiceConnections::getAddress($item),
                 'Office' => $item->Office,
                 'Status' => $item->Status,
-                'DateofAppliction' => $item->DateOfApplication != null ? date('M d, Y', strtotime($item->DateOfApplication)) : '-',
+                'DateofApplication' => $item->DateOfApplication != null ? date('M d, Y', strtotime($item->DateOfApplication)) : '-',
+                'Inspector' => $item->name,
+                'DateOfinspection' => $item->DateOfVerification != null ? date('M d, Y', strtotime($item->DateOfVerification)) : '-',
                 'DateOfEnergization' => $item->DateTimeOfEnergization != null ? date('M d, Y', strtotime($item->DateTimeOfEnergization)) : '-',
                 'MeterNo' => $item->MeterSerialNumber,
                 'DateInstalled' => $item->DateTimeOfEnergization != null ? date('M d, Y', strtotime($item->DateTimeOfEnergization)) : '-',
@@ -3318,7 +3336,7 @@ class ServiceConnectionsController extends AppBaseController
         ];
         
         $export = new DynamicExportsNoBillingMonth($arr, 
-                                    $town,
+                                    'TAGBILARAN CITY',
                                     $headers, 
                                     [],
                                     'A8',

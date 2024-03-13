@@ -156,7 +156,7 @@ Route::get('/service_connections/print-application-form-without-membership/{id}'
 Route::get('/service_connections/metering-installation', [ServiceConnectionsController::class, 'meteringInstallation'])->name('serviceConnections.metering-installation');
 Route::get('/service_connections/download-metering-installation-report/{from}/{to}', [ServiceConnectionsController::class, 'downloadMeteringInstallation'])->name('serviceConnections.download-metering-installation-report');
 Route::get('/service_connections/detailed-summary', [ServiceConnectionsController::class, 'detailedSummary'])->name('serviceConnections.detailed-summary');
-Route::get('/service_connections/download-detailed-summary/{town}/{from}/{to}', [ServiceConnectionsController::class, 'downloadDetailedSummary'])->name('serviceConnections.download-detailed-summary');
+Route::get('/service_connections/download-detailed-summary/{status}/{from}/{to}', [ServiceConnectionsController::class, 'downloadDetailedSummary'])->name('serviceConnections.download-detailed-summary');
 Route::get('/service_connections/summary-report', [ServiceConnectionsController::class, 'summaryReport'])->name('serviceConnections.summary-report');
 Route::get('/service_connections/mriv', [ServiceConnectionsController::class, 'mriv'])->name('serviceConnections.mriv');
 Route::get('/service_connections/print-mriv/{town}/{from}/{to}', [ServiceConnectionsController::class, 'printMriv'])->name('serviceConnections.print-mriv');
