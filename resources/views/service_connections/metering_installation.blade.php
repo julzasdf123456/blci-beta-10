@@ -22,7 +22,7 @@
             {!! Form::open(['route' => 'serviceConnections.metering-installation', 'method' => 'GET']) !!}
             <div class="card-body">
                 <div class="row">
-                    <div class="form-group col-lg-2">
+                    {{-- <div class="form-group col-lg-2">
                         <label for="Town">Town</label>
                         <select name="Town" id="Town" class="form-control form-control-sm">
                             <option value="All">All</option>
@@ -31,7 +31,7 @@
                             @endforeach
                         </select>
                     </div>
-    
+     --}}
                     <div class="form-group col-lg-2">
                         {!! Form::label('From', 'From') !!}
                         {!! Form::text('From', isset($_GET['From']) ? $_GET['From'] : '', ['class' => 'form-control form-control-sm','id'=>'From', 'required' => true]) !!}
@@ -62,8 +62,8 @@
 
                     <div class="form-group col-lg-2">
                         <label for="">Action</label><br>
-                        <button type="submit" class="btn btn-sm btn-primary" title="Show Results"><i class="fas fa-check-circle"></i></button>
-                        <button id="download" class="btn btn-sm btn-success" title="Download in Excel File"><i class="fas fa-file-download"></i></button>
+                        <button type="submit" class="btn btn-sm btn-default" title="Show Results"><i class="fas fa-check-circle ico-tab-mini"></i>View</button>
+                        <button id="download" class="btn btn-sm btn-primary" title="Download in Excel File"><i class="fas fa-file-download ico-tab-mini"></i>Download .xlsx</button>
                     </div>
                 </div>
             </div>
@@ -81,10 +81,11 @@
                         <th>Svc. No</th>
                         <th>Applicant Name</th>
                         <th>Address</th>
-                        <th>Office</th>
+                        <th>Application Type</th>
                         <th>Application Date</th>
                         <th>Date of Energization</th>
                         <th>Meter No.</th>
+                        <th>Meter Brand</th>
                         <th>Date Installed</th>
                         <th>Crew</th>
                         <th>Remarks/Notes</th>
@@ -99,10 +100,11 @@
                                 <td><a href="{{ route('serviceConnections.show', [$item->id]) }}">{{ $item->id }}</a></td>
                                 <td>{{ $item->ServiceAccountName }}</td>
                                 <td>{{ ServiceConnections::getAddress($item) }}</td>
-                                <td>{{ $item->Office }}</td>
+                                <td>{{ $item->AccountApplicationType }}</td>
                                 <td>{{ $item->DateOfApplication != null ? date('M d, Y', strtotime($item->DateOfApplication)) : '-' }}</td>
                                 <td>{{ $item->DateTimeOfEnergization != null ? date('M d, Y', strtotime($item->DateTimeOfEnergization)) : '-' }}</td>
                                 <td>{{ $item->MeterSerialNumber }}</td>
+                                <td>{{ $item->NewMeterBrand }}</td>
                                 <td>{{ $item->DateTimeOfEnergization != null ? date('M d, Y', strtotime($item->DateTimeOfEnergization)) : '-' }}</td>
                                 <td>{{ $item->StationName }}</td>
                                 <td>{{ $item->Notes }}</td>
@@ -124,7 +126,7 @@
         $(document).ready(function() {
             $('#download').on('click', function(e) {
                 e.preventDefault()
-                window.location.href = "{{ url('/service_connections/download-metering-installation-report') }}" + "/" + $('#Town').val() + "/" + $('#From').val() + "/" + $('#To').val()
+                window.location.href = "{{ url('/service_connections/download-metering-installation-report') }}/" + $('#From').val() + "/" + $('#To').val()
             })
         })
     </script>

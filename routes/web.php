@@ -154,7 +154,7 @@ Route::get('/service_connections/create-re-installation/{id}', [ServiceConnectio
 Route::get('/service_connections/print-contract-without-membership/{id}', [ServiceConnectionsController::class, 'printContractWithoutMembership'])->name('serviceConnections.print-contract-without-membership');
 Route::get('/service_connections/print-application-form-without-membership/{id}', [ServiceConnectionsController::class, 'printApplicationFormWithoutMembership'])->name('serviceConnections.print-application-form-without-membership');
 Route::get('/service_connections/metering-installation', [ServiceConnectionsController::class, 'meteringInstallation'])->name('serviceConnections.metering-installation');
-Route::get('/service_connections/download-metering-installation-report/{town}/{from}/{to}', [ServiceConnectionsController::class, 'downloadMeteringInstallation'])->name('serviceConnections.download-metering-installation-report');
+Route::get('/service_connections/download-metering-installation-report/{from}/{to}', [ServiceConnectionsController::class, 'downloadMeteringInstallation'])->name('serviceConnections.download-metering-installation-report');
 Route::get('/service_connections/detailed-summary', [ServiceConnectionsController::class, 'detailedSummary'])->name('serviceConnections.detailed-summary');
 Route::get('/service_connections/download-detailed-summary/{town}/{from}/{to}', [ServiceConnectionsController::class, 'downloadDetailedSummary'])->name('serviceConnections.download-detailed-summary');
 Route::get('/service_connections/summary-report', [ServiceConnectionsController::class, 'summaryReport'])->name('serviceConnections.summary-report');
