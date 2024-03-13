@@ -181,15 +181,15 @@ use Illuminate\Support\Facades\Auth;
                     </li>
                     @endcanany
 
-                    @canany(['Super Admin', 'sc view'])
+                    {{-- @canany(['Super Admin', 'sc view']) --}}
                     {{-- FLOW --}}
-                    <li class="nav-item">
+                    {{-- <li class="nav-item">
                         <a href="{{ route('serviceConnectionMtrTrnsfrmrs.assigning') }}"
                         class="nav-link {{ Request::is('serviceConnectionMtrTrnsfrmrs.assigning*') ? 'active' : '' }}">
                         <i class="fas fa-tachometer-alt nav-icon text-warning"></i><p>For Meter Assigning</p>
                         </a>
                     </li>
-                    @endcanany
+                    @endcanany --}}
                     
                     @canany(['Super Admin', 'sc view'])
                     <li class="nav-item">
