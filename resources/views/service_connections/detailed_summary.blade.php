@@ -22,11 +22,11 @@
             <div class="card-body">
                 <div class="row">
                     <div class="form-group col-lg-2">
-                        <label for="Town">Town</label>
-                        <select name="Town" id="Town" class="form-control form-control-sm">
+                        <label for="Status">Status</label>
+                        <select name="Status" id="Status" class="form-control form-control-sm">
                             <option value="All">All</option>
-                            @foreach ($towns as $item)
-                                <option value="{{ $item->id }}" {{ isset($_GET['Town']) && $_GET['Town']==$item->id ? 'selected' : '' }}>{{ $item->Town }}</option>
+                            @foreach ($statuses as $item)
+                                <option value="{{ $item->Status }}" {{ isset($_GET['Status']) && $_GET['Status']==$item->Status ? 'selected' : '' }}>{{ $item->Status }}</option>
                             @endforeach
                         </select>
                     </div>
@@ -125,7 +125,7 @@
         $(document).ready(function() {
             $('#download').on('click', function(e) {
                 e.preventDefault()
-                window.location.href = "{{ url('/service_connections/download-detailed-summary') }}" + "/" + $('#Town').val() + "/" + $('#From').val() + "/" + $('#To').val()
+                window.location.href = "{{ url('/service_connections/download-detailed-summary') }}" + "/" + $('#Status').val() + "/" + $('#From').val() + "/" + $('#To').val()
             })
         })
     </script>

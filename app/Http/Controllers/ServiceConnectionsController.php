@@ -3148,11 +3148,11 @@ class ServiceConnectionsController extends AppBaseController
     }
 
     public function detailedSummary(Request $request) {
-        $town = $request['Town'];
+        $status = $request['Status'];
         $from = $request['From'];
         $to = $request['To'];
 
-        if ($town == 'All') {
+        if ($status == 'All') {
             $data = DB::table('CRM_ServiceConnections')
                 ->leftJoin('CRM_ServiceConnectionMeterAndTransformer', 'CRM_ServiceConnectionMeterAndTransformer.ServiceConnectionId', '=', 'CRM_ServiceConnections.id')
                 ->leftJoin('CRM_Barangays', 'CRM_ServiceConnections.Barangay', '=', 'CRM_Barangays.id')
@@ -3174,7 +3174,6 @@ class ServiceConnectionsController extends AppBaseController
                     'CRM_ServiceConnectionCrew.StationName',
                     'CRM_ServiceConnections.Notes',
                 )
-                ->orderBy('CRM_Towns.Town')
                 ->orderBy('CRM_ServiceConnections.ServiceAccountName')
                 ->get();
         } else {
@@ -3183,7 +3182,7 @@ class ServiceConnectionsController extends AppBaseController
                 ->leftJoin('CRM_Barangays', 'CRM_ServiceConnections.Barangay', '=', 'CRM_Barangays.id')
                 ->leftJoin('CRM_Towns', 'CRM_ServiceConnections.Town', '=', 'CRM_Towns.id')
                 ->leftJoin('CRM_ServiceConnectionCrew', 'CRM_ServiceConnections.StationCrewAssigned', '=', 'CRM_ServiceConnectionCrew.id')
-                ->whereRaw("CRM_ServiceConnections.Town='" . $town . "' AND (TRY_CAST(CRM_ServiceConnections.DateOfApplication AS DATE) BETWEEN '" . $from . "' AND '" . $to . "')")
+                ->whereRaw("CRM_ServiceConnections.Status='" . $status . "' AND (TRY_CAST(CRM_ServiceConnections.DateOfApplication AS DATE) BETWEEN '" . $from . "' AND '" . $to . "')")
                 ->select(
                     'CRM_ServiceConnections.id',
                     'CRM_ServiceConnections.ServiceAccountName',
@@ -3199,14 +3198,19 @@ class ServiceConnectionsController extends AppBaseController
                     'CRM_ServiceConnectionCrew.StationName',
                     'CRM_ServiceConnections.Notes',
                 )
-                ->orderBy('CRM_Towns.Town')
                 ->orderBy('CRM_ServiceConnections.ServiceAccountName')
                 ->get();
         }
+
+        $statuses = DB::table('CRM_ServiceConnections')
+            ->select('Status')
+            ->groupBy('Status')
+            ->orderBy('Status')
+            ->get();
         
         return view('/service_connections/detailed_summary', [
             'data' => $data,
-            'towns' => Towns::all()
+            'statuses' => $statuses
         ]);
     }
 
@@ -5063,7 +5067,7 @@ class ServiceConnectionsController extends AppBaseController
             foreach($localItems as $item) {
                 $whItems = new WarehouseItems;
                 $whItems->reqno = $item->reqno;
-                $whItems->ent_no = $item->ent_no;
+                $whItems->ent_no = $localHead->ent_no;
                 $whItems->tdate = $item->tdate;
                 $whItems->itemcd = $item->itemcd;
                 $whItems->qty = $item->qty;
@@ -5119,7 +5123,7 @@ class ServiceConnectionsController extends AppBaseController
             foreach($localItemsMeters as $item) {
                 $whItems = new WarehouseItems;
                 $whItems->reqno = $item->reqno;
-                $whItems->ent_no = $item->ent_no;
+                $whItems->ent_no = $localHeadMeter->ent_no;
                 $whItems->tdate = $item->tdate;
                 $whItems->itemcd = $item->itemcd;
                 $whItems->qty = $item->qty;
@@ -5134,7 +5138,6 @@ class ServiceConnectionsController extends AppBaseController
             }
         }
     }
-
     
     public function printOrderMeters($id) {
         $serviceConnections = DB::table('CRM_ServiceConnections')
