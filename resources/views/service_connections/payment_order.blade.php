@@ -1,3 +1,11 @@
+@php
+    use App\Models\ServiceConnections;
+    use App\Models\Barangays;
+
+    $typeOfCustomers = ServiceConnections::typesOfConsumer();
+    $brgys = Barangays::orderBy('BarangayCode')->get();
+@endphp
+
 @extends('layouts.app')
 
 @section('content')
@@ -59,9 +67,19 @@
          <div class="card-body">
             <span class="text-muted">ACCOUNT NUMBER</span>
             <br>
-            <input title="Type of Customer" maxlength="2" type="text" name="BarangayCode" id="BarangayCode" class="form-control" required value="{{ $serviceConnection->BarangayCode }}" style="width: 46px; display: inline;">
+            {{-- <input title="Barangay" maxlength="2" type="text" name="BarangayCode" id="BarangayCode" class="form-control" required value="{{ $serviceConnection->BarangayCode }}" style="width: 46px; display: inline;"> --}}
+            <select title="Barangay" name="BarangayCode" id="BarangayCode" class="form-control" required style="width: 66px; display: inline;">
+               @foreach ($brgys as $item)
+                   <option value="{{ $item->BarangayCode }}" {{ $serviceConnection->BarangayCode != null && $serviceConnection->BarangayCode==$item->BarangayCode ? 'selected' : '' }}>{{ $item->BarangayCode }}  - {{ $item->Barangay}}</option>
+               @endforeach
+            </select>
             <span>-</span>
-            <input title="Type of Customer" maxlength="2" type="text" name="TypeOfCustomer" id="TypeOfCustomer" class="form-control" required value="{{ $serviceConnection->TypeOfCustomer }}" style="width: 46px; display: inline;">
+            {{-- <input title="Type of Customer" maxlength="2" type="text" name="TypeOfCustomer" id="TypeOfCustomer" class="form-control" required value="{{ $serviceConnection->TypeOfCustomer }}" style="width: 46px; display: inline;"> --}}
+            <select title="Type of Customer" name="TypeOfCustomer" id="TypeOfCustomer" class="form-control" required style="width: 66px; display: inline;">
+               @foreach ($typeOfCustomers as $key => $item)
+                   <option value="{{ $key }}" {{ $serviceConnection->TypeOfCustomer != null && $serviceConnection->TypeOfCustomer==$key ? 'selected' : '' }}>{{ $key }}  - {{ $item }}</option>
+               @endforeach
+            </select>
             <span>-</span>
             <input type="text" name="AccountNumber" maxlength="5" id="AccountNumber" placeholder="Input Account Number Here" class="form-control" required style="width: 100px; display: inline;">
             <span>-</span>
