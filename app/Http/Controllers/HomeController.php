@@ -78,25 +78,31 @@ class HomeController extends Controller
     }
 
     public function fetchApprovedServiceConnections(Request $request) {
-        if ($request->ajax()) {            
-            $data = DB::table('CRM_ServiceConnections')
-                    ->join('CRM_Barangays', 'CRM_ServiceConnections.Barangay', '=', 'CRM_Barangays.id')
-                    ->join('CRM_Towns', 'CRM_ServiceConnections.Town', '=', 'CRM_Towns.id')
-                    ->where('CRM_ServiceConnections.Status', 'Approved')
-                    ->whereNull('CRM_ServiceConnections.ORNumber')
-                    ->where(function ($query) {
-                        $query->where('CRM_ServiceConnections.Trash', 'No')
-                            ->orWhereNull('CRM_ServiceConnections.Trash');
-                    })
-                    ->select('CRM_ServiceConnections.id as id',
-                        'CRM_ServiceConnections.ServiceAccountName as ServiceAccountName', 
-                        'CRM_Towns.Town as Town',
-                        'CRM_Barangays.Barangay as Barangay',)
-                    ->orderBy('CRM_ServiceConnections.ServiceAccountName')
-                    ->get();
+        $data = DB::table('CRM_ServiceConnections')
+                ->leftJoin('CRM_Barangays', 'CRM_ServiceConnections.Barangay', '=', 'CRM_Barangays.id')
+                ->leftJoin('CRM_Towns', 'CRM_ServiceConnections.Town', '=', 'CRM_Towns.id')
+                ->leftJoin('CRM_PaymentOrder', 'CRM_PaymentOrder.ServiceConnectionId', '=', 'CRM_ServiceConnections.id')
+                ->leftJoin('CRM_ServiceConnectionInspections', 'CRM_ServiceConnectionInspections.ServiceConnectionId', '=', 'CRM_ServiceConnections.id')
+                ->leftJoin('users', 'CRM_ServiceConnectionInspections.Inspector', '=', 'users.id')
+                ->where('CRM_ServiceConnections.Status', 'Approved')
+                ->whereNull('CRM_ServiceConnections.ORNumber')
+                ->where(function ($query) {
+                    $query->where('CRM_ServiceConnections.Trash', 'No')
+                        ->orWhereNull('CRM_ServiceConnections.Trash');
+                })
+                ->select('CRM_ServiceConnections.id as id',
+                    'CRM_ServiceConnections.ServiceAccountName as ServiceAccountName', 
+                    'CRM_Towns.Town as Town',
+                    'CRM_Barangays.Barangay as Barangay',
+                    'CRM_PaymentOrder.OverAllTotal',
+                    'CRM_PaymentOrder.ORNumber',
+                    'users.name',
+                    'CRM_ServiceConnections.Status',
+                    'CRM_ServiceConnectionInspections.InspectionSchedule')
+                ->orderBy('CRM_ServiceConnections.ServiceAccountName')
+                ->get();
 
-            echo json_encode($data);
-        }
+        return response()->json($data, 200);
     }
 
     public function fetchForPaymentApprovals(Request $request) {

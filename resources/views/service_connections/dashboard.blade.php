@@ -291,7 +291,7 @@
 {{-- MODALS SECTION --}}
 {{-- MODAL FOR APPROVED AND FOR PAYMENT --}}
 <div class="modal fade" id="approved-modal" style="display: none;" aria-hidden="true">
-    <div class="modal-dialog modal-xl">
+    <div class="modal-dialog" style="max-width: 90% !important; margin-top: 20px;">
         <div class="modal-content">
             <div class="modal-header">
                 <h4 class="modal-title" id="modal-title">Approved Applicants</h4>
@@ -299,12 +299,16 @@
                     <span aria-hidden="true">×</span>
                 </button>
             </div>
-            <div class="modal-body">
-                <table class="table" id="approved-table">
+            <div class="modal-body table-responsive">
+                <table class="table table-hover" id="approved-table">
                     <thead>
                         <th>ID</th>
                         <th>Service Account Name</th>
                         <th>Address</th>
+                        <th class="text-right">Payment Order</th>
+                        <th>Status</th>
+                        <th>Inspector</th>
+                        <th>Inspection Schedule</th>
                     </thead>
                     <tbody>
 
@@ -508,8 +512,15 @@
                 success : function(response) {
                     $('#approved-table tbody tr').remove();
                     $.each(response, function(index, element) {
-                        console.log(response[index]['id']);
-                        $('#approved-table tbody').append('<tr><td><a href="{{ url("/serviceConnections") }}/' + response[index]["id"] + '">' + response[index]['id'] + '</a></td><td>' + response[index]['ServiceAccountName'] + '</td><td>' + response[index]['Barangay'] + ', ' + response[index]['Town'] + '</td></tr>');
+                        $('#approved-table tbody').append(`<tr>` + 
+                                `<td><a href="{{ url("/serviceConnections") }}/` + response[index]["id"] + `">` + response[index]['id'] + `</a></td>` + 
+                                `<td>` + response[index]['ServiceAccountName'] + `</td>` + 
+                                `<td>` + response[index]['Barangay'] + `, ` + response[index]['Town'] + `</td>` + 
+                                `<td class='text-right v-align'>` + (isNull(response[index]['OverAllTotal']) ? `<span class="badge bg-danger">no order</span> <a class="btn btn-sm btn-primary" href="{{ url('/service_connections/payment-order') }}/${response[index]["id"]}">Create Order</a>` : toMoney(parseFloat(response[index]['OverAllTotal']))) + `</td>` + 
+                                `<td>` + response[index]['Status'] + `</td>` + 
+                                `<td>` + response[index]['name'] + `</td>` + 
+                                `<td>` + (isNull(response[index]['InspectionSchedule']) ? '-' : moment(response[index]['InspectionSchedule']).format("MMMM DD, YYYY (dddd)")) + `</td>` + 
+                            `</tr>`);
                     });
                 },
                 error : function(error) {
