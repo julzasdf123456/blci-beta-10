@@ -156,9 +156,9 @@
                <td>{{ $item->ascode }}</td>
                <td class="text-right">{{ $item->qty }}</td>
                <td class="text-right">{{ $item->uom }}</td>
-               <td class="text-right">{{ is_numeric($item->salesprice) ? round($item->salesprice, 2) : $item->salesprice }}</td>
-               <td class="text-right">{{ is_numeric($item->amt) ? round($item->amt, 2) : $item->amt }}</td>
-               <td class="text-right">{{ is_numeric($item->cst) ? round($item->cst, 2) : $item->cst }}</td>
+               <td class="text-right">{{ is_numeric($item->salesprice) ? number_format($item->salesprice, 6, ".", "") : $item->salesprice }}</td>
+               <td class="text-right">{{ is_numeric($item->amt) ? number_format($item->amt, 6, ".", "") : $item->amt }}</td>
+               <td class="text-right">{{ is_numeric($item->cst) ? number_format($item->cst, 6, ".", "") : $item->cst }}</td>
                <td>
                   <button onclick='removeItem(`{{ $item->id }}`, `OLD`)' class='btn btn-xs btn-link text-danger' style='margin-left: 10px;'><i class='fas fa-trash'></i></button>
                </td>

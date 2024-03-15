@@ -3794,6 +3794,7 @@ class ServiceConnectionsController extends AppBaseController
             ->select('CRM_ServiceConnections.id as id',
                         'CRM_ServiceConnections.Sitio as Sitio', 
                         'CRM_Towns.Town as Town',
+                        'CRM_ServiceConnections.Status',
                         'CRM_Barangays.Barangay as Barangay',
                         )
         ->where('CRM_ServiceConnections.id', $ServiceConnectionId)
@@ -3801,13 +3802,24 @@ class ServiceConnectionsController extends AppBaseController
 
         // UPDATE AccountNumber
         if ($ORNumber != null && $ORNumber !== '0') {
-            ServiceConnections::where('id', $ServiceConnectionId)
-                ->update(['AccountNumber' => $acctNo, 
-                'ORNumber' => $ORNumber, 
-                'TypeOfCustomer' => $typeOfCustomer,
-                'BarangayCode' => $barangayCode,
-                'NumberOfAccounts' => $numberOfAccounts,
-                'Status' => 'For Energization']);
+            if ($serviceConnections != null) {
+                if (in_array($serviceConnections->Status, ['Approved', 'Payment Approved'])) {
+                    ServiceConnections::where('id', $ServiceConnectionId)
+                        ->update(['AccountNumber' => $acctNo, 
+                        'ORNumber' => $ORNumber, 
+                        'TypeOfCustomer' => $typeOfCustomer,
+                        'BarangayCode' => $barangayCode,
+                        'NumberOfAccounts' => $numberOfAccounts,
+                        'Status' => 'For Energization']);
+                } else {
+                    ServiceConnections::where('id', $ServiceConnectionId)
+                        ->update(['AccountNumber' => $acctNo, 
+                        'ORNumber' => $ORNumber, 
+                        'TypeOfCustomer' => $typeOfCustomer,
+                        'BarangayCode' => $barangayCode,
+                        'NumberOfAccounts' => $numberOfAccounts]);
+                }
+            }
         } else {
             ServiceConnections::where('id', $ServiceConnectionId)
                 ->update(['AccountNumber' => $acctNo,  
@@ -3850,12 +3862,10 @@ class ServiceConnectionsController extends AppBaseController
         $paymentOrder->save();
 
         // DELETE WAREHOUSE HEAD
-        $whHead = WarehouseHead::where('appl_no', $ServiceConnectionId)->get();
+        $whHeadCheck = WarehouseHead::where('appl_no', $ServiceConnectionId)->get();
 
-        if ($whHead != null) {
-            foreach($whHead as $item) {
-                $item->delete();
-
+        if ($whHeadCheck != null) {
+            foreach($whHeadCheck as $item) {
                 // DELETE MATERIAL ITEMS FIRST
                 $whItems = WarehouseItems::where('reqno', $item->orderno)->delete();
             }            
@@ -3871,12 +3881,21 @@ class ServiceConnectionsController extends AppBaseController
         $entryNo = $entNoLast != null ? (floatval($entNoLast->ent_no) + 1) : 0;
 
         // SAVE WAREHOUSE HEAD ITEMS
-        $whHead = new WarehouseHead;
-        $whHead->orderno = $reqNo;
-        $whHead->ent_no = $entryNo;
+        $whHead = WarehouseHead::where('appl_no', $ServiceConnectionId)
+            ->where('orderno', $reqNo)
+            ->first();
+
+        if ($whHead != null) {
+            
+        } else {
+            $whHead = new WarehouseHead;
+            $whHead->orderno = $reqNo;
+            $whHead->ent_no = $entryNo;
+            $whHead->address = ServiceConnections::getAddress($serviceConnections);
+            $whHead->tdate = date('m/d/Y');
+        }
+        
         $whHead->misno = $mirsNo;
-        $whHead->address = ServiceConnections::getAddress($serviceConnections);
-        $whHead->tdate = date('m/d/Y');
         $whHead->emp_id = $requestedById;
         $whHead->ccode = $CostCenter;
         $whHead->dept = $chargeTo;
@@ -3913,20 +3932,29 @@ class ServiceConnectionsController extends AppBaseController
         $whHeadLocal = LocalWarehouseHead::where('appl_no', $ServiceConnectionId)->get();
         if ($whHeadLocal != null) {
             foreach($whHeadLocal as $item) {
-                $item->delete();
+                // $item->delete();
 
                 // DELETE MATERIAL ITEMS FIRST
                 $whItemsLocal = LocalWarehouseItems::where('reqno', $item->orderno)->delete();
             }            
         }
 
-        $whHeadLocal = new LocalWarehouseHead;
-        $whHeadLocal->id = IDGenerator::generateIDandRandString();
-        $whHeadLocal->orderno = $reqNo;
-        $whHeadLocal->ent_no = $entryNo;
-        $whHeadLocal->misno = $mirsNo;
-        $whHeadLocal->address = ServiceConnections::getAddress($serviceConnections);
-        $whHeadLocal->tdate = date('m/d/Y');
+        $whHeadLocal = LocalWarehouseHead::where('appl_no', $ServiceConnectionId)
+            ->where('orderno', $reqNo)
+            ->first();
+
+        if ($whHeadLocal != null) {
+        
+        } else {
+            $whHeadLocal = new LocalWarehouseHead;
+            $whHeadLocal->id = IDGenerator::generateIDandRandString();
+            $whHeadLocal->orderno = $reqNo;
+            $whHeadLocal->ent_no = $entryNo;
+            $whHeadLocal->misno = $mirsNo;
+            $whHeadLocal->address = ServiceConnections::getAddress($serviceConnections);
+            $whHeadLocal->tdate = date('m/d/Y');
+        }
+
         $whHeadLocal->emp_id = $requestedById;
         $whHeadLocal->ccode = $CostCenter;
         $whHeadLocal->dept = $chargeTo;
@@ -3992,12 +4020,20 @@ class ServiceConnectionsController extends AppBaseController
 
         // SAVE WAREHOUSE HEAD METERS
         if ($meter_reqNo != null && count($meterItems) > 0) {
-            $whHead = new WarehouseHead;
-            $whHead->orderno = $meter_reqNo;
-            $whHead->ent_no = ($entryNo + 1);
-            $whHead->misno = $meter_mirsNo;
-            $whHead->address = ServiceConnections::getAddress($serviceConnections);
-            $whHead->tdate = date('m/d/Y');
+            $whHead = WarehouseHead::where('appl_no', $ServiceConnectionId)
+                ->where('orderno', $meter_reqNo)
+                ->first();
+            if ($whHead != null) {
+    
+            } else {
+                $whHead = new WarehouseHead;
+                $whHead->orderno = $meter_reqNo;
+                $whHead->ent_no = ($entryNo + 1);
+                $whHead->misno = $meter_mirsNo;
+                $whHead->address = ServiceConnections::getAddress($serviceConnections);
+                $whHead->tdate = date('m/d/Y');
+            } 
+
             $whHead->emp_id = $meter_requestedById;
             $whHead->ccode = $CostCenter;
             $whHead->dept = $meter_chargeTo;
@@ -4028,14 +4064,22 @@ class ServiceConnectionsController extends AppBaseController
              * SAVE LOCAL WH_HEAD METERS
              * ===============================================
              */
+            $whHeadLocalMeters = LocalWarehouseHead::where('appl_no', $ServiceConnectionId)
+                ->where('orderno', $meter_reqNo)
+                ->first();
 
-            $whHeadLocalMeters = new LocalWarehouseHead;
-            $whHeadLocalMeters->id = IDGenerator::generateIDandRandString();
-            $whHeadLocalMeters->orderno = $meter_reqNo;
-            $whHeadLocalMeters->ent_no = ($entryNo + 1);
-            $whHeadLocalMeters->misno = $meter_mirsNo;
-            $whHeadLocalMeters->address = ServiceConnections::getAddress($serviceConnections);
-            $whHeadLocalMeters->tdate = date('m/d/Y');
+            if ($whHeadLocalMeters != null) {
+            
+            } else {
+                $whHeadLocalMeters = new LocalWarehouseHead;
+                $whHeadLocalMeters->id = IDGenerator::generateIDandRandString();
+                $whHeadLocalMeters->orderno = $meter_reqNo;
+                $whHeadLocalMeters->ent_no = ($entryNo + 1);
+                $whHeadLocalMeters->misno = $meter_mirsNo;
+                $whHeadLocalMeters->address = ServiceConnections::getAddress($serviceConnections);
+                $whHeadLocalMeters->tdate = date('m/d/Y');
+            }
+
             $whHeadLocalMeters->emp_id = $meter_requestedById;
             $whHeadLocalMeters->ccode = $CostCenter;
             $whHeadLocalMeters->dept = $meter_chargeTo;
@@ -4672,6 +4716,9 @@ class ServiceConnectionsController extends AppBaseController
                         'CRM_ServiceConnections.Feeder',
                         'CRM_ServiceConnections.ChargeTo',
                         'CRM_ServiceConnections.AccountNumber',
+                        'CRM_ServiceConnections.BarangayCode',
+                        'CRM_ServiceConnections.TypeOfCustomer',
+                        'CRM_ServiceConnections.NumberOfAccounts',
                         'CRM_ServiceConnections.CertificateOfConnectionIssuedOn',
                         'users.name'
                         )
@@ -4682,11 +4729,14 @@ class ServiceConnectionsController extends AppBaseController
         })
         ->first(); 
 
+        $whHead = WarehouseHead::where('appl_no', $id)->whereRaw("orderno NOT LIKE 'M%'")->first();
+
         $paymentOrder = PaymentOrder::where('ServiceConnectionId', $id)->first();
 
         return view('/service_connections/print_payment_order', [
             'serviceConnection' => $serviceConnections,
             'paymentOrder' => $paymentOrder,
+            'whHead' => $whHead,
         ]);
     }
 
@@ -4987,6 +5037,9 @@ class ServiceConnectionsController extends AppBaseController
                         'CRM_ServiceConnections.Feeder',
                         'CRM_ServiceConnections.ChargeTo',
                         'CRM_ServiceConnections.AccountNumber',
+                        'CRM_ServiceConnections.BarangayCode',
+                        'CRM_ServiceConnections.TypeOfCustomer',
+                        'CRM_ServiceConnections.NumberOfAccounts',
                         'CRM_ServiceConnections.CertificateOfConnectionIssuedOn',
                         'users.name'
                         )
@@ -5191,6 +5244,9 @@ class ServiceConnectionsController extends AppBaseController
                         'CRM_ServiceConnections.Feeder',
                         'CRM_ServiceConnections.ChargeTo',
                         'CRM_ServiceConnections.AccountNumber',
+                        'CRM_ServiceConnections.BarangayCode',
+                        'CRM_ServiceConnections.TypeOfCustomer',
+                        'CRM_ServiceConnections.NumberOfAccounts',
                         'CRM_ServiceConnections.CertificateOfConnectionIssuedOn',
                         'users.name'
                         )

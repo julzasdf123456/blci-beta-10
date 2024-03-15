@@ -141,9 +141,15 @@ p {
                         </tr>
                         <tr>
                             <td>Account Number:</td>
-                            <td><strong>{{ $serviceConnection->AccountNumber }}</strong></td>
+                            <td><strong>{{ $serviceConnection->BarangayCode . '-' . $serviceConnection->TypeOfCustomer . '-' . $serviceConnection->AccountNumber . '-' . $serviceConnection->NumberOfAccounts }}</strong></td>
                             <td>Application Type: </td>
                             <td><strong>{{ $serviceConnection->AccountApplicationType }}</strong></td>
+                        </tr>
+                        <tr>
+                            <td>Order Number:</td>
+                            <td><strong>{{ $whHead != null ? $whHead->orderno : '-' }}</strong></td>
+                            <td>Entry No: </td>
+                            <td><strong>{{ $whHead != null ? $whHead->ent_no : '-' }}</strong></td>
                         </tr>
                     </tbody>
                 </table>

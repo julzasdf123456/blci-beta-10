@@ -113,8 +113,8 @@
                     <td>{{ $item->ascode }}</td>
                     <td class="text-right">{{ $item->qty }}</td>
                     <td class="text-right">{{ $item->uom }}</td>
-                    <td class="text-right">{{ is_numeric($item->cst) ? number_format($item->cst, 2) : $item->cst }}</td>
-                    <td class="text-right">{{ is_numeric($item->amt) ? number_format($item->amt, 2) : $item->amt }}</td>
+                    <td class="text-right">{{ is_numeric($item->cst) ? number_format($item->cst, 6, ".", "") : $item->cst }}</td>
+                    <td class="text-right">{{ is_numeric($item->amt) ? number_format($item->amt, 6, ".", "") : $item->amt }}</td>
                 </tr>
                 @php
                     $cst += (is_numeric($item->cst) ? floatval($item->cst) : 0);
@@ -123,8 +123,8 @@
             @endforeach
             <tr>
                 <td colspan="5"><strong>TOTAL</strong></td>
-                <td class="text-right"><strong>{{ number_format($cst, 2) }}</strong></td>
-                <td class="text-right"><strong>{{ number_format($amt, 2) }}</strong></td>
+                <td class="text-right"><strong>{{ number_format($cst, 6, ".", "") }}</strong></td>
+                <td class="text-right"><strong>{{ number_format($amt, 6, ".", "") }}</strong></td>
             </tr>
         </tbody>
      </table>

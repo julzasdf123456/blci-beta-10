@@ -539,8 +539,15 @@
                 success : function(response) {
                     $('#approved-table tbody tr').remove();
                     $.each(response, function(index, element) {
-                        console.log(response[index]['id']);
-                        $('#approved-table tbody').append('<tr><td><a href="/serviceConnections/' + response[index]["id"] + '">' + response[index]['id'] + '</a></td><td>' + response[index]['ServiceAccountName'] + '</td><td>' + response[index]['Barangay'] + ', ' + response[index]['Town'] + '</td></tr>');
+                        $('#approved-table tbody').append(`<tr>` + 
+                                `<td><a href="{{ url("/serviceConnections") }}/` + response[index]["id"] + `">` + response[index]['id'] + `</a></td>` + 
+                                `<td>` + response[index]['ServiceAccountName'] + `</td>` + 
+                                `<td>` + response[index]['Barangay'] + `, ` + response[index]['Town'] + `</td>` + 
+                                `<td class='text-right v-align'>` + (isNull(response[index]['OverAllTotal']) ? `<span class="badge bg-danger">no order</span> <a class="btn btn-sm btn-primary" href="{{ url('/service_connections/payment-order') }}/${response[index]["id"]}">Create Order</a>` : toMoney(parseFloat(response[index]['OverAllTotal']))) + `</td>` + 
+                                `<td>` + response[index]['Status'] + `</td>` + 
+                                `<td>` + response[index]['name'] + `</td>` + 
+                                `<td>` + (isNull(response[index]['InspectionSchedule']) ? '-' : moment(response[index]['InspectionSchedule']).format("MMMM DD, YYYY (dddd)")) + `</td>` + 
+                            `</tr>`);
                     });
                 },
                 error : function(error) {
