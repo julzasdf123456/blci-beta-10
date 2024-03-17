@@ -424,9 +424,9 @@
                   ItemCode : $('td', this).eq(0).text(),
                   ItemQuantity : $('td', this).eq(3).text(),
                   ItemUOM : $('td', this).eq(4).text(),
-                  ItemUnitPrice : $('td', this).eq(5).text(),
-                  ItemSalesPrice : $('td', this).eq(6).text(),
-                  ItemTotalCost : $('td', this).eq(7).text(),
+                  ItemUnitPrice : isNull($('td', this).eq(5).text()) ? 0 : $('td', this).eq(5).text(),
+                  ItemSalesPrice : isNull($('td', this).eq(6).text()) ? 0 : $('td', this).eq(6).text(),
+                  ItemTotalCost : isNull($('td', this).eq(7).text()) ? 0 : $('td', this).eq(7).text(),
                   ItemNo : (index + 1),
                })
             }            

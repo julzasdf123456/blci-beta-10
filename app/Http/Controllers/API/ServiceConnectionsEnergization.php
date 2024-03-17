@@ -173,12 +173,19 @@ class ServiceConnectionsEnergization extends Controller {
         $input = $request->all();
 
         $id = $input['id'];
-        $meterInstallation = MeterInstallation::find($id);
 
-        if ($meterInstallation != null) {
+        $sc = MeterInstallation::where('ServiceConnectionId', $input['ServiceConnectionId'])->first();
+
+        if ($sc != null) {
             $meterInstallation = MeterInstallation::update($input);
         } else {
-            $meterInstallation = MeterInstallation::create($input);
+            $meterInstallation = MeterInstallation::find($id);
+
+            if ($meterInstallation != null) {
+                $meterInstallation = MeterInstallation::update($input);
+            } else {
+                $meterInstallation = MeterInstallation::create($input);
+            }
         }
         
         return response()->json($meterInstallation, 200);
