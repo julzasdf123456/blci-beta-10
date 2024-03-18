@@ -4465,7 +4465,7 @@ class ServiceConnectionsController extends AppBaseController
             ->leftJoin('users', 'CRM_ServiceConnectionInspections.Inspector', '=', 'users.id')
             ->whereNotNull('CRM_ServiceConnectionInspections.Inspector')
             ->whereRaw("(Trash IS NULL OR Trash='No')")
-            ->whereRaw("ReInspectionSchedule IS NULL AND CRM_ServiceConnectionInspections.Status='Re-Inspection'")
+            ->whereRaw("CRM_ServiceConnectionInspections.Status='Re-Inspection'")
             ->select(
                 'CRM_ServiceConnections.id',
                 'CRM_ServiceConnectionInspections.id AS InspectionId',
