@@ -433,7 +433,13 @@ use Illuminate\Support\Facades\Auth;
                 </a>
             </li>
             @canany(['Super Admin', 'tickets create'])
-            <li class="nav-item has-treeview">
+            <li class="nav-item">
+                <a href="{{ route('tickets.create-select-new') }}"
+                class="nav-link {{ Request::is('tickets.create-select-new*') ? 'active' : '' }}">
+                    <i class="fas fa-plus-circle nav-icon text-danger"></i><p>Create Ticket</p>
+                </a>
+            </li>
+            {{-- <li class="nav-item has-treeview">
                 <a href="#" class="nav-link">
                     <i class="fas fa-plus-circle nav-icon text-danger"></i>
                     <p>
@@ -461,7 +467,7 @@ use Illuminate\Support\Facades\Auth;
                         </a>
                     </li>
                 </ul>
-            </li>
+            </li> --}}
             @endcanany
             @canany(['Super Admin', 'tickets edit'])
             <li class="nav-header">                

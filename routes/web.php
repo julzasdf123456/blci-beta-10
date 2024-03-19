@@ -462,6 +462,8 @@ Route::get('/tickets/get-ticket-tally', [TicketsController::class, 'getTicketTal
 Route::get('/tickets/download-ticket-tally/{town}/{from}/{to}', [TicketsController::class, 'downloadTicketTally'])->name('tickets.download-ticket-tally');
 Route::get('/tickets/kps-summary-report', [TicketsController::class, 'kpsSummaryReport'])->name('tickets.kps-summary-report');
 Route::get('/tickets/download-kps-summary-report/{town}/{from}/{to}', [TicketsController::class, 'downloadKpsSummaryReport'])->name('tickets.download-kps-summary-report');
+Route::get('/tickets/create-select-new', [App\Http\Controllers\TicketsController::class, 'createSelectNew'])->name('tickets.create-select-new');
+Route::get('/tickets/search-account', [App\Http\Controllers\TicketsController::class, 'searchAccount'])->name('tickets.search-account');
 Route::resource('tickets', TicketsController::class);
 
 

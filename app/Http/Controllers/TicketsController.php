@@ -2677,4 +2677,47 @@ class TicketsController extends AppBaseController
 
         return Excel::download($export, 'NEA-KPS-Report.xlsx');
     }
+    
+    public function createSelectNew(Request $request) {
+        return view('/tickets/create_select_new');
+    }
+
+    
+    public function searchAccount(Request $request) {
+        $params = $request['params'];
+        if (isset($params)) {
+            $serviceAccounts = DB::table('Billing_ServiceAccounts')
+                ->leftJoin('CRM_Towns', 'Billing_ServiceAccounts.Town', '=', 'CRM_Towns.id')
+                ->leftJoin('CRM_Barangays', 'Billing_ServiceAccounts.Barangay', '=', 'CRM_Barangays.id')
+                ->select('Billing_ServiceAccounts.ServiceAccountName', 
+                    'Billing_ServiceAccounts.id', 
+                    'Billing_ServiceAccounts.OldAccountNo', 
+                    'CRM_Towns.Town', 
+                    'CRM_Barangays.Barangay', 
+                    'Billing_ServiceAccounts.Purok',
+                    'Billing_ServiceAccounts.AccountType',
+                    'Billing_ServiceAccounts.MeterDetailsId AS MeterNumber',
+                    'Billing_ServiceAccounts.AccountStatus')
+                ->whereRaw("ServiceAccountName LIKE '%" . $params . "%' OR Billing_ServiceAccounts.id LIKE '%" . $params . "%' OR OldAccountNo LIKE '%" . $params . "%' OR Billing_ServiceAccounts.MeterDetailsId LIKE '%" . $params . "%'")
+                ->orderBy('Billing_ServiceAccounts.ServiceAccountName')
+                ->paginate(30);
+        } else {
+            $serviceAccounts = DB::table('Billing_ServiceAccounts')
+                ->leftJoin('CRM_Towns', 'Billing_ServiceAccounts.Town', '=', 'CRM_Towns.id')
+                ->leftJoin('CRM_Barangays', 'Billing_ServiceAccounts.Barangay', '=', 'CRM_Barangays.id')
+                ->select('Billing_ServiceAccounts.ServiceAccountName', 
+                    'Billing_ServiceAccounts.id', 
+                    'Billing_ServiceAccounts.OldAccountNo', 
+                    'CRM_Towns.Town', 
+                    'CRM_Barangays.Barangay', 
+                    'Billing_ServiceAccounts.Purok',
+                    'Billing_ServiceAccounts.AccountType',
+                    'Billing_ServiceAccounts.MeterDetailsId AS MeterNumber',
+                    'Billing_ServiceAccounts.AccountStatus')
+                ->orderBy('Billing_ServiceAccounts.ServiceAccountName')
+                ->paginate(30);
+        }
+        
+        return response()->json($serviceAccounts, 200);
+    }
 }

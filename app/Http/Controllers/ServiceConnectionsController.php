@@ -3893,7 +3893,7 @@ class ServiceConnectionsController extends AppBaseController
             ->first();
 
         if ($whHead != null) {
-            
+
         } else {
             $whHead = new WarehouseHead;
             $whHead->orderno = $reqNo;
@@ -5115,7 +5115,7 @@ class ServiceConnectionsController extends AppBaseController
             $whHead->ent_no = $localHead->ent_no;
             $whHead->misno = $localHead->misno;
             $whHead->address = $localHead->address;
-            $whHead->tdate = $localHead->tdate;
+            $whHead->tdate = date('m/d/Y', strtotime($localHead->tdate));
             $whHead->emp_id = $localHead->emp_id;
             $whHead->ccode = $localHead->ccode;
             $whHead->dept = $localHead->dept;
@@ -5130,7 +5130,7 @@ class ServiceConnectionsController extends AppBaseController
             $whHead->tot_amt = $localHead->tot_amnt;
             $whHead->chkby = $localHead->chkby;
             $whHead->stat = $localHead->stat;
-            $whHead->rdate = $localHead->rdate;
+            $whHead->rdate = date('m/d/Y', strtotime($localHead->rdate));
             $whHead->rtime = $localHead->rtime;
             $whHead->walk_in = $localHead->walk_in;
             $whHead->appl_no = $localHead->appl_no;
@@ -5142,14 +5142,14 @@ class ServiceConnectionsController extends AppBaseController
                 $whItems = new WarehouseItems;
                 $whItems->reqno = $item->reqno;
                 $whItems->ent_no = $localHead->ent_no;
-                $whItems->tdate = $item->tdate;
+                $whItems->tdate = date('m/d/Y', strtotime($item->tdate));
                 $whItems->itemcd = $item->itemcd;
                 $whItems->qty = $item->qty;
                 $whItems->uom = $item->uom;
                 $whItems->cst = $item->cst;
                 $whItems->amt = $item->amnt;
                 $whItems->itemno = $item->itemno;
-                $whItems->rdate = $item->rdate;
+                $whItems->rdate = date('m/d/Y', strtotime($item->rdate));
                 $whItems->rtime = $item->rtime;
                 $whItems->salesprice = $item->salesprice;
                 $whItems->save();
@@ -5171,7 +5171,7 @@ class ServiceConnectionsController extends AppBaseController
             $whHead->ent_no = $localHeadMeter->ent_no;
             $whHead->misno = $localHeadMeter->misno;
             $whHead->address = $localHeadMeter->address;
-            $whHead->tdate = $localHeadMeter->tdate;
+            $whHead->tdate = date('m/d/Y', strtotime($localHeadMeter->tdate));
             $whHead->emp_id = $localHeadMeter->emp_id;
             $whHead->ccode = $localHeadMeter->ccode;
             $whHead->dept = $localHeadMeter->dept;
@@ -5186,7 +5186,7 @@ class ServiceConnectionsController extends AppBaseController
             $whHead->tot_amt = $localHeadMeter->tot_amnt;
             $whHead->chkby = $localHeadMeter->chkby;
             $whHead->stat = $localHeadMeter->stat;
-            $whHead->rdate = $localHeadMeter->rdate;
+            $whHead->rdate = date('m/d/Y', strtotime($localHeadMeter->rdate));
             $whHead->rtime = $localHeadMeter->rtime;
             $whHead->walk_in = $localHeadMeter->walk_in;
             $whHead->appl_no = $localHeadMeter->appl_no;
@@ -5198,14 +5198,14 @@ class ServiceConnectionsController extends AppBaseController
                 $whItems = new WarehouseItems;
                 $whItems->reqno = $item->reqno;
                 $whItems->ent_no = $localHeadMeter->ent_no;
-                $whItems->tdate = $item->tdate;
+                $whItems->tdate = date('m/d/Y', strtotime($item->tdate));
                 $whItems->itemcd = $item->itemcd;
                 $whItems->qty = $item->qty;
                 $whItems->uom = $item->uom;
                 $whItems->cst = $item->cst;
                 $whItems->amt = $item->amnt;
                 $whItems->itemno = $item->itemno;
-                $whItems->rdate = $item->rdate;
+                $whItems->rdate = date('m/d/Y', strtotime($item->rdate));
                 $whItems->rtime = $item->rtime;
                 $whItems->salesprice = $item->salesprice;
                 $whItems->save();
