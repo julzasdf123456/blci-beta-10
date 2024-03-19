@@ -320,57 +320,20 @@ class ServiceConnections extends Model
 
     public static function skippableForInspection() {
         return [
-            "AMICABLE SETTLEMENT",
-            "CHANGE NAME/TM",
-            "CHANGE OF NAME",
             "CONDUCTOR COVER RENTAL",
-            "DISCONNECTION",
-            "DOWNGRADING",
-            "ELECTRICIAN ID",
-            "EXTENSION OF PRIMARY LINES",
-            "EXTENSION OF SECONDARY LINE",
-            "EXTENSION OF TRANSFORMER RENTAL",
-            "FOR  PROCESSING REFUND(ACCTNG)",
-            "INSTALLATION OF INSULATION COVER",
-            "INSTALLATION OF METERBOX",
-            "INSTALLATION OF TRANSFORMER",
-            "LINE RECONFIGURATION",
             "METER ACCURACY TEST",
-            "NET METERING",
-            "PULLED-OUT",
             "PURCHASE OF MATERIALS",
-            "RECONNECTION",
-            "RECONNECTION/CHANGE METER",
-            "RECONNECTION/CHANGE OF NAME",
             "REFUND OF BILL DEPOSIT",
-            "REFUND OF EXCESS CUSTOMER DEPOSIT",
-            "REFUND OF METER DEPOSIT",
-            "RELOCATION OF BLCI POLE",
-            "RENTAL OF WIRE",
-            "REPAIR OF VEHICLE",
-            "REPLACEMENT OF BUSTED TRANSFORMER",
-            "REPLACEMENT OF CIRCUIT BREAKER",
             "SALE OF ITEMS",
-            "SECONDARY SIDE ARM INSTALLATION",
             "SENIOR CITIZEN'S DISCOUNT",
-            "SEPARATION",
-            "SPECIAL LIGHTING",
-            "STRUCTURE MODIFICATION",
-            "TEMPORARY",
-            "TEMPORARY DISCONNECTION",
-            "TEMPORARY TO PERMANENT CONNECTION",
-            "TERMINATION OF CONTRACT",
-            "TRANSFER BLCI 13.8KV LINE",
-            "TRANSFER METER",
-            "TRANSFER METER",
-            "TRANSFER METER/TSDW/RECON",
-            "TRANSFER OF CONNECTION",
-            "TRANSFER OF SERVICE DROP WIRE",
-            "TRANSFORMER INSTALLATION",
-            "TRANSFORMER RENTAL",
-            "UPGRADING/AMENDMENT",
-            "VERIFICATION OF METER ACCURACY",
-            "VERIFICATION TEST",
         ];
+    }
+
+    public static function defaultNewConnectionInspector() {
+        return '1709265310093'; // joko
+    }
+
+    public static function defaultOtherApplicationsInspector() {
+        return '1709067435299'; // ramil satago
     }
 }

@@ -20,7 +20,7 @@
         </tr>
         <tr>
             <td class="text-muted">Service Applied For</td>
-            <td style="border-right: 1px solid #adadad;">{{ $serviceConnections->AccountApplicationType }}</td>
+            <td style="border-right: 1px solid #adadad;"><strong>{{ $serviceConnections->AccountApplicationType }}</strong></td>
             <td class="text-muted" style="padding-left: 50px;">Inspector</td>
             <td>{{ $serviceConnectionInspections != null && $serviceConnectionInspections->name != null ? $serviceConnectionInspections->name : '-' }}</td>
         </tr>

@@ -68,7 +68,12 @@
       }
 
       function selectCustomer(id) {
-         $('#AccountNumber').val($('#' + id).attr('data_id'))
+         var acctNoData = $('#' + id).attr('data_old_no').split("-")
+         var acctNo = isNull(acctNoData) ? '' : (acctNoData.length > 0 ? acctNoData[0] : '')
+         var noOffAccount = isNull(acctNoData) ? '' : (acctNoData.length > 1 ? acctNoData[1] : '')
+         $('#AccountNumber').val(acctNo)
+         $('#NumberOfAccounts').val(noOffAccount)
+
          $('#ServiceAccountName').val($('#' + id).attr('data_name'))
          $('#Barangay').val($('#' + id).attr('data_barangay'))
          $('#Sitio').val($('#' + id).attr('data_purok'))

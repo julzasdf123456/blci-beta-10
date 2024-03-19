@@ -175,6 +175,13 @@ class ServiceConnectionsController extends AppBaseController
         $brgy = Barangays::find($input['Barangay']);
         $input['BarangayCode'] = $brgy != null ? $brgy->BarangayCode : '';
 
+        // FILTER ACOUNT APPLICATION TYPE
+        if (in_array($input['AccountApplicationType'], ServiceConnections::skippableForInspection())) {
+            $input['Status'] = 'Approved';
+        } else {
+            $input['Status'] = 'For Inspection';
+        }
+
         if ($input['id'] != null) {
             $sc = ServiceConnections::find($input['id']);
 
@@ -196,7 +203,7 @@ class ServiceConnectionsController extends AppBaseController
                     $inspection->id = IDGenerator::generateID();
                     $inspection->ServiceConnectionId = $input['id'];
                     $inspection->Inspector = $input['Inspector'];
-                    $inspection->Status = 'FOR INSPECTION';
+                    $inspection->Status = in_array($input['AccountApplicationType'], ServiceConnections::skippableForInspection()) ? 'Approved' : 'FOR INSPECTION';
                     $inspection->InspectionSchedule = $input['InspectionSchedule'];
                     $inspection->save();
 
@@ -246,7 +253,7 @@ class ServiceConnectionsController extends AppBaseController
                 $inspection->id = IDGenerator::generateID();
                 $inspection->ServiceConnectionId = $input['id'];
                 $inspection->Inspector = $input['Inspector'];
-                $inspection->Status = 'FOR INSPECTION';
+                $inspection->Status = in_array($input['AccountApplicationType'], ServiceConnections::skippableForInspection()) ? 'Approved' : 'FOR INSPECTION';
                 $inspection->InspectionSchedule = $input['InspectionSchedule'];
                 $inspection->save();
 
@@ -4620,6 +4627,7 @@ class ServiceConnectionsController extends AppBaseController
                             'CRM_Barangays.Barangay')
                         ->whereRaw("Billing_ServiceAccounts.OldAccountNo LIKE '%" . $search . "%' OR Billing_ServiceAccounts.ServiceAccountName LIKE '%" . $search . "%' OR Billing_ServiceAccounts.MeterNumber LIKE '%" . $search . "%'")
                         ->orderBy('Billing_ServiceAccounts.ServiceAccountName')
+                        ->limit(60)
                         ->get(); 
 
         $output = "";
@@ -4629,6 +4637,7 @@ class ServiceConnectionsController extends AppBaseController
                 data_name='" . $item->ServiceAccountName . "'
                 data_purok='" . $item->Purok . "'
                 data_contact='" . $item->ContactNumber . "'
+                data_old_no='" . $item->OldAccountNo . "'
                 data_barangay='" . $item->BarangayId . "'>
                             <td>" . $item->OldAccountNo . "</td>
                             <td>" . $item->ServiceAccountName . "</td>

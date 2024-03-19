@@ -17,7 +17,6 @@
         {{-- HIDDEN FIELDS --}}
         <input type="hidden" name="Status" value="For Inspection">
         <input type="hidden" name="Town" value="01" id="Town">
-        <input type="hidden" name="AccountNumber" value="" id="AccountNumber">
         <input type="hidden" name="UserId" value="{{ Auth::id() }}">
         <input type="hidden" name="DateOfApplication" value="{{ date('Y-m-d') }}">
         <input type="hidden" name="TimeOfApplication" value="{{ date('H:i:s') }}">
@@ -31,27 +30,16 @@
                 <div class="card-body table-responsive p-0">
                     <table class="table table-sm table-borderless">
                         <tr style="border-bottom: 1px solid #9a9a9a;">
-                            {{-- <div class="input-group-radio">
-                                <input type="radio" id="Bonus" name="For" value="Bonus" class="custom-radio" required>
-                                <label for="Bonus" class="custom-radio-label">Bonus</label>
-            
-                                <input type="radio" id="Payroll" name="For" value="Payroll" class="custom-radio" required>
-                                <label for="Payroll" class="custom-radio-label">Payroll</label>
-                            </div> --}}
                             <td>
                                 <div class="form-check pt-1">
                                     <input type="radio" id="new-inst" name="customer-profile" value="New Installation" class="custom-radio" checked>
                                     <label for="new-inst" class="custom-radio-label">New Installation</label>
-                                    {{-- <input class="form-check-input" type="radio" name="customer-profile" id="new-inst" checked value="New Installation">
-                                    <label class="form-check-label" for="new-inst"><strong>New Installation</strong></label> --}}
                                 </div>
                             </td>
                             <td>
                                 <div class="form-check pt-1">
                                     <input type="radio" id="existing" name="customer-profile" value="Existing" class="custom-radio">
                                     <label for="existing" class="custom-radio-label">Existing</label>
-                                    {{-- <input class="form-check-input" type="radio" name="customer-profile" id="existing" value="Existing">
-                                    <label class="form-check-label" for="existing"><strong>Existing</strong></label> --}}
                                 </div>
                             </td>
                             <td></td>
@@ -68,9 +56,7 @@
                             <td>District/Barangay:  <strong class="text-danger">*</strong></td>
                             <td>
                                 <select name="Barangay" id="Barangay" class="form-control form-control-sm">
-                                    {{-- @foreach ($barangays as $item)
-                                        <option value="{{ $item->id }}">{{ $item->Barangay }}</option>
-                                    @endforeach --}}
+                                    
                                 </select>
                             </td>
                         </tr>
@@ -93,6 +79,16 @@
                             <td>
                                 <input type="text" class="form-control form-control-sm" name="ContactNumber" id="ContactNumber" value="" required>
                             </td>
+                        </tr>
+                        <tr>
+                            <td>Account No.</td>
+                            <td>
+                                <input type="text" style="width: 120px; display: inline;" class="form-control form-control-sm" name="AccountNumber" id="AccountNumber" maxlength="5">
+                                -
+                                <input type="text" style="width: 60px; display: inline;" class="form-control form-control-sm" name="NumberOfAccounts" id="NumberOfAccounts" maxlength="2">
+                            </td>
+                            <td></td>
+                            <td></td>
                         </tr>
                     </table>
                 </div>
@@ -278,6 +274,8 @@
         })
 
         $(document).ready(function() {
+            defaultInspector()
+
             const forceKeyPressUppercase = (e) => {
                 let el = e.target;
                 let charInput = e.keyCode;
@@ -308,6 +306,18 @@
                     $('#select-costumer').removeClass('gone')
                 }
             });
+
+            $('#AccountApplicationType').on('change', function() {
+                defaultInspector()
+            })
         })
+
+        function defaultInspector() {
+            if ($('#AccountApplicationType').val() === 'NEW INSTALLATION') {
+                $('#Inspector').val(`{{ ServiceConnections::defaultNewConnectionInspector() }}`).change()
+            } else {
+                $('#Inspector').val(`{{ ServiceConnections::defaultOtherApplicationsInspector() }}`).change()
+            }
+        }
     </script>
 @endpush

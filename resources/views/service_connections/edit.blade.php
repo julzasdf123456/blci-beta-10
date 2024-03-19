@@ -58,6 +58,16 @@
                                 <input type="text" class="form-control form-control-sm" name="ContactNumber" id="ContactNumber" value="{{ $serviceConnections->ContactNumber }}">
                             </td>
                         </tr>
+                        <tr>
+                            <td>Account No.</td>
+                            <td>
+                                <input type="text" style="width: 120px; display: inline;" class="form-control form-control-sm" name="AccountNumber" id="AccountNumber" value="{{ $serviceConnections->AccountNumber }}" maxlength="5">
+                                -
+                                <input type="text" style="width: 60px; display: inline;" class="form-control form-control-sm" name="NumberOfAccounts" id="NumberOfAccounts" value="{{ $serviceConnections->NumberOfAccounts }}" maxlength="2">
+                            </td>
+                            <td></td>
+                            <td></td>
+                        </tr>
                     </table>
                 </div>
             </div>
@@ -224,6 +234,8 @@
         })
 
         $(document).ready(function() {
+            defaultInspector()
+            
             const forceKeyPressUppercase = (e) => {
                 let el = e.target;
                 let charInput = e.keyCode;
@@ -241,7 +253,19 @@
 
             document.querySelectorAll(".uc-text-smooth").forEach(function(current) {
                 current.addEventListener("keypress", forceKeyPressUppercase);
-            });
+            })
+            
+            $('#AccountApplicationType').on('change', function() {
+                defaultInspector()
+            })
         })
+
+        function defaultInspector() {
+            if ($('#AccountApplicationType').val() === 'NEW INSTALLATION') {
+                $('#Inspector').val(`{{ ServiceConnections::defaultNewConnectionInspector() }}`).change()
+            } else {
+                $('#Inspector').val(`{{ ServiceConnections::defaultOtherApplicationsInspector() }}`).change()
+            }
+        }
     </script>
 @endpush

@@ -81,9 +81,9 @@
                @endforeach
             </select>
             <span>-</span>
-            <input type="text" name="AccountNumber" maxlength="5" id="AccountNumber" placeholder="Input Account Number Here" class="form-control" required style="width: 100px; display: inline;">
+            <input type="text" name="AccountNumber" maxlength="5" id="AccountNumber" value="{{ $serviceConnection->AccountNumber }}" placeholder="Input Account Number Here" class="form-control" required style="width: 100px; display: inline;">
             <span>-</span>
-            <input title="Number of Accounts" maxlength="2" type="text" name="NumberOfAccounts" id="NumberOfAccounts" class="form-control" required style="width: 46px; display: inline;" value="00">
+            <input title="Number of Accounts" maxlength="2" type="text" name="NumberOfAccounts" value="{{ $serviceConnection->NumberOfAccounts }}" id="NumberOfAccounts" class="form-control" required style="width: 46px; display: inline;" value="00">
          </div>
       </div>
       {{-- FEES --}}
