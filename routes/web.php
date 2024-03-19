@@ -192,6 +192,7 @@ Route::post('/service_connections/trash-file', [ServiceConnectionsController::cl
 Route::get('/service_connections/print-order-materials/{id}', [ServiceConnectionsController::class, 'printOrderMaterials'])->name('serviceConnections.print-order-materials');
 Route::get('/service_connections/revalidate-payment-order-materials', [ServiceConnectionsController::class, 'revalidatePaymentOrderMaterials'])->name('serviceConnections.revalidate-payment-order-materials');
 Route::get('/service_connections/print-order-meters/{id}', [ServiceConnectionsController::class, 'printOrderMeters'])->name('serviceConnections.print-order-meters');
+Route::get('/service_connections/delete-payment-order', [ServiceConnectionsController::class, 'deletePaymentOrder'])->name('serviceConnections.delete-payment-order');
 Route::resource('serviceConnections', App\Http\Controllers\ServiceConnectionsController::class);
 
 

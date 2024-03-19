@@ -51,6 +51,11 @@ use Illuminate\Support\Facades\Auth;
     
                                 <button onclick="revalidatePayment(`{{ $serviceConnections->id }}`)" class="dropdown-item" title="Re-flush payment order materials to warehouse database">
                                     <i class="fas fa-file-invoice-dollar ico-tab"></i>Revalidate Payment Order Materials</button>
+
+                                <div class="divider"></div>
+
+                                <button onclick="deletePaymentOrder(`{{ $serviceConnections->id }}`)" class="dropdown-item" title="Re-flush payment order materials to warehouse database">
+                                    <i class="fas fa-trash text-danger ico-tab"></i>Delete Payment Order</button>
                             @endif
                             {{-- <div class="dropdown-divider"></div> --}}
                         </div>
@@ -243,6 +248,41 @@ use Illuminate\Support\Facades\Auth;
                             Swal.fire({
                                 icon : 'error',
                                 text : 'Error revalidating payment order'
+                            })
+                        }
+                    })      
+                }
+            })
+        }
+
+        function deletePaymentOrder(id) {
+            Swal.fire({
+                title: "Delete Payment Order?",
+                text: "Payment profile of this application will be deleted forever. Continue?",
+                icon: "warning",
+                showCancelButton: true,
+                confirmButtonColor: "#3085d6",
+                cancelButtonColor: "#d33",
+                confirmButtonText: "Delete"
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    $.ajax({
+                        url : "{{ route('serviceConnections.delete-payment-order') }}",
+                        type : "GET",
+                        data : {
+                            id : id,
+                        },
+                        success : function(res) {
+                            Toast.fire({
+                                icon : 'success',
+                                text : 'Payment order deleted!'
+                            })
+                            location.reload()
+                        },
+                        error : function(err) {
+                            Swal.fire({
+                                icon : 'error',
+                                text : 'Error deleting payment order'
                             })
                         }
                     })      
