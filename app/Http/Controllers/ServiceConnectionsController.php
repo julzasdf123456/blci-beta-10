@@ -3772,6 +3772,8 @@ class ServiceConnectionsController extends AppBaseController
         $OverAllTotal = $request['OverAllTotal'];
         $ORNumber = $request['ORNumber'];
         $MaterialTotal = $request['MaterialTotal'];
+
+        // MATERIALS
         $reqNo = $request['ReqNo'];
         $mirsNo = $request['MIRSNo'];
         $CostCenter = $request['CostCenter'];
@@ -3783,6 +3785,8 @@ class ServiceConnectionsController extends AppBaseController
         $customerName = $request['CustomerName'];
         $typeOfServiceId = $request['TypeOfServiceId'];
         $entryNo = $request['EntryNo'];
+
+        // METERS
         $meter_reqNo = $request['MeterReqNo'];
         $meter_mirsNo = $request['MeterMIRSNo'];
         $meter_CostCenter = $request['MeterCostCenter'];
@@ -3794,6 +3798,7 @@ class ServiceConnectionsController extends AppBaseController
         $meter_customerName = $request['MeterCustomerName'];
         $meter_typeOfServiceId = $request['MeterTypeOfServiceId'];
         $meter_entryNo = $request['MeterEntryNo'];
+
         $acctNo = $request['AccountNumber'];
         $typeOfCustomer = $request['TypeOfCustomer'];
         $barangayCode = $request['BarangayCode'];
@@ -4003,7 +4008,7 @@ class ServiceConnectionsController extends AppBaseController
                 // TO MSSQL Local
                 $whItemsLocal = new LocalWarehouseItems;
                 $whItemsLocal->id = IDGenerator::generateIDandRandString();
-                $whItemsLocal->reqno = $item->ReqNo;
+                $whItemsLocal->reqno = $reqNo;
                 $whItemsLocal->ent_no = $entryNo;            
                 $whItemsLocal->tdate = date('m/d/Y');
                 $whItemsLocal->itemcd = $item->ItemCode;  
@@ -4019,7 +4024,7 @@ class ServiceConnectionsController extends AppBaseController
 
                 // TO MYSQL
                 $whItems = new WarehouseItems;
-                $whItems->reqno = $item->ReqNo;
+                $whItems->reqno = $reqNo;
                 $whItems->ent_no = $entryNo;            
                 $whItems->tdate = date('m/d/Y');
                 $whItems->itemcd = $item->ItemCode;  
@@ -4034,7 +4039,15 @@ class ServiceConnectionsController extends AppBaseController
                 $whItems->save();
             }
         }
-        
+
+        // ENTRY NO FOR METERS
+        $entNoLast = DB::connection('mysql')
+            ->table('tblor_head')
+            ->select('ent_no')
+            ->orderByDesc('ent_no')
+            ->first();
+
+        $entryNo = $entNoLast != null ? (floatval($entNoLast->ent_no) + 1) : 0;
 
         /**
          * ==================================================
@@ -4050,7 +4063,7 @@ class ServiceConnectionsController extends AppBaseController
             } else {
                 $whHead = new WarehouseHead;
                 $whHead->orderno = $meter_reqNo;
-                $whHead->ent_no = ($entryNo + 1);
+                $whHead->ent_no = ($entryNo);
                 $whHead->misno = $meter_mirsNo;
                 $whHead->address = ServiceConnections::getAddress($serviceConnections);
                 $whHead->tdate = date('m/d/Y');
@@ -4096,7 +4109,7 @@ class ServiceConnectionsController extends AppBaseController
                 $whHeadLocalMeters = new LocalWarehouseHead;
                 $whHeadLocalMeters->id = IDGenerator::generateIDandRandString();
                 $whHeadLocalMeters->orderno = $meter_reqNo;
-                $whHeadLocalMeters->ent_no = ($entryNo + 1);
+                $whHeadLocalMeters->ent_no = ($entryNo);
                 $whHeadLocalMeters->misno = $meter_mirsNo;
                 $whHeadLocalMeters->address = ServiceConnections::getAddress($serviceConnections);
                 $whHeadLocalMeters->tdate = date('m/d/Y');
@@ -4132,8 +4145,8 @@ class ServiceConnectionsController extends AppBaseController
                 // TO MSSQL Local
                 $whItemsLocalMeters = new LocalWarehouseItems;
                 $whItemsLocalMeters->id = IDGenerator::generateIDandRandString();
-                $whItemsLocalMeters->reqno = $item->ReqNo;
-                $whItemsLocalMeters->ent_no = ($entryNo + 1);            
+                $whItemsLocalMeters->reqno = $meter_reqNo;
+                $whItemsLocalMeters->ent_no = ($entryNo);            
                 $whItemsLocalMeters->tdate = date('m/d/Y');
                 $whItemsLocalMeters->itemcd = $item->ItemCode;  
                 $whItemsLocalMeters->qty = $item->ItemQuantity;  
@@ -4148,8 +4161,8 @@ class ServiceConnectionsController extends AppBaseController
 
                 // TO MY SQL
                 $whItems = new WarehouseItems;
-                $whItems->reqno = $item->ReqNo;
-                $whItems->ent_no = ($entryNo + 1);            
+                $whItems->reqno = $meter_reqNo;
+                $whItems->ent_no = ($entryNo);            
                 $whItems->tdate = date('m/d/Y');
                 $whItems->itemcd = $item->ItemCode;  
                 $whItems->qty = $item->ItemQuantity;  
