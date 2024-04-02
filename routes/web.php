@@ -1016,3 +1016,4 @@ Route::resource('sms-settings', App\Http\Controllers\SmsSettingsController::clas
 Route::resource('readingFromTexts', App\Http\Controllers\ReadingFromTextController::class);
 Route::resource('local-warehouse-heads', App\Http\Controllers\LocalWarehouseHeadController::class);
 Route::resource('local-warehouse-items', App\Http\Controllers\LocalWarehouseItemsController::class);
+Route::resource('material-presets', App\Http\Controllers\MaterialPresetsController::class);

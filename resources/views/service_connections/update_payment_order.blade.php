@@ -55,6 +55,117 @@
             </div>  
          </div>
       </div>
+
+      {{-- MATERIAL PRESETS --}}
+      @if ($materialPresets != null)
+         <div class="card shadow-none">
+            <div class="card-header">
+               <span class="card-title"><i class="fas fa-info-circle ico-tab"></i>Suggested Material Presets From Inspector</span>
+               <div class="card-tools">
+                  <button type="button" class="btn btn-sm" data-card-widget="collapse" title="Collapse"><i class="fas fa-minus"></i></button>
+               </div>
+            </div>
+            <div class="card-body table-responsive p-0">
+               <table class="table table-hover table-sm table-bordered">
+                  <thead>
+                     <th>Materials</th>
+                     <th>Unit</th>
+                     <th class="text-right">Quantity</th>
+                  </thead>
+                  <tbody>
+                     <tr>
+                        <td>METERBASE SOCKET</td>
+                        <td>pcs</td>
+                        <td class="text-right">{{ $materialPresets->MeterBaseSocket != null ? number_format($materialPresets->MeterBaseSocket, 2) : '-' }}</td>
+                     </tr>
+                     <tr>
+                        <td>METALBOX TYPE A</td>
+                        <td>pcs</td>
+                        <td class="text-right">{{ $materialPresets->MetalboxTypeA != null ? number_format($materialPresets->MetalboxTypeA, 2) : '-' }}</td>
+                     </tr>
+                     <tr>
+                        <td>METALBOX TYPE B</td>
+                        <td>pcs</td>
+                        <td class="text-right">{{ $materialPresets->MetalboxTypeB != null ? number_format($materialPresets->MetalboxTypeB, 2) : '-' }}</td>
+                     </tr>
+                     <tr>
+                        <td>PIPE #1</td>
+                        <td>pcs</td>
+                        <td class="text-right">{{ $materialPresets->Pipe != null ? number_format($materialPresets->Pipe, 2) : '-' }}</td>
+                     </tr>
+                     <tr>
+                        <td>ENTRANCE CAP #1</td>
+                        <td>pcs</td>
+                        <td class="text-right">{{ $materialPresets->EntranceCap != null ? number_format($materialPresets->EntranceCap, 2) : '-' }}</td>
+                     </tr>
+                     <tr>
+                        <td>ADAPTER #1</td>
+                        <td>pcs</td>
+                        <td class="text-right">{{ $materialPresets->Adapter != null ? number_format($materialPresets->Adapter, 2) : '-' }}</td>
+                     </tr>
+                     <tr>
+                        <td>LOCKNOT #1</td>
+                        <td>pcs</td>
+                        <td class="text-right">{{ $materialPresets->Locknot != null ? number_format($materialPresets->Locknot, 2) : '-' }}</td>
+                     </tr>
+                     <tr>
+                        <td>MAILBOX</td>
+                        <td>pcs</td>
+                        <td class="text-right">{{ $materialPresets->Mailbox != null ? number_format($materialPresets->Mailbox, 2) : '-' }}</td>
+                     </tr>
+                     <tr>
+                        <td>BUCKLE</td>
+                        <td>pcs</td>
+                        <td class="text-right">{{ $materialPresets->Buckle != null ? number_format($materialPresets->Buckle, 2) : '-' }}</td>
+                     </tr>
+                     <tr>
+                        <td>PVC ELBOW #1</td>
+                        <td>pcs</td>
+                        <td class="text-right">{{ $materialPresets->PvcElbow != null ? number_format($materialPresets->PvcElbow, 2) : '-' }}</td>
+                     </tr>
+                     <tr>
+                        <td>STAINLESS STRAP</td>
+                        <td>pcs</td>
+                        <td class="text-right">{{ $materialPresets->StainlessStrap != null ? number_format($materialPresets->StainlessStrap, 2) : '-' }}</td>
+                     </tr>
+                     <tr>
+                        <td>PLYBOARD 17x20 CM</td>
+                        <td>pcs</td>
+                        <td class="text-right">{{ $materialPresets->Plyboard != null ? number_format($materialPresets->Plyboard, 2) : '-' }}</td>
+                     </tr>
+                     <tr>
+                        <td>STRAIN INSULATOR (M)</td>
+                        <td>pcs</td>
+                        <td class="text-right">{{ $materialPresets->StrainInsulator != null ? number_format($materialPresets->StrainInsulator, 2) : '-' }}</td>
+                     </tr>
+                     <tr>
+                        <td>STRANDED WIRE #8</td>
+                        <td>meters</td>
+                        <td class="text-right">{{ $materialPresets->StraindedWireEight != null ? number_format($materialPresets->StraindedWireEight, 2) : '-' }}</td>
+                     </tr>
+                     <tr>
+                        <td>STRANDED WIRE #6</td>
+                        <td>meters</td>
+                        <td class="text-right">{{ $materialPresets->StrandedWireSix != null ? number_format($materialPresets->StrandedWireSix, 2) : '-' }}</td>
+                     </tr>
+                     <tr>
+                        <td>TWISTED WIRE #6</td>
+                        <td>meters</td>
+                        <td class="text-right">{{ $materialPresets->TwistedWireSix != null ? number_format($materialPresets->TwistedWireSix, 2) : '-' }}</td>
+                     </tr>
+                     <tr>
+                        <td>TWISTED WIRE #4</td>
+                        <td>meters</td>
+                        <td class="text-right">{{ $materialPresets->TwistedWireFour != null ? number_format($materialPresets->TwistedWireFour, 2) : '-' }}</td>
+                     </tr>
+                  </tbody>
+               </table>
+            </div>
+            <div class="card-footer">
+
+            </div>
+         </div>
+      @endif
    </div>
 
    <div class="col-lg-3">

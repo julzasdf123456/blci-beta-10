@@ -26,7 +26,7 @@
                 <tr v-for="item in results.data" :key="item.ConsumerId" style="cursor: pointer;" :id="item.ConsumerId">
                     <td @click="goToApplication(item.ConsumerId)" class="v-align">
                         <div style="display: inline-block; vertical-align: middle;">
-                            <img src="../../../../public/imgs/prof-icon.png" style="width: 40px; margin-right: 15px;" class="img-circle" alt="profile">
+                            <img :src="imgPath + 'prof-icon.png'" style="width: 40px; margin-right: 15px;" class="img-circle" alt="profile">
                         </div>
                         
                         <div style="display: inline-block; height: inherit; vertical-align: middle;">
@@ -60,6 +60,7 @@
                                 <i class="fas fa-ellipsis-v"></i>
                             </a>
                             <div class="dropdown-menu" aria-labelledby="more-menu">
+                                <a :href="baseURL + '/serviceConnections/' + item.ConsumerId + '/edit'" class="dropdown-item"><i class="fas fa-pen ico-tab"></i> Edit Application</a>
                                 <button @click="moveToTrash(item.ConsumerId)" class="dropdown-item"><i class="fas fa-trash ico-tab"></i> Move to Trash</button>
                             </div>
                         </div>
@@ -102,6 +103,7 @@ export default {
             search : '',
             results : {},
             baseURL : window.location.origin + axios.defaults.baseURL,
+            imgPath : axios.defaults.imgPath,
         }
     },
     methods : {

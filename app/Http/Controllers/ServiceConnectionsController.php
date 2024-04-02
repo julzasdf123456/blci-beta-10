@@ -49,6 +49,7 @@ use App\Models\ProjectCodes;
 use App\Models\MeterInstallation;
 use App\Models\Notifications;
 use App\Models\SmsSettings;
+use App\Models\MaterialPresets;
 use App\Models\LocalWarehouseHead;
 use App\Models\LocalWarehouseItems;
 use App\Exports\ServiceConnectionApplicationsReportExport;
@@ -3736,6 +3737,8 @@ class ServiceConnectionsController extends AppBaseController
 
         $inspection = ServiceConnectionInspections::where('ServiceConnectionId', $scId)->first();
         
+        $materialPresets = MaterialPresets::where('ServiceConnectionId', $scId)->orderByDesc('updated_at')->first();
+        
         return view('/service_connections/payment_order', [
             'whHead' => $whHead,
             'whItems' => $whItems,
@@ -3745,6 +3748,7 @@ class ServiceConnectionsController extends AppBaseController
             'projectCodes' => ProjectCodes::orderBy('ProjectCode')->get(),
             'inspection' => $inspection,
             'serviceAppliedFor' => $serviceAppliedFor,
+            'materialPresets' => $materialPresets,
         ]);
     }
 
@@ -4231,6 +4235,8 @@ class ServiceConnectionsController extends AppBaseController
 
         $serviceAppliedFor = ServiceAppliedFor::where('ServiceAppliedFor', $serviceConnection->AccountApplicationType)->first();
 
+        $materialPresets = MaterialPresets::where('ServiceConnectionId', $scId)->orderByDesc('updated_at')->first();
+
         return view('/service_connections/update_payment_order', [
             'whHead' => $whHead,
             'whItems' => $whItems,
@@ -4242,6 +4248,7 @@ class ServiceConnectionsController extends AppBaseController
             'projectCodes' => ProjectCodes::orderBy('ProjectCode')->get(),
             'entNoLast' => $entNoLast,
             'serviceAppliedFor' => $serviceAppliedFor,
+            'materialPresets' => $materialPresets,
         ]);
     }
 

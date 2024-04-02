@@ -36,6 +36,7 @@ Route::get('get-zones', [ServiceConnectionInspectionsAPI::class, 'getZones']);
 Route::get('get-blocks', [ServiceConnectionInspectionsAPI::class, 'getBlocks']);
 Route::get('update-downloaded-inspection', [ServiceConnectionInspectionsAPI::class, 'updateDownloadedInspection']);
 Route::get('get-files', [ServiceConnectionInspectionsAPI::class, 'getFiles']);
+Route::post('receive-material-presets', [ServiceConnectionInspectionsAPI::class, 'receiveMaterialPresets']);
 
 Route::get('get-payment-queues/', [TelleringController::class, 'fetchApprovedServiceConnections']);
 

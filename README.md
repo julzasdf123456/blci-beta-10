@@ -25,6 +25,7 @@
 ### Added New Columns
  
 ### Added New Tables
+-CRM_MaterialPresets
 
 ### New Permissions
 

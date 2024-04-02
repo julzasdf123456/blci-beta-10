@@ -3,19 +3,19 @@
    <tr>
        <td>Order No :</td>
        <td>
-           <input type="text" id="OrderNo" class="form-control form-control-xs text-right" value="{{ $whHead != null ? $whHead->orderno : '' }}" readonly>
+           <input type="text" id="OrderNo" class="form-control form-control-xs text-right" value="{{ $whHead != null ? $whHead->orderno : (date('Y-m-d') . 'T' . date('H:i:s')) }}" readonly>
        </td>
        <td></td>
        <td></td>
        <td>Entry No : </td>
        <td>
-           <input type="number" id="EntryNo" class="form-control form-control-xs text-right" value="{{ $whHead != null ? $whHead->ent_no : '' }}" readonly>
+           <input type="number" id="EntryNo" class="form-control form-control-xs text-right" value="{{ $whHead != null ? $whHead->ent_no : ($entNoLast != null ? (floatval($entNoLast->ent_no) + 1) : 0) }}" readonly>
        </td>
    </tr>
    <tr>
        <td>Date :</td>
        <td>
-           <input type="text" id="MIRSDate" class="form-control form-control-xs" value="{{ $whHead != null ? $whHead->tdate : '' }}" readonly>
+           <input type="text" id="MIRSDate" class="form-control form-control-xs" value="{{ $whHead != null ? $whHead->tdate : date('Y-m-d') }}" readonly>
        </td>
        <td></td>
        <td>Invoice No : </td>
@@ -29,10 +29,10 @@
    <tr>
        <td>Requisition By :</td>
        <td>
-           <input type="text" id="RequisitionById" class="form-control form-control-xs text-right" value="{{ $whHead != null ? ($whHead->emp_id != null ? $whHead->emp_id : Auth::user()->HRUserId) : '' }}" readonly>
+           <input type="text" id="RequisitionById" class="form-control form-control-xs text-right" value="{{ $whHead != null ? ($whHead->emp_id != null ? $whHead->emp_id : Auth::user()->HRUserId) : Auth::user()->HRUserId }}" readonly>
        </td>
        <td>
-           <input type="text" id="RequisitionByName" class="form-control form-control-xs" value="{{ strtoupper($whHead != null ? $whHead->chkby : '') }}">
+           <input type="text" id="RequisitionByName" class="form-control form-control-xs" value="{{ strtoupper($whHead != null ? $whHead->chkby : Auth::user()->name) }}">
        </td>
        <td>OR No : </td>
        <td>
@@ -72,7 +72,7 @@
            <input type="text" id="TypeOfService" class="form-control form-control-xs" value="{{ $serviceConnection->AccountApplicationType }}" readonly>
        </td>
        <td>
-           <input type="text" id="TypeOfServiceId" class="form-control form-control-xs" value="{{ $whHead != null ? $whHead->serv_code : '' }}" readonly>
+           <input type="text" id="TypeOfServiceId" class="form-control form-control-xs" value="{{ $whHead != null ? $whHead->serv_code : ($serviceAppliedFor != null ? $serviceAppliedFor->id : '7') }}" readonly>
        </td>
    </tr>
    <tr>
@@ -94,7 +94,7 @@
    <tr>
        <td>Requested By :</td>
        <td colspan="2">
-           <input type="text" id="RequestedBy" class="form-control form-control-xs" value="{{ $whHead != null ? $whHead->chkby : '' }}">
+           <input type="text" id="RequestedBy" class="form-control form-control-xs" value="{{ $whHead != null ? $whHead->chkby : strtoupper(Auth::user()->name) }}">
        </td> 
    </tr>
 </table>

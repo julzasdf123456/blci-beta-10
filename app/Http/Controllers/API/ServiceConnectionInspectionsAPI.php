@@ -14,6 +14,7 @@ use App\Models\Notifications;
 use App\Models\Zones;
 use App\Models\Blocks;
 use App\Models\SmsSettings;
+use App\Models\MaterialPresets;
 use Illuminate\Support\Facades\DB;
 use Validator;
 
@@ -300,5 +301,21 @@ class ServiceConnectionInspectionsAPI extends Controller {
         } else {
             return response()->json('File folder not found', 200);
         }
+    }
+
+    public function receiveMaterialPresets(Request $request) {
+        $input = $request->all();
+
+        $scId = $input['ServiceConnectionId'];
+
+        $materials = MaterialPresets::where('ServiceConnectionId', $scId)->first();
+
+        if ($materials != null) {
+            $materials = MaterialPresets::update($input);
+        } else {
+            $materials = MaterialPresets::create($input);
+        }
+
+        return response()->json($materials, 200);
     }
 }
