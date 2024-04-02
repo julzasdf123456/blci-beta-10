@@ -29,7 +29,14 @@ class MaterialPresets extends Model
         'StraindedWireEight',
         'StrandedWireSix',
         'TwistedWireSix',
-        'TwistedWireFour'
+        'TwistedWireFour',
+        'CompressionTapAsu',
+        'CompressionTapYtdTwoFifty',
+        'CompressionTapYtdThreeHundred',
+        'CompressionTapYtdTwoHundred',
+        'CompressionTapYtdOneFifty',
+        'MetalScrew',
+        'ElectricalTape',
     ];
 
     protected $casts = [
@@ -51,7 +58,14 @@ class MaterialPresets extends Model
         'StraindedWireEight' => 'string',
         'StrandedWireSix' => 'string',
         'TwistedWireSix' => 'string',
-        'TwistedWireFour' => 'string'
+        'TwistedWireFour' => 'string',
+        'CompressionTapAsu' => 'string',
+        'CompressionTapYtdTwoFifty' => 'string',
+        'CompressionTapYtdThreeHundred' => 'string',
+        'CompressionTapYtdTwoHundred' => 'string',
+        'CompressionTapYtdOneFifty' => 'string',
+        'MetalScrew' => 'string',
+        'ElectricalTape' => 'string',
     ];
 
     public static array $rules = [
@@ -74,7 +88,14 @@ class MaterialPresets extends Model
         'TwistedWireSix' => 'nullable|string|max:50',
         'TwistedWireFour' => 'nullable|string|max:50',
         'created_at' => 'nullable',
-        'updated_at' => 'nullable'
+        'updated_at' => 'nullable',
+        'CompressionTapAsu' => 'nullable|string',
+        'CompressionTapYtdTwoFifty' => 'nullable|string',
+        'CompressionTapYtdThreeHundred' => 'nullable|string',
+        'CompressionTapYtdTwoHundred' => 'nullable|string',
+        'CompressionTapYtdOneFifty' => 'nullable|string',
+        'MetalScrew' => 'nullable|string',
+        'ElectricalTape' => 'nullable|string',
     ];
 
     
