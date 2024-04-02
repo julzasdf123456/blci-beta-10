@@ -3803,6 +3803,7 @@ class ServiceConnectionsController extends AppBaseController
         $typeOfCustomer = $request['TypeOfCustomer'];
         $barangayCode = $request['BarangayCode'];
         $numberOfAccounts = $request['NumberOfAccounts'];
+        $isNew = $reqNo['IsNew'];
 
         $serviceConnections = DB::table('CRM_ServiceConnections')
             ->leftJoin('CRM_Barangays', 'CRM_ServiceConnections.Barangay', '=', 'CRM_Barangays.id')
@@ -3907,8 +3908,10 @@ class ServiceConnectionsController extends AppBaseController
                 ->first();
 
             if ($whHead != null) {
-
+                $entryNo = $whHead->ent_no;
             } else {
+                $entryNo = $entryNo;
+
                 $whHead = new WarehouseHead;
                 $whHead->orderno = $reqNo;
                 $whHead->ent_no = $entryNo;
@@ -4059,8 +4062,10 @@ class ServiceConnectionsController extends AppBaseController
                 ->where('orderno', $meter_reqNo)
                 ->first();
             if ($whHead != null) {
-    
+                $entryNo = $whHead->ent_no;
             } else {
+                $entryNo = $entryNo;
+
                 $whHead = new WarehouseHead;
                 $whHead->orderno = $meter_reqNo;
                 $whHead->ent_no = ($entryNo);

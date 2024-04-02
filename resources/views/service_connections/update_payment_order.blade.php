@@ -716,6 +716,7 @@
                   TypeOfCustomer : typeOfCustomer,
                   BarangayCode : brgyCode,
                   NumberOfAccounts : noOfAccounts,
+                  IsNew : 'Update',
                },
                success : function(res) {
                   Toast.fire({
