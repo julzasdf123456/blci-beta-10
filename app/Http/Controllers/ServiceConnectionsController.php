@@ -3803,7 +3803,7 @@ class ServiceConnectionsController extends AppBaseController
         $typeOfCustomer = $request['TypeOfCustomer'];
         $barangayCode = $request['BarangayCode'];
         $numberOfAccounts = $request['NumberOfAccounts'];
-        $isNew = $reqNo['IsNew'];
+        $isNew = $request['IsNew'];
 
         $serviceConnections = DB::table('CRM_ServiceConnections')
             ->leftJoin('CRM_Barangays', 'CRM_ServiceConnections.Barangay', '=', 'CRM_Barangays.id')
