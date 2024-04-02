@@ -3908,7 +3908,7 @@ class ServiceConnectionsController extends AppBaseController
                 ->first();
 
             if ($whHead != null) {
-                $entryNo = $whHead->ent_no;
+                $entryNo = intval($whHead->ent_no);
             } else {
                 $entryNo = $entryNo;
 
@@ -4062,7 +4062,7 @@ class ServiceConnectionsController extends AppBaseController
                 ->where('orderno', $meter_reqNo)
                 ->first();
             if ($whHead != null) {
-                $entryNo = $whHead->ent_no;
+                $entryNo = intval($whHead->ent_no);
             } else {
                 $entryNo = $entryNo;
 
