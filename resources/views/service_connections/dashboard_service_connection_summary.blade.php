@@ -79,7 +79,24 @@
                         <h1 class="text-center strong text-xxl text-success mt-3" id="for-energization">...</h1>
                     </div>
                     <div class="px-3">
-                        <a href="{{ route('serviceConnections.for-energization') }}" class="btn btn-block btn-transparent" title="Paid applications for turn-on approvals">View <i class="fas fa-arrow-circle-right ico-tab-left-mini"></i></a>
+                        <a href="{{ route('serviceConnections.for-energization') }}" class="btn btn-block btn-transparent" title="Paid new applications for energization">View <i class="fas fa-arrow-circle-right ico-tab-left-mini"></i></a>
+                    </div>
+                </div>               
+            </div>
+        </div>
+        @endcanany
+
+        {{-- Other Services --}}
+        @canany(['Super Admin', 'turn-on assigning'])
+        <div class="col-lg-3">                
+            <div class="card shadow-none">
+                <div class="card-body p-0 mt-3 mb-2">
+                    <div class="inner">
+                        <p class="no-pads text-muted text-center">Other Services</p>
+                        <h1 class="text-center strong text-xxl text-success mt-3" id="other-services">...</h1>
+                    </div>
+                    <div class="px-3">
+                        <a href="{{ route('serviceConnections.other-services') }}" class="btn btn-block btn-transparent" title="Paid other services for execution">View <i class="fas fa-arrow-circle-right ico-tab-left-mini"></i></a>
                     </div>
                 </div>               
             </div>
@@ -235,6 +252,23 @@
                success : function(response) {
                    console.log(response.length);
                    $('#for-energization').text(response.length);
+               },
+               error : function(error) {
+                   // alert(error);
+                   console.log('Server error!');
+               }
+           })
+
+           /**
+            * OTHER SERVICES
+            */
+            $.ajax({
+               url : '{{ route("home.fetch-other-services") }}',
+               type: "GET",
+               dataType : "json",
+               success : function(response) {
+                   console.log(response.length);
+                   $('#other-services').text(response.length);
                },
                error : function(error) {
                    // alert(error);

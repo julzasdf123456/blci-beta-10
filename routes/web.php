@@ -51,6 +51,7 @@ Route::get('/home/fetch-for-payment-orders', [HomeController::class, 'fetchForPa
 Route::get('/home/fetch-for-turn-on-approvals', [HomeController::class, 'fetchForTurnOnApprovals'])->name('home.fetch-for-turn-on-approvals');
 Route::get('/settings/settings', [HomeController::class, 'settings'])->name('settings.settings');
 Route::get('/settings/save-general-settings', [HomeController::class, 'saveGeneralSettings'])->name('settings.save-general-settings');
+Route::get('/home/fetch-other-services', [HomeController::class, 'fetchOtherServices'])->name('home.fetch-other-services');
 
 // ADD PERMISSIONS TO ROLES
 Route::get('/roles/add-permissions/{id}', [RoleController::class, 'addPermissions'])->name('roles.add_permissions');
@@ -193,6 +194,7 @@ Route::get('/service_connections/print-order-materials/{id}', [ServiceConnection
 Route::get('/service_connections/revalidate-payment-order-materials', [ServiceConnectionsController::class, 'revalidatePaymentOrderMaterials'])->name('serviceConnections.revalidate-payment-order-materials');
 Route::get('/service_connections/print-order-meters/{id}', [ServiceConnectionsController::class, 'printOrderMeters'])->name('serviceConnections.print-order-meters');
 Route::get('/service_connections/delete-payment-order', [ServiceConnectionsController::class, 'deletePaymentOrder'])->name('serviceConnections.delete-payment-order');
+Route::get('/service_connections/other-services', [ServiceConnectionsController::class, 'otherServices'])->name('serviceConnections.other-services');
 Route::resource('serviceConnections', App\Http\Controllers\ServiceConnectionsController::class);
 
 

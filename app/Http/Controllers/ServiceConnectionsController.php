@@ -4613,7 +4613,7 @@ class ServiceConnectionsController extends AppBaseController
             ->leftJoin('CRM_Barangays', 'CRM_ServiceConnections.Barangay', '=', 'CRM_Barangays.id')
             ->leftJoin('users', 'CRM_ServiceConnectionInspections.Inspector', '=', 'users.id')
             ->whereRaw("(Trash IS NULL OR Trash='No')")
-            ->whereRaw("CRM_ServiceConnections.Status='Approved for Energization' AND CRM_ServiceConnections.ORNumber IS NOT NULL")
+            ->whereRaw("CRM_ServiceConnections.Status='Approved for Energization' AND CRM_ServiceConnections.ORNumber IS NOT NULL AND AccountApplicationType IN ('NEW INSTALLATION', 'TEMPORARY')")
             ->select(
                 'CRM_ServiceConnections.id',
                 'CRM_ServiceConnections.ServiceAccountName',
@@ -4633,6 +4633,38 @@ class ServiceConnectionsController extends AppBaseController
             ->get();
 
         return view('/service_connections/for_energization', [
+            'data' => $data,
+            'crew' => ServiceConnectionCrew::orderBy('StationName')->get(),
+        ]);
+    }
+
+    public function otherServices(Request $request) {
+        $data = DB::table('CRM_ServiceConnections')
+            ->leftJoin('CRM_ServiceConnectionInspections', 'CRM_ServiceConnectionInspections.ServiceConnectionId', '=', 'CRM_ServiceConnections.id')
+            ->leftJoin('CRM_Towns', 'CRM_ServiceConnections.Town', '=', 'CRM_Towns.id')
+            ->leftJoin('CRM_Barangays', 'CRM_ServiceConnections.Barangay', '=', 'CRM_Barangays.id')
+            ->leftJoin('users', 'CRM_ServiceConnectionInspections.Inspector', '=', 'users.id')
+            ->whereRaw("(Trash IS NULL OR Trash='No')")
+            ->whereRaw("CRM_ServiceConnections.Status='Approved for Energization' AND CRM_ServiceConnections.ORNumber IS NOT NULL AND AccountApplicationType NOT IN ('NEW INSTALLATION', 'TEMPORARY')")
+            ->select(
+                'CRM_ServiceConnections.id',
+                'CRM_ServiceConnections.ServiceAccountName',
+                'CRM_ServiceConnections.Sitio',
+                'CRM_ServiceConnections.Status',
+                'CRM_Towns.Town',
+                'CRM_Barangays.Barangay',
+                'CRM_ServiceConnections.DateOfApplication',
+                'CRM_ServiceConnections.AccountApplicationType',
+                'CRM_ServiceConnectionInspections.DateOfVerification',
+                'CRM_ServiceConnections.ConnectionSchedule',
+                'CRM_ServiceConnections.StationCrewAssigned',
+                'users.name',
+            )
+            ->orderBy('ConnectionSchedule')
+            ->orderBy('ServiceAccountName')
+            ->get();
+
+        return view('/service_connections/other_services', [
             'data' => $data,
             'crew' => ServiceConnectionCrew::orderBy('StationName')->get(),
         ]);

@@ -204,7 +204,7 @@ class HomeController extends Controller
         ->leftJoin('CRM_Barangays', 'CRM_ServiceConnections.Barangay', '=', 'CRM_Barangays.id')
         ->leftJoin('users', 'CRM_ServiceConnectionInspections.Inspector', '=', 'users.id')
         ->whereRaw("(Trash IS NULL OR Trash='No')")
-        ->whereRaw("CRM_ServiceConnections.Status='Approved for Energization' AND CRM_ServiceConnections.ORNumber IS NOT NULL")
+        ->whereRaw("CRM_ServiceConnections.Status='Approved for Energization' AND CRM_ServiceConnections.ORNumber IS NOT NULL AND AccountApplicationType IN ('NEW INSTALLATION', 'TEMPORARY')")
         ->select(
             'CRM_ServiceConnections.id',
             'CRM_ServiceConnections.ServiceAccountName',
@@ -225,6 +225,35 @@ class HomeController extends Controller
         
         return response()->json($data);
     }
+
+    public function fetchOtherServices(Request $request) {
+        $data = DB::table('CRM_ServiceConnections')
+         ->leftJoin('CRM_ServiceConnectionInspections', 'CRM_ServiceConnectionInspections.ServiceConnectionId', '=', 'CRM_ServiceConnections.id')
+         ->leftJoin('CRM_Towns', 'CRM_ServiceConnections.Town', '=', 'CRM_Towns.id')
+         ->leftJoin('CRM_Barangays', 'CRM_ServiceConnections.Barangay', '=', 'CRM_Barangays.id')
+         ->leftJoin('users', 'CRM_ServiceConnectionInspections.Inspector', '=', 'users.id')
+         ->whereRaw("(Trash IS NULL OR Trash='No')")
+         ->whereRaw("CRM_ServiceConnections.Status='Approved for Energization' AND CRM_ServiceConnections.ORNumber IS NOT NULL AND AccountApplicationType NOT IN ('NEW INSTALLATION', 'TEMPORARY')")
+         ->select(
+             'CRM_ServiceConnections.id',
+             'CRM_ServiceConnections.ServiceAccountName',
+             'CRM_ServiceConnections.Sitio',
+             'CRM_ServiceConnections.Status',
+             'CRM_Towns.Town',
+             'CRM_Barangays.Barangay',
+             'CRM_ServiceConnections.DateOfApplication',
+             'CRM_ServiceConnections.AccountApplicationType',
+             'CRM_ServiceConnectionInspections.DateOfVerification',
+             'CRM_ServiceConnections.ConnectionSchedule',
+             'CRM_ServiceConnections.StationCrewAssigned',
+             'users.name',
+         )
+         ->orderBy('ConnectionSchedule')
+         ->orderBy('ServiceAccountName')
+         ->get();
+         
+         return response()->json($data);
+     }
 
     public function fetchInspectionReport(Request $request) {
         if ($request->ajax()) {            
