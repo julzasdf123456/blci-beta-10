@@ -324,7 +324,7 @@ class ServiceConnectionInspectionsController extends AppBaseController
             $serviceConnection->LoadType = $request['LoadType'];
             $serviceConnection->PoleNumber = $request['PoleNo'];
 
-            if ($serviceConnection->Status == 'For Inspection') {
+            if ($serviceConnection->Status == 'For Inspection' | $serviceConnection->Status == 'Re-Inspection') {
                 $serviceConnection->Status = $request['Status'];
             }
 

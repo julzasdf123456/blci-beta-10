@@ -96,6 +96,7 @@ use Illuminate\Support\Facades\Auth;
                                             <option {{ $serviceConnections->Status=="Downloaded by Crew" ? 'selected' : '' }} value="Downloaded by Crew">Downloaded by Crew</option>
                                             <option {{ $serviceConnections->Status=="Energized" ? 'selected' : '' }} value="Energized">Energized</option>
                                             <option {{ $serviceConnections->Status=="For Inspection" ? 'selected' : '' }} value="For Inspection">For Inspection</option>
+                                            <option {{ $serviceConnections->Status=="Re-Inspection" ? 'selected' : '' }} value="Re-Inspection">Re-Inspection</option>
                                             <option {{ $serviceConnections->Status=="Forwarded To Planning" ? 'selected' : '' }} value="Forwarded To Planning">Forwarded To Planning</option>
                                         </select>
                                     @endif
