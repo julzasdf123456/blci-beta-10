@@ -37,7 +37,7 @@ class ServiceConnectionInspectionsAPI extends Controller {
             // })
             ->where('CRM_ServiceConnectionInspections.Inspector', $request['userid'])
             ->whereRaw("(Trash IS NULL OR Trash='No')")
-            ->whereRaw("(InspectionSchedule <= '" . date('Y-m-d') . "' AND CRM_ServiceConnectionInspections.Status='FOR INSPECTION' AND ReInspectionSchedule IS NULL) OR (ReInspectionSchedule <= '" . date('Y-m-d') . "'AND CRM_ServiceConnectionInspections.Status='Re-Inspection')")
+            ->whereRaw("(InspectionSchedule <= '" . date('Y-m-d') . "' AND CRM_ServiceConnections.Status='For Inspection' AND ReInspectionSchedule IS NULL) OR (ReInspectionSchedule <= '" . date('Y-m-d') . "'AND CRM_ServiceConnections.Status='Re-Inspection')")
             ->get(); 
 
         if ($serviceConnections == null) {
@@ -62,7 +62,7 @@ class ServiceConnectionInspectionsAPI extends Controller {
             // })
             ->where('CRM_ServiceConnectionInspections.Inspector', $request['userid'])
             ->whereRaw("(Trash IS NULL OR Trash='No')")
-            ->whereRaw("(InspectionSchedule <= '" . date('Y-m-d') . "' AND CRM_ServiceConnectionInspections.Status='FOR INSPECTION' AND ReInspectionSchedule IS NULL) OR (ReInspectionSchedule <= '" . date('Y-m-d') . "'AND CRM_ServiceConnectionInspections.Status='Re-Inspection')")
+            ->whereRaw("(InspectionSchedule <= '" . date('Y-m-d') . "' AND CRM_ServiceConnections.Status='For Inspection' AND ReInspectionSchedule IS NULL) OR (ReInspectionSchedule <= '" . date('Y-m-d') . "'AND CRM_ServiceConnections.Status='Re-Inspection')")
             ->get(); 
 
         if ($serviceConnections == null) {
