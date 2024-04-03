@@ -28,7 +28,7 @@
                      <thead>
                         <th>ID</th>
                         <th>Account Name</th>
-                        <th class="text-center">Status</th>
+                        <th class="text-center">Type / Status</th>
                         <th>Inspector</th>
                         <th>Inspection Date</th>
                         <th>Connection Schedule</th>
@@ -43,7 +43,11 @@
                                  <strong>{{ $item->ServiceAccountName }}</strong><br>
                                  <span class="text-muted">{{ ServiceConnections::getAddress($item) }}</span>
                               </td>
-                              <td class="text-center v-align"><span class="badge bg-success">For Execution</span></td>
+                              <td class="text-center v-align">
+                                 {{ $item->AccountApplicationType }}
+                                 <br>
+                                 <span class="badge bg-success">For Execution</span>
+                              </td>
                               <td class="v-align">{{ $item->name }}</td>
                               <td class="v-align">{{ $item->DateOfVerification != null ? date('M d, Y', strtotime($item->DateOfVerification)) : 'n/a' }}</td>
                               <td class="v-align">
