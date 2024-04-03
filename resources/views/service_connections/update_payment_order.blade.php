@@ -375,6 +375,8 @@
       var selectedUOM = '' // initialized in modal_payment_order_items
       var selectedUnitPrice = 0 // initialized in modal_payment_order_items
 
+      var meterSelectedUnitPrice = 0
+
       $(document).ready(function() {
          $('body').addClass('sidebar-collapse')
 

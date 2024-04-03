@@ -99,6 +99,7 @@
          selectedItemCost = parseFloat($('#' + id).attr('meter_data_cst'))
          selectedUOM = $('#' + id).attr('meter_data_uom')
          selectedUnitPrice = parseFloat($('#' + id).attr('meter_data_unitprice'))
+         meterSelectedUnitPrice  = parseFloat($('#' + id).attr('meter_data_cst'))
 
          $('#modal-add-meter').modal('hide')
          $('#meter-Search').val('')
