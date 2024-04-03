@@ -158,6 +158,41 @@
                         <td>meters</td>
                         <td class="text-right">{{ $materialPresets->TwistedWireFour != null ? number_format($materialPresets->TwistedWireFour, 2) : '-' }}</td>
                      </tr>
+                     <tr>
+                        <td>COMPRESSION TAP 2A SU</td>
+                        <td>pcs</td>
+                        <td class="text-right">{{ $materialPresets->CompressionTapAsu != null ? number_format($materialPresets->CompressionTapAsu, 2) : '-' }}</td>
+                     </tr>
+                     <tr>
+                        <td>COMPRESSION TAP YTD 250</td>
+                        <td>pcs</td>
+                        <td class="text-right">{{ $materialPresets->CompressionTapYtdTwoFifty != null ? number_format($materialPresets->CompressionTapYtdTwoFifty, 2) : '-' }}</td>
+                     </tr>
+                     <tr>
+                        <td>COMPRESSION TAP YTD 300</td>
+                        <td>pcs</td>
+                        <td class="text-right">{{ $materialPresets->CompressionTapYtdThreeHundred != null ? number_format($materialPresets->CompressionTapYtdThreeHundred, 2) : '-' }}</td>
+                     </tr>
+                     <tr>
+                        <td>COMPRESSION TAP YTD 200</td>
+                        <td>pcs</td>
+                        <td class="text-right">{{ $materialPresets->CompressionTapYtdThreeHundred != null ? number_format($materialPresets->CompressionTapYtdThreeHundred, 2) : '-' }}</td>
+                     </tr>
+                     <tr>
+                        <td>COMPRESSION TAP YTD 150</td>
+                        <td>pcs</td>
+                        <td class="text-right">{{ $materialPresets->CompressionTapYtdOneFifty != null ? number_format($materialPresets->CompressionTapYtdOneFifty, 2) : '-' }}</td>
+                     </tr>
+                     <tr>
+                        <td>METAL SCREW</td>
+                        <td>pcs</td>
+                        <td class="text-right">{{ $materialPresets->MetalScrew != null ? number_format($materialPresets->MetalScrew, 2) : '-' }}</td>
+                     </tr>
+                     <tr>
+                        <td>ELECTRICAL TAPE</td>
+                        <td>pcs</td>
+                        <td class="text-right">{{ $materialPresets->ElectricalTape != null ? number_format($materialPresets->ElectricalTape, 2) : '-' }}</td>
+                     </tr>
                   </tbody>
                </table>
             </div>
