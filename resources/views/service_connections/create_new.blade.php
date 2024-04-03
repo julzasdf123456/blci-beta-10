@@ -314,9 +314,9 @@
 
         function defaultInspector() {
             if ($('#AccountApplicationType').val() === 'NEW INSTALLATION') {
-                $('#Inspector').val(`{{ ServiceConnections::defaultNewConnectionInspector() }}`).change()
+                $('#Inspector').val(`{{ ServiceConnections::defaultNewConnectionInspector() }}`)
             } else {
-                $('#Inspector').val(`{{ ServiceConnections::defaultOtherApplicationsInspector() }}`).change()
+                $('#Inspector').val(`{{ ServiceConnections::defaultOtherApplicationsInspector() }}`)
             }
         }
     </script>
