@@ -313,7 +313,7 @@
         })
 
         function defaultInspector() {
-            if ($('#AccountApplicationType').val() === 'NEW INSTALLATION' || $('#AccountApplicationType').val() === 'TEMPORARY') {
+            if ($('#AccountApplicationType').val() === 'NEW INSTALLATION' | $('#AccountApplicationType').val() === 'TEMPORARY') {
                 $('#Inspector').val(`{{ ServiceConnections::defaultNewConnectionInspector() }}`)
             } else {
                 $('#Inspector').val(`{{ ServiceConnections::defaultOtherApplicationsInspector() }}`)
