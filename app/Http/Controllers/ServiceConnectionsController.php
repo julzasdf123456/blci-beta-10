@@ -4549,7 +4549,7 @@ class ServiceConnectionsController extends AppBaseController
                             <td>" . $item->Status . "</td>
                             <td>" . $item->name . "</td>
                             <td>
-                                <input type='date' class='form-control form-control-sm' id='date-" . $item->InspectionId . "' placeholder='Set Re-Inspection Date' value='" . {{ $item->ReInspectionSchedule }} . "'>
+                                <input type='date' class='form-control form-control-sm' id='date-" . $item->InspectionId . "' placeholder='Set Re-Inspection Date' value='" . $item->ReInspectionSchedule . "'>
                             </td>
                             <td class='text-right'>
                                 <button class='btn btn-xs btn-success' onclick='saveSchedule(`" . $item->InspectionId . "`)'>Save</button>
