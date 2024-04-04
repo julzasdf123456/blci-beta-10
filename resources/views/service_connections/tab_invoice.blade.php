@@ -36,8 +36,8 @@
             </div>
             <div class="card-footer">
                <a href="{{ route('serviceConnections.update-payment-order', [$serviceConnections->id]) }}" class="btn btn-primary btn-sm float-right"><i class="fas fa-pen ico-tab"></i>Edit Payment Order</a>
-               <a href="{{ route('serviceConnections.print-order-materials', [$serviceConnections->id]) }}" class="btn btn-primary-skinny btn-sm float-right ico-tab-mini"><i class="fas fa-print ico-tab"></i>Print Materials</a>
                <a href="{{ route('serviceConnections.print-material-and-meters', [$serviceConnections->id]) }}" class="btn btn-primary-skinny btn-sm float-right ico-tab-mini"><i class="fas fa-print ico-tab"></i>Print Both</a>
+               <a href="{{ route('serviceConnections.print-order-materials', [$serviceConnections->id]) }}" class="btn btn-primary-skinny btn-sm float-right ico-tab-mini"><i class="fas fa-print ico-tab"></i>Print Materials</a>
                <a href="{{ route('serviceConnections.print-order-meters', [$serviceConnections->id]) }}" class="btn btn-primary-skinny btn-sm float-right ico-tab-mini"><i class="fas fa-print ico-tab"></i>Print Meter</a>
             </div>
         </div>
