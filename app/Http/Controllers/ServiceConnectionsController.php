@@ -4928,6 +4928,7 @@ class ServiceConnectionsController extends AppBaseController
                 'CRM_ServiceConnections.ConnectionSchedule',
                 'CRM_ServiceConnections.StationCrewAssigned',
                 'users.name',
+                DB::raw("(SELECT COUNT(id) FROM CRM_ServiceConnectionComments WHERE ServiceConnectionId=CRM_ServiceConnections.id) AS CommentCount")
             )
             ->orderBy('ConnectionSchedule')
             ->orderBy('ServiceAccountName')
@@ -4958,7 +4959,8 @@ class ServiceConnectionsController extends AppBaseController
                 'CRM_ServiceConnections.AccountApplicationType',
                 'CRM_ServiceConnectionInspections.DateOfVerification',
                 'users.name',
-                'CRM_PaymentOrder.OverAllTotal'
+                'CRM_PaymentOrder.OverAllTotal',
+                DB::raw("(SELECT COUNT(id) FROM CRM_ServiceConnectionComments WHERE ServiceConnectionId=CRM_ServiceConnections.id) AS CommentCount")
             )
             ->orderBy('ServiceAccountName')
             ->get();

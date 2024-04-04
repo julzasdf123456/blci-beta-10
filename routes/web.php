@@ -1019,3 +1019,6 @@ Route::resource('readingFromTexts', App\Http\Controllers\ReadingFromTextControll
 Route::resource('local-warehouse-heads', App\Http\Controllers\LocalWarehouseHeadController::class);
 Route::resource('local-warehouse-items', App\Http\Controllers\LocalWarehouseItemsController::class);
 Route::resource('material-presets', App\Http\Controllers\MaterialPresetsController::class);
+
+Route::get('/service_connection_comments/get-comments', [App\Http\Controllers\ServiceConnectionCommentsController::class, 'getComments'])->name('serviceConnectionComments.get-comments');
+Route::resource('serviceConnectionComments', App\Http\Controllers\ServiceConnectionCommentsController::class);

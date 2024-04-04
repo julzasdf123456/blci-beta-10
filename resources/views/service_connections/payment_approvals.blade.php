@@ -45,7 +45,9 @@
                               <td class="v-align">{{ $item->name }}</td>
                               <td class="v-align">{{ $item->DateOfVerification != null ? date('M d, Y', strtotime($item->DateOfVerification)) : 'n/a' }}</td>
                               <td class="text-right v-align" style="min-width: 150px;">
-                                 <button class="btn btn-sm btn-success" onclick="approveForPayment(`{{ $item->id }}`)"><i class="fas fa-check-circle ico-tab-mini"></i>Approve</button>
+                                <button id="comments-{{ $item->id }}" class="btn btn-sm btn-default" onclick="viewComments(`{{ $item->id }}`)" title="View Comments"><i class="fas fa-comments"></i> ({{ $item->CommentCount }})</button>
+                                <button class="btn btn-sm btn-warning" onclick="comment(`{{ $item->id }}`, `{{ $item->CommentCount }}`)" title="Add Comment"><i class="fas fa-comment"></i></button>
+                                <button class="btn btn-sm btn-success" onclick="approveForPayment(`{{ $item->id }}`)"><i class="fas fa-check-circle ico-tab-mini"></i>Approve</button>
                               </td>
                            </tr>
                         @endforeach
@@ -59,10 +61,12 @@
 </div>
 @endsection
 
+@include('service_connections.modal_comments')
+
 @push('page_scripts')
     <script>
         $(document).ready(function() {
-
+            $('body').addClass('sidebar-collapse')
         })
 
         function approveForPayment(id) {
@@ -97,6 +101,87 @@
                     })
                 }
             });
+        }
+
+        function comment(id, count) {
+            (async () => {
+                const { value: text } = await Swal.fire({
+                    input: 'textarea',
+                    inputPlaceholder: 'Type your remarks here...',
+                    inputAttributes: {
+                        'aria-label': 'Type your remarks here'
+                    },
+                    text : 'Provide comment/remarks/notes.',
+                    showCancelButton: true
+                })
+
+                if (text) {
+                    $.ajax({
+                        url : "{{ route('serviceConnectionComments.store') }}",
+                        type : "POST",
+                        data : {
+                            _token : "{{ csrf_token() }}",
+                            ServiceConnectionId : id,
+                            Comments : text, 
+                            UserId : "{{ Auth::id() }}"
+                        }, 
+                        success : function(res) {
+                            Toast.fire({
+                                icon : 'success',
+                                text : 'Comment added!'
+                            })      
+                            
+                            $('#comments-' + id).html('<i class="fas fa-comments"></i> (' + (parseInt(count) + 1) + ')')
+                        },
+                        error : function(err) {
+                            console.log(err)
+                            Swal.fire({
+                                icon : 'error',
+                                text : 'Error adding comment!'
+                            })
+                        }
+                    })
+                }
+            })()
+        }
+
+        function viewComments(id) {
+            $('#modal-comments').modal('show')
+
+            $('#comment-results tbody tr').remove()
+
+            $.ajax({
+                url : "{{ route('serviceConnectionComments.get-comments') }}",
+                type : "GET",
+                data : {
+                    ServiceConnectionId : id,
+                },
+                success : function(res) {
+                    if (!isNull(res)) {
+                        $.each(res, function(index, el) {
+                            $('#comment-results tbody').append(`
+                                <tr>
+                                    <td class='v-align py-3' style='width: 35px;'>
+                                        <i class='fas fa-comment'></i>
+                                    </td>
+                                    <td class='v-align'>
+                                        ` + res[index]['Comments'] + `
+                                        <br>
+                                        <span class='text-muted' style='font-size: 0.8em;'><i class='fas fa-user-circle ico-tab-mini'></i>` + res[index]['name'] + ` | ` + moment(res[index]['created_at']).format("MMM DD, YYYY @ h:m A") + `</span>
+                                    </td>    
+                                </tr>
+                            `)
+                        })
+                    }
+                },
+                error : function(err) {
+                    console.log(err)
+                    Toast.fire({
+                        icon : 'error',
+                        text : 'Error getting comments'
+                    })
+                }
+            })
         }
     </script>
 @endpush
