@@ -140,6 +140,10 @@ class ServiceConnectionInspectionsAPI extends Controller {
         $serviceConnectionInspections->BillDeposit = $request['BillDeposit'];
         $serviceConnectionInspections->MeteringType = $request['MeteringType'];
 
+        if ($request['Status'] === 'Re-Inspection') {
+            $serviceConnectionInspections->ReInspectionSchedule = null;
+        }
+
         $serviceConnectionInspections->save();
 
         $serviceConnections->save();
