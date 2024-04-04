@@ -3930,7 +3930,7 @@ class ServiceConnectionsController extends AppBaseController
             $whHead->orno = $ORNumber;
             $whHead->purpose = 'FOR ' . strtoupper($customerName);
             $whHead->serv_code = $typeOfServiceId;
-            $whHead->account_no = $acctNo;
+            $whHead->account_no = $acctNo .'-' . $numberOfAccounts;
             $whHead->cust_name = $customerName;
             $whHead->tot_amt = $MaterialTotal;
             $whHead->chkby = $requestedBy;
@@ -3989,7 +3989,7 @@ class ServiceConnectionsController extends AppBaseController
             $whHeadLocal->orno = $ORNumber;
             $whHeadLocal->purpose = 'FOR ' . strtoupper($customerName);
             $whHeadLocal->serv_code = $typeOfServiceId;
-            $whHeadLocal->account_no = $acctNo;
+            $whHeadLocal->account_no = $acctNo .'-' . $numberOfAccounts;
             $whHeadLocal->cust_name = $customerName;
             $whHeadLocal->tot_amnt = $MaterialTotal;
             $whHeadLocal->chkby = $requestedBy;
@@ -4084,7 +4084,7 @@ class ServiceConnectionsController extends AppBaseController
             $whHead->orno = $ORNumber;
             $whHead->purpose = 'FOR ' . strtoupper($meter_customerName);
             $whHead->serv_code = $meter_typeOfServiceId;
-            $whHead->account_no = $acctNo;
+            $whHead->account_no = $acctNo .'-' . $numberOfAccounts;
             $whHead->cust_name = $meter_customerName;
             $whHead->tot_amt = $meterTotal != null ? $meterTotal : 0;
             $whHead->chkby = $meter_requestedBy;
@@ -4130,7 +4130,7 @@ class ServiceConnectionsController extends AppBaseController
             $whHeadLocalMeters->orno = $ORNumber;
             $whHeadLocalMeters->purpose = 'FOR ' . strtoupper($meter_customerName);
             $whHeadLocalMeters->serv_code = $meter_typeOfServiceId;
-            $whHeadLocalMeters->account_no = $acctNo;
+            $whHeadLocalMeters->account_no = $acctNo .'-' . $numberOfAccounts;
             $whHeadLocalMeters->cust_name = $meter_customerName;
             $whHeadLocalMeters->tot_amnt = $meterTotal != null ? $meterTotal : 0;
             $whHeadLocalMeters->chkby = $meter_requestedBy;
