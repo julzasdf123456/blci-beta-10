@@ -3798,6 +3798,7 @@ class ServiceConnectionsController extends AppBaseController
         $meter_customerName = $request['MeterCustomerName'];
         $meter_typeOfServiceId = $request['MeterTypeOfServiceId'];
         $meter_entryNo = $request['MeterEntryNo'];
+        $meterTotal = $request['MeterTotal'];
 
         $acctNo = $request['AccountNumber'];
         $typeOfCustomer = $request['TypeOfCustomer'];
@@ -3929,7 +3930,7 @@ class ServiceConnectionsController extends AppBaseController
             $whHead->orno = $ORNumber;
             $whHead->purpose = 'FOR ' . strtoupper($customerName);
             $whHead->serv_code = $typeOfServiceId;
-            $whHead->account_no = $barangayCode . "-" . $typeOfCustomer . "-" . $acctNo . "-" . $numberOfAccounts;
+            $whHead->account_no = $acctNo;
             $whHead->cust_name = $customerName;
             $whHead->tot_amt = $MaterialTotal;
             $whHead->chkby = $requestedBy;
@@ -3988,7 +3989,7 @@ class ServiceConnectionsController extends AppBaseController
             $whHeadLocal->orno = $ORNumber;
             $whHeadLocal->purpose = 'FOR ' . strtoupper($customerName);
             $whHeadLocal->serv_code = $typeOfServiceId;
-            $whHeadLocal->account_no = $barangayCode . "-" . $typeOfCustomer . "-" . $acctNo . "-" . $numberOfAccounts;
+            $whHeadLocal->account_no = $acctNo;
             $whHeadLocal->cust_name = $customerName;
             $whHeadLocal->tot_amnt = $MaterialTotal;
             $whHeadLocal->chkby = $requestedBy;
@@ -4083,9 +4084,9 @@ class ServiceConnectionsController extends AppBaseController
             $whHead->orno = $ORNumber;
             $whHead->purpose = 'FOR ' . strtoupper($meter_customerName);
             $whHead->serv_code = $meter_typeOfServiceId;
-            $whHead->account_no = $barangayCode . "-" . $typeOfCustomer . "-" . $acctNo . "-" . $numberOfAccounts;
+            $whHead->account_no = $acctNo;
             $whHead->cust_name = $meter_customerName;
-            $whHead->tot_amt = $MaterialTotal;
+            $whHead->tot_amt = $meterTotal != null ? $meterTotal : 0;
             $whHead->chkby = $meter_requestedBy;
             if (Auth::user()->hasAnyRole(ServiceConnections::whHeadStatus())) {
                 $whHead->stat = 'Checked';
@@ -4129,9 +4130,9 @@ class ServiceConnectionsController extends AppBaseController
             $whHeadLocalMeters->orno = $ORNumber;
             $whHeadLocalMeters->purpose = 'FOR ' . strtoupper($meter_customerName);
             $whHeadLocalMeters->serv_code = $meter_typeOfServiceId;
-            $whHeadLocalMeters->account_no = $barangayCode . "-" . $typeOfCustomer . "-" . $acctNo . "-" . $numberOfAccounts;
+            $whHeadLocalMeters->account_no = $acctNo;
             $whHeadLocalMeters->cust_name = $meter_customerName;
-            $whHeadLocalMeters->tot_amnt = $MaterialTotal;
+            $whHeadLocalMeters->tot_amnt = $meterTotal != null ? $meterTotal : 0;
             $whHeadLocalMeters->chkby = $meter_requestedBy;
             if (Auth::user()->hasAnyRole(ServiceConnections::whHeadStatus())) {
                 $whHeadLocalMeters->stat = 'Checked';
@@ -4157,7 +4158,7 @@ class ServiceConnectionsController extends AppBaseController
                 $whItemsLocalMeters->qty = $item->ItemQuantity;  
                 $whItemsLocalMeters->uom = $item->ItemUOM; 
                 $whItemsLocalMeters->cst = $item->ItemSalesPrice; 
-                $whItemsLocalMeters->amnt = $item->ItemTotalCost; 
+                $whItemsLocalMeters->amnt = round(floatVal($item->ItemSalesPrice) * floatVal($item->ItemQuantity), 6); 
                 $whItemsLocalMeters->itemno = $item->ItemNo; 
                 $whItemsLocalMeters->rdate = date('m/d/Y');
                 $whItemsLocalMeters->rtime = date('h:i A');
@@ -4173,7 +4174,7 @@ class ServiceConnectionsController extends AppBaseController
                 $whItems->qty = $item->ItemQuantity;  
                 $whItems->uom = $item->ItemUOM; 
                 $whItems->cst = $item->ItemSalesPrice; 
-                $whItems->amt = $item->ItemTotalCost; 
+                $whItems->amt = round(floatVal($item->ItemSalesPrice) * floatVal($item->ItemQuantity), 6); 
                 $whItems->itemno = $item->ItemNo; 
                 $whItems->rdate = date('m/d/Y');
                 $whItems->rtime = date('h:i A');

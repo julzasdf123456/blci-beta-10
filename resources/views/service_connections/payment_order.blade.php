@@ -603,6 +603,18 @@
 
          return data
       }
+      
+      function getMetersTotal() {
+         var total = 0
+
+         $('#meter-items-list tbody tr').each(function(index, element) {    
+            if (!jQuery.isEmptyObject($('td', this).eq(6).text())) {
+               total += parseFloat($('td', this).eq(6).text())
+            }            
+         })
+
+         return total
+      }
 
       /**
        * FEES AND SUMMARY
@@ -754,6 +766,7 @@
                   BarangayCode : brgyCode,
                   NumberOfAccounts : noOfAccounts,
                   IsNew : 'New',
+                  MeterTotal : getMetersTotal(),
                },
                success : function(res) {
                   Toast.fire({
