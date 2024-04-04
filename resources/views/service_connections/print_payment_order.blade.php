@@ -156,7 +156,7 @@ p {
             </div>
             <div class="col-sm-6" style="margin-top: 20px;">
                 <p class="text-muted">Application Fees</p>
-                <table class="table table-sm" style="margin-bottom: 140px;">
+                <table class="table table-sm" style="margin-bottom: 10px;">
                     <tbody>
                         <tr>
                             <td>Material Deposit</td>
