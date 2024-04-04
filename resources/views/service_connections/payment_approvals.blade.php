@@ -46,7 +46,7 @@
                               <td class="v-align">{{ $item->DateOfVerification != null ? date('M d, Y', strtotime($item->DateOfVerification)) : 'n/a' }}</td>
                               <td class="text-right v-align" style="min-width: 150px;">
                                 <button id="comments-{{ $item->id }}" class="btn btn-sm btn-default" onclick="viewComments(`{{ $item->id }}`)" title="View Comments"><i class="fas fa-comments"></i> ({{ $item->CommentCount }})</button>
-                                <button class="btn btn-sm btn-warning" onclick="comment(`{{ $item->id }}`, `{{ $item->CommentCount }}`)" title="Add Comment"><i class="fas fa-comment"></i></button>
+                                <button class="btn btn-sm btn-warning" onclick="comment(`{{ $item->id }}`, `{{ $item->CommentCount }}`)" title="Add Comment"><i class="fas fa-comment ico-tab-mini"></i>Add Comment</button>
                                 <button class="btn btn-sm btn-success" onclick="approveForPayment(`{{ $item->id }}`)"><i class="fas fa-check-circle ico-tab-mini"></i>Approve</button>
                               </td>
                            </tr>
