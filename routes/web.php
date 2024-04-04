@@ -195,6 +195,7 @@ Route::get('/service_connections/revalidate-payment-order-materials', [ServiceCo
 Route::get('/service_connections/print-order-meters/{id}', [ServiceConnectionsController::class, 'printOrderMeters'])->name('serviceConnections.print-order-meters');
 Route::get('/service_connections/delete-payment-order', [ServiceConnectionsController::class, 'deletePaymentOrder'])->name('serviceConnections.delete-payment-order');
 Route::get('/service_connections/other-services', [ServiceConnectionsController::class, 'otherServices'])->name('serviceConnections.other-services');
+Route::get('/service_connections/print-material-and-meters/{id}', [ServiceConnectionsController::class, 'printMaterialsAndMeters'])->name('serviceConnections.print-material-and-meters');
 Route::resource('serviceConnections', App\Http\Controllers\ServiceConnectionsController::class);
 
 

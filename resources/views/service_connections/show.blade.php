@@ -48,6 +48,9 @@ use Illuminate\Support\Facades\Auth;
 
                                 <a href="{{ route('serviceConnections.print-order-meters', [$serviceConnections->id]) }}" class="dropdown-item" title="Print Payment Order Materials">
                                     <i class="fas fa-print ico-tab"></i>Print Order - Meter</a>
+
+                                <a href="{{ route('serviceConnections.print-material-and-meters', [$serviceConnections->id]) }}" class="dropdown-item" title="Print Payment Order Materials">
+                                    <i class="fas fa-print ico-tab"></i>Print Order - Materials & Meter</a>
     
                                 <button onclick="revalidatePayment(`{{ $serviceConnections->id }}`)" class="dropdown-item" title="Re-flush payment order materials to warehouse database">
                                     <i class="fas fa-file-invoice-dollar ico-tab"></i>Revalidate Payment Order Materials</button>

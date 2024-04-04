@@ -5390,4 +5390,102 @@ class ServiceConnectionsController extends AppBaseController
 
         return response()->json('ok', 200);
     }
+
+    public function printMaterialsAndMeters($id) {
+        $serviceConnections = DB::table('CRM_ServiceConnections')
+            ->leftJoin('CRM_Barangays', 'CRM_ServiceConnections.Barangay', '=', 'CRM_Barangays.id')
+            ->leftJoin('CRM_Towns', 'CRM_ServiceConnections.Town', '=', 'CRM_Towns.id')
+            ->leftJoin('users', 'CRM_ServiceConnections.UserId', '=', 'users.id')
+            ->select('CRM_ServiceConnections.id as id',
+                        'CRM_ServiceConnections.AccountCount as AccountCount', 
+                        'CRM_ServiceConnections.ServiceAccountName as ServiceAccountName',
+                        'CRM_ServiceConnections.DateOfApplication', 
+                        'CRM_ServiceConnections.TimeOfApplication', 
+                        'CRM_ServiceConnections.ContactNumber as ContactNumber', 
+                        'CRM_ServiceConnections.EmailAddress as EmailAddress',  
+                        'CRM_ServiceConnections.AccountApplicationType as AccountApplicationType', 
+                        'CRM_ServiceConnections.AccountOrganization as AccountOrganization', 
+                        'CRM_ServiceConnections.ConnectionApplicationType as ConnectionApplicationType',
+                        'CRM_ServiceConnections.MemberConsumerId as MemberConsumerId',
+                        'CRM_ServiceConnections.Status as Status',  
+                        'CRM_ServiceConnections.Notes as Notes', 
+                        'CRM_ServiceConnections.Office', 
+                        'CRM_ServiceConnections.LongSpan', 
+                        'CRM_ServiceConnections.ORNumber as ORNumber',
+                        'CRM_ServiceConnections.ORDate', 
+                        'CRM_ServiceConnections.Sitio as Sitio', 
+                        'CRM_ServiceConnections.LoadCategory as LoadCategory', 
+                        'CRM_ServiceConnections.DateTimeOfEnergization as DateTimeOfEnergization', 
+                        'CRM_ServiceConnections.DateTimeLinemenArrived as DateTimeLinemenArrived', 
+                        'CRM_Towns.Town as Town',
+                        'CRM_Barangays.Barangay as Barangay',
+                        'CRM_ServiceConnections.AccountType',
+                        'CRM_ServiceConnections.ServiceNumber',
+                        'CRM_ServiceConnections.ConnectionSchedule',
+                        'CRM_ServiceConnections.LoadType',
+                        'CRM_ServiceConnections.Zone',
+                        'CRM_ServiceConnections.Block',
+                        'CRM_ServiceConnections.TransformerID',
+                        'CRM_ServiceConnections.LoadInKva',
+                        'CRM_ServiceConnections.PoleNumber',
+                        'CRM_ServiceConnections.Feeder',
+                        'CRM_ServiceConnections.ChargeTo',
+                        'CRM_ServiceConnections.AccountNumber',
+                        'CRM_ServiceConnections.BarangayCode',
+                        'CRM_ServiceConnections.TypeOfCustomer',
+                        'CRM_ServiceConnections.NumberOfAccounts',
+                        'CRM_ServiceConnections.CertificateOfConnectionIssuedOn',
+                        'users.name'
+                        )
+        ->where('CRM_ServiceConnections.id', $id)
+        ->where(function ($query) {
+            $query->where('CRM_ServiceConnections.Trash', 'No')
+                ->orWhereNull('CRM_ServiceConnections.Trash');
+        })
+        ->first(); 
+
+        // ITEMS
+        $whHead = WarehouseHead::where('appl_no', $id)->whereRaw("orderno NOT LIKE 'M%'")->first();
+        if ($whHead != null) {
+            $whItems = DB::connection('mysql')
+                ->table('tblor_line')
+                ->leftJoin('tblitems', 'tblor_line.itemcd', '=', 'tblitems.itm_code')
+                ->whereRaw("reqno='" . $whHead->orderno . "'")
+                ->select(
+                    'tblor_line.*', 
+                    'tblitems.itm_desc'
+                    )
+                ->orderBy('itemno')
+                ->get();
+        } else {
+            $whItems = [];
+        }
+
+        $paymentOrder = PaymentOrder::where('ServiceConnectionId', $id)->first();
+
+        $whHeadMeters = WarehouseHead::where('appl_no', $id)->whereRaw("orderno LIKE 'M%'")->first();
+        if ($whHeadMeters != null) {
+            $whItemsMeters = DB::connection('mysql')
+                ->table('tblor_line')
+                ->leftJoin('tblitems', 'tblor_line.itemcd', '=', 'tblitems.itm_code')
+                ->whereRaw("reqno='" . $whHeadMeters->orderno . "'")
+                ->select(
+                    'tblor_line.*', 
+                    'tblitems.itm_desc'
+                    )
+                ->orderBy('itemno')
+                ->get();
+        } else {
+            $whItemsMeters = [];
+        }
+
+        return view('/service_connections/print_material_and_meters', [
+            'serviceConnection' => $serviceConnections,
+            'paymentOrder' => $paymentOrder,
+            'whHead' => $whHead,
+            'whItems' => $whItems,
+            'whHeadMeters' => $whHeadMeters,
+            'whItemsMeters' => $whItemsMeters,
+        ]);
+    }
 }
