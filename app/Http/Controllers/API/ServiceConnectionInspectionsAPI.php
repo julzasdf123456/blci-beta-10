@@ -140,27 +140,25 @@ class ServiceConnectionInspectionsAPI extends Controller {
         $serviceConnectionInspections->BillDeposit = $request['BillDeposit'];
         $serviceConnectionInspections->MeteringType = $request['MeteringType'];
 
-        if ($serviceConnectionInspections->save()) {
-            $serviceConnections->save();
+        $serviceConnectionInspections->save();
 
-            // CREATE Timeframes
-            $timeFrame = new ServiceConnectionTimeframes;
-            $timeFrame->id = IDGenerator::generateID();
-            $timeFrame->ServiceConnectionId = $request['ServiceConnectionId'];
-            $timeFrame->UserId = $request['Inspector'];
-            $timeFrame->Status = $request['Status'];
-            if ($request['Status'] == 'Approved') {
-                $timeFrame->Notes = 'Inspection approved and is waiting for payment';
-            } else {
-                $timeFrame->Notes = $request['Notes'];
-            }
-            
-            $timeFrame->save();
+        $serviceConnections->save();
 
-            return response()->json(['ok' => 'ok'], $this->successStatus);
+        // CREATE Timeframes
+        $timeFrame = new ServiceConnectionTimeframes;
+        $timeFrame->id = IDGenerator::generateID();
+        $timeFrame->ServiceConnectionId = $request['ServiceConnectionId'];
+        $timeFrame->UserId = $request['Inspector'];
+        $timeFrame->Status = $request['Status'];
+        if ($request['Status'] == 'Approved') {
+            $timeFrame->Notes = 'Inspection approved and is waiting for payment';
         } else {
-            return response()->json(['error' => 'Error updating data'], 401);
+            $timeFrame->Notes = $request['Notes'];
         }
+        
+        $timeFrame->save();
+
+        return response()->json(['ok' => 'ok'], $this->successStatus);
     }
 
     public function updateDownloadedInspection(Request $request) {
