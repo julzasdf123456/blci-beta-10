@@ -5488,4 +5488,25 @@ class ServiceConnectionsController extends AppBaseController
             'whItemsMeters' => $whItemsMeters,
         ]);
     }
+
+    public function trashDocumets(Request $request) {
+        $id = $request['ServiceConnectionId'];
+        $currentFile = $request['CurrentFile'];
+
+        $current = ServiceConnections::filePath() . $id . "/" . $currentFile;
+
+        $path = ServiceConnections::filePath() . $id . "/images/trash/";
+        File::makeDirectory($path, $mode = 0777, true, true);
+        $trash = $path . date('Y_m_d_H_i_') . $currentFile;
+
+        if (file_exists($current)) {
+            if (rename($current, $trash)) {
+                return response()->json('ok', 200);
+            } else {
+                return response()->json('Unable to trash file!', 403);
+            }
+        } else {
+            return response()->json('File not found!', 404);
+        }
+    }
 }
