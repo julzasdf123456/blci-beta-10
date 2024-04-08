@@ -55,7 +55,10 @@ class ServiceConnectionInspectionsAPI extends Controller {
             ->leftJoin('CRM_Towns', 'CRM_ServiceConnections.Town', '=', 'CRM_Towns.id')
             ->select('CRM_ServiceConnectionInspections.*',
                 'CRM_Barangays.Barangay AS BarangayFull',
-                'CRM_Towns.Town AS TownFull')
+                'CRM_Towns.Town AS TownFull',
+                'CRM_ServiceConnections.Zone',
+                'CRM_ServiceConnections.Block',
+                'CRM_ServiceConnections.Feeder')
             // ->where('CRM_ServiceConnections.Status', "For Inspection")
             // ->where(function($query) {
             //     $query->where('CRM_ServiceConnections.Status', "For Inspection")
