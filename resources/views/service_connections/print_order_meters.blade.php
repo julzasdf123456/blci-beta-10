@@ -136,12 +136,12 @@
             <th class="text-left" style="border-bottom: 1px solid #454455">Asset Code</th>
             <th style="border-bottom: 1px solid #454455">Quantity</th>
             <th style="border-bottom: 1px solid #454455">UOM</th>
-            <th style="border-bottom: 1px solid #454455">Unit Price</th>
+            <th style="border-bottom: 1px solid #454455">Sales Price</th>
             <th style="border-bottom: 1px solid #454455">Total Cost</th>
         </thead>
         <tbody>
             @php
-                $cst = 0;
+                $salesprice = 0;
                 $amt = 0;
             @endphp
             @foreach ($whItems as $key => $item)
@@ -152,17 +152,17 @@
                     <td>{{ $item->ascode }}</td>
                     <td class="text-right">{{ $item->qty }}</td>
                     <td class="text-right">{{ $item->uom }}</td>
-                    <td class="text-right">{{ is_numeric($item->cst) ? number_format($item->cst, 2) : $item->cst }}</td>
+                    <td class="text-right">{{ is_numeric($item->salesprice) ? number_format($item->salesprice, 2) : $item->salesprice }}</td>
                     <td class="text-right">{{ is_numeric($item->amt) ? number_format($item->amt, 2) : $item->amt }}</td>
                 </tr>
                 @php
-                    $cst += (is_numeric($item->cst) ? floatval($item->cst) : 0);
+                    $salesprice += (is_numeric($item->salesprice) ? floatval($item->salesprice) : 0);
                     $amt += (is_numeric($item->amt) ? floatval($item->amt) : 0);
                 @endphp
             @endforeach
             <tr>
                 <td colspan="6"><strong>TOTAL</strong></td>
-                <td class="text-right"><strong>{{ number_format($cst, 2) }}</strong></td>
+                <td class="text-right"><strong>{{ number_format($salesprice, 2) }}</strong></td>
                 <td class="text-right"><strong>{{ number_format($amt, 2) }}</strong></td>
             </tr>
         </tbody>

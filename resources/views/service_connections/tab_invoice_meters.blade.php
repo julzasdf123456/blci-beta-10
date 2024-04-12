@@ -97,12 +97,14 @@
         <th>Quantity</th>
         <th>UOM</th>
         <th>Unit Price</th>
+        <th>Sales Price</th>
         <th>Total Cost</th>
     </thead>
     <tbody>
         @php
             $cst = 0;
             $amt = 0;
+            $salesprice = 0;
         @endphp
         @foreach ($whItemsMeters as $item)
             <tr>
@@ -112,16 +114,19 @@
                 <td class="text-right">{{ $item->qty }}</td>
                 <td class="text-right">{{ $item->uom }}</td>
                 <td class="text-right">{{ is_numeric($item->cst) ? number_format($item->cst, 6, ".", "") : $item->cst }}</td>
+                <td class="text-right">{{ is_numeric($item->salesprice) ? number_format($item->salesprice, 6, ".", "") : $item->salesprice }}</td>
                 <td class="text-right">{{ is_numeric($item->amt) ? number_format($item->amt, 6, ".", "") : $item->amt }}</td>
             </tr>
             @php
                 $cst += (is_numeric($item->cst) ? floatval($item->cst) : 0);
+                    $salesprice += (is_numeric($item->salesprice) ? floatval($item->salesprice) : 0);
                 $amt += (is_numeric($item->amt) ? floatval($item->amt) : 0);
             @endphp
         @endforeach
         <tr>
             <td colspan="5"><strong>TOTAL</strong></td>
             <td class="text-right"><strong>{{ number_format($cst, 6, ".", "") }}</strong></td>
+            <td class="text-right"><strong>{{ number_format($salesprice, 6, ".", "") }}</strong></td>
             <td class="text-right"><strong>{{ number_format($amt, 6, ".", "") }}</strong></td>
         </tr>
     </tbody>
