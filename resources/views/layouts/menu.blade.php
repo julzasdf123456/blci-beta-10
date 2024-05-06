@@ -1456,7 +1456,12 @@ use Illuminate\Support\Facades\Auth;
                 <i class="fas fa-circle nav-icon"></i><p>Customer Deposit Bal.</p>
                 </a>
             </li>
-
+            <li class="nav-item">
+                <a href="{{ route('serviceAccounts.mw-ledgers') }}"
+                class="nav-link {{ Request::is('serviceAccounts.mw-ledgers*') ? 'active' : '' }}">
+                <i class="fas fa-circle nav-icon"></i><p>Ledgers</p>
+                </a>
+            </li>
         </ul>
     </li>
 @endcanany

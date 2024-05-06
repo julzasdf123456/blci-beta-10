@@ -45,6 +45,7 @@ use App\Models\PaymentOrder;
 use App\Models\CustomerDepositInterests;
 use App\Models\CustomerDepositLogs;
 use App\Exports\DynamicExports;
+use App\Imports\Ledgers;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Flash;
 use Response;
@@ -3993,5 +3994,26 @@ class ServiceAccountsController extends AppBaseController
         Flash::success('Customer deposit balances updated!');
 
         return redirect(route('serviceAccounts.mw-customer-deposit-balances'));
+    }
+
+    public function mwLedgers(Request $request) {
+        return view('/service_accounts/mw_ledgers', [
+
+        ]);
+    }
+
+    public function validateMwLedgers(Request $request) {
+        $file = $request->file('file');
+        $period = $request['ServicePeriod'];
+
+        $fileUpload = new Ledgers(Auth::id(), $period);
+
+        DB::connection()->disableQueryLog();
+
+        Excel::import($fileUpload, $file);
+        
+        Flash::success('Ledgers for ' . date('F Y', strtotime($period)) . ' uploaded successfully!');
+
+        return redirect(route('serviceAccounts.mw-ledgers'));
     }
 }

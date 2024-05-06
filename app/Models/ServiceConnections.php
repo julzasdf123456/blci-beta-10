@@ -323,9 +323,9 @@ class ServiceConnections extends Model
             "CONDUCTOR COVER RENTAL",
             "METER ACCURACY TEST",
             "PURCHASE OF MATERIALS",
-            "REFUND OF BILL DEPOSIT",
+            "REFUND OF BILL DEPOSIT", // DIRECTLY DONE
             "SALE OF ITEMS",
-            "SENIOR CITIZEN'S DISCOUNT",
+            "SENIOR CITIZEN'S DISCOUNT", // DIRECTLY DONE
         ];
     }
 

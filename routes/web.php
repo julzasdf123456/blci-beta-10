@@ -348,6 +348,8 @@ Route::get('/service_accounts/mw-advance-material-deposit-balances', [ServiceAcc
 Route::post('/service_accounts/validate-mw-advance-material-deposit-balances', [ServiceAccountsController::class, 'validateMwAdvanceMaterialDepositBalances'])->name('serviceAccounts.validate-mw-advance-material-deposit-balances');
 Route::get('/service_accounts/mw-customer-deposit-balances', [ServiceAccountsController::class, 'mwCustomerDepositBalances'])->name('serviceAccounts.mw-customer-deposit-balances');
 Route::post('/service_accounts/validate-mw-customer-deposit-balances', [ServiceAccountsController::class, 'validateMwCustomerDepositBalances'])->name('serviceAccounts.validate-mw-customer-deposit-balances');
+Route::get('/service_accounts/mw-ledgers', [ServiceAccountsController::class, 'mwLedgers'])->name('serviceAccounts.mw-ledgers');
+Route::post('/service_accounts/validate-mw-ledgers', [ServiceAccountsController::class, 'validateMwLedgers'])->name('serviceAccounts.validate-mw-ledgers');
 Route::resource('serviceAccounts', ServiceAccountsController::class);
 
 
