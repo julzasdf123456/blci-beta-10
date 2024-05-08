@@ -201,7 +201,7 @@
         <div class="col-lg-12">
             <div class="card shadow-none">
                 <div class="card-body">
-                    <div id="map" style="width: 100%; height: 80vh;"></div>
+                    <div id="map" style="position: absolute; top: 0; bottom: 0; width: 100%; height: 80vh;"></div>
                 </div>
             </div>
         </div>
@@ -481,7 +481,10 @@
                                     })
                                 });
                                 
-                                new mapboxgl.Marker(el)
+                                new mapboxgl.Marker({
+                                    element : el,
+                                    anchor : 'top-left'
+                                })
                                         .setLngLat([parseFloat(result[index]['Longitude']), parseFloat(result[index]['Latitude'])])
                                         .addTo(map);
                             }
