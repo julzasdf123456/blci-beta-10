@@ -193,6 +193,16 @@
                         </tbody>
                     </table>
                 </div>
+                <div class="card-footer"></div>
+            </div>
+        </div>
+
+        {{-- MAP --}}
+        <div class="col-lg-12">
+            <div class="card shadow-none">
+                <div class="card-body">
+                    <div id="map" style="width: 100%; height: 80vh;"></div>
+                </div>
             </div>
         </div>
     </div>
@@ -368,12 +378,122 @@
 @endsection
 
 @push('page_scripts')
+    <script src="https://api.mapbox.com/mapbox-gl-js/v2.5.1/mapbox-gl.js"></script>
+    <link href="https://api.mapbox.com/mapbox-gl-js/v2.5.1/mapbox-gl.css" rel="stylesheet">
+
     <script>
         var prev = 0
         var pres = 0
         var kwhused = 0
         var multiplier = 0
         var acctid = ""
+
+        // MAP
+        mapboxgl.accessToken = 'pk.eyJ1IjoianVsemxvcGV6IiwiYSI6ImNqZzJ5cWdsMjJid3Ayd2xsaHcwdGhheW8ifQ.BcTcaOXmXNLxdO3wfXaf5A';
+            const map = new mapboxgl.Map({
+            container: 'map', // container ID
+            style: 'mapbox://styles/mapbox/satellite-v9',
+            center: [123.873378, 9.659182], // starting position [lng, lat], 
+            zoom: 13 // starting zoom
+        });
+
+        map.on('load', () => {
+            loadMapAndAccounts()
+        })
+
+        function loadMapAndAccounts() {
+            $.ajax({
+                url : "{{ route('readings.get-readings-from-meter-reader') }}",
+                type : 'GET',
+                data : {
+                    ServicePeriod : "{{ $period }}",
+                    MeterReader : "{{ $meterReader != null ? $meterReader->id : '' }}",
+                    Day : "{{ $day }}",
+                    Town : "{{ $town }}",
+                },
+                success : function(result) {
+                    $('#res-table tbody tr').remove();
+                    if (jQuery.isEmptyObject(result)) {
+                        console.log("No data found")
+                    } else {
+                        $.each(result, function(index, element) {
+                            // ADD TO MAP
+                            if (jQuery.isEmptyObject(result[index]['Longitude']) | jQuery.isEmptyObject(result[index]['Latitude'])) {
+
+                            } else {
+                                if (index == 0) {
+                                    map.flyTo({
+                                            center: [parseFloat(result[index]['Longitude']), parseFloat(result[index]['Latitude'])],
+                                            zoom: 15,
+                                            bearing: 0,
+                                            speed: 1, // make the flying slow
+                                            curve: 1, // change the speed at which it zooms out
+                                            easing: (t) => t,
+                                            essential: true
+                                        });                                                                      
+                                }  
+
+                                const el = document.createElement('div');
+                                el.className = 'marker';
+                                el.id = result[index]['id'];
+                                el.title = result[index]['ServiceAccountName']
+                                el.innerHTML += `<button id="update" class="btn btn-sm text-white" style="margin-left: -10px;" style="margin-left: 10px;"> 
+                                        <span><i class="fas fa-map-marker-alt text-danger" style="font-size: 1.8em;"></i></span> 
+                                        ${ result[index]['ServiceAccountName'] }
+                                    </button>`
+                                el.style.backgroundColor = `transparent`;                       
+                                // el.style.width = `20px`;
+                                el.style.height = `20px`;
+                                el.style.borderRadius = '50%';
+                                el.style.backgroundSize = '100%';
+
+                                el.addEventListener('click', () => {
+                                    Swal.fire({
+                                        title : result[index]['ServiceAccountName'],
+                                        html : `<table class="table table-sm table-hover table-bordered">
+                                                    <tbody>
+                                                        <tr>
+                                                            <td class='text-muted text-left'>Account No</td>  
+                                                            <td class='text-left'>${ result[index]['OldAccountNo'] }</td>      
+                                                        </tr>
+                                                        <tr>
+                                                            <td class='text-muted text-left'>Meter No</td>  
+                                                            <td class='text-left'>${ result[index]['MeterNumber'] }</td>      
+                                                        </tr>
+                                                        <tr>
+                                                            <td class='text-muted text-left'>House No</td>  
+                                                            <td class='text-left'>${ result[index]['HouseNumber'] }</td>      
+                                                        </tr>
+                                                        <tr>
+                                                            <td class='text-muted text-left'>Previous Reading</td>  
+                                                            <td class='text-left'>${ result[index]['PreviousReading'] }</td>      
+                                                        </tr>
+                                                        <tr>
+                                                            <td class='text-muted text-left'>Present Reading</td>  
+                                                            <td class='text-left'>${ result[index]['KwhUsed'] }</td>      
+                                                        </tr>
+                                                        <tr>
+                                                            <td class='text-muted text-left'>Consumption</td>  
+                                                            <td class='text-left'>${ result[index]['KwhConsumed'] }</td>      
+                                                        </tr>
+                                                    </tbody>
+                                                </table>`
+                                    })
+                                });
+                                
+                                new mapboxgl.Marker(el)
+                                        .setLngLat([parseFloat(result[index]['Longitude']), parseFloat(result[index]['Latitude'])])
+                                        .addTo(map);
+                            }
+                        })
+                    }
+                },
+                error : function(error) {
+                    alert("An error occurred while fetching data")
+                    console.log(error)
+                }
+            })
+        }
 
         // CAPTURED
         var readid = ""
