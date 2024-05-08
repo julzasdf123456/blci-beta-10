@@ -86,7 +86,7 @@
                         <thead>
                             <th class="text-center">#</th>
                             <th class="text-center text-primary">Account #</th>
-                            <th class="text-center">Sequence #</th>
+                            <th class="text-center">House #</th>
                             <th class="text-center">Name</th>
                             <th class="text-center">Acct. Status</th>
                             <th class="text-center">Timestamp</th>
@@ -100,6 +100,7 @@
                             <th class="text-center">Meter #</th>
                             <th class="text-center">Reading <br>Code</th>
                             <th class="text-center">Reading<br>Remarks</th>
+                            <th class="text-center">System<br>Remarks</th>
                             <th class="text-center"></th>
                         </thead>
                         <tbody>
@@ -154,6 +155,7 @@
                                     <td class="text-right">{{ $item->MeterNumber }}</td>
                                     <td>{{ $item->ReadingErrorCode }}</td>
                                     <td>{{ $item->ReadingErrorRemarks }}</td>
+                                    <td>{{ $item->FieldStatus }}</td>
                                     <td class="text-right">
                                         @if ($item->KwhConsumed == null && $item->AccountStatus == 'ACTIVE')
                                             {{-- <a href="{{ route('bills.zero-readings-view', [$item->id]) }}"><i class="fas fa-pen"></i></a> --}}
@@ -176,7 +178,7 @@
                                             </button>
                                             @else
                                                 @if ($item->FieldStatus != null && ($item->FieldStatus=='CHANGE METER' | $item->FieldStatus=='RESET'))
-                                                <a href="{{ $item->BillId != null ? route('bills.adjust-bill', [$item->BillId]) : '' }}" class="btn btn-xs btn-link" title="Adjust Reading"><i class="fas fa-pen"></i></a>
+                                                    <a href="{{ $item->BillId != null ? route('bills.adjust-bill', [$item->BillId]) : '' }}" class="btn btn-xs btn-link" title="Adjust Reading"><i class="fas fa-pen"></i></a>
                                                 @else
                                                     
                                                 @endif
@@ -378,6 +380,7 @@
         var remarks = ""
         var fieldFindings = ""
         $(document).ready(function() {
+            $('body').addClass('sidebar-collapse')
 
             $('#KwhAdjusted').keyup(function(e) {
                 computeKwh()

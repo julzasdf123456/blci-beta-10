@@ -595,8 +595,8 @@
                 /**
                  * CHECK IF RESET
                  **/
-                kwhFinal = parseFloat($('#multiplier').text()) * getResetKwhUsed(prev, pres)
-                $('#account-validation').text('Meter Reset detected! Reset value is ' + getResetValue(prev, pres)).removeClass('text-success').addClass('text-danger')
+                kwhFinal = parseFloat($('#multiplier').text()) * getResetValue(prev, pres)
+                $('#account-validation').text('Meter Reset detected! Reset ceiling value is ' + getCeiling(prev) + ' (' + getCeiling(prev) + ' - ' + prev + ') + ' + pres + ' = ' + getResetValue(prev, pres) + ' kwh)').removeClass('text-success').addClass('text-danger')
             } else {
                 /**
                  * NOT RESET
@@ -701,22 +701,6 @@
             prev = parseFloat(prev)
 
             return (resetValue - prev) + pres
-        }
-
-        function getResetValue(prev, pres) {
-            prev = prev + ""
-            var numZeroes = prev.length - 1
-            var firstNum = prev.charAt(0)
-            firstNum = parseInt(firstNum) + 1
-
-            var resetValue = firstNum + ""
-            for (var i=0; i<numZeroes; i++) {
-                resetValue += "0"
-            }
-
-            resetValue = parseInt(resetValue)
-
-            return resetValue
         }
 
         function getPreviousReading(acctNo, period) {

@@ -1008,3 +1008,12 @@ body.dark-mode .bg-success {
     margin: 8px;
     object-fit: cover; /* Adjusts the object fit */
 }
+
+.card-header .nav .nav-item .nav-link.active {
+    border-radius: 12px !important;
+}
+
+.card-header .nav {
+    padding-left: 6px !important;
+    padding-right: 6px !important;
+}

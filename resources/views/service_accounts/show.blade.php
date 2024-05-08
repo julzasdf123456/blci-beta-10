@@ -303,6 +303,7 @@
 @push('page_scripts')
     <script>
         $(document).ready(function() {
+            $('body').addClass('sidebar-collapse')
             $('#disconnect-proceed').on('click', function() {
                 disconnect()
             })

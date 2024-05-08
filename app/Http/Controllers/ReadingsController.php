@@ -200,31 +200,31 @@ class ReadingsController extends AppBaseController
          * ACTUAL RBS
          * Re activate if RBS is already implemented
          */
-        // $readings = DB::table('Billing_Readings')
-        //     ->leftJoin('Billing_ServiceAccounts', 'Billing_Readings.AccountNumber', '=', 'Billing_ServiceAccounts.id')
-        //     ->where('Billing_Readings.MeterReader', $request['MeterReader'])
-        //     ->where('Billing_Readings.ServicePeriod', $request['ServicePeriod'])
-        //     ->where('Billing_ServiceAccounts.GroupCode', $request['Day'])
-        //     ->where('Billing_ServiceAccounts.Town', $request['Town'])
-        //     ->select('Billing_Readings.*',
-        //         'Billing_ServiceAccounts.ServiceAccountName',
-        //         'Billing_ServiceAccounts.SequenceCode')
-        //     ->orderBy('Billing_Readings.ReadingTimestamp')
-        //     ->get();
+        $readings = DB::table('Billing_Readings')
+            ->leftJoin('Billing_ServiceAccounts', 'Billing_Readings.AccountNumber', '=', 'Billing_ServiceAccounts.id')
+            ->where('Billing_Readings.MeterReader', $request['MeterReader'])
+            ->where('Billing_Readings.ServicePeriod', $request['ServicePeriod'])
+            ->where('Billing_ServiceAccounts.GroupCode', $request['Day'])
+            ->where('Billing_ServiceAccounts.Town', $request['Town'])
+            ->select('Billing_Readings.*',
+                'Billing_ServiceAccounts.ServiceAccountName',
+                'Billing_ServiceAccounts.SequenceCode')
+            ->orderBy('Billing_Readings.ReadingTimestamp')
+            ->get();
 
         /**
          * Reading from text
          */
-        $readings = DB::table('Billing_Readings')
-            ->where('Billing_Readings.MeterReader', $request['MeterReader'])
-            ->where('Billing_Readings.ServicePeriod', $request['ServicePeriod'])
-            ->where('Billing_Readings.GroupCode', $request['Day'])
-            ->where('Billing_Readings.AreaCode', $request['Town'])
-            ->select('Billing_Readings.*',
-                'Billing_Readings.ConsumerName as ServiceAccountName',
-                'Billing_Readings.HouseNumber as SequenceCode')
-            ->orderBy('Billing_Readings.ReadingTimestamp')
-            ->get();
+        // $readings = DB::table('Billing_Readings')
+        //     ->where('Billing_Readings.MeterReader', $request['MeterReader'])
+        //     ->where('Billing_Readings.ServicePeriod', $request['ServicePeriod'])
+        //     ->where('Billing_Readings.GroupCode', $request['Day'])
+        //     ->where('Billing_Readings.AreaCode', $request['Town'])
+        //     ->select('Billing_Readings.*',
+        //         'Billing_Readings.ConsumerName as ServiceAccountName',
+        //         'Billing_Readings.HouseNumber as SequenceCode')
+        //     ->orderBy('Billing_Readings.ReadingTimestamp')
+        //     ->get();
 
         return response()->json($readings, 200);
     }
@@ -968,6 +968,11 @@ class ReadingsController extends AppBaseController
          * FROM READING VIA TEXT
          */
         $readingReport = DB::table('Billing_Readings')
+            ->leftJoin("Billing_Bills", function($join) {
+                $join->on('Billing_Readings.AccountNumber', '=', 'Billing_Bills.AccountNumber')
+                    ->on('Billing_Readings.ServicePeriod', '=', 'Billing_Bills.ServicePeriod');
+            })
+            ->leftJoin('Billing_ServiceAccounts', 'Billing_Readings.AccountNumber', '=', 'Billing_ServiceAccounts.id')
             ->whereRaw("Billing_Readings.MeterReader = '" . $meterReader->id . "'")
             ->where('Billing_Readings.ServicePeriod', $period)
             ->select('Billing_Readings.*',
@@ -975,9 +980,8 @@ class ReadingsController extends AppBaseController
                 'Billing_Readings.OldAccountNo',
                 'Billing_Readings.ConsumerName AS ServiceAccountName',
                 'Billing_Readings.HouseNumber AS SequenceCode',
-                DB::raw("'-' AS AccountStatus"),
-                DB::raw("'1' AS Multiplier"),
-                DB::raw("'' AS BillId"),
+                'Billing_Bills.id AS BillId',
+                'Billing_ServiceAccounts.AccountStatus',
                 )
             ->orderBy('HouseNumber')
             // ->orderBy('FieldStatus')
@@ -5231,7 +5235,7 @@ class ReadingsController extends AppBaseController
             ->where('Billing_Readings.MeterReader', $meterReader)
             ->where('Billing_Readings.ServicePeriod', $servicePeriod)
             ->where('Billing_Readings.GroupCode', $groupCode)
-            ->where('Billing_Readings.AreaCode', $areaCode)
+            // ->where('Billing_Readings.AreaCode', $areaCode)
             ->select('Billing_Readings.*')
             ->orderBy('Billing_Readings.HouseNumber')
             ->get();

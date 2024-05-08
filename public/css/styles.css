@@ -6,6 +6,10 @@
     width: 100%;
 }
 
+.dark-mode .form-blend {
+    color: white;
+}
+
 .form-blend:focus {
     outline: none !important;
     border: 1px solid #328afd;

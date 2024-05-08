@@ -691,6 +691,27 @@
     function round(value) {
         return Math.round((value + Number.EPSILON) * 100) / 100
     }
+
+    /**
+     * RESET OR CHANGE METER
+     */
+    function getCeiling(value) {
+        if (value < 1000) {
+            return 1000;
+        } else if (value > 999 && value < 10000) {
+            return 10000
+        } else if (value > 9999 && value < 100000) {
+            return 100000
+        } else {
+            return 1000000
+        }
+    }
+
+    function getResetValue(prev, pres) {
+        const ceiling = getCeiling(prev)
+        const dif = ceiling - prev
+        return round(pres + dif)
+    }
 </script>
 
 @yield('third_party_scripts')

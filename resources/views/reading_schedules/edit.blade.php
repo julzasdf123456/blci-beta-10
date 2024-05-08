@@ -16,8 +16,9 @@
         @include('adminlte-templates::common.errors')
 
         <div class="row">
-            <div class="col-lg-6 offset-lg-3 col-md-8 offset-md-2">
-                <div class="card">
+            {{-- EDIT --}}
+            <div class="col-lg-4 col-md-6">
+                <div class="card shadow-none">
 
                     <div class="card-header">
                         <span class="card-title">Update {{ $user->name }}'s Schedule</span>
@@ -46,7 +47,7 @@
                             @endphp
 
                             <!-- Serviceperiod Field -->
-                            <div class="form-group col-sm-6">
+                            <div class="form-group col-lg-12">
                                 {!! Form::label('ServicePeriod', 'Select Billing Month') !!}
                                 
                                 <select name="ServicePeriod" id="ServicePeriod" class="form-control">
@@ -56,7 +57,7 @@
                                 </select>
                             </div>
                             <!-- Areacode Field -->
-                            <div class="form-group col-sm-6">
+                            <div class="form-group col-lg-12">
                                 {!! Form::label('AreaCode', 'Area') !!}
                                 <select name="AreaCode" id="AreaCode" class="form-control">
                                     @foreach ($towns as $item)
@@ -66,7 +67,7 @@
                             </div>
 
                             <!-- Groupcode Field -->
-                            <div class="form-group col-sm-6">
+                            <div class="form-group col-lg-12">
                                 {!! Form::label('GroupCode', 'Day/Group') !!}
                                 <select name="GroupCode" id="GroupCode" class="form-control">
                                     @for ($i = 0; $i < count($groups); $i++)
@@ -76,7 +77,7 @@
                             </div>
 
                             <!-- Scheduleddate Field -->
-                            <div class="form-group col-sm-6">
+                            <div class="form-group col-lg-12">
                                 {!! Form::label('ScheduledDate', 'Reading Date') !!}
                                 {!! Form::text('ScheduledDate', null, ['class' => 'form-control','id'=>'ScheduledDate']) !!}
                             </div>
@@ -92,7 +93,7 @@
                             @endpush
 
                             <!-- Status Field -->
-                            <div class="form-group col-sm-6">
+                            <div class="form-group col-lg-12">
                                 {!! Form::label('Status', 'Status') !!}
                                 <select name="Status" id="Status" class="form-control">
                                     <option value="" {{ $readingSchedules->Status==null ? 'selected' : '' }}>Not Yet Downloaded</option>
@@ -100,12 +101,12 @@
                                 </select>
                             </div>
 
-                            <div class="divider"></div>
+                            {{-- <div class="divider"></div>
 
                             <div class="col-lg-12">
                                 <span class="text-muted">3rd-day Reading Rule Unlock Code</span>
                                 <p><strong>{{ explode("-", $readingSchedules->id)[0] }}</strong></p>
-                            </div>
+                            </div> --}}
                         </div>
                     </div>
 
@@ -118,8 +119,83 @@
 
                 </div>
             </div>
-        </div>
 
-        
+            {{-- ACCOUNTS IN THIS SCHED --}}
+            <div class="col-lg-8 col-md-6">
+                <div class="card shadow-none">
+                    <div class="card-header">
+                        <span class="card-title"><i class="fas fa-list ico-tab"></i>Accounts on this Schedule</span>
+
+                        <div class="card-tools">
+                            <div id="loader" class="spinner-border text-info" role="status">
+                                <span class="sr-only">Loading...</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card-body table-responsive p-0">
+                        <table class="table table-bordered table-sm table-hover" id="reading-table">
+                            <thead>
+                                <th>House No</th>
+                                <th>Account No</th>
+                                <th>Account Name</th>
+                                <th>Zone-Block</th>
+                                <th class='text-right'>Previous Kwh Used</th>
+                            </thead>
+                            <tbody>
+
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="card-footer">
+
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
 @endsection
+
+@push('page_scripts')
+    <script>
+        $(document).ready(function() {
+            getAccountsInSched()
+        })
+
+        function getAccountsInSched() {
+            $('#reading-table tbody tr').remove()
+            $.ajax({
+                url : "{{ route('api.readAndBillApi.download-accounts') }}",
+                type : "GET",
+                data : {
+                    ServicePeriod : "{{ $readingSchedules->ServicePeriod }}",
+                    AreaCode : "{{ $readingSchedules->AreaCode }}",
+                    GroupCode : "{{ $readingSchedules->GroupCode }}",
+                    MeterReader : "{{ $readingSchedules->MeterReader }}",
+                },
+                success : function(res) {
+                    $.each(res, function(index, el) {
+                        $('#reading-table tbody').append(addRow(res[index]))
+                    })
+                    $('#loader').addClass('gone')
+                },
+                error : function(xhr, textStatus, errorThrown) {
+                    Swal.fire({
+                        title : xhr.textStatus,
+                        text : errorThrown
+                    })
+                    $('#loader').addClass('gone')
+                }
+            })
+        }
+
+        function addRow(object) {
+            return `<tr>
+                        <td>${ object['HouseNumber'] }</td>
+                        <td><a target="_blank" href="{{ url('/serviceAccounts/') }}/${ object['AccountId'] }">${ object['OldAccountNo'] }</a></td>
+                        <td>${ object['ServiceAccountName'] }</td>
+                        <td>${ object['Zone'] + '-' + object['BlockCode'] }</td>
+                        <td class='text-right'>${ isNull(object['PrevKwhUsed']) ? 0 : object['PrevKwhUsed'] }</td>
+                    </tr>`
+        }
+    </script>
+@endpush

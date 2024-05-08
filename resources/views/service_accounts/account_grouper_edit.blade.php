@@ -28,7 +28,7 @@
                     </thead>
                     <tbody>
                         @foreach ($meterReaders as $item)
-                            <tr onclick="fetchRoutes('{{ $item->MeterReader }}')">
+                            <tr onclick="fetchRoutes(`{{ $item->MeterReader }}`, `{{ $item->name }}`)">
                                 <td>{{ $item->name != null ? $item->name : 'Unassigned' }}</td>
                                 <td>{{ $item->NoOfConsumers }}</td>
                             </tr>
@@ -43,7 +43,7 @@
     <div class="col-lg-9">
         <div class="card shadow-none" style="height: 75vh;">
             <div class="card-header">
-                <span class="card-title">Routes Within the Selected Meter Reader</span>
+                <span class="card-title">Routes Within the Selected Meter Reader ( <span class="text-muted" id="mreader-selected"></span> )</span>
             </div>
             <div class="card-body table-responsive p-0">
                 <table class="table table-hover" id="routes-table">
@@ -72,8 +72,9 @@
 
         })
 
-        function fetchRoutes(meterReader) {
+        function fetchRoutes(meterReader, mReaderName) {
             $('#routes-table tbody tr').remove()
+            $('#mreader-selected').text(isNull(mReaderName) ? 'Unassigned' : mReaderName)
             mreader = meterReader
             if (!jQuery.isEmptyObject(meterReader)) {
                 day = '{{ $day }}'
