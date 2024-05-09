@@ -277,8 +277,13 @@
                                                 @endforeach
                                             </tr>
                                             <tr>
-                                                <td>Feed-inTariff Allowance</td>
-                                                <td colspan="16" class="text-muted">Temporary Suspension until August 2023.</td>
+                                                <td>Feed-inTariff Allowance</td>         
+                                                <td>P/kwh</td>
+                                                @foreach ($rates as $item)
+                                                    @if ($item->RateFor == $categoryValue->RateFor)
+                                                        <td class="text-right">{{ $item->FeedInTariffAllowance==null ? '' : number_format($item->FeedInTariffAllowance, 4) }}</td>
+                                                    @endif
+                                                @endforeach
                                             </tr>                                            
                                             <tr>
                                                 <td>Local Franchise Tax</td>           
