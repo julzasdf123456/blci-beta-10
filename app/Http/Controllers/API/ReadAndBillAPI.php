@@ -128,6 +128,8 @@ class ReadAndBillAPI extends Controller {
                 DB::raw("(SELECT TOP 1 NewMeterStartKwh FROM Billing_ChangeMeterLogs WHERE AccountNumber=Billing_ServiceAccounts.id AND ServicePeriod='" . $request['ServicePeriod'] . "' ORDER BY created_at DESC) AS ChangeMeterStartKwh"),
                 DB::raw("(SELECT SUM(TRY_CAST(NetAmount AS DECIMAL(8, 2))) FROM Billing_Bills WHERE AccountNumber=Billing_ServiceAccounts.id AND MergedToCollectible IS NULL AND AccountNumber NOT IN (SELECT AccountNumber FROM Cashier_PaidBills WHERE AccountNumber=Billing_ServiceAccounts.id AND AccountNumber IS NOT NULL AND (Status IS NULL OR Status='Application') AND ServicePeriod=Billing_Bills.ServicePeriod)) AS ArrearsTotal"),
                 )
+            ->orderBy('Zone')
+            ->orderBy('BlockCode')
             ->orderBy('HouseNumber')
             ->orderBy('ServiceAccountName')
             ->get();
