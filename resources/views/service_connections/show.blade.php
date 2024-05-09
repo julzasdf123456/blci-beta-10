@@ -40,6 +40,11 @@ use Illuminate\Support\Facades\Auth;
                                 <a href="{{ route('serviceConnections.update-payment-order', [$serviceConnections->id]) }}" class="dropdown-item" title="Edit Payment Order">
                                     <i class="fas fa-file-invoice-dollar ico-tab"></i>Edit Payment Order</a>
 
+                                @if ($paymentOrder != null && $paymentOrder->InspectionFee != null)
+                                    <a href="{{ route('serviceConnections.print-inspection-fee', [$serviceConnections->id]) }}" class="dropdown-item" title="Print Inspection Fee">
+                                    <i class="fas fa-print ico-tab"></i>Print Inspection Fee</a>
+                                @endif
+
                                 <a href="{{ route('serviceConnections.print-payment-order', [$serviceConnections->id]) }}" class="dropdown-item" title="Print Payment Order Stub">
                                     <i class="fas fa-print ico-tab"></i>Print Payment Order Stub</a>
                                     

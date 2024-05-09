@@ -39,6 +39,9 @@
                <a href="{{ route('serviceConnections.print-material-and-meters', [$serviceConnections->id]) }}" class="btn btn-primary-skinny btn-sm float-right ico-tab-mini"><i class="fas fa-print ico-tab"></i>Print Both</a>
                <a href="{{ route('serviceConnections.print-order-materials', [$serviceConnections->id]) }}" class="btn btn-primary-skinny btn-sm float-right ico-tab-mini"><i class="fas fa-print ico-tab"></i>Print Materials</a>
                <a href="{{ route('serviceConnections.print-order-meters', [$serviceConnections->id]) }}" class="btn btn-primary-skinny btn-sm float-right ico-tab-mini"><i class="fas fa-print ico-tab"></i>Print Meter</a>
+               @if ($paymentOrder != null && $paymentOrder->InspectionFee != null)
+                  <a href="{{ route('serviceConnections.print-inspection-fee', [$serviceConnections->id]) }}" class="btn btn-primary-skinny btn-sm float-right ico-tab-mini"><i class="fas fa-print ico-tab"></i>Print Inspection Fee</a>
+               @endif
             </div>
         </div>
     </div>
@@ -99,6 +102,38 @@
 
     {{-- OVERALL TOTAL --}}
     <div class="col-lg-6">
+         {{-- INSPECTION FEE --}}
+         @if ($paymentOrder != null && $paymentOrder->InspectionFee != null)
+            <div class="card shadow-none">
+               <div class="card-header">
+                  <span class="card-title">Inspection Fee</span>
+               </div>
+               <div class="card-body">
+                  <table class="table table-sm table-hover table-sm">
+                     <tbody>
+                        <tr>
+                           <td>Inspection Fee</td>
+                           <td class="text-right">50.00</td>
+                        </tr>
+                        <tr>
+                           <td>F. Tax</td>
+                           <td class="text-right">0.38</td>
+                        </tr>
+                        <tr>
+                           <td>VAT</td>
+                           <td class="text-right">6.00</td>
+                        </tr>
+                        <tr>
+                           <td>Total Inspection Fee</td>
+                           <td class="text-right">P {{ is_numeric($paymentOrder->InspectionFee) ? number_format($paymentOrder->InspectionFee, 2) : $paymentOrder->InspectionFee }}</td>
+                        </tr>
+                     </tbody>
+                  </table>
+               </div>
+            </div>
+         @endif
+
+         {{-- OVER ALL --}}
         <div class="card {{ $serviceConnections->ORNumber != null ? 'card-success' : 'card-danger' }}">
             <div class="card-header">
                <span class="card-title">Summary</span>

@@ -101,6 +101,9 @@ class PaymentOrder extends Model
         'MaterialTotal',
         'AmountPaid',
         'SaleOfMaterials',
+        'InspectionFee',
+        'InspectionFeeORNumber',
+        'InspectionFeeORDate',
     ];
 
     /**
@@ -131,6 +134,9 @@ class PaymentOrder extends Model
         'MaterialTotal' => 'string',
         'AmountPaid' => 'string',
         'SaleOfMaterials' => 'string',
+        'InspectionFee' => 'string',
+        'InspectionFeeORNumber' => 'string',
+        'InspectionFeeORDate' => 'string',
     ];
 
     /**
@@ -165,6 +171,9 @@ class PaymentOrder extends Model
         'MaterialTotal' => 'nullable|string',
         'AmountPaid' => 'nullable|string',
         'SaleOfMaterials' => 'nullable|string',
+        'InspectionFee' => 'nullable|string',
+        'InspectionFeeORNumber' => 'nullable|string',
+        'InspectionFeeORDate' => 'nullable|string',
     ];
 
     

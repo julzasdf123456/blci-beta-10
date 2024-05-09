@@ -197,6 +197,7 @@ Route::get('/service_connections/delete-payment-order', [ServiceConnectionsContr
 Route::get('/service_connections/other-services', [ServiceConnectionsController::class, 'otherServices'])->name('serviceConnections.other-services');
 Route::get('/service_connections/print-material-and-meters/{id}', [ServiceConnectionsController::class, 'printMaterialsAndMeters'])->name('serviceConnections.print-material-and-meters');
 Route::post('/service_connections/trash-documents', [ServiceConnectionsController::class, 'trashDocumets'])->name('serviceConnections.trash-documents');
+Route::get('/service_connections/print-inspection-fee/{id}', [ServiceConnectionsController::class, 'printInspectionFee'])->name('serviceConnections.print-inspection-fee');
 Route::resource('serviceConnections', App\Http\Controllers\ServiceConnectionsController::class);
 
 

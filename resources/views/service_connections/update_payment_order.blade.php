@@ -663,7 +663,7 @@
          var serviceFee = getInputAmount($('#ServiceFee').val())
          var others = getInputAmount($('#Others').val())
          var othersTotal = getInputAmount($('#OthersTotal').val())
-         var saleOfMaterials = getLocalFTax($('#SaleOfMaterials').val())
+         var saleOfMaterials = getInputAmount($('#SaleOfMaterials').val())
          var materialsTotal = getInputAmount($('#MaterialsTotal').val())
 
          var total = materialDeposit + overheadExpenses + transformerRentalFees + apprehension + customerDeposit + ciac + serviceFee + others + othersTotal + materialsTotal + saleOfMaterials 

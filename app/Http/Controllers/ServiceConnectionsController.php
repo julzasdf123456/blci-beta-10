@@ -179,8 +179,10 @@ class ServiceConnectionsController extends AppBaseController
         // FILTER ACOUNT APPLICATION TYPE
         if (in_array($input['AccountApplicationType'], ServiceConnections::skippableForInspection())) {
             $input['Status'] = 'Approved';
+            $input['InspectionFee'] = '0';
         } else {
             $input['Status'] = 'For Inspection';
+            $input['InspectionFee'] = '56.43';
         }
 
         if ($input['id'] != null) {
@@ -219,6 +221,16 @@ class ServiceConnectionsController extends AppBaseController
                     $timeFrame->Notes = 'Inspection scheduled on ' . date('F d, Y', strtotime($input['InspectionSchedule'])) . ', by ' .  ($inspectorUser != null ? $inspectorUser->name : 'n/a');
                     $timeFrame->save();
                 }
+
+                // create payment order
+                $paymentOrder = PaymentOrder::where('ServiceConnectionId', $input['id'])->first();
+                if ($paymentOrder == null) {
+                    $paymentOrder = new PaymentOrder;
+                    $paymentOrder->id = IDGenerator::generateID();
+                    $paymentOrder->ServiceConnectionId = $input['id'];
+                    $paymentOrder->InspectionFee = $input['InspectionFee'];
+                    $paymentOrder->save();
+                } 
 
                 // CREATE Timeframes
                 $timeFrame = new ServiceConnectionTimeframes;
@@ -270,6 +282,16 @@ class ServiceConnectionsController extends AppBaseController
                     }                    
                 } 
 
+                // create payment order
+                $paymentOrder = PaymentOrder::where('ServiceConnectionId', $input['id'])->first();
+                if ($paymentOrder == null) {
+                    $paymentOrder = new PaymentOrder;
+                    $paymentOrder->id = IDGenerator::generateID();
+                    $paymentOrder->ServiceConnectionId = $input['id'];
+                    $paymentOrder->InspectionFee = $input['InspectionFee'];
+                    $paymentOrder->save();
+                } 
+
                 // CREATE Timeframes
                 $timeFrame = new ServiceConnectionTimeframes;
                 $timeFrame->id = IDGenerator::generateID();
@@ -288,6 +310,15 @@ class ServiceConnectionsController extends AppBaseController
                 $timeFrame->Status = 'Inspection Scheduled';
                 $timeFrame->Notes = 'Inspection scheduled on ' . date('F d, Y', strtotime($input['InspectionSchedule'])) . ', by ' .  ($inspectorUser != null ? $inspectorUser->name : 'n/a');
                 $timeFrame->save();
+
+                // CREATE Timeframes for inspection fee
+                $timeFrame = new ServiceConnectionTimeframes;
+                $timeFrame->id = IDGenerator::generateID();
+                $timeFrame->ServiceConnectionId = $input['id'];
+                $timeFrame->UserId = Auth::id();
+                $timeFrame->Status = 'Inspection Fee Assigned';
+                $timeFrame->Notes = 'Inspection fee set with an amount of ' . $input['InspectionFee'];
+                $timeFrame->save();
                 
                 // CREATE FOLDER FIRST
                 if (!file_exists('/CRM_FILES//' . $input['id'])) {
@@ -302,8 +333,6 @@ class ServiceConnectionsController extends AppBaseController
         } else {
             return abort('ID Not found!', 404);
         }
-
-        
     }
 
     /**
@@ -3853,7 +3882,13 @@ class ServiceConnectionsController extends AppBaseController
 
         // CHECK FIRST IF PAYMENT ORDER EXIST
         $paymentOrder = PaymentOrder::where('ServiceConnectionId', $ServiceConnectionId)->first();
+        $inspectionFee = null;
+        $inspectionFeeORNo = null;
+        $inspectionFeeORDate = null;
         if ($paymentOrder != null) {
+            $inspectionFee = $paymentOrder->InspectionFee;
+            $inspectionFeeORNo = $paymentOrder->InspectionFeeORNumber;
+            $inspectionFeeORDate = $paymentOrder->InspectionFeeORDate;
             $paymentOrder->delete();
         } 
 
@@ -3877,6 +3912,9 @@ class ServiceConnectionsController extends AppBaseController
         $paymentOrder->ORDate = date('Y-m-d');
         $paymentOrder->MaterialTotal = $MaterialTotal;
         $paymentOrder->SaleOfMaterials = $SaleOfMaterials;
+        $paymentOrder->InspectionFee = $inspectionFee;
+        $paymentOrder->InspectionFeeORNumber = $inspectionFeeORNo;
+        $paymentOrder->InspectionFeeORDate = $inspectionFeeORDate;
         $paymentOrder->save();
 
         // DELETE WAREHOUSE HEAD
@@ -5508,5 +5546,66 @@ class ServiceConnectionsController extends AppBaseController
         } else {
             return response()->json('File not found!', 404);
         }
+    }
+
+    public function printInspectionFee($id) {
+        $serviceConnections = DB::table('CRM_ServiceConnections')
+            ->leftJoin('CRM_Barangays', 'CRM_ServiceConnections.Barangay', '=', 'CRM_Barangays.id')
+            ->leftJoin('CRM_Towns', 'CRM_ServiceConnections.Town', '=', 'CRM_Towns.id')
+            ->leftJoin('users', 'CRM_ServiceConnections.UserId', '=', 'users.id')
+            ->select('CRM_ServiceConnections.id as id',
+                        'CRM_ServiceConnections.AccountCount as AccountCount', 
+                        'CRM_ServiceConnections.ServiceAccountName as ServiceAccountName',
+                        'CRM_ServiceConnections.DateOfApplication', 
+                        'CRM_ServiceConnections.TimeOfApplication', 
+                        'CRM_ServiceConnections.ContactNumber as ContactNumber', 
+                        'CRM_ServiceConnections.EmailAddress as EmailAddress',  
+                        'CRM_ServiceConnections.AccountApplicationType as AccountApplicationType', 
+                        'CRM_ServiceConnections.AccountOrganization as AccountOrganization', 
+                        'CRM_ServiceConnections.ConnectionApplicationType as ConnectionApplicationType',
+                        'CRM_ServiceConnections.MemberConsumerId as MemberConsumerId',
+                        'CRM_ServiceConnections.Status as Status',  
+                        'CRM_ServiceConnections.Notes as Notes', 
+                        'CRM_ServiceConnections.Office', 
+                        'CRM_ServiceConnections.LongSpan', 
+                        'CRM_ServiceConnections.ORNumber as ORNumber',
+                        'CRM_ServiceConnections.ORDate', 
+                        'CRM_ServiceConnections.Sitio as Sitio', 
+                        'CRM_ServiceConnections.LoadCategory as LoadCategory', 
+                        'CRM_ServiceConnections.DateTimeOfEnergization as DateTimeOfEnergization', 
+                        'CRM_ServiceConnections.DateTimeLinemenArrived as DateTimeLinemenArrived', 
+                        'CRM_Towns.Town as Town',
+                        'CRM_Barangays.Barangay as Barangay',
+                        'CRM_ServiceConnections.AccountType',
+                        'CRM_ServiceConnections.ServiceNumber',
+                        'CRM_ServiceConnections.ConnectionSchedule',
+                        'CRM_ServiceConnections.LoadType',
+                        'CRM_ServiceConnections.Zone',
+                        'CRM_ServiceConnections.Block',
+                        'CRM_ServiceConnections.TransformerID',
+                        'CRM_ServiceConnections.LoadInKva',
+                        'CRM_ServiceConnections.PoleNumber',
+                        'CRM_ServiceConnections.Feeder',
+                        'CRM_ServiceConnections.ChargeTo',
+                        'CRM_ServiceConnections.AccountNumber',
+                        'CRM_ServiceConnections.BarangayCode',
+                        'CRM_ServiceConnections.TypeOfCustomer',
+                        'CRM_ServiceConnections.NumberOfAccounts',
+                        'CRM_ServiceConnections.CertificateOfConnectionIssuedOn',
+                        'users.name'
+                        )
+        ->where('CRM_ServiceConnections.id', $id)
+        ->where(function ($query) {
+            $query->where('CRM_ServiceConnections.Trash', 'No')
+                ->orWhereNull('CRM_ServiceConnections.Trash');
+        })
+        ->first(); 
+
+        $paymentOrder = PaymentOrder::where('ServiceConnectionId', $id)->first();
+
+        return view('/service_connections/print_inspection_fee', [
+            'serviceConnection' => $serviceConnections,
+            'paymentOrder' => $paymentOrder,
+        ]);
     }
 }
