@@ -125,6 +125,12 @@
                 <td>Account Number:</td>
                 <td><strong>{{ $serviceConnection->BarangayCode . '-' . $serviceConnection->TypeOfCustomer . '-' . $serviceConnection->AccountNumber . '-' . $serviceConnection->NumberOfAccounts }}</strong></td>
             </tr>
+            <tr>
+                <td>Entry Number:</td>
+                <td><strong>{{ $whHead != null ? $whHead->ent_no : '-' }}</strong></td>
+                <td></td>
+                <td></td>
+            </tr>
         </tbody>
     </table>
     {{-- ITEMS --}}
@@ -174,7 +180,17 @@
     </table>
     {{-- METERS --}}
     @if (count($whItemsMeters) > 0)
-    <table style="width: 100%; margin-top: 10px;" class="table">
+    <table style="width: 100%; margin-top: 20px;">
+        <tbody>
+            <tr>
+                <td>Order Number:</td>
+                <td><strong>{{ $whHeadMeters != null ? $whHeadMeters->orderno : '-' }}</strong></td>
+                <td>Entry Number:</td>
+                <td><strong>{{ $whHeadMeters != null ? $whHeadMeters->ent_no : '-' }}</strong></td>
+            </tr>
+        </tbody>
+    </table>
+    <table style="width: 100%;" class="table">
         <thead>            
             <tr>
                 <th colspan='8' class="text-center">METER</th>

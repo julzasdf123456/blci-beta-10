@@ -23,7 +23,7 @@
                 <th><!-- TRASH --></th>
             </thead>
             <tbody>
-                <tr v-for="item in results.data" :key="item.ConsumerId" style="cursor: pointer;" :id="item.ConsumerId">
+                <tr v-for="item in resultData" :key="item.ConsumerId" style="cursor: pointer;" :id="item.ConsumerId">
                     <td @click="goToApplication(item.ConsumerId)" class="v-align">
                         <div style="display: inline-block; vertical-align: middle;">
                             <img :src="imgPath + 'prof-icon.png'" style="width: 40px; margin-right: 15px;" class="img-circle" alt="profile">
@@ -46,7 +46,7 @@
                         <span class="text-muted">Date Applied: {{ isNull(item.DateOfApplication) ? '-' : moment(item.DateOfApplication).format("MMM DD, YYYY") }}</span>
                     </td>
                     <td @click="goToApplication(item.ConsumerId)" class="v-align">
-                        {{ item.Status }} ({{ getProgressIncFromStatus(item.Status) }} %)
+                        {{ item.Status }} ({{ round(getProgressIncFromStatus(item.Status)) }} %)
                         <div class="progress" style="height: 5px;">
                             <div class="progress-bar progress-bar-striped" :class="getProgressBgFromStatus(item.Status)" role="progressbar" :style="{width: getProgressIncFromStatus(item.Status) + '%'}" aria-valuenow="50" aria-valuemin="0" aria-valuemax="100"></div>
                         </div>
@@ -61,6 +61,7 @@
                             </a>
                             <div class="dropdown-menu" aria-labelledby="more-menu">
                                 <a :href="baseURL + '/serviceConnections/' + item.ConsumerId + '/edit'" class="dropdown-item"><i class="fas fa-pen ico-tab"></i> Edit Application</a>
+                                <button v-if="item.Status==='Pending Inspection Fee Payment' ? true : false" @click="inspectionFeeOR(item.ConsumerId)" class="dropdown-item"><i class="fas fa-dollar-sign ico-tab"></i> Pay Inspection Fee</button>
                                 <button @click="moveToTrash(item.ConsumerId)" class="dropdown-item"><i class="fas fa-trash ico-tab"></i> Move to Trash</button>
                             </div>
                         </div>
@@ -102,6 +103,7 @@ export default {
             }),
             search : '',
             results : {},
+            resultData : [],
             baseURL : window.location.origin + axios.defaults.baseURL,
             imgPath : axios.defaults.imgPath,
         }
@@ -150,6 +152,7 @@ export default {
             })
             .then(response => {
                 this.results = response.data
+                this.resultData = this.results.data
             })
             .catch(error => {
                 console.log(error)
@@ -163,22 +166,24 @@ export default {
             if (this.isNull(status)) {
                 return 1;
             } else {
-                if (status === 'For Inspection' | status === 'Re-Inspection') {
-                    return ((1/8) * 100);
+                if (status === 'Pending Inspection Fee Payment') {
+                    return ((1/9) * 100);
+                } else if (status === 'For Inspection' | status === 'Re-Inspection') {
+                    return ((2/9) * 100);
                 } else if (status === 'Approved') {
-                    return ((2/8) * 100);
+                    return ((3/9) * 100);
                 } else if (status === 'Payment Approved') {
-                    return ((3/8) * 100);
+                    return ((4/9) * 100);
                 } else if (status === 'For Payment') {
-                    return ((4/8) * 100);
+                    return ((5/9) * 100);
                 } else if (status === 'For Energization') {
-                    return ((5/8) * 100);
+                    return ((6/9) * 100);
                 } else if (status === 'Approved for Energization') {
-                    return ((6/8) * 100);
+                    return ((7/9) * 100);
                 } else if (status === 'Energized') {
-                    return ((7/8) * 100);
+                    return ((8/9) * 100);
                 } else if (status === 'Closed') {
-                    return ((8/8) * 100);
+                    return ((9/9) * 100);
                 } else {
                     return 1;
                 }
@@ -245,6 +250,50 @@ export default {
                     })
                 }
             });
+        },
+        inspectionFeeOR(id) {
+            (async () => {
+                const { value: text } = await Swal.fire({
+                    input: 'text',
+                    title : 'Inspection Fee Payment',
+                    text : 'Input the inspection fee OR Number below to validate the payment',
+                    inputPlaceholder: 'Input OR Number',
+                    // inputAttributes: {
+                    //     'aria-label': 'Type your remarks here'
+                    // },
+                    showCancelButton: true
+                })
+
+                if (text) {
+                    axios.get(`${ this.baseURL }/service_connections/update-inspection-fee`, {
+                        params : {
+                            ServiceConnectionId : id,
+                            ORNumber : text,
+                        }
+                    })
+                    .then(response => {
+                        this.toast.fire({
+                            icon : 'success',
+                            text : 'Inspection fee payment validated!'
+                        })
+                        this.resultData = this.resultData.map(obj => {
+                            if (obj.ConsumerId === id) {
+                                return { ...obj, Status : 'For Inspection' };
+                            } else {
+                                return obj;
+                            }
+                        })
+                    })
+                    .catch(error => {
+                        this.toast.fire({
+                            icon : 'error',
+                            title : 'Error Validating Inspection Fee Payment!',
+                            text : error
+                        })
+                    })
+                    
+                }
+            })()
         }
     },
     created() {

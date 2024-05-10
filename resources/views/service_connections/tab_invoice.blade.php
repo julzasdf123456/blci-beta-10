@@ -104,29 +104,55 @@
     <div class="col-lg-6">
          {{-- INSPECTION FEE --}}
          @if ($paymentOrder != null && $paymentOrder->InspectionFee != null)
-            <div class="card shadow-none">
+            <div class="card">
                <div class="card-header">
                   <span class="card-title">Inspection Fee</span>
+                  <div class="card-tools">
+                     @if ($paymentOrder->InspectionFeeORNumber != null)
+                        <span class="badge bg-success">Paid: {{ $paymentOrder->InspectionFeeORNumber . ' - ' . date('M d, Y', strtotime($paymentOrder->InspectionFeeORDate)) }}</span>
+                     @endif
+                  </div>
                </div>
                <div class="card-body">
                   <table class="table table-sm table-hover table-sm">
                      <tbody>
-                        <tr>
-                           <td>Inspection Fee</td>
-                           <td class="text-right">50.00</td>
-                        </tr>
-                        <tr>
-                           <td>F. Tax</td>
-                           <td class="text-right">0.38</td>
-                        </tr>
-                        <tr>
-                           <td>VAT</td>
-                           <td class="text-right">6.00</td>
-                        </tr>
-                        <tr>
-                           <td>Total Inspection Fee</td>
-                           <td class="text-right">P {{ is_numeric($paymentOrder->InspectionFee) ? number_format($paymentOrder->InspectionFee, 2) : $paymentOrder->InspectionFee }}</td>
-                        </tr>
+                        @if ($serviceConnections->TypeOfCustomer === '01')
+                           {{-- RESIDENTIAL --}}
+                           <tr>
+                              <td>Inspection Fee</td>
+                              <td class="text-right">50.00</td>
+                           </tr>
+                           <tr>
+                              <td>F. Tax</td>
+                              <td class="text-right">0.38</td>
+                           </tr>
+                           <tr>
+                              <td>VAT</td>
+                              <td class="text-right">6.00</td>
+                           </tr>
+                           <tr>
+                              <td>Total Inspection Fee</td>
+                              <td class="text-right">P {{ is_numeric($paymentOrder->InspectionFee) ? number_format($paymentOrder->InspectionFee, 2) : $paymentOrder->InspectionFee }}</td>
+                           </tr>
+                        @else
+                           {{-- NON-RESIDENTIAL --}}
+                           <tr>
+                              <td>Inspection Fee</td>
+                              <td class="text-right">500.00</td>
+                           </tr>
+                           <tr>
+                              <td>F. Tax</td>
+                              <td class="text-right">3.75</td>
+                           </tr>
+                           <tr>
+                              <td>VAT</td>
+                              <td class="text-right">60.45</td>
+                           </tr>
+                           <tr>
+                              <td>Total Inspection Fee</td>
+                              <td class="text-right">P {{ is_numeric($paymentOrder->InspectionFee) ? number_format($paymentOrder->InspectionFee, 2) : $paymentOrder->InspectionFee }}</td>
+                           </tr>
+                        @endif
                      </tbody>
                   </table>
                </div>

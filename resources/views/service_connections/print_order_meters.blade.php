@@ -125,6 +125,12 @@
                 <td>Account Number:</td>
                 <td><strong>{{ $serviceConnection->BarangayCode . '-' . $serviceConnection->TypeOfCustomer . '-' . $serviceConnection->AccountNumber . '-' . $serviceConnection->NumberOfAccounts }}</strong></td>
             </tr>
+            <tr>
+                <td>Entry Number:</td>
+                <td><strong>{{ $whHead != null ? $whHead->ent_no : '-' }}</strong></td>
+                <td></td>
+                <td></td>
+            </tr>
         </tbody>
     </table>
     {{-- SUMMARY --}}

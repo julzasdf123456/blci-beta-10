@@ -155,26 +155,52 @@ p {
             <div class="col-sm-6" style="margin-top: 20px;">
                 <table class="table table-sm">
                     <tbody>
-                        <tr>
-                            <td>Inspection Fee</td>
-                            <td class="text-right"><strong>50.00</strong></td>
-                        </tr>
-                        <tr>
-                            <td>Local F. Tax</td>
-                            <td class="text-right"><strong>0.38</strong></td>
-                        </tr>
-                        <tr>
-                            <td>Sub-total w/o VAT</td>
-                            <td class="text-right"><strong>50.38</strong></td>
-                        </tr>
-                        <tr>
-                            <td>VAT</td>
-                            <td class="text-right"><strong>6.00</strong></td>
-                        </tr>
-                        <tr>
-                            <td><strong>OVERALL TOTAL</strong></td>
-                            <td class="text-right"><strong><h2>{{ $paymentOrder != null && $paymentOrder->InspectionFee != null ? number_format($paymentOrder->InspectionFee, 2) : '-' }}</h2></strong></td>
-                        </tr>
+                        @if ($serviceConnection->TypeOfCustomer === '01')
+                           {{-- RESIDENTIAL --}}
+                           <tr>
+                                <td>Inspection Fee</td>
+                                <td class="text-right"><strong>50.00</strong></td>
+                            </tr>
+                            <tr>
+                                <td>Local F. Tax</td>
+                                <td class="text-right"><strong>0.38</strong></td>
+                            </tr>
+                            <tr>
+                                <td>Sub-total w/o VAT</td>
+                                <td class="text-right"><strong>50.38</strong></td>
+                            </tr>
+                            <tr>
+                                <td>VAT</td>
+                                <td class="text-right"><strong>6.00</strong></td>
+                            </tr>
+                            <tr>
+                                <td><strong>OVERALL TOTAL</strong></td>
+                                <td class="text-right"><strong><h2>{{ $paymentOrder != null && $paymentOrder->InspectionFee != null ? number_format($paymentOrder->InspectionFee, 2) : '-' }}</h2></strong></td>
+                            </tr>
+                        @else
+                           {{-- NON-RESIDENTIAL --}}
+                           <tr>
+                                <td>Inspection Fee</td>
+                                <td class="text-right"><strong>500.00</strong></td>
+                            </tr>
+                            <tr>
+                                <td>Local F. Tax</td>
+                                <td class="text-right"><strong>3.75</strong></td>
+                            </tr>
+                            <tr>
+                                <td>Sub-total w/o VAT</td>
+                                <td class="text-right"><strong>503.38</strong></td>
+                            </tr>
+                            <tr>
+                                <td>VAT</td>
+                                <td class="text-right"><strong>60.45</strong></td>
+                            </tr>
+                            <tr>
+                                <td><strong>OVERALL TOTAL</strong></td>
+                                <td class="text-right"><strong><h2>{{ $paymentOrder != null && $paymentOrder->InspectionFee != null ? number_format($paymentOrder->InspectionFee, 2) : '-' }}</h2></strong></td>
+                            </tr>
+                        @endif
+                        
                     </tbody>
                 </table>
             </div>

@@ -41,6 +41,11 @@ use Illuminate\Support\Facades\Auth;
                                     <i class="fas fa-file-invoice-dollar ico-tab"></i>Edit Payment Order</a>
 
                                 @if ($paymentOrder != null && $paymentOrder->InspectionFee != null)
+                                    @if ($paymentOrder->InspectionFeeORNumber === null)
+                                        <button onclick="inspectionFeeOR()" class="dropdown-item" title="Pay Inspection Fee">
+                                            <i class="fas fa-dollar-sign ico-tab"></i> Pay Inspection Fee</button>
+                                    @endif
+
                                     <a href="{{ route('serviceConnections.print-inspection-fee', [$serviceConnections->id]) }}" class="dropdown-item" title="Print Inspection Fee">
                                     <i class="fas fa-print ico-tab"></i>Print Inspection Fee</a>
                                 @endif
@@ -103,6 +108,7 @@ use Illuminate\Support\Facades\Auth;
                                             <option {{ $serviceConnections->Status=="Closed" ? 'selected' : '' }} value="Closed">Closed</option>
                                             <option {{ $serviceConnections->Status=="Downloaded by Crew" ? 'selected' : '' }} value="Downloaded by Crew">Downloaded by Crew</option>
                                             <option {{ $serviceConnections->Status=="Energized" ? 'selected' : '' }} value="Energized">Energized</option>
+                                            <option {{ $serviceConnections->Status=="Pending Inspection Fee Payment" ? 'selected' : '' }} value="Pending Inspection Fee Payment">Pending Inspection Fee Payment</option>
                                             <option {{ $serviceConnections->Status=="For Inspection" ? 'selected' : '' }} value="For Inspection">For Inspection</option>
                                             <option {{ $serviceConnections->Status=="Re-Inspection" ? 'selected' : '' }} value="Re-Inspection">Re-Inspection</option>
                                             <option {{ $serviceConnections->Status=="Forwarded To Planning" ? 'selected' : '' }} value="Forwarded To Planning">Forwarded To Planning</option>
@@ -297,6 +303,43 @@ use Illuminate\Support\Facades\Auth;
                     })      
                 }
             })
+        }
+
+        function inspectionFeeOR() {
+            (async () => {
+                const { value: text } = await Swal.fire({
+                    input: 'text',
+                    title : 'Inspection Fee Payment',
+                    text : 'Input the inspection fee OR Number below to validate the payment',
+                    inputPlaceholder: 'Input OR Number',
+                    showCancelButton: true
+                })
+
+                if (text) {
+                    $.ajax({
+                        url : "{{ route('serviceConnections.update-inspection-fee') }}",
+                        type : "GET",
+                        data : {
+                            ServiceConnectionId : "{{ $serviceConnections->id }}",
+                            ORNumber : text,
+                        },
+                        success : function(res) {
+                            Toast.fire({
+                                icon : 'success',
+                                text : 'Inspection fee payment validated!'
+                            })
+                            location.reload()
+                        },
+                        error : function(err) {
+                            Toast.fire({
+                                icon : 'error',
+                                title : 'Error Validating Inspection Fee Payment!',
+                                text : error
+                            })
+                        }
+                    })
+                }
+            })()
         }
     </script>
 @endpush

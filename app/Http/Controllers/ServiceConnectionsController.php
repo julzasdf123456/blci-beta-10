@@ -181,8 +181,14 @@ class ServiceConnectionsController extends AppBaseController
             $input['Status'] = 'Approved';
             $input['InspectionFee'] = '0';
         } else {
-            $input['Status'] = 'For Inspection';
-            $input['InspectionFee'] = '56.43';
+            $input['Status'] = 'Pending Inspection Fee Payment';
+            if ($input['TypeOfCustomer'] === '01') {
+                // RESIDENTIAL
+                $input['InspectionFee'] = '56.43';
+            } else {
+                // NON RESIDENTIALS
+                $input['InspectionFee'] = '564.20';
+            }
         }
 
         if ($input['id'] != null) {
@@ -206,7 +212,7 @@ class ServiceConnectionsController extends AppBaseController
                     $inspection->id = IDGenerator::generateID();
                     $inspection->ServiceConnectionId = $input['id'];
                     $inspection->Inspector = $input['Inspector'];
-                    $inspection->Status = in_array($input['AccountApplicationType'], ServiceConnections::skippableForInspection()) ? 'Approved' : 'FOR INSPECTION';
+                    $inspection->Status = in_array($input['AccountApplicationType'], ServiceConnections::skippableForInspection()) ? 'Approved' : $input['Status'];
                     $inspection->InspectionSchedule = $input['InspectionSchedule'];
                     $inspection->save();
 
@@ -266,7 +272,7 @@ class ServiceConnectionsController extends AppBaseController
                 $inspection->id = IDGenerator::generateID();
                 $inspection->ServiceConnectionId = $input['id'];
                 $inspection->Inspector = $input['Inspector'];
-                $inspection->Status = in_array($input['AccountApplicationType'], ServiceConnections::skippableForInspection()) ? 'Approved' : 'FOR INSPECTION';
+                $inspection->Status = in_array($input['AccountApplicationType'], ServiceConnections::skippableForInspection()) ? 'Approved' : $input['Status'];
                 $inspection->InspectionSchedule = $input['InspectionSchedule'];
                 $inspection->save();
 
@@ -5608,4 +5614,25 @@ class ServiceConnectionsController extends AppBaseController
             'paymentOrder' => $paymentOrder,
         ]);
     }
+
+    public function updateInspectionFee(Request $request) {{
+        $scId = $request['ServiceConnectionId'];
+        $orNo = $request['ORNumber'];
+
+        $paymentOrder = PaymentOrder::where('ServiceConnectionId', $scId)->first();
+        if ($paymentOrder != null) {
+            if ($orNo != null) {
+                $paymentOrder->InspectionFeeORNumber = $orNo;
+                $paymentOrder->InspectionFeeORDate = date('Y-m-d');
+                $paymentOrder->save();
+
+                ServiceConnections::where('id', $scId)
+                    ->update(['Status' => 'For Inspection']);
+            } else {
+                return response()->json('No OR Number inputed!', 404);
+            }
+        } else {
+            return response()->json('No inspection fee data found!', 404);
+        }
+    }}
 }

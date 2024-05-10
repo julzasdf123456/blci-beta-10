@@ -271,7 +271,9 @@ class ServiceConnections extends Model
     }
 
     public static function getProgressStatus($status) {
-        if ($status=='For Inspection' || $status=='Re-Inspection') {
+        if ($status=='Pending Inspection Fee Payment') {
+            return 2;
+        } elseif ($status=='For Inspection' || $status=='Re-Inspection') {
             return 14.28;
         } elseif ($status=='Approved') {
             return 28.56;
