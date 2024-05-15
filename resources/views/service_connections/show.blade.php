@@ -131,7 +131,7 @@ use Illuminate\Support\Facades\Auth;
                                 Application Basic Details</a></li>
                             <li class="nav-item"><a class="nav-link custom-tab" href="#verification" data-toggle="tab">
                                 <i class="fas fa-clipboard-check"></i>
-                                Verification</a></li>
+                                Inspection</a></li>
                             <li class="nav-item"><a class="nav-link custom-tab" href="#metering" data-toggle="tab">
                                 <i class="fas fa-tachometer-alt"></i>
                                 Metering and Transformer</a></li>

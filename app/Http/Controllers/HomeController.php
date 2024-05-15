@@ -49,6 +49,34 @@ class HomeController extends Controller
         }
     }
 
+    public function fetchRequestsForInspection(Request $request) {
+        $data = DB::table('CRM_ServiceConnections')
+                    ->leftJoin('CRM_Barangays', 'CRM_ServiceConnections.Barangay', '=', 'CRM_Barangays.id')
+                    ->leftJoin('CRM_Towns', 'CRM_ServiceConnections.Town', '=', 'CRM_Towns.id')
+                    ->leftJoin('CRM_ServiceConnectionInspections', 'CRM_ServiceConnectionInspections.ServiceConnectionId', '=', 'CRM_ServiceConnections.id')
+                    ->leftJoin('users', 'CRM_ServiceConnectionInspections.Inspector', '=', 'users.id')
+                    ->leftJoin('CRM_PaymentOrder', 'CRM_PaymentOrder.ServiceConnectionId', '=', 'CRM_ServiceConnections.id')
+                    ->whereRaw("CRM_ServiceConnections.Status IN ('Pending Inspection Fee Payment')")
+                    ->where(function ($query) {
+                        $query->where('Trash', 'No')
+                            ->orWhereNull('Trash');
+                    })
+                    ->select('CRM_ServiceConnections.id as id',
+                        'CRM_ServiceConnections.ServiceAccountName as ServiceAccountName', 
+                        'CRM_ServiceConnections.AccountApplicationType', 
+                        'CRM_Towns.Town as Town',
+                        'CRM_PaymentOrder.OverAllTotal',
+                        'CRM_PaymentOrder.ORNumber',
+                        'users.name',
+                        'CRM_Barangays.Barangay as Barangay',
+                        'CRM_ServiceConnections.Status',
+                        'CRM_ServiceConnectionInspections.InspectionSchedule')
+                    ->orderBy('CRM_ServiceConnections.ServiceAccountName')
+                    ->get();
+
+        return response()->json($data, 200);
+    }
+
     public function fetchNewServiceConnections(Request $request) {
         if ($request->ajax()) {            
             $data = DB::table('CRM_ServiceConnections')
@@ -81,6 +109,7 @@ class HomeController extends Controller
             echo json_encode($data);
         }
     }
+
 
     public function fetchApprovedServiceConnections(Request $request) {
         $data = DB::table('CRM_ServiceConnections')

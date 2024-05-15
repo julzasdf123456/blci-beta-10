@@ -50,7 +50,7 @@ class MaterialPresetsController extends AppBaseController
 
         Flash::success('Material Presets saved successfully.');
 
-        return redirect(route('materialPresets.index'));
+        return redirect(route('serviceConnections.show', [$input['ServiceConnectionId']]));
     }
 
     /**
@@ -102,7 +102,7 @@ class MaterialPresetsController extends AppBaseController
 
         Flash::success('Material Presets updated successfully.');
 
-        return redirect(route('materialPresets.index'));
+        return redirect(route('serviceConnections.show', [$materialPresets->ServiceConnectionId]));
     }
 
     /**
@@ -125,5 +125,12 @@ class MaterialPresetsController extends AppBaseController
         Flash::success('Material Presets deleted successfully.');
 
         return redirect(route('materialPresets.index'));
+    }
+
+    public function createPreset($scId)
+    {
+        return view('material_presets.create', [
+            'scId' => $scId,
+        ]);
     }
 }

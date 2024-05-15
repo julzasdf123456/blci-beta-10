@@ -38,6 +38,7 @@ Route::get('/', function () {
 Route::get('/home', [HomeController::class, 'index'])->name('home');
 Route::get('/home/get-unassigned-meters', [HomeController::class, 'fetchUnassignedMeters'])->name('home.get-unassigned-meters');
 Route::get('/home/get-new-service-connections', [HomeController::class, 'fetchNewServiceConnections'])->name('home.get-new-service-connections');
+Route::get('/home/get-requests-for-inspection', [HomeController::class, 'fetchRequestsForInspection'])->name('home.get-requests-for-inspection');
 Route::get('/home/get-approved-service-connections', [HomeController::class, 'fetchApprovedServiceConnections'])->name('home.get-approved-service-connections');
 Route::get('/home/get-for-engergization', [HomeController::class, 'fetchForEnergization'])->name('home.get-for-engergization');
 Route::get('/home/get-inspection-report', [HomeController::class, 'fetchInspectionReport'])->name('home.get-inspection-report');
@@ -1024,7 +1025,9 @@ Route::resource('sms-settings', App\Http\Controllers\SmsSettingsController::clas
 Route::resource('readingFromTexts', App\Http\Controllers\ReadingFromTextController::class);
 Route::resource('local-warehouse-heads', App\Http\Controllers\LocalWarehouseHeadController::class);
 Route::resource('local-warehouse-items', App\Http\Controllers\LocalWarehouseItemsController::class);
-Route::resource('material-presets', App\Http\Controllers\MaterialPresetsController::class);
+
+Route::get('/material_presets/create-preset/{scid}', [App\Http\Controllers\MaterialPresetsController::class, 'createPreset'])->name('materialPresets.create-preset');
+Route::resource('materialPresets', App\Http\Controllers\MaterialPresetsController::class);
 
 Route::get('/service_connection_comments/get-comments', [App\Http\Controllers\ServiceConnectionCommentsController::class, 'getComments'])->name('serviceConnectionComments.get-comments');
 Route::resource('serviceConnectionComments', App\Http\Controllers\ServiceConnectionCommentsController::class);

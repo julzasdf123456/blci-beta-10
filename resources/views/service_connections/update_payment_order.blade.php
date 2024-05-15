@@ -265,7 +265,7 @@
               <tr>
                  <td>Customer Deposit</td>
                  <td>
-                    <input type="number" step="any" value="{{ $paymentOrder->CustomerDeposit }}" onkeyup="validateTotalInputs()" id="CustomerDeposit" name="CustomerDeposit" class="form-control form-control-sm text-right" autofocus>
+                    <input type="number" step="any" value="{{ $paymentOrder->CustomerDeposit != null  ? $paymentOrder->CustomerDeposit : ($inspection != null && $inspection->BillDeposit != null ? $inspection->BillDeposit : 0) }}" onkeyup="validateTotalInputs()" id="CustomerDeposit" name="CustomerDeposit" class="form-control form-control-sm text-right" autofocus>
                  </td>
               </tr>
               <tr>

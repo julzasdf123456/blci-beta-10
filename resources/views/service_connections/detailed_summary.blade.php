@@ -88,7 +88,7 @@
                         <th>Svc. No</th>
                         <th>Applicant Name</th>
                         <th>Address</th>
-                        <th>Office</th>
+                        <th>Application Type</th>
                         <th>Status</th>
                         <th>Application Date</th>
                         <th>Inspector</th>
@@ -109,7 +109,7 @@
                                 <td><a href="{{ route('serviceConnections.show', [$item->id]) }}">{{ $item->id }}</a></td>
                                 <td>{{ $item->ServiceAccountName }}</td>
                                 <td>{{ ServiceConnections::getAddress($item) }}</td>
-                                <td>{{ $item->Office }}</td>
+                                <td>{{ $item->AccountApplicationType }}</td>
                                 <td>{{ $item->Status }}</td>
                                 <td>{{ $item->DateOfApplication != null ? date('M d, Y', strtotime($item->DateOfApplication)) : '-' }}</td>
                                 <td>{{ $item->name }}</td>

@@ -475,6 +475,8 @@ class ServiceConnectionsController extends AppBaseController
 
         $images = Signatories::where('Name', $id)->where('Notes', 'SERVICE CONNECTIONS')->get();
 
+        $materialPresets = MaterialPresets::where('ServiceConnectionId', $id)->orderByDesc('updated_at')->first();
+
         // FILES
         $path = ServiceConnections::filePath() . "$id/";
         if (file_exists($path) && is_dir($path)) {
@@ -502,6 +504,7 @@ class ServiceConnectionsController extends AppBaseController
                             'whHeadMeters' => $whHeadMeters,
                             'whItemsMeters' => $whItemsMeters,
                             'fileNames' => $fileNames,
+                            'materialPresets' => $materialPresets,
                         ]);
         } else {
             return abort(403, "You're not authorized to view a service connection application.");
@@ -3207,6 +3210,7 @@ class ServiceConnectionsController extends AppBaseController
                     'CRM_ServiceConnections.Status',
                     'CRM_ServiceConnections.Office',
                     'CRM_ServiceConnections.DateOfApplication',
+                    'CRM_ServiceConnections.AccountApplicationType',
                     'CRM_ServiceConnections.DateTimeOfEnergization',
                     'CRM_MeterInstallation.NewMeterNumber AS MeterSerialNumber',
                     'CRM_MeterInstallation.created_at',
@@ -3235,6 +3239,7 @@ class ServiceConnectionsController extends AppBaseController
                     'CRM_ServiceConnections.Status',
                     'CRM_ServiceConnections.Office',
                     'CRM_ServiceConnections.DateOfApplication',
+                    'CRM_ServiceConnections.AccountApplicationType',
                     'CRM_ServiceConnections.DateTimeOfEnergization',
                     'CRM_MeterInstallation.NewMeterNumber AS MeterSerialNumber',
                     'CRM_MeterInstallation.created_at',
@@ -3279,6 +3284,7 @@ class ServiceConnectionsController extends AppBaseController
                     'CRM_ServiceConnections.Office',
                     'CRM_ServiceConnections.DateOfApplication',
                     'CRM_ServiceConnections.DateTimeOfEnergization',
+                    'CRM_ServiceConnections.AccountApplicationType',
                     'CRM_MeterInstallation.NewMeterNumber AS MeterSerialNumber',
                     'CRM_MeterInstallation.created_at',
                     'CRM_ServiceConnectionCrew.StationName',
@@ -3307,6 +3313,7 @@ class ServiceConnectionsController extends AppBaseController
                     'CRM_ServiceConnections.Office',
                     'CRM_ServiceConnections.DateOfApplication',
                     'CRM_ServiceConnections.DateTimeOfEnergization',
+                    'CRM_ServiceConnections.AccountApplicationType',
                     'CRM_MeterInstallation.NewMeterNumber AS MeterSerialNumber',
                     'CRM_MeterInstallation.created_at',
                     'CRM_ServiceConnectionCrew.StationName',
@@ -3322,7 +3329,7 @@ class ServiceConnectionsController extends AppBaseController
             'Svc. No',
             'Applicant Name',
             'Address',
-            'Office',
+            'Application Type',
             'Status',
             'Date of Application',
             'Inspector',
@@ -3340,7 +3347,7 @@ class ServiceConnectionsController extends AppBaseController
                 'SvcNo' => "#" . $item->id,
                 'Applicant' => $item->ServiceAccountName,
                 'Address' => ServiceConnections::getAddress($item),
-                'Office' => $item->Office,
+                'Office' => $item->AccountApplicationType,
                 'Status' => $item->Status,
                 'DateofApplication' => $item->DateOfApplication != null ? date('M d, Y', strtotime($item->DateOfApplication)) : '-',
                 'Inspector' => $item->name,
@@ -4300,6 +4307,8 @@ class ServiceConnectionsController extends AppBaseController
 
         $materialPresets = MaterialPresets::where('ServiceConnectionId', $scId)->orderByDesc('updated_at')->first();
 
+        $inspection = ServiceConnectionInspections::where('ServiceConnectionId', $scId)->first();
+
         return view('/service_connections/update_payment_order', [
             'whHead' => $whHead,
             'whItems' => $whItems,
@@ -4312,6 +4321,7 @@ class ServiceConnectionsController extends AppBaseController
             'entNoLast' => $entNoLast,
             'serviceAppliedFor' => $serviceAppliedFor,
             'materialPresets' => $materialPresets,
+            'inspection' => $inspection,
         ]);
     }
 

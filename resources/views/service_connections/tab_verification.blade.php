@@ -399,6 +399,159 @@
                 </div>
             </div>
         </div>
+
+        {{-- MATERIAL PRESETS --}}
+        <div class="col-lg-12">
+            <div class="card">
+                <div class="card-header">
+                    <span class="card-title"><i class="fas fa-info-circle ico-tab"></i>Suggested Material Presets From Inspector</span>
+                    <div class="card-tools">
+                        @if ($materialPresets != null)
+                            <a href="{{ route('materialPresets.edit', [$materialPresets->id]) }}" title="Edit material presets" class="btn btn-sm"><i class="fas fa-pen"></i></a>
+                        @else
+                            <a href="{{ route('materialPresets.create-preset', [$serviceConnectionInspections->ServiceConnectionId]) }}" title="Add material presets" class="btn btn-sm"><i class="fas fa-plus"></i></a>
+                        @endif
+                        <button type="button" class="btn btn-sm" data-card-widget="collapse" title="Collapse"><i class="fas fa-minus"></i></button>
+                    </div>
+                </div>
+                <div class="card-body table-responsive p-0">
+                    @if ($materialPresets != null)
+                    <table class="table table-hover table-sm table-bordered">
+                        <thead>
+                            <th>Materials</th>
+                            <th>Unit</th>
+                            <th class="text-right">Quantity</th>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>METERBASE SOCKET</td>
+                                <td>pcs</td>
+                                <td class="text-right">{{ $materialPresets->MeterBaseSocket != null ? number_format($materialPresets->MeterBaseSocket, 2) : '-' }}</td>
+                            </tr>
+                            <tr>
+                                <td>METALBOX TYPE A</td>
+                                <td>pcs</td>
+                                <td class="text-right">{{ $materialPresets->MetalboxTypeA != null ? number_format($materialPresets->MetalboxTypeA, 2) : '-' }}</td>
+                            </tr>
+                            <tr>
+                                <td>METALBOX TYPE B</td>
+                                <td>pcs</td>
+                                <td class="text-right">{{ $materialPresets->MetalboxTypeB != null ? number_format($materialPresets->MetalboxTypeB, 2) : '-' }}</td>
+                            </tr>
+                            <tr>
+                                <td>PIPE #1</td>
+                                <td>pcs</td>
+                                <td class="text-right">{{ $materialPresets->Pipe != null ? number_format($materialPresets->Pipe, 2) : '-' }}</td>
+                            </tr>
+                            <tr>
+                                <td>ENTRANCE CAP #1</td>
+                                <td>pcs</td>
+                                <td class="text-right">{{ $materialPresets->EntranceCap != null ? number_format($materialPresets->EntranceCap, 2) : '-' }}</td>
+                            </tr>
+                            <tr>
+                                <td>ADAPTER #1</td>
+                                <td>pcs</td>
+                                <td class="text-right">{{ $materialPresets->Adapter != null ? number_format($materialPresets->Adapter, 2) : '-' }}</td>
+                            </tr>
+                            <tr>
+                                <td>LOCKNOT #1</td>
+                                <td>pcs</td>
+                                <td class="text-right">{{ $materialPresets->Locknot != null ? number_format($materialPresets->Locknot, 2) : '-' }}</td>
+                            </tr>
+                            <tr>
+                                <td>MAILBOX</td>
+                                <td>pcs</td>
+                                <td class="text-right">{{ $materialPresets->Mailbox != null ? number_format($materialPresets->Mailbox, 2) : '-' }}</td>
+                            </tr>
+                            <tr>
+                                <td>BUCKLE</td>
+                                <td>pcs</td>
+                                <td class="text-right">{{ $materialPresets->Buckle != null ? number_format($materialPresets->Buckle, 2) : '-' }}</td>
+                            </tr>
+                            <tr>
+                                <td>PVC ELBOW #1</td>
+                                <td>pcs</td>
+                                <td class="text-right">{{ $materialPresets->PvcElbow != null ? number_format($materialPresets->PvcElbow, 2) : '-' }}</td>
+                            </tr>
+                            <tr>
+                                <td>STAINLESS STRAP</td>
+                                <td>pcs</td>
+                                <td class="text-right">{{ $materialPresets->StainlessStrap != null ? number_format($materialPresets->StainlessStrap, 2) : '-' }}</td>
+                            </tr>
+                            <tr>
+                                <td>PLYBOARD 17x20 CM</td>
+                                <td>pcs</td>
+                                <td class="text-right">{{ $materialPresets->Plyboard != null ? number_format($materialPresets->Plyboard, 2) : '-' }}</td>
+                            </tr>
+                            <tr>
+                                <td>STRAIN INSULATOR (M)</td>
+                                <td>pcs</td>
+                                <td class="text-right">{{ $materialPresets->StrainInsulator != null ? number_format($materialPresets->StrainInsulator, 2) : '-' }}</td>
+                            </tr>
+                            <tr>
+                                <td>STRANDED WIRE #8</td>
+                                <td>meters</td>
+                                <td class="text-right">{{ $materialPresets->StraindedWireEight != null ? number_format($materialPresets->StraindedWireEight, 2) : '-' }}</td>
+                            </tr>
+                            <tr>
+                                <td>STRANDED WIRE #6</td>
+                                <td>meters</td>
+                                <td class="text-right">{{ $materialPresets->StrandedWireSix != null ? number_format($materialPresets->StrandedWireSix, 2) : '-' }}</td>
+                            </tr>
+                            <tr>
+                                <td>TWISTED WIRE #6</td>
+                                <td>meters</td>
+                                <td class="text-right">{{ $materialPresets->TwistedWireSix != null ? number_format($materialPresets->TwistedWireSix, 2) : '-' }}</td>
+                            </tr>
+                            <tr>
+                                <td>TWISTED WIRE #4</td>
+                                <td>meters</td>
+                                <td class="text-right">{{ $materialPresets->TwistedWireFour != null ? number_format($materialPresets->TwistedWireFour, 2) : '-' }}</td>
+                            </tr>
+                            <tr>
+                                <td>COMPRESSION TAP 2A SU</td>
+                                <td>pcs</td>
+                                <td class="text-right">{{ $materialPresets->CompressionTapAsu != null ? number_format($materialPresets->CompressionTapAsu, 2) : '-' }}</td>
+                            </tr>
+                            <tr>
+                                <td>COMPRESSION TAP YTD 250</td>
+                                <td>pcs</td>
+                                <td class="text-right">{{ $materialPresets->CompressionTapYtdTwoFifty != null ? number_format($materialPresets->CompressionTapYtdTwoFifty, 2) : '-' }}</td>
+                            </tr>
+                            <tr>
+                                <td>COMPRESSION TAP YTD 300</td>
+                                <td>pcs</td>
+                                <td class="text-right">{{ $materialPresets->CompressionTapYtdThreeHundred != null ? number_format($materialPresets->CompressionTapYtdThreeHundred, 2) : '-' }}</td>
+                            </tr>
+                            <tr>
+                                <td>COMPRESSION TAP YTD 200</td>
+                                <td>pcs</td>
+                                <td class="text-right">{{ $materialPresets->CompressionTapYtdThreeHundred != null ? number_format($materialPresets->CompressionTapYtdThreeHundred, 2) : '-' }}</td>
+                            </tr>
+                            <tr>
+                                <td>COMPRESSION TAP YTD 150</td>
+                                <td>pcs</td>
+                                <td class="text-right">{{ $materialPresets->CompressionTapYtdOneFifty != null ? number_format($materialPresets->CompressionTapYtdOneFifty, 2) : '-' }}</td>
+                            </tr>
+                            <tr>
+                                <td>METAL SCREW</td>
+                                <td>pcs</td>
+                                <td class="text-right">{{ $materialPresets->MetalScrew != null ? number_format($materialPresets->MetalScrew, 2) : '-' }}</td>
+                            </tr>
+                            <tr>
+                                <td>ELECTRICAL TAPE</td>
+                                <td>pcs</td>
+                                <td class="text-right">{{ $materialPresets->ElectricalTape != null ? number_format($materialPresets->ElectricalTape, 2) : '-' }}</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    @endif
+                </div>
+                <div class="card-footer">
+
+                </div>
+            </div>
+        </div>
     </div>
 @else 
     <p class="text-center"><i>No inspection data found!</i></p>
