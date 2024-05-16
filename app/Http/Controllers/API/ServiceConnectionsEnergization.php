@@ -173,6 +173,7 @@ class ServiceConnectionsEnergization extends Controller {
         $input = $request->all();
 
         $id = $input['id'];
+        $input['CustomerSignature'] = null; // temporarily hold signature upload
 
         $sc = MeterInstallation::where('ServiceConnectionId', $input['ServiceConnectionId'])->first();
 
