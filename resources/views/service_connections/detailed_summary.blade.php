@@ -86,6 +86,7 @@
                     <thead>
                         <th style="width: 35px;">#</th>
                         <th>Svc. No</th>
+                        <th>Account No</th>
                         <th>Applicant Name</th>
                         <th>Address</th>
                         <th>Application Type</th>
@@ -107,6 +108,7 @@
                             <tr>
                                 <td>{{ $i }}</td>
                                 <td><a href="{{ route('serviceConnections.show', [$item->id]) }}">{{ $item->id }}</a></td>
+                                <td>{{ $item->AccountNumber }}-{{ $item->NumberOfAccounts }}</td>
                                 <td>{{ $item->ServiceAccountName }}</td>
                                 <td>{{ ServiceConnections::getAddress($item) }}</td>
                                 <td>{{ $item->AccountApplicationType }}</td>

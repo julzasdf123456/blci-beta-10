@@ -113,6 +113,10 @@
                             <td>Installed By</td>
                             <td><strong>{{ $serviceConnectionMeter->InstalledBy }}</strong></td>
                         </tr>
+                        <tr>
+                            <td>Notes/Remarks</td>
+                            <td><strong>{{ $serviceConnectionMeter->Notes }}</strong></td>
+                        </tr>
                     </table>
                 </div>
             </div>
