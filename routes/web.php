@@ -1031,3 +1031,4 @@ Route::resource('materialPresets', App\Http\Controllers\MaterialPresetsControlle
 
 Route::get('/service_connection_comments/get-comments', [App\Http\Controllers\ServiceConnectionCommentsController::class, 'getComments'])->name('serviceConnectionComments.get-comments');
 Route::resource('serviceConnectionComments', App\Http\Controllers\ServiceConnectionCommentsController::class);
+Route::resource('line-and-metering-services', App\Http\Controllers\LineAndMeteringServicesController::class);

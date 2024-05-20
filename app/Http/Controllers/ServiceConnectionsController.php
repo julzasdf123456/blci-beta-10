@@ -52,6 +52,7 @@ use App\Models\SmsSettings;
 use App\Models\MaterialPresets;
 use App\Models\LocalWarehouseHead;
 use App\Models\LocalWarehouseItems;
+use App\Models\LineAndMeteringServices;
 use App\Exports\ServiceConnectionApplicationsReportExport;
 use App\Exports\ServiceConnectionEnergizationReportExport;
 use App\Exports\DynamicExportsNoBillingMonth;
@@ -477,6 +478,16 @@ class ServiceConnectionsController extends AppBaseController
 
         $materialPresets = MaterialPresets::where('ServiceConnectionId', $id)->orderByDesc('updated_at')->first();
 
+        $lineAndMetering = DB::table('CRM_LineAndMeteringServices')
+            ->leftJoin('users', 'CRM_LineAndMeteringServices.UserId', '=', 'users.id')
+            ->where('ServiceConnectionId', $id)
+            ->select(
+                'CRM_LineAndMeteringServices.*',
+                'users.name'
+            )
+            ->orderByDesc('created_at')
+            ->first();
+
         // FILES
         $path = ServiceConnections::filePath() . "$id/";
         if (file_exists($path) && is_dir($path)) {
@@ -505,6 +516,7 @@ class ServiceConnectionsController extends AppBaseController
                             'whItemsMeters' => $whItemsMeters,
                             'fileNames' => $fileNames,
                             'materialPresets' => $materialPresets,
+                            'lineAndMetering' => $lineAndMetering,
                         ]);
         } else {
             return abort(403, "You're not authorized to view a service connection application.");

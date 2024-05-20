@@ -13,6 +13,7 @@ use App\Models\MastPoles;
 use App\Models\IDGenerator;
 use App\Models\MeterReaders;
 use App\Models\MeterInstallation;
+use App\Models\LineAndMeteringServices;
 use File;
 
 class ServiceConnectionsEnergization extends Controller {
@@ -190,5 +191,27 @@ class ServiceConnectionsEnergization extends Controller {
         }
         
         return response()->json($meterInstallation, 200);
+    }
+
+    public function receiveLineAndMetering(Request $request) {
+        $input = $request->all();
+
+        $id = $input['id'];
+
+        $sc = LineAndMeteringServices::where('ServiceConnectionId', $input['ServiceConnectionId'])->first();
+
+        if ($sc != null) {
+            $lineAndMetering = LineAndMeteringServices::update($input);
+        } else {
+            $lineAndMetering = LineAndMeteringServices::find($id);
+
+            if ($lineAndMetering != null) {
+                $lineAndMetering = LineAndMeteringServices::update($input);
+            } else {
+                $lineAndMetering = LineAndMeteringServices::create($input);
+            }
+        }
+        
+        return response()->json($lineAndMetering, 200);
     }
 }

@@ -128,13 +128,16 @@ use Illuminate\Support\Facades\Auth;
                         <ul class="nav nav-pills">
                             <li class="nav-item"><a class="nav-link custom-tab active" href="#details" data-toggle="tab">
                                 <i class="fas fa-info-circle"></i>
-                                Application Basic Details</a></li>
+                                Basic Details</a></li>
                             <li class="nav-item"><a class="nav-link custom-tab" href="#verification" data-toggle="tab">
                                 <i class="fas fa-clipboard-check"></i>
                                 Inspection</a></li>
                             <li class="nav-item"><a class="nav-link custom-tab" href="#metering" data-toggle="tab">
                                 <i class="fas fa-tachometer-alt"></i>
-                                Metering and Transformer</a></li>
+                                Meter & Transformer</a></li>
+                            <li class="nav-item"><a class="nav-link custom-tab" href="#linemeteringservices" data-toggle="tab">
+                                <i class="fas fa-bezier-curve"></i>
+                                Line & Metering<span class="badge bg-danger ico-tab-left-mini">new</span></a></li>
                             <li class="nav-item"><a class="nav-link custom-tab" href="#invoice" data-toggle="tab">
                                 <i class="fas fa-file-invoice-dollar"></i>
                                 Payment Order</a></li>
@@ -166,6 +169,10 @@ use Illuminate\Support\Facades\Auth;
 
                             <div class="tab-pane" id="metering">
                                 @include('service_connections.tab_metering')
+                            </div>
+                            
+                            <div class="tab-pane" id="linemeteringservices">
+                                @include('service_connections.tab_line_and_metering')
                             </div>
 
                             <div class="tab-pane" id="invoice">
