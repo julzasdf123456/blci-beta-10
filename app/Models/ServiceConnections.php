@@ -100,6 +100,7 @@ class ServiceConnections extends Model
         'BarangayCode',
         'TypeOfCustomer',
         'NumberOfAccounts',
+        'BLCIInitiated',
     ];
 
     /**
@@ -159,6 +160,7 @@ class ServiceConnections extends Model
         'BarangayCode' => 'string',
         'TypeOfCustomer' => 'string',
         'NumberOfAccounts' => 'string',
+        'BLCIInitiated' => 'string',
     ];
 
     /**
@@ -220,6 +222,7 @@ class ServiceConnections extends Model
         'BarangayCode' => 'nullable|string',
         'TypeOfCustomer' => 'nullable|string',
         'NumberOfAccounts' => 'nullable|string',
+        'BLCIInitiated' => 'nullable|string',
     ];
 
     public static function getAccountCount($consumerId) {

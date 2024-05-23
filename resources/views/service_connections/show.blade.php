@@ -137,7 +137,7 @@ use Illuminate\Support\Facades\Auth;
                                 Meter & Transformer</a></li>
                             <li class="nav-item"><a class="nav-link custom-tab" href="#linemeteringservices" data-toggle="tab">
                                 <i class="fas fa-bezier-curve"></i>
-                                Line & Metering<span class="badge bg-danger ico-tab-left-mini">new</span></a></li>
+                                Line & Metering</a></li>
                             <li class="nav-item"><a class="nav-link custom-tab" href="#invoice" data-toggle="tab">
                                 <i class="fas fa-file-invoice-dollar"></i>
                                 Payment Order</a></li>
@@ -205,6 +205,8 @@ use Illuminate\Support\Facades\Auth;
 @push('page_scripts')
     <script>
         $(document).ready(function() {
+            $('body').addClass('sidebar-collapse')
+            
             // LOAD IMAGE
             $.ajax({
                 url : '/member_consumer_images/get-image/' + "{{ $serviceConnections->MemberConsumerId }}",

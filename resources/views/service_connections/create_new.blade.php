@@ -87,7 +87,10 @@
                                 -
                                 <input type="text" style="width: 60px; display: inline;" class="form-control form-control-sm" name="NumberOfAccounts" id="NumberOfAccounts" maxlength="2">
                             </td>
-                            <td></td>
+                            <td>
+                                <input type="checkbox" class="form-checkbox" name="BLCIInitiated" id="BLCIInitiated" value="Yes" style="width: 24px; display: inline;">
+                                <label for="BLCIInitiated">BLCI Initiated?</label>
+                            </td>
                             <td></td>
                         </tr>
                     </table>
@@ -161,9 +164,14 @@
                             <td>
                                 <input type="text" class="form-control form-control-sm" name="ServiceNumber" id="ServiceNumber">
                             </td>
-                            <td>Remarks: </td>
+                            <td>Crew Assigned: </td>
                             <td>
-                                <textarea type="text" class="form-control form-control-sm" rows="3" name="Notes" id="Notes"></textarea>
+                                <select name="StationCrewAssigned" id="StationCrewAssigned" class='form-control form-control-sm'>
+                                    <option value="">-</option>
+                                    @foreach ($crew as $itemx)
+                                       <option value="{{ $itemx->id }}" {{ $item->StationCrewAssigned==$itemx->id ? 'selected' : '' }}>{{ $itemx->StationName }}</option>
+                                    @endforeach
+                                 </select>
                             </td>
                         </tr>
                         {{-- ROW 5 --}}
@@ -172,10 +180,11 @@
                             <td style="position: relative;">
                                 <input type="text" class="form-control form-control-sm" name="CertificateOfConnectionIssuedOn" id="CertificateOfConnectionIssuedOn">
                             </td>
-                            <td>Load in kVa (Trans. kVa): </td>
+                            <td>Remarks: </td>
                             <td>
-                                <input type="number" step="any" class="form-control form-control-sm" name="LoadInKva" id="LoadInKva">
+                                <textarea type="text" class="form-control form-control-sm" rows="3" name="Notes" id="Notes"></textarea>
                             </td>
+                            
                         </tr>
                         {{-- ROW 7 --}}
                         <tr>
@@ -187,10 +196,11 @@
                                     <option value="COMMON">COMMON</option>
                                 </select>
                             </td>
-                            <td>TIN</td>
+                            <td>Load in kVa (Trans. kVa): </td>
                             <td>
-                                <input type="text" class="form-control form-control-sm" name="TIN" id="TIN">
+                                <input type="number" step="any" class="form-control form-control-sm" name="LoadInKva" id="LoadInKva">
                             </td>
+                            
                         </tr>
                         {{-- ROW 8 --}}
                         <tr>
@@ -198,8 +208,10 @@
                             <td>
                                 <input type="number" step="any" class="form-control form-control-sm" name="TransformerID" id="TransformerID">
                             </td>
-                            <td></td>
-                            <td></td>
+                            <td>TIN</td>
+                            <td>
+                                <input type="text" class="form-control form-control-sm" name="TIN" id="TIN">
+                            </td>
                         </tr>
                         {{-- ROW 9 --}}
                         <tr>

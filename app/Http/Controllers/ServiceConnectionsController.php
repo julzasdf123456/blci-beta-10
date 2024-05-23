@@ -203,6 +203,11 @@ class ServiceConnectionsController extends AppBaseController
         
                     return redirect(route('serviceConnections.all-applications'));
                 }
+                
+                // BYPASS IF BLCI INITIATED
+                if (isset($input['BLCIInitiated'])) {
+                    $input['Status'] = 'Approved for Energization';
+                }
         
                 $serviceConnections = $this->serviceConnectionsRepository->update($request->all(), $sc->id);
 
@@ -210,7 +215,7 @@ class ServiceConnectionsController extends AppBaseController
                 $inspection = ServiceConnectionInspections::where('ServiceConnectionId', $sc->id)->first();
                 if ($inspection == null) {
                     $inspection = new ServiceConnectionInspections;
-                    $inspection->id = IDGenerator::generateID();
+                    $inspection->id = IDGenerator::generateIDandRandString();
                     $inspection->ServiceConnectionId = $input['id'];
                     $inspection->Inspector = $input['Inspector'];
                     $inspection->Status = in_array($input['AccountApplicationType'], ServiceConnections::skippableForInspection()) ? 'Approved' : $input['Status'];
@@ -221,7 +226,7 @@ class ServiceConnectionsController extends AppBaseController
 
                     // CREATE Timeframes
                     $timeFrame = new ServiceConnectionTimeframes;
-                    $timeFrame->id = IDGenerator::generateID();
+                    $timeFrame->id = IDGenerator::generateIDandRandString();
                     $timeFrame->ServiceConnectionId = $input['id'];
                     $timeFrame->UserId = Auth::id();
                     $timeFrame->Status = 'Inspection Scheduled';
@@ -241,7 +246,7 @@ class ServiceConnectionsController extends AppBaseController
 
                 // CREATE Timeframes
                 $timeFrame = new ServiceConnectionTimeframes;
-                $timeFrame->id = IDGenerator::generateID();
+                $timeFrame->id = IDGenerator::generateIDandRandString();
                 $timeFrame->ServiceConnectionId = $input['id'];
                 $timeFrame->UserId = Auth::id();
                 $timeFrame->Status = $sc->Status;
@@ -251,8 +256,12 @@ class ServiceConnectionsController extends AppBaseController
                 Flash::success('Service Connections saved successfully.');
 
                 return redirect(route('serviceConnections.show', [$input['id']]));
-                // return redirect(route('serviceConnections.assess-checklists', [$input['id']]));
             } else {
+                // BYPASS IF BLCI INITIATED
+                if (isset($input['BLCIInitiated'])) {
+                    $input['Status'] = 'Approved for Energization';
+                }
+
                 $serviceConnections = $this->serviceConnectionsRepository->create($input);
 
                 // SEND SMS
@@ -301,7 +310,7 @@ class ServiceConnectionsController extends AppBaseController
 
                 // CREATE Timeframes
                 $timeFrame = new ServiceConnectionTimeframes;
-                $timeFrame->id = IDGenerator::generateID();
+                $timeFrame->id = IDGenerator::generateIDandRandString();
                 $timeFrame->ServiceConnectionId = $input['id'];
                 $timeFrame->UserId = Auth::id();
                 $timeFrame->Status = 'Received';
@@ -311,7 +320,7 @@ class ServiceConnectionsController extends AppBaseController
 
                 // CREATE Timeframes
                 $timeFrame = new ServiceConnectionTimeframes;
-                $timeFrame->id = IDGenerator::generateID();
+                $timeFrame->id = IDGenerator::generateIDandRandString();
                 $timeFrame->ServiceConnectionId = $input['id'];
                 $timeFrame->UserId = Auth::id();
                 $timeFrame->Status = 'Inspection Scheduled';
@@ -320,7 +329,7 @@ class ServiceConnectionsController extends AppBaseController
 
                 // CREATE Timeframes for inspection fee
                 $timeFrame = new ServiceConnectionTimeframes;
-                $timeFrame->id = IDGenerator::generateID();
+                $timeFrame->id = IDGenerator::generateIDandRandString();
                 $timeFrame->ServiceConnectionId = $input['id'];
                 $timeFrame->UserId = Auth::id();
                 $timeFrame->Status = 'Inspection Fee Assigned';
@@ -478,15 +487,27 @@ class ServiceConnectionsController extends AppBaseController
 
         $materialPresets = MaterialPresets::where('ServiceConnectionId', $id)->orderByDesc('updated_at')->first();
 
-        $lineAndMetering = DB::table('CRM_LineAndMeteringServices')
+        $accountNo = $serviceConnections->AccountNumber . '-' . $serviceConnections->NumberOfAccounts;
+        // line services
+        $line = DB::table('CRM_LineAndMeteringServices')
             ->leftJoin('users', 'CRM_LineAndMeteringServices.UserId', '=', 'users.id')
-            ->where('ServiceConnectionId', $id)
+            ->whereRaw("AccountNumber LIKE '%". $accountNo . "%' AND (LineLength IS NOT NULL OR ConductorType IS NOT NULL OR ConductorUnit IS NOT NULL)")
             ->select(
                 'CRM_LineAndMeteringServices.*',
                 'users.name'
             )
             ->orderByDesc('created_at')
-            ->first();
+            ->get();
+
+        $metering = DB::table('CRM_LineAndMeteringServices')
+            ->leftJoin('users', 'CRM_LineAndMeteringServices.UserId', '=', 'users.id')
+            ->whereRaw("AccountNumber LIKE '%". $accountNo . "%' AND (MeterSealNumber IS NOT NULL OR MeterNumber IS NOT NULL)")
+            ->select(
+                'CRM_LineAndMeteringServices.*',
+                'users.name'
+            )
+            ->orderByDesc('created_at')
+            ->get();
 
         // FILES
         $path = ServiceConnections::filePath() . "$id/";
@@ -516,7 +537,8 @@ class ServiceConnectionsController extends AppBaseController
                             'whItemsMeters' => $whItemsMeters,
                             'fileNames' => $fileNames,
                             'materialPresets' => $materialPresets,
-                            'lineAndMetering' => $lineAndMetering,
+                            'line' => $line,
+                            'metering' => $metering,
                         ]);
         } else {
             return abort(403, "You're not authorized to view a service connection application.");
@@ -818,6 +840,7 @@ class ServiceConnectionsController extends AppBaseController
                 'barangays' => $barangays,
                 'serviceAppliedFor' => $serviceAppliedFor,
                 'inspectors' => $inspectors,
+                'crew' => ServiceConnectionCrew::orderBy('StationName')->get(),
             ]);
         } else {
             return abort(403, "You're not authorized to create a service connection application.");
