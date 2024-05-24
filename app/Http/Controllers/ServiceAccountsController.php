@@ -375,8 +375,9 @@ class ServiceAccountsController extends AppBaseController
         $katas = KatasNgVat::where('AccountNumber', $id)->first();
 
         $unpaid = DB::table('Billing_Bills')
-            ->whereRaw("AccountNumber='" . $id . "' AND Balance > 0")
+            ->whereRaw("AccountNumber='" . $id . "' AND Balance != 0")
             ->get();
+            
         $balances = 0;
         $surcharges = 0;
         foreach($unpaid as $item) {
