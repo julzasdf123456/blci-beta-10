@@ -116,7 +116,7 @@ class ReadAndBillAPI extends Controller {
                 'CRM_Towns.Town as TownFull',
                 'CRM_Barangays.Barangay as BarangayFull',
                 'Billing_ServiceAccounts.Purok',
-                DB::raw("(SELECT SUM(Balance) FROM Billing_Bills WHERE AccountNumber=Billing_ServiceAccounts.id AND ServicePeriod < '" . $request['ServicePeriod'] . "') AS Balance"),
+                DB::raw("(SELECT SUM(Balance) FROM Billing_Bills WHERE AccountNumber=Billing_ServiceAccounts.id) AS Balance"),
                 'Billing_KatasNgVat.Balance as KatasNgVat',
                 DB::raw("'0' AS ArrearsLedger"),
                 DB::raw("(SELECT TOP 1 KwhUsed FROM Billing_Readings WHERE ServicePeriod=(SELECT TOP 1 ServicePeriod FROM Billing_Readings WHERE AccountNumber=Billing_ServiceAccounts.id ORDER BY ServicePeriod DESC) AND AccountNumber=Billing_ServiceAccounts.id) AS KwhUsed"),
