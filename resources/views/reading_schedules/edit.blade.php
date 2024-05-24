@@ -194,7 +194,7 @@
                         <td><a target="_blank" href="{{ url('/serviceAccounts/') }}/${ object['AccountId'] }">${ object['OldAccountNo'] }</a></td>
                         <td>${ object['ServiceAccountName'] }</td>
                         <td>${ object['Zone'] + '-' + object['BlockCode'] }</td>
-                        <td class='text-right'>${ isNull(object['PrevKwhUsed']) ? 0 : object['PrevKwhUsed'] }</td>
+                        <td class='text-right'>${ isNull(object['KwhUsed']) ? 0 : object['KwhUsed'] }</td>
                     </tr>`
         }
     </script>
