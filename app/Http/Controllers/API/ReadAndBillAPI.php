@@ -154,7 +154,7 @@ class ReadAndBillAPI extends Controller {
                 array_push($data, [
                     'id' => $item->id,
                     'AccountId' => $item->AccountId,
-                    'ServiceAccountName' => $item->ServiceAccountName,
+                    'ServiceAccountName' => trim($item->ServiceAccountName),
                     'Multiplier' => $item->Multiplier,
                     'Coreloss' => $item->Coreloss,
                     'AccountType' => $item->AccountType,
