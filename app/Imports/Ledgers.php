@@ -10,6 +10,7 @@ use Illuminate\Support\Facades\DB;
 use App\Models\IDGenerator;
 use App\Models\Bills;
 use App\Models\PaidBills;
+use App\Models\Readings;
 use App\Models\ServiceAccounts;
 class Ledgers implements  WithCalculatedFormulas, ToCollection
 {
@@ -85,6 +86,17 @@ class Ledgers implements  WithCalculatedFormulas, ToCollection
                     'TransformerRental' => $row[43] != null ? htmlspecialchars_decode(trim($row[43])) : 0,
                     'SMSSent' => 'Yes',
                     'EmailSent' => 'Yes',
+                ]);
+
+                // insert readings
+                Readings::create([
+                    'id' => IDGenerator::generateIDandRandString() . $key,
+                    'AccountNumber' => $acct != null ? $acct->id : htmlspecialchars_decode(trim($row[0])),
+                    'ServicePeriod' => $this->period,
+                    'ReadingTimestamp' => $row[12] != null ? ((Bills::validateDate(date('Y-m-d', strtotime(htmlspecialchars_decode(trim($row[12])))))) ? date('Y-m-d', strtotime(htmlspecialchars_decode(trim($row[12])))) : '1970-01-01' ) : null,
+                    'KwhUsed' => $row[8] != null ? htmlspecialchars_decode(trim($row[8])) : 0,
+                    'PreviousReading' => $row[6] != null ? htmlspecialchars_decode(trim($row[6])) : 0,
+                    'OldAccountNo' => htmlspecialchars_decode(trim($row[0])),
                 ]);
 
                 // create paidbills
