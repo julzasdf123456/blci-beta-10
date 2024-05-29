@@ -3925,6 +3925,7 @@ class ServiceConnectionsController extends AppBaseController
                     ServiceConnections::where('id', $ServiceConnectionId)
                         ->update(['AccountNumber' => $acctNo, 
                         'ORNumber' => $ORNumber, 
+                        'ORDate' => date('Y-m-d'), 
                         'TypeOfCustomer' => $typeOfCustomer,
                         'BarangayCode' => $barangayCode,
                         'NumberOfAccounts' => $numberOfAccounts,
@@ -3933,6 +3934,7 @@ class ServiceConnectionsController extends AppBaseController
                     ServiceConnections::where('id', $ServiceConnectionId)
                         ->update(['AccountNumber' => $acctNo, 
                         'ORNumber' => $ORNumber, 
+                        'ORDate' => date('Y-m-d'), 
                         'TypeOfCustomer' => $typeOfCustomer,
                         'BarangayCode' => $barangayCode,
                         'NumberOfAccounts' => $numberOfAccounts]);

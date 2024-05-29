@@ -341,4 +341,22 @@ class ServiceConnections extends Model
     public static function defaultOtherApplicationsInspector() {
         return '1709067435299'; // ramil satago
     }
+
+    public static function statusCheckPreviousArray($status) {
+        if ($status != null && ($status === 'Pending Inspection Fee Payment')) {
+            return 0;
+        } elseif ($status != null && ($status === 'For Inspection' | $status === 'Re-Inspection')) {
+            return 1;
+        } elseif ($status != null && ($status === 'Approved' | $status === 'For Energization')) {
+            return 2;
+        } elseif ($status != null && ($status === 'Approved for Energization')) {
+            return 4;
+        } elseif ($status != null && ($status === 'Energized')) {
+            return 5;
+        } elseif ($status != null && ($status === 'Closed')) {
+            return 6;
+        } else {
+            return -1;
+        }
+    }
 }
