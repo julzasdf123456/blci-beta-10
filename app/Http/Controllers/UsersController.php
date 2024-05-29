@@ -299,4 +299,37 @@ class UsersController extends AppBaseController
             'message' => 'Password updated successfully.',
         ]);
     }
+
+    public function updatePasswordAdmin(Request $request) {
+        // Validate the request
+        $validator = Validator::make($request->all(), [
+            'password' => 'required|string',
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json([
+                'status' => 'error',
+                'errors' => $validator->errors(),
+            ], 400);
+        }
+
+        // Assuming you have a user authenticated
+        $user = Users::find($request->user_id);
+        if (!$user) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'User not authenticated.',
+            ], 401);
+        }
+
+        // Update the user's password
+        $user->password = Hash::make($request->password);
+        $user->LastPasswordUpdateDate = date('Y-m-d');
+        $user->save();
+
+        return response()->json([
+            'status' => 'success',
+            'message' => 'Password updated successfully.',
+        ]);
+    }
 }

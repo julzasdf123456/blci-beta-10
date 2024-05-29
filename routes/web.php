@@ -72,6 +72,7 @@ Route::group(['middleware' => ['settings']], function () {
     Route::post('/users/authenticate', [UsersController::class, 'authenticate'])->name('users.authenticate');
     Route::get('/users/switch-color-modes', [UsersController::class, 'switchColorModes'])->name('users.switch-color-modes');
     Route::post('/users/update-password', [UsersController::class, 'updatePassword'])->name('users.update-password');
+    Route::post('/users/update-password-admin', [UsersController::class, 'updatePasswordAdmin'])->name('users.update-password-admin');
     Route::resource('users', UsersController::class);
 
     Route::resource('roles', App\Http\Controllers\RoleController::class);
