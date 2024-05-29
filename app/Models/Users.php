@@ -43,6 +43,7 @@ class Users extends Model
         'OfficeSignation',
         'ProfilePicture',
         'HRUserId',
+        'LastPasswordUpdateDate',
     ];
 
     /**
@@ -60,6 +61,7 @@ class Users extends Model
         'OfficeSignation' => 'string',
         'ProfilePicture' => 'string',
         'HRUserId' => 'string',
+        'LastPasswordUpdateDate' => 'string',
     ];
 
     /**
@@ -78,7 +80,14 @@ class Users extends Model
         'OfficeSignation' => 'nullable|string',
         'ProfilePicture' => 'nullable|string',
         'HRUserId' => 'nullable|string',
+        'LastPasswordUpdateDate' => 'nullable|string',
     ];
 
-    
+    public static function getPasswordResetRemainingDays($lastPasswordUpdate) {
+        $now = time(); // or your date as well
+        $lastPasswordUpdate = strtotime($lastPasswordUpdate);
+        $datediff = $now - $lastPasswordUpdate;
+
+        return round($datediff / (60 * 60 * 24));
+    }
 }

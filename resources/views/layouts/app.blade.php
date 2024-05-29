@@ -1,3 +1,6 @@
+@php
+    use App\Models\Users;
+@endphp
 <!DOCTYPE html>
 <html>
 <head>
@@ -5,6 +8,7 @@
     <title>{{ config('app.name') }}</title>
     <meta content='width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no' name='viewport'>
     <meta name="color-profile" content="{{ Auth::user()->ColorProfile }}">
+    <meta name="csrf-token" content="{{ csrf_token() }}">
 
     {{-- <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700&amp;display=fallback"> --}}
     <link rel="stylesheet" href="{{ URL::asset('css/source_sans_pro.css'); }} ">
@@ -209,6 +213,91 @@
 @php
     $userCache = Auth::user();
 @endphp
+
+{{-- CHECK IF PASSWORD NEEDS TO BE RESET --}}
+@php
+    $lastPasswordUpdateDate = $userCache->LastPasswordUpdateDate;
+
+    $systemSettings = getSession('settings');
+    $dayEllapsedThreshold = $systemSettings != null ? ($systemSettings->PasswordDaysExpire != null ? intval($systemSettings->PasswordDaysExpire) : 30) : 30;
+
+    if ($lastPasswordUpdateDate != null) {
+        $daysEllapsed = Users::getPasswordResetRemainingDays($lastPasswordUpdateDate);
+    } else {
+        $daysEllapsed = 31;
+    }
+@endphp
+@if ($daysEllapsed >= $dayEllapsedThreshold)
+    @push('page_scripts')
+        <script>
+            $(document).ready(function() {
+                showPasswordAlert()
+            })
+
+            function showPasswordAlert() {
+                Swal.fire({
+                    title: 'Update Your Password',
+                    html:
+                        `<p>Your password has exceeded the longevity limit, and is now expired. To continue using the system, you need to update your password for security purposes.</p>
+                        <input id="password" class="swal2-input" type="password" placeholder="Enter password...">
+                        <input id="password-confirm" class="swal2-input" type="password" placeholder="Confirm password...">`,
+                    focusConfirm: false,
+                    allowOutsideClick: false,
+                    allowEscapeKey: false,
+                    allowEnterKey: false,
+                    confirmButtonText: 'Update Password',
+                    preConfirm: () => {
+                        const pword = document.getElementById('password').value;
+                        const pwordConfirm = document.getElementById('password-confirm').value;
+
+                        if (!pword || !pwordConfirm) {
+                            Swal.showValidationMessage('Both passwords are required.');
+                            return false;
+                        }
+
+                        if (pword !== pwordConfirm) {
+                            Swal.showValidationMessage('Passwords do not match.');
+                            return false;
+                        }
+
+                        return fetch('{{ route("users.update-password") }}', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json',
+                                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+                            },
+                            body: JSON.stringify({
+                                password: pword,
+                                password_confirmation: pwordConfirm
+                            })
+                        })
+                        .then(response => response.json().then(data => ({
+                            status: response.status,
+                            body: data
+                        })))
+                        .then(({ status, body }) => {
+                            if (status !== 200) {
+                                console.log('Server response:', body);
+                                Swal.showValidationMessage(`Request failed: ${body.message || 'Unknown error'}`);
+                                return false;
+                            }
+                            return body
+                        })
+                        .catch(error => {
+                            Swal.showValidationMessage(`Request failed: ${error}`);
+                            console.log(error.message)
+                        })
+                    }
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        Swal.fire('Success', 'Password updated successfully', 'success');
+                    }
+                })
+            }
+        </script>
+    @endpush
+@endif  
+
 <body class="hold-transition sidebar-mini layout-fixed {{ $userCache->ColorProfile }}"> {{--  sidebar-collapse --}}
 <div class="wrapper">
     <!-- Main Header -->

@@ -12,6 +12,7 @@ use App\Models\User;
 use App\Models\Users;
 use App\Models\Permission;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
 use Flash;
@@ -264,5 +265,38 @@ class UsersController extends AppBaseController
         }
 
         return response()->json($user, 200);
+    }
+
+    public function updatePassword(Request $request) {
+        // Validate the request
+        $validator = Validator::make($request->all(), [
+            'password' => 'required|string',
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json([
+                'status' => 'error',
+                'errors' => $validator->errors(),
+            ], 400);
+        }
+
+        // Assuming you have a user authenticated
+        $user = Auth::user();
+        if (!$user) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'User not authenticated.',
+            ], 401);
+        }
+
+        // Update the user's password
+        $user->password = Hash::make($request->password);
+        $user->LastPasswordUpdateDate = date('Y-m-d');
+        $user->save();
+
+        return response()->json([
+            'status' => 'success',
+            'message' => 'Password updated successfully.',
+        ]);
     }
 }

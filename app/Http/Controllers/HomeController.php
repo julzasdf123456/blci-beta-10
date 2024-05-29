@@ -9,6 +9,7 @@ use Illuminate\Support\Str;
 use App\Models\ServiceAccounts;
 use App\Models\SmsSettings;
 use App\Models\IDGenerator;
+use App\Models\SystemSettings;
 
 class HomeController extends Controller
 {
@@ -284,7 +285,7 @@ class HomeController extends Controller
          return response()->json($data);
      }
 
-    public function fetchInspectionReport(Request $request) {
+     public function fetchInspectionReport(Request $request) {
         if ($request->ajax()) {            
             $data = DB::table('users')
                     ->leftJoin('model_has_roles', 'users.id', '=', 'model_has_roles.model_id')
@@ -418,6 +419,7 @@ class HomeController extends Controller
         if(Auth::user()->hasAnyPermission(['Super Admin'])) {
             return view('/settings/settings', [
                 'smsSettings' => SmsSettings::orderByDesc('created_at')->first(),
+                'systemSettings' => SystemSettings::orderByDesc('created_at')->first(),
             ]);
         } else {
             return abort(403, "You're not authorized to create a service connection application.");
@@ -425,6 +427,8 @@ class HomeController extends Controller
     }
 
     public function saveGeneralSettings(Request $request) {
+        $passwordDaysExpire = $request['PasswordDaysExpire'];
+
         // SMS SETTINGS
         $smsSettings = SmsSettings::orderByDesc('created_at')->first();
 
@@ -446,6 +450,19 @@ class HomeController extends Controller
             $smsSettings->PaymentApproved = trim($request['PaymentApproved']);
             $smsSettings->InspectionToday = trim($request['InspectionToday']);
             $smsSettings->save();
+        }
+
+        // system settings
+        $systemSettings = SystemSettings::orderByDesc('created_at')->first();
+
+        if ($systemSettings != null) {
+            $systemSettings->PasswordDaysExpire = $passwordDaysExpire;
+            $systemSettings->save();
+        } else {
+            $systemSettings = new SystemSettings;
+            $systemSettings->id = IDGenerator::generateIDandRandString();
+            $systemSettings->PasswordDaysExpire = $passwordDaysExpire;
+            $systemSettings->save();
         }
 
         return response()->json('ok', 200);

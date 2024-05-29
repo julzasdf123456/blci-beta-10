@@ -23,9 +23,12 @@
 
 
 ### Added New Columns
+- users
+    - LastPasswordUpdateDate
  
 ### Added New Tables
--CRM_LineAndMeteringServices
+- System_Settings
+
 
 ### New Permissions
 

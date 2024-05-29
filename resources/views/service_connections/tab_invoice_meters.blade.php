@@ -86,10 +86,10 @@
             <input type="text" id="RequestedBy" class="form-control form-control-xs" value="{{ $whHeadMeters->chkby }}" readonly>
         </td> 
     </tr>
-    </table>
+</table>
 
-    {{-- ITEMS LIST --}}
-    <table id="items-list" class="table table-bordered table-sm table-hover">
+{{-- ITEMS LIST --}}
+<table id="items-list" class="table table-bordered table-sm table-hover">
     <thead>
         <th>Item Code</th>
         <th>Description</th>
@@ -130,7 +130,7 @@
             <td class="text-right"><strong>{{ number_format($amt, 6, ".", "") }}</strong></td>
         </tr>
     </tbody>
-    </table>
+</table>
 @else
     <p class="text-center text-info"><i class="fas fa-info-circle ico-tab"></i> No meter invoice recorded!</p>
 @endif

@@ -445,6 +445,11 @@ class ServiceConnectionsController extends AppBaseController
 
         $paymentOrder = PaymentOrder::where('ServiceConnectionId', $id)->first();
 
+        /**
+         * ================================================
+         * MYSQL ITEMS
+         * ================================================
+         */
         // ITEMS
         $whHead = WarehouseHead::where('appl_no', $id)->whereRaw("orderno NOT LIKE 'M%'")->first();
         if ($whHead != null) {
@@ -3992,8 +3997,7 @@ class ServiceConnectionsController extends AppBaseController
                 $whItems = WarehouseItems::where('reqno', $item->orderno)->delete();
             }            
         }
-        // WarehouseHead::where('appl_no', $ServiceConnectionId)->delete();
-        // WarehouseItems::where('reqno', $whHead->orderno)->delete();
+        
         $entNoLast = DB::connection('mysql')
             ->table('tblor_head')
             ->select('ent_no')
@@ -4008,6 +4012,9 @@ class ServiceConnectionsController extends AppBaseController
          * ========================================================
          */
         if (count($materialItems) > 0) {
+            /**
+             * ONLY SAVE WH-HEAD TO MY SQL IF OR NUMBER IS FULLFILED
+             */
             $whHead = WarehouseHead::where('appl_no', $ServiceConnectionId)
                 ->where('orderno', $reqNo)
                 ->first();
@@ -4038,10 +4045,15 @@ class ServiceConnectionsController extends AppBaseController
             $whHead->cust_name = $customerName;
             $whHead->tot_amt = $MaterialTotal;
             $whHead->chkby = $requestedBy;
-            if (Auth::user()->hasAnyRole(ServiceConnections::whHeadStatus())) {
-                $whHead->stat = 'Checked';
+            
+            if ($ORNumber != null && $ORNumber !== '0') {
+                if (Auth::user()->hasAnyRole(ServiceConnections::whHeadStatus())) {
+                    $whHead->stat = 'Checked';
+                } else {
+                    $whHead->stat = 'Pending';
+                }
             } else {
-                $whHead->stat = 'Pending';
+                $whHead->stat = 'For Payment';
             }
             
             $whHead->rdate = date('m/d/Y');
@@ -4050,7 +4062,6 @@ class ServiceConnectionsController extends AppBaseController
             $whHead->appl_no = $ServiceConnectionId;
             $whHead->appby = ' ';
             $whHead->save();
-
             
             /**
              * ===============================================
@@ -4097,10 +4108,14 @@ class ServiceConnectionsController extends AppBaseController
             $whHeadLocal->cust_name = $customerName;
             $whHeadLocal->tot_amnt = $MaterialTotal;
             $whHeadLocal->chkby = $requestedBy;
-            if (Auth::user()->hasAnyRole(ServiceConnections::whHeadStatus())) {
-                $whHeadLocal->stat = 'Checked';
+            if ($ORNumber != null && $ORNumber !== '0') {
+                if (Auth::user()->hasAnyRole(ServiceConnections::whHeadStatus())) {
+                    $whHeadLocal->stat = 'Checked';
+                } else {
+                    $whHeadLocal->stat = 'Pending';
+                }
             } else {
-                $whHeadLocal->stat = 'Pending';
+                $whHeadLocal->stat = 'For Payment';
             }
             
             $whHeadLocal->rdate = date('m/d/Y');
@@ -4163,6 +4178,9 @@ class ServiceConnectionsController extends AppBaseController
          * ==================================================
          */
         if ($meter_reqNo != null && count($meterItems) > 0) {
+            /**
+             * ONLY SAVE WH-HEAD TO MY SQL IF OR NUMBER IS FULLFILED
+             */
             $whHead = WarehouseHead::where('appl_no', $ServiceConnectionId)
                 ->where('orderno', $meter_reqNo)
                 ->first();
@@ -4192,10 +4210,14 @@ class ServiceConnectionsController extends AppBaseController
             $whHead->cust_name = $meter_customerName;
             $whHead->tot_amt = $meterTotal != null ? $meterTotal : 0;
             $whHead->chkby = $meter_requestedBy;
-            if (Auth::user()->hasAnyRole(ServiceConnections::whHeadStatus())) {
-                $whHead->stat = 'Checked';
+            if ($ORNumber != null && $ORNumber !== '0') {
+                if (Auth::user()->hasAnyRole(ServiceConnections::whHeadStatus())) {
+                    $whHead->stat = 'Checked';
+                } else {
+                    $whHead->stat = 'Pending';
+                }
             } else {
-                $whHead->stat = 'Pending';
+                $whHead->stat = 'For Payment';
             }
             $whHead->rdate = date('m/d/Y');
             $whHead->rtime = date('h:i A');
@@ -4238,10 +4260,14 @@ class ServiceConnectionsController extends AppBaseController
             $whHeadLocalMeters->cust_name = $meter_customerName;
             $whHeadLocalMeters->tot_amnt = $meterTotal != null ? $meterTotal : 0;
             $whHeadLocalMeters->chkby = $meter_requestedBy;
-            if (Auth::user()->hasAnyRole(ServiceConnections::whHeadStatus())) {
-                $whHeadLocalMeters->stat = 'Checked';
+            if ($ORNumber != null && $ORNumber !== '0') {
+                if (Auth::user()->hasAnyRole(ServiceConnections::whHeadStatus())) {
+                    $whHeadLocalMeters->stat = 'Checked';
+                } else {
+                    $whHeadLocalMeters->stat = 'Pending';
+                }
             } else {
-                $whHeadLocalMeters->stat = 'Pending';
+                $whHeadLocalMeters->stat = 'For Payment';
             }
             $whHeadLocalMeters->rdate = date('m/d/Y');
             $whHeadLocalMeters->rtime = date('h:i A');

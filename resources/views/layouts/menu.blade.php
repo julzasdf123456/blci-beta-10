@@ -181,6 +181,15 @@ use Illuminate\Support\Facades\Auth;
                     </li>
                     @endcanany
 
+                    @canany(['Super Admin', 'turn-on assigning'])
+                    <li class="nav-item">
+                        <a href="{{ route('serviceConnections.other-services') }}"
+                        class="nav-link {{ Request::is('serviceConnections.other-services*') ? 'active' : '' }}">
+                        <i class="fas fa-circle nav-icon text-warning"></i><p>Other Services</p>
+                        </a>
+                    </li>
+                    @endcanany
+
                     {{-- @canany(['Super Admin', 'sc view']) --}}
                     {{-- FLOW --}}
                     {{-- <li class="nav-item">

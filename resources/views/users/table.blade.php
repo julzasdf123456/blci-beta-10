@@ -3,8 +3,9 @@
         <thead>
             <tr>
                 <th>Name</th>
-            <th>Email</th>
-            <th>Username</th>
+                <th>Email</th>
+                <th>Username</th>
+                <th>Last Password<br>Update</th>
             {{-- <th>Employee Id</th> --}}
             {{-- <th>Email Verified At</th> --}}
             {{-- <th>Password</th> --}}
@@ -18,6 +19,7 @@
                 <td>{{ $users->name }}</td>
                 <td>{{ $users->email }}</td>
                 <td>{{ $users->username }}</td>
+                <td>{{ date('M d, Y', strtotime($users->LastPasswordUpdateDate)) }}</td>
                 {{-- <td>{{ $users->employee_id }}</td>
                 <td>{{ $users->email_verified_at }}</td>
                 <td>{{ $users->password }}</td>
