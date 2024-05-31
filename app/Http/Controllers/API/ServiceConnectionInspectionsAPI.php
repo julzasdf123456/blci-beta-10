@@ -155,10 +155,10 @@ class ServiceConnectionInspectionsAPI extends Controller {
 
         // CREATE Timeframes
         $timeFrame = new ServiceConnectionTimeframes;
-        $timeFrame->id = IDGenerator::generateID();
+        $timeFrame->id = IDGenerator::generateIDandRandString();
         $timeFrame->ServiceConnectionId = $request['ServiceConnectionId'];
         $timeFrame->UserId = $request['Inspector'];
-        $timeFrame->Status = $request['Status'];
+        $timeFrame->Status = '[WEB] ' . $request['Status'];
         if ($request['Status'] == 'Approved') {
             $timeFrame->Notes = 'Inspection approved and is waiting for payment';
         } else {
@@ -183,6 +183,18 @@ class ServiceConnectionInspectionsAPI extends Controller {
             $smsSettings = SmsSettings::orderByDesc('created_at')->first();
             // InspectionToday
             if ($serviceConnections != null) {
+                $inspection = ServiceConnectionInspections::where('ServiceConnectionId', $serviceConnections->id)->first();
+                if ($inspection != null) {
+                    // CREATE Timeframes
+                    $timeFrame = new ServiceConnectionTimeframes;
+                    $timeFrame->id = IDGenerator::generateIDandRandString();
+                    $timeFrame->ServiceConnectionId = $arr[$i];
+                    $timeFrame->Status = '[WEB] Inspection Downloaded';
+                    $timeFrame->UserId = $inspection->Inspector;
+                    $timeFrame->Notes = "Inspection data downloaded to Inspector's App.";
+                    $timeFrame->save();
+                }
+
                 if ($serviceConnections->ContactNumber != null) {
                     if (strlen($serviceConnections->ContactNumber) > 10 && strlen($serviceConnections->ContactNumber) < 13) {
                         if ($smsSettings != null && $smsSettings->InspectionToday=='Yes') {
@@ -302,10 +314,37 @@ class ServiceConnectionInspectionsAPI extends Controller {
                 readfile($tempZipPath);
                 // Delete the temporary file
                 unlink($tempZipPath);
+
+                // CREATE Timeframes
+                $timeFrame = new ServiceConnectionTimeframes;
+                $timeFrame->id = IDGenerator::generateIDandRandString();
+                $timeFrame->ServiceConnectionId = $request['id'];
+                $timeFrame->Status = '[WEB] Files Sent to Device';
+                $timeFrame->UserId = '0';
+                $timeFrame->Notes = 'Attached files successfully compressed and sent to device.';
+                $timeFrame->save();
             } else {
+                // CREATE Timeframes
+                $timeFrame = new ServiceConnectionTimeframes;
+                $timeFrame->id = IDGenerator::generateIDandRandString();
+                $timeFrame->ServiceConnectionId = $request['id'];
+                $timeFrame->Status = '[WEB] Error Zipping Files';
+                $timeFrame->UserId = '0';
+                $timeFrame->Notes = 'Unable to zip attached files.';
+                $timeFrame->save();
+
                 return response()->json('Error zipping file', 403);
             }
         } else {
+            // CREATE Timeframes
+            $timeFrame = new ServiceConnectionTimeframes;
+            $timeFrame->id = IDGenerator::generateIDandRandString();
+            $timeFrame->ServiceConnectionId = $request['id'];
+            $timeFrame->Status = '[WEB] Error Attaching Files';
+            $timeFrame->UserId = '0';
+            $timeFrame->Notes = 'File folder not found.';
+            $timeFrame->save();
+
             return response()->json('File folder not found', 200);
         }
     }
@@ -324,5 +363,23 @@ class ServiceConnectionInspectionsAPI extends Controller {
         }
 
         return response()->json($materials, 200);
+    }
+
+    public function applicationsLogger(Request $request) {
+        $scId = $request['ServiceConnectionId'];
+        $status = $request['Status'];
+        $notes = $request['Notes'];
+        $userId = $request['UserId'];
+
+        // CREATE Timeframes
+        $timeFrame = new ServiceConnectionTimeframes;
+        $timeFrame->id = IDGenerator::generateIDandRandString();
+        $timeFrame->ServiceConnectionId = $scId;
+        $timeFrame->Status = $status;
+        $timeFrame->UserId = $userId;
+        $timeFrame->Notes = $notes;
+        $timeFrame->save();
+
+        return response()->json($timeFrame, 200);
     }
 }

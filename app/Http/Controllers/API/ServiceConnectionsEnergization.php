@@ -66,9 +66,8 @@ class ServiceConnectionsEnergization extends Controller {
             $timeFrame->id = IDGenerator::generateIDandRandString();
             $timeFrame->ServiceConnectionId = $item->id;
             $timeFrame->UserId = $request['User'];
-            $timeFrame->Status = $request['Status'];
+            $timeFrame->Status = '[WEB]' . $request['Status'];
             $timeFrame->Notes = 'Application downloaded by crew ' . $request['CrewAssigned'];
-
             $timeFrame->save();
         }
 
@@ -106,7 +105,17 @@ class ServiceConnectionsEnergization extends Controller {
         $serviceConnections->TransformerID = $request['TransformerID'];
         $serviceConnections->Notes = $request['Notes'];
 
+        // CREATE LOG
+        $timeFrame = new ServiceConnectionTimeframes;
+        $timeFrame->id = IDGenerator::generateIDandRandString();
+        $timeFrame->ServiceConnectionId = $request['id'];
+        $timeFrame->UserId = "0";
+        $timeFrame->Status = '[WEB] Energization Uploaded By Linemen';
+        $timeFrame->Notes = "Application uploaded by linemen/crew from Linemen's App.";
+        $timeFrame->save();
+
         if ($serviceConnections->save()) {
+
             return response()->json(['success' => 'Upload Success'], $this->successStatus);             
         } else {
             return response()->json(['error' => 'Error Uploading Data ID ' . $request['id']], 404); 
@@ -180,13 +189,40 @@ class ServiceConnectionsEnergization extends Controller {
 
         if ($sc != null) {
             $meterInstallation = MeterInstallation::update($input);
+            
+            // CREATE LOG
+            $timeFrame = new ServiceConnectionTimeframes;
+            $timeFrame->id = IDGenerator::generateIDandRandString();
+            $timeFrame->ServiceConnectionId = $request['ServiceConnectionId'];
+            $timeFrame->UserId = "0";
+            $timeFrame->Status = '[WEB] Meter Installation Updated';
+            $timeFrame->Notes = "Meter installation updated by linemen/crew from Linemen's App.";
+            $timeFrame->save();
         } else {
             $meterInstallation = MeterInstallation::find($id);
 
             if ($meterInstallation != null) {
                 $meterInstallation = MeterInstallation::update($input);
+
+                // CREATE LOG
+                $timeFrame = new ServiceConnectionTimeframes;
+                $timeFrame->id = IDGenerator::generateIDandRandString();
+                $timeFrame->ServiceConnectionId = $request['ServiceConnectionId'];
+                $timeFrame->UserId = "0";
+                $timeFrame->Status = '[WEB] Meter Installation Updated';
+                $timeFrame->Notes = "Meter installation updated by linemen/crew from Linemen's App.";
+                $timeFrame->save();
             } else {
                 $meterInstallation = MeterInstallation::create($input);
+
+                // CREATE LOG
+                $timeFrame = new ServiceConnectionTimeframes;
+                $timeFrame->id = IDGenerator::generateIDandRandString();
+                $timeFrame->ServiceConnectionId = $request['ServiceConnectionId'];
+                $timeFrame->UserId = "0";
+                $timeFrame->Status = '[WEB] Meter Installation Created';
+                $timeFrame->Notes = "Meter installation created by linemen/crew from Linemen's App.";
+                $timeFrame->save();
             }
         }
         
@@ -202,13 +238,40 @@ class ServiceConnectionsEnergization extends Controller {
 
         if ($sc != null) {
             $lineAndMetering = LineAndMeteringServices::update($input);
+            
+            // CREATE LOG
+            $timeFrame = new ServiceConnectionTimeframes;
+            $timeFrame->id = IDGenerator::generateIDandRandString();
+            $timeFrame->ServiceConnectionId = $request['ServiceConnectionId'];
+            $timeFrame->UserId = "0";
+            $timeFrame->Status = '[WEB] Line & Metering Updated';
+            $timeFrame->Notes = "Line and metering services data updated by linemen/crew from Linemen's App.";
+            $timeFrame->save();
         } else {
             $lineAndMetering = LineAndMeteringServices::find($id);
 
             if ($lineAndMetering != null) {
                 $lineAndMetering = LineAndMeteringServices::update($input);
+
+                // CREATE LOG
+                $timeFrame = new ServiceConnectionTimeframes;
+                $timeFrame->id = IDGenerator::generateIDandRandString();
+                $timeFrame->ServiceConnectionId = $request['ServiceConnectionId'];
+                $timeFrame->UserId = "0";
+                $timeFrame->Status = '[WEB] Line & Metering Updated';
+                $timeFrame->Notes = "Line and metering services data updated by linemen/crew from Linemen's App.";
+                $timeFrame->save();
             } else {
                 $lineAndMetering = LineAndMeteringServices::create($input);
+
+                // CREATE LOG
+                $timeFrame = new ServiceConnectionTimeframes;
+                $timeFrame->id = IDGenerator::generateIDandRandString();
+                $timeFrame->ServiceConnectionId = $request['ServiceConnectionId'];
+                $timeFrame->UserId = "0";
+                $timeFrame->Status = '[WEB] Line & Metering Created';
+                $timeFrame->Notes = "Line and metering services data created by linemen/crew from Linemen's App.";
+                $timeFrame->save();
             }
         }
         
