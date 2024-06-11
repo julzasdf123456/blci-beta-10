@@ -188,7 +188,7 @@ class ServiceConnectionsEnergization extends Controller {
         $sc = MeterInstallation::where('ServiceConnectionId', $input['ServiceConnectionId'])->first();
 
         if ($sc != null) {
-            $meterInstallation = MeterInstallation::update($input);
+            $meterInstallation = $sc->update($input);
             
             // CREATE LOG
             $timeFrame = new ServiceConnectionTimeframes;
