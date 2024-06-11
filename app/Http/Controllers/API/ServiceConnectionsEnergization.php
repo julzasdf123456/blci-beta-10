@@ -188,7 +188,32 @@ class ServiceConnectionsEnergization extends Controller {
         $sc = MeterInstallation::where('ServiceConnectionId', $input['ServiceConnectionId'])->first();
 
         if ($sc != null) {
-            $meterInstallation = $sc->update($input);
+            $sc->Type = $input['Type'];
+            $sc->NewMeterNumber = $input['NewMeterNumber'];
+            $sc->NewMeterBrand = $input['NewMeterBrand'];
+            $sc->NewMeterSize = $input['NewMeterSize'];
+            $sc->NewMeterType = $input['NewMeterType'];
+            $sc->NewMeterAmperes = $input['NewMeterAmperes'];
+            $sc->NewMeterInitialReading = $input['NewMeterInitialReading'];
+            $sc->NewMeterLineToNeutral = $input['NewMeterLineToNeutral'];
+            $sc->NewMeterLineToGround = $input['NewMeterLineToGround'];
+            $sc->NewMeterNeutralToGround = $input['NewMeterNeutralToGround'];
+            $sc->DateInstalled = $input['DateInstalled'];
+            $sc->NewMeterMultiplier = $input['NewMeterMultiplier'];
+            $sc->TransfomerCapacity = $input['TransfomerCapacity'];
+            $sc->TransformerID = $input['TransformerID'];
+            $sc->PoleID = $input['PoleID'];
+            $sc->CTSerialNumber = $input['CTSerialNumber'];
+            $sc->NewMeterRemarks = $input['NewMeterRemarks'];
+            $sc->OldMeterNumber = $input['OldMeterNumber'];
+            $sc->OldMeterBrand = $input['OldMeterBrand'];
+            $sc->OldMeterSize = $input['OldMeterSize'];
+            $sc->OldMeterType = $input['OldMeterType'];
+            $sc->DateRemoved = $input['DateRemoved'];
+            $sc->ReasonForChanging = $input['ReasonForChanging'];
+            $sc->OldMeterMultiplier = $input['OldMeterMultiplier'];
+            $sc->OldMeterRemarks = $input['OldMeterRemarks'];
+            $sc->save();
             
             // CREATE LOG
             $timeFrame = new ServiceConnectionTimeframes;
@@ -202,7 +227,32 @@ class ServiceConnectionsEnergization extends Controller {
             $meterInstallation = MeterInstallation::find($id);
 
             if ($meterInstallation != null) {
-                $meterInstallation = $meterInstallation->update($input);
+                $meterInstallation->Type = $input['Type'];
+                $meterInstallation->NewMeterNumber = $input['NewMeterNumber'];
+                $meterInstallation->NewMeterBrand = $input['NewMeterBrand'];
+                $meterInstallation->NewMeterSize = $input['NewMeterSize'];
+                $meterInstallation->NewMeterType = $input['NewMeterType'];
+                $meterInstallation->NewMeterAmperes = $input['NewMeterAmperes'];
+                $meterInstallation->NewMeterInitialReading = $input['NewMeterInitialReading'];
+                $meterInstallation->NewMeterLineToNeutral = $input['NewMeterLineToNeutral'];
+                $meterInstallation->NewMeterLineToGround = $input['NewMeterLineToGround'];
+                $meterInstallation->NewMeterNeutralToGround = $input['NewMeterNeutralToGround'];
+                $meterInstallation->DateInstalled = $input['DateInstalled'];
+                $meterInstallation->NewMeterMultiplier = $input['NewMeterMultiplier'];
+                $meterInstallation->TransfomerCapacity = $input['TransfomerCapacity'];
+                $meterInstallation->TransformerID = $input['TransformerID'];
+                $meterInstallation->PoleID = $input['PoleID'];
+                $meterInstallation->CTSerialNumber = $input['CTSerialNumber'];
+                $meterInstallation->NewMeterRemarks = $input['NewMeterRemarks'];
+                $meterInstallation->OldMeterNumber = $input['OldMeterNumber'];
+                $meterInstallation->OldMeterBrand = $input['OldMeterBrand'];
+                $meterInstallation->OldMeterSize = $input['OldMeterSize'];
+                $meterInstallation->OldMeterType = $input['OldMeterType'];
+                $meterInstallation->DateRemoved = $input['DateRemoved'];
+                $meterInstallation->ReasonForChanging = $input['ReasonForChanging'];
+                $meterInstallation->OldMeterMultiplier = $input['OldMeterMultiplier'];
+                $meterInstallation->OldMeterRemarks = $input['OldMeterRemarks'];
+                $meterInstallation->save();
 
                 // CREATE LOG
                 $timeFrame = new ServiceConnectionTimeframes;
@@ -237,7 +287,25 @@ class ServiceConnectionsEnergization extends Controller {
         $sc = LineAndMeteringServices::where('ServiceConnectionId', $input['ServiceConnectionId'])->first();
 
         if ($sc != null) {
-            $lineAndMetering = $sc->update($input);
+            $sc->TypeOfService = ['TypeOfService'];
+            $sc->MeterSealNumber = ['MeterSealNumber'];
+            $sc->IsLeadSeal = ['IsLeadSeal'];
+            $sc->MeterStatus = ['MeterStatus'];
+            $sc->MeterNumber = ['MeterNumber'];
+            $sc->Multiplier = ['Multiplier'];
+            $sc->MeterType = ['MeterType'];
+            $sc->MeterBrand = ['MeterBrand'];
+            $sc->Notes = ['Notes'];
+            $sc->ServiceDate = ['ServiceDate'];
+            $sc->UserId = ['UserId'];
+            $sc->PrivateElectrician = ['PrivateElectrician'];
+            $sc->LineLength = ['LineLength'];
+            $sc->ConductorType = ['ConductorType'];
+            $sc->ConductorSize = ['ConductorSize'];
+            $sc->ConductorUnit = ['ConductorUnit'];
+            $sc->Status = ['Status'];
+            $sc->AccountNumber = ['AccountNumber'];
+            $sc->save();
             
             // CREATE LOG
             $timeFrame = new ServiceConnectionTimeframes;
@@ -251,7 +319,25 @@ class ServiceConnectionsEnergization extends Controller {
             $lineAndMetering = LineAndMeteringServices::find($id);
 
             if ($lineAndMetering != null) {
-                $lineAndMetering = $lineAndMetering->update($input);
+                $lineAndMetering->TypeOfService = ['TypeOfService'];
+                $lineAndMetering->MeterSealNumber = ['MeterSealNumber'];
+                $lineAndMetering->IsLeadSeal = ['IsLeadSeal'];
+                $lineAndMetering->MeterStatus = ['MeterStatus'];
+                $lineAndMetering->MeterNumber = ['MeterNumber'];
+                $lineAndMetering->Multiplier = ['Multiplier'];
+                $lineAndMetering->MeterType = ['MeterType'];
+                $lineAndMetering->MeterBrand = ['MeterBrand'];
+                $lineAndMetering->Notes = ['Notes'];
+                $lineAndMetering->ServiceDate = ['ServiceDate'];
+                $lineAndMetering->UserId = ['UserId'];
+                $lineAndMetering->PrivateElectrician = ['PrivateElectrician'];
+                $lineAndMetering->LineLength = ['LineLength'];
+                $lineAndMetering->ConductorType = ['ConductorType'];
+                $lineAndMetering->ConductorSize = ['ConductorSize'];
+                $lineAndMetering->ConductorUnit = ['ConductorUnit'];
+                $lineAndMetering->Status = ['Status'];
+                $lineAndMetering->AccountNumber = ['AccountNumber'];
+                $lineAndMetering->save();
 
                 // CREATE LOG
                 $timeFrame = new ServiceConnectionTimeframes;

@@ -357,7 +357,32 @@ class ServiceConnectionInspectionsAPI extends Controller {
         $materials = MaterialPresets::where('ServiceConnectionId', $scId)->first();
 
         if ($materials != null) {
-            $materials = MaterialPresets::update($input);
+            $materials->MeterBaseSocket = ['MeterBaseSocket'];
+            $materials->MetalboxTypeA = ['MetalboxTypeA'];
+            $materials->MetalboxTypeB = ['MetalboxTypeB'];
+            $materials->Pipe = ['Pipe'];
+            $materials->EntranceCap = ['EntranceCap'];
+            $materials->Adapter = ['Adapter'];
+            $materials->Locknot = ['Locknot'];
+            $materials->Mailbox = ['Mailbox'];
+            $materials->Buckle = ['Buckle'];
+            $materials->PvcElbow = ['PvcElbow'];
+            $materials->StainlessStrap = ['StainlessStrap'];
+            $materials->Plyboard = ['Plyboard'];
+            $materials->StrainInsulator = ['StrainInsulator'];
+            $materials->StraindedWireEight = ['StraindedWireEight'];
+            $materials->StrandedWireSix = ['StrandedWireSix'];
+            $materials->TwistedWireSix = ['TwistedWireSix'];
+            $materials->TwistedWireFour = ['TwistedWireFour'];
+            $materials->CompressionTapAsu = ['CompressionTapAsu'];
+            $materials->CompressionTapYtdTwoFifty = ['CompressionTapYtdTwoFifty'];
+            $materials->CompressionTapYtdThreeHundred = ['CompressionTapYtdThreeHundred'];
+            $materials->CompressionTapYtdTwoHundred = ['CompressionTapYtdTwoHundred'];
+            $materials->CompressionTapYtdOneFifty = ['CompressionTapYtdOneFifty'];
+            $materials->MetalScrew = ['MetalScrew'];
+            $materials->ElectricalTape = ['ElectricalTape'];
+            $materials->CompressionTapYtdOneHundred = ['CompressionTapYtdOneHundred'];
+            $materials->save();
         } else {
             $materials = MaterialPresets::create($input);
         }
