@@ -194,7 +194,7 @@ class ServiceConnectionsEnergization extends Controller {
             $sc->NewMeterSize = isset($input['NewMeterSize']) ? $input['NewMeterSize'] : '';
             $sc->NewMeterType = isset($input['NewMeterType']) ? $input['NewMeterType'] : '';
             $sc->NewMeterAmperes = isset($input['NewMeterAmperes']) ? $input['NewMeterAmperes'] : '';
-            $sc->NewMeterInitialReading = isset($input['NewMeterInitialReading']) ? (is_numeric($input['NewMeterInitialReading']) ? $input['NewMeterInitialReading'] : 0) : '';
+            $sc->NewMeterInitialReading = isset($input['NewMeterInitialReading']) ? (is_numeric($input['NewMeterInitialReading']) ? $input['NewMeterInitialReading'] : 0) : 0;
             $sc->NewMeterLineToNeutral = isset($input['NewMeterLineToNeutral']) ? $input['NewMeterLineToNeutral'] : '';
             $sc->NewMeterLineToGround = isset($input['NewMeterLineToGround']) ? $input['NewMeterLineToGround'] : '';
             $sc->NewMeterNeutralToGround = isset($input['NewMeterNeutralToGround']) ? $input['NewMeterNeutralToGround'] : '';
@@ -233,7 +233,7 @@ class ServiceConnectionsEnergization extends Controller {
                 $meterInstallation->NewMeterSize = isset($input['NewMeterSize']) ? $input['NewMeterSize'] : '';
                 $meterInstallation->NewMeterType = isset($input['NewMeterType']) ? $input['NewMeterType'] : '';
                 $meterInstallation->NewMeterAmperes = isset($input['NewMeterAmperes']) ? $input['NewMeterAmperes'] : '';
-                $meterInstallation->NewMeterInitialReading = isset($input['NewMeterInitialReading']) ? (is_numeric($input['NewMeterInitialReading']) ? $input['NewMeterInitialReading'] : 0) : '';
+                $meterInstallation->NewMeterInitialReading = isset($input['NewMeterInitialReading']) ? (is_numeric($input['NewMeterInitialReading']) ? $input['NewMeterInitialReading'] : 0) : 0;
                 $meterInstallation->NewMeterLineToNeutral = isset($input['NewMeterLineToNeutral']) ? $input['NewMeterLineToNeutral'] : '';
                 $meterInstallation->NewMeterLineToGround = isset($input['NewMeterLineToGround']) ? $input['NewMeterLineToGround'] : '';
                 $meterInstallation->NewMeterNeutralToGround = isset($input['NewMeterNeutralToGround']) ? $input['NewMeterNeutralToGround'] : '';
