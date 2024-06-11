@@ -79,7 +79,7 @@ export default {
     data() {
         return {
             moment : moment,
-            baseURL : axios.defaults.baseURL,
+            baseURL : window.location.origin + axios.defaults.baseURL,
             filePath : axios.defaults.filePath,
             imgsPath : axios.defaults.imgsPath,
             colorProfile : document.querySelector("meta[name='color-profile']").getAttribute('content'),
@@ -129,7 +129,7 @@ export default {
             return moment().valueOf() + "-" + this.generateRandomString(32);
         },
         getRequests() {
-            axios.get(`${ axios.defaults.baseURL }/service_connections/get-applied-requests`)
+            axios.get(`${ this.baseURL }/service_connections/get-applied-requests`)
             .then(response => {
                 this.requests = response.data
             })
@@ -142,7 +142,7 @@ export default {
             })
         },
         save(id, status, notes) {
-            axios.get(`${ axios.defaults.baseURL }/service_connections/update-status`, {
+            axios.get(`${ this.baseURL }/service_connections/update-status`, {
                 params : {
                     id : id,
                     Status : status,
