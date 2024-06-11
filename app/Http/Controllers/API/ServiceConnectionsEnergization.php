@@ -185,35 +185,35 @@ class ServiceConnectionsEnergization extends Controller {
         $id = $input['id'];
         $input['CustomerSignature'] = null; // temporarily hold signature upload
 
-        $sc = MeterInstallation::where('ServiceConnectionId', $input['ServiceConnectionId'])->first();
+        $meterInstallation = MeterInstallation::where('ServiceConnectionId', $input['ServiceConnectionId'])->first();
 
-        if ($sc != null) {
-            $sc->Type = isset($input['Type']) ? $input['Type'] : '';
-            $sc->NewMeterNumber = isset($input['NewMeterNumber']) ? $input['NewMeterNumber'] : '';
-            $sc->NewMeterBrand = isset($input['NewMeterBrand']) ? $input['NewMeterBrand'] : '';
-            $sc->NewMeterSize = isset($input['NewMeterSize']) ? $input['NewMeterSize'] : '';
-            $sc->NewMeterType = isset($input['NewMeterType']) ? $input['NewMeterType'] : '';
-            $sc->NewMeterAmperes = isset($input['NewMeterAmperes']) ? $input['NewMeterAmperes'] : '';
-            $sc->NewMeterInitialReading = isset($input['NewMeterInitialReading']) ? (is_numeric($input['NewMeterInitialReading']) ? $input['NewMeterInitialReading'] : 0) : 0;
-            $sc->NewMeterLineToNeutral = isset($input['NewMeterLineToNeutral']) ? $input['NewMeterLineToNeutral'] : '';
-            $sc->NewMeterLineToGround = isset($input['NewMeterLineToGround']) ? $input['NewMeterLineToGround'] : '';
-            $sc->NewMeterNeutralToGround = isset($input['NewMeterNeutralToGround']) ? $input['NewMeterNeutralToGround'] : '';
-            $sc->DateInstalled = isset($input['DateInstalled']) ? $input['DateInstalled'] : '';
-            $sc->NewMeterMultiplier = isset($input['NewMeterMultiplier']) ? $input['NewMeterMultiplier'] : '';
-            $sc->TransfomerCapacity = isset($input['TransfomerCapacity']) ? $input['TransfomerCapacity'] : '';
-            $sc->TransformerID = isset($input['TransformerID']) ? $input['TransformerID'] : '';
-            $sc->PoleID = isset($input['PoleID']) ? $input['PoleID'] : '';
-            $sc->CTSerialNumber = isset($input['CTSerialNumber']) ? $input['CTSerialNumber'] : '';
-            $sc->NewMeterRemarks = isset($input['NewMeterRemarks']) ? $input['NewMeterRemarks'] : '';
-            $sc->OldMeterNumber = isset($input['OldMeterNumber']) ? $input['OldMeterNumber'] : '';
-            $sc->OldMeterBrand = isset($input['OldMeterBrand']) ? $input['OldMeterBrand'] : '';
-            $sc->OldMeterSize = isset($input['OldMeterSize']) ? $input['OldMeterSize'] : '';
-            $sc->OldMeterType = isset($input['OldMeterType']) ? $input['OldMeterType'] : '';
-            $sc->DateRemoved = isset($input['DateRemoved']) ? $input['DateRemoved'] : '';
-            $sc->ReasonForChanging = isset($input['ReasonForChanging']) ? $input['ReasonForChanging'] : '';
-            $sc->OldMeterMultiplier = isset($input['OldMeterMultiplier']) ? $input['OldMeterMultiplier'] : '';
-            $sc->OldMeterRemarks = isset($input['OldMeterRemarks']) ? $input['OldMeterRemarks'] : '';
-            $sc->save();
+        if ($meterInstallation != null) {
+            $meterInstallation->Type = isset($input['Type']) ? $input['Type'] : '';
+            $meterInstallation->NewMeterNumber = isset($input['NewMeterNumber']) ? $input['NewMeterNumber'] : '';
+            $meterInstallation->NewMeterBrand = isset($input['NewMeterBrand']) ? $input['NewMeterBrand'] : '';
+            $meterInstallation->NewMeterSize = isset($input['NewMeterSize']) ? $input['NewMeterSize'] : '';
+            $meterInstallation->NewMeterType = isset($input['NewMeterType']) ? $input['NewMeterType'] : '';
+            $meterInstallation->NewMeterAmperes = isset($input['NewMeterAmperes']) ? $input['NewMeterAmperes'] : '';
+            $meterInstallation->NewMeterInitialReading = isset($input['NewMeterInitialReading']) ? (is_numeric($input['NewMeterInitialReading']) ? $input['NewMeterInitialReading'] : 0) : 0;
+            $meterInstallation->NewMeterLineToNeutral = isset($input['NewMeterLineToNeutral']) ? $input['NewMeterLineToNeutral'] : '';
+            $meterInstallation->NewMeterLineToGround = isset($input['NewMeterLineToGround']) ? $input['NewMeterLineToGround'] : '';
+            $meterInstallation->NewMeterNeutralToGround = isset($input['NewMeterNeutralToGround']) ? $input['NewMeterNeutralToGround'] : '';
+            $meterInstallation->DateInstalled = isset($input['DateInstalled']) ? $input['DateInstalled'] : '';
+            $meterInstallation->NewMeterMultiplier = isset($input['NewMeterMultiplier']) ? $input['NewMeterMultiplier'] : '';
+            $meterInstallation->TransfomerCapacity = isset($input['TransfomerCapacity']) ? $input['TransfomerCapacity'] : '';
+            $meterInstallation->TransformerID = isset($input['TransformerID']) ? $input['TransformerID'] : '';
+            $meterInstallation->PoleID = isset($input['PoleID']) ? $input['PoleID'] : '';
+            $meterInstallation->CTSerialNumber = isset($input['CTSerialNumber']) ? $input['CTSerialNumber'] : '';
+            $meterInstallation->NewMeterRemarks = isset($input['NewMeterRemarks']) ? $input['NewMeterRemarks'] : '';
+            $meterInstallation->OldMeterNumber = isset($input['OldMeterNumber']) ? $input['OldMeterNumber'] : '';
+            $meterInstallation->OldMeterBrand = isset($input['OldMeterBrand']) ? $input['OldMeterBrand'] : '';
+            $meterInstallation->OldMeterSize = isset($input['OldMeterSize']) ? $input['OldMeterSize'] : '';
+            $meterInstallation->OldMeterType = isset($input['OldMeterType']) ? $input['OldMeterType'] : '';
+            $meterInstallation->DateRemoved = isset($input['DateRemoved']) ? $input['DateRemoved'] : '';
+            $meterInstallation->ReasonForChanging = isset($input['ReasonForChanging']) ? $input['ReasonForChanging'] : '';
+            $meterInstallation->OldMeterMultiplier = isset($input['OldMeterMultiplier']) ? $input['OldMeterMultiplier'] : '';
+            $meterInstallation->OldMeterRemarks = isset($input['OldMeterRemarks']) ? $input['OldMeterRemarks'] : '';
+            $meterInstallation->save();
             
             // CREATE LOG
             $timeFrame = new ServiceConnectionTimeframes;
@@ -284,28 +284,28 @@ class ServiceConnectionsEnergization extends Controller {
 
         $id = $input['id'];
 
-        $sc = LineAndMeteringServices::where('ServiceConnectionId', $input['ServiceConnectionId'])->first();
+        $lineAndMetering = LineAndMeteringServices::where('ServiceConnectionId', $input['ServiceConnectionId'])->first();
 
-        if ($sc != null) {
-            $sc->TypeOfService = isset($input['TypeOfService']) ? $input['TypeOfService'] : '';
-            $sc->MeterSealNumber = isset($input['MeterSealNumber']) ? $input['MeterSealNumber'] : '';
-            $sc->IsLeadSeal = isset($input['IsLeadSeal']) ? $input['IsLeadSeal'] : '';
-            $sc->MeterStatus = isset($input['MeterStatus']) ? $input['MeterStatus'] : '';
-            $sc->MeterNumber = isset($input['MeterNumber']) ? $input['MeterNumber'] : '';
-            $sc->Multiplier = isset($input['Multiplier']) ? $input['Multiplier'] : '';
-            $sc->MeterType = isset($input['MeterType']) ? $input['MeterType'] : '';
-            $sc->MeterBrand = isset($input['MeterBrand']) ? $input['MeterBrand'] : '';
-            $sc->Notes = isset($input['Notes']) ? $input['Notes'] : '';
-            $sc->ServiceDate = isset($input['ServiceDate']) ? $input['ServiceDate'] : '';
-            $sc->UserId = isset($input['UserId']) ? $input['UserId'] : '';
-            $sc->PrivateElectrician = isset($input['PrivateElectrician']) ? $input['PrivateElectrician'] : '';
-            $sc->LineLength = isset($input['LineLength']) ? $input['LineLength'] : '';
-            $sc->ConductorType = isset($input['ConductorType']) ? $input['ConductorType'] : '';
-            $sc->ConductorSize = isset($input['ConductorSize']) ? $input['ConductorSize'] : '';
-            $sc->ConductorUnit = isset($input['ConductorUnit']) ? $input['ConductorUnit'] : '';
-            $sc->Status = isset($input['Status']) ? $input['Status'] : '';
-            $sc->AccountNumber = isset($input['AccountNumber']) ? $input['AccountNumber'] : '';
-            $sc->save();
+        if ($lineAndMetering != null) {
+            $lineAndMetering->TypeOfService = isset($input['TypeOfService']) ? $input['TypeOfService'] : '';
+            $lineAndMetering->MeterSealNumber = isset($input['MeterSealNumber']) ? $input['MeterSealNumber'] : '';
+            $lineAndMetering->IsLeadSeal = isset($input['IsLeadSeal']) ? $input['IsLeadSeal'] : '';
+            $lineAndMetering->MeterStatus = isset($input['MeterStatus']) ? $input['MeterStatus'] : '';
+            $lineAndMetering->MeterNumber = isset($input['MeterNumber']) ? $input['MeterNumber'] : '';
+            $lineAndMetering->Multiplier = isset($input['Multiplier']) ? $input['Multiplier'] : '';
+            $lineAndMetering->MeterType = isset($input['MeterType']) ? $input['MeterType'] : '';
+            $lineAndMetering->MeterBrand = isset($input['MeterBrand']) ? $input['MeterBrand'] : '';
+            $lineAndMetering->Notes = isset($input['Notes']) ? $input['Notes'] : '';
+            $lineAndMetering->ServiceDate = isset($input['ServiceDate']) ? $input['ServiceDate'] : '';
+            $lineAndMetering->UserId = isset($input['UserId']) ? $input['UserId'] : '';
+            $lineAndMetering->PrivateElectrician = isset($input['PrivateElectrician']) ? $input['PrivateElectrician'] : '';
+            $lineAndMetering->LineLength = isset($input['LineLength']) ? $input['LineLength'] : '';
+            $lineAndMetering->ConductorType = isset($input['ConductorType']) ? $input['ConductorType'] : '';
+            $lineAndMetering->ConductorSize = isset($input['ConductorSize']) ? $input['ConductorSize'] : '';
+            $lineAndMetering->ConductorUnit = isset($input['ConductorUnit']) ? $input['ConductorUnit'] : '';
+            $lineAndMetering->Status = isset($input['Status']) ? $input['Status'] : '';
+            $lineAndMetering->AccountNumber = isset($input['AccountNumber']) ? $input['AccountNumber'] : '';
+            $lineAndMetering->save();
             
             // CREATE LOG
             $timeFrame = new ServiceConnectionTimeframes;
