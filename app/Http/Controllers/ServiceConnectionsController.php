@@ -5087,6 +5087,7 @@ class ServiceConnectionsController extends AppBaseController
             ->leftJoin('users', 'CRM_ServiceConnectionInspections.Inspector', '=', 'users.id')
             ->whereRaw("(Trash IS NULL OR Trash='No')")
             ->whereRaw("CRM_ServiceConnections.Status='Approved' AND CRM_ServiceConnections.ORNumber IS NULL")
+            ->whereNotIn('AccountApplicationType', ServiceConnections::skippableForInspection())
             ->select(
                 'CRM_ServiceConnections.id',
                 'CRM_ServiceConnections.ServiceAccountName',
