@@ -202,7 +202,7 @@ class ServiceConnectionsEnergization extends Controller {
             $meterInstallation = MeterInstallation::find($id);
 
             if ($meterInstallation != null) {
-                $meterInstallation = MeterInstallation::update($input);
+                $meterInstallation = $meterInstallation->update($input);
 
                 // CREATE LOG
                 $timeFrame = new ServiceConnectionTimeframes;
@@ -237,7 +237,7 @@ class ServiceConnectionsEnergization extends Controller {
         $sc = LineAndMeteringServices::where('ServiceConnectionId', $input['ServiceConnectionId'])->first();
 
         if ($sc != null) {
-            $lineAndMetering = LineAndMeteringServices::update($input);
+            $lineAndMetering = $sc->update($input);
             
             // CREATE LOG
             $timeFrame = new ServiceConnectionTimeframes;
@@ -251,7 +251,7 @@ class ServiceConnectionsEnergization extends Controller {
             $lineAndMetering = LineAndMeteringServices::find($id);
 
             if ($lineAndMetering != null) {
-                $lineAndMetering = LineAndMeteringServices::update($input);
+                $lineAndMetering = $lineAndMetering->update($input);
 
                 // CREATE LOG
                 $timeFrame = new ServiceConnectionTimeframes;
