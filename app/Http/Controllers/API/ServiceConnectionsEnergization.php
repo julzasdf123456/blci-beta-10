@@ -292,7 +292,7 @@ class ServiceConnectionsEnergization extends Controller {
             $lineAndMetering->IsLeadSeal = isset($input['IsLeadSeal']) ? $input['IsLeadSeal'] : '';
             $lineAndMetering->MeterStatus = isset($input['MeterStatus']) ? $input['MeterStatus'] : '';
             $lineAndMetering->MeterNumber = isset($input['MeterNumber']) ? $input['MeterNumber'] : '';
-            $lineAndMetering->Multiplier = isset($input['Multiplier']) ? $input['Multiplier'] : '';
+            $lineAndMetering->Multiplier = isset($input['Multiplier']) ? (is_numeric($input['Multiplier']) ? $input['Multiplier'] : 0) : 0;
             $lineAndMetering->MeterType = isset($input['MeterType']) ? $input['MeterType'] : '';
             $lineAndMetering->MeterBrand = isset($input['MeterBrand']) ? $input['MeterBrand'] : '';
             $lineAndMetering->Notes = isset($input['Notes']) ? $input['Notes'] : '';
@@ -324,7 +324,7 @@ class ServiceConnectionsEnergization extends Controller {
                 $lineAndMetering->IsLeadSeal = isset($input['IsLeadSeal']) ? $input['IsLeadSeal'] : '';
                 $lineAndMetering->MeterStatus = isset($input['MeterStatus']) ? $input['MeterStatus'] : '';
                 $lineAndMetering->MeterNumber = isset($input['MeterNumber']) ? $input['MeterNumber'] : '';
-                $lineAndMetering->Multiplier = isset($input['Multiplier']) ? $input['Multiplier'] : '';
+                $lineAndMetering->Multiplier = isset($input['Multiplier']) ? (is_numeric($input['Multiplier']) ? $input['Multiplier'] : 0) : 0;
                 $lineAndMetering->MeterType = isset($input['MeterType']) ? $input['MeterType'] : '';
                 $lineAndMetering->MeterBrand = isset($input['MeterBrand']) ? $input['MeterBrand'] : '';
                 $lineAndMetering->Notes = isset($input['Notes']) ? $input['Notes'] : '';

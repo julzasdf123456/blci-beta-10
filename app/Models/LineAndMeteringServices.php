@@ -61,7 +61,7 @@ class LineAndMeteringServices extends Model
         'IsLeadSeal' => 'nullable|string|max:50',
         'MeterStatus' => 'nullable|string|max:50',
         'MeterNumber' => 'nullable|string|max:50',
-        'Multiplier' => 'nullable|numeric',
+        'Multiplier' => 'nullable|string',
         'MeterType' => 'nullable|string|max:50',
         'MeterBrand' => 'nullable|string|max:50',
         'Notes' => 'nullable|string|max:1000',
