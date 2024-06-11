@@ -126,7 +126,7 @@ class MeterInstallation extends Model
         'NewMeterSize' => 'string',
         'NewMeterType' => 'string',
         'NewMeterAmperes' => 'string',
-        'NewMeterInitialReading' => 'decimal:2',
+        'NewMeterInitialReading' => 'string',
         'NewMeterLineToNeutral' => 'string',
         'NewMeterLineToGround' => 'string',
         'NewMeterNeutralToGround' => 'string',
