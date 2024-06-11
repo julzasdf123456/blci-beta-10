@@ -37,6 +37,7 @@ class MaterialPresets extends Model
         'CompressionTapYtdOneFifty',
         'MetalScrew',
         'ElectricalTape',
+        'CompressionTapYtdOneHundred',
     ];
 
     protected $casts = [
@@ -66,6 +67,7 @@ class MaterialPresets extends Model
         'CompressionTapYtdOneFifty' => 'string',
         'MetalScrew' => 'string',
         'ElectricalTape' => 'string',
+        'CompressionTapYtdOneHundred' => 'string',
     ];
 
     public static array $rules = [
@@ -96,6 +98,7 @@ class MaterialPresets extends Model
         'CompressionTapYtdOneFifty' => 'nullable|string',
         'MetalScrew' => 'nullable|string',
         'ElectricalTape' => 'nullable|string',
+        'CompressionTapYtdOneHundred' => 'nullable|string',
     ];
 
     
