@@ -7,6 +7,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Str;
 use App\Models\ServiceAccounts;
+use App\Models\ServiceConnections;
 use App\Models\SmsSettings;
 use App\Models\IDGenerator;
 use App\Models\SystemSettings;
@@ -111,7 +112,6 @@ class HomeController extends Controller
         }
     }
 
-
     public function fetchApprovedServiceConnections(Request $request) {
         $data = DB::table('CRM_ServiceConnections')
                 ->leftJoin('CRM_Barangays', 'CRM_ServiceConnections.Barangay', '=', 'CRM_Barangays.id')
@@ -149,6 +149,7 @@ class HomeController extends Controller
             ->leftJoin('users', 'CRM_ServiceConnectionInspections.Inspector', '=', 'users.id')
             ->whereRaw("(Trash IS NULL OR Trash='No')")
             ->whereRaw("CRM_ServiceConnections.Status='Approved' AND CRM_ServiceConnections.ORNumber IS NULL")
+            ->whereNotIn('AccountApplicationType', ServiceConnections::skippableForInspection())
             ->select(
                 'CRM_ServiceConnections.id',
                 'CRM_ServiceConnections.ServiceAccountName',

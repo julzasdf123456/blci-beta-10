@@ -3631,9 +3631,10 @@ class ServiceConnectionsController extends AppBaseController
     public function updateStatus(Request $request) {
         $id = $request['id'];
         $status = $request['Status'];
+        $notes = isset($request['Notes']) ? $request['Notes'] : null;
 
         ServiceConnections::where('id', $id)
-            ->update(['Status' => $status]);
+            ->update(['Status' => $status, 'Notes' => $notes]);
 
         // CREATE Timeframes
         $timeFrame = new ServiceConnectionTimeframes;
@@ -3664,6 +3665,9 @@ class ServiceConnectionsController extends AppBaseController
                     }                    
                 } 
             }
+        } elseif ($status === 'Energized') {
+            ServiceConnections::where('id', $id)
+                ->update(['DateTimeOfEnergization' => date('Y-m-d H:i:s')]);
         }
 
         return response()->json('ok', 200);
@@ -5726,4 +5730,32 @@ class ServiceConnectionsController extends AppBaseController
             return response()->json('No inspection fee data found!', 404);
         }
     }}
+
+    public function appliedRequests(Request $request) {
+        return view('/service_connections/applied_requests', [
+
+        ]);
+    }
+
+    public function getAppliedRequests(Request $request) {
+        $data = DB::table('CRM_ServiceConnections')
+            ->leftJoin('CRM_Barangays', 'CRM_ServiceConnections.Barangay', '=', 'CRM_Barangays.id')
+            ->leftJoin('CRM_Towns', 'CRM_ServiceConnections.Town', '=', 'CRM_Towns.id')
+            ->leftJoin('CRM_ServiceConnectionInspections', 'CRM_ServiceConnectionInspections.ServiceConnectionId', '=', 'CRM_ServiceConnections.id')
+            ->leftJoin('users', 'CRM_ServiceConnectionInspections.Inspector', '=', 'users.id')
+            ->leftJoin('CRM_PaymentOrder', 'CRM_PaymentOrder.ServiceConnectionId', '=', 'CRM_ServiceConnections.id')
+            ->whereRaw("(Trash IS NULL OR Trash = 'No') AND CRM_ServiceConnections.Status NOT IN ('Energized', 'Closed')")
+            ->whereIn('AccountApplicationType', ServiceConnections::skippableForInspection())
+            ->select('CRM_ServiceConnections.*',
+                'CRM_Towns.Town as TownFull',
+                'CRM_PaymentOrder.OverAllTotal',
+                'CRM_PaymentOrder.ORNumber',
+                'users.name',
+                'CRM_Barangays.Barangay as BarangayFull',
+                'CRM_ServiceConnectionInspections.InspectionSchedule')
+            ->orderBy('CRM_ServiceConnections.ServiceAccountName')
+            ->get();
+
+        return response()->json($data, 200);
+    }
 }

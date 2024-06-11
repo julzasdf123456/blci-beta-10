@@ -325,12 +325,12 @@ class ServiceConnections extends Model
 
     public static function skippableForInspection() {
         return [
-            "CONDUCTOR COVER RENTAL",
-            "METER ACCURACY TEST",
-            "PURCHASE OF MATERIALS",
-            "REFUND OF BILL DEPOSIT", // DIRECTLY DONE
-            "SALE OF ITEMS",
-            "SENIOR CITIZEN'S DISCOUNT", // DIRECTLY DONE
+            "CONDUCTOR COVER RENTAL", // STATUS: Paid
+            "METER ACCURACY TEST", // | STATUS: Paid
+            "PURCHASE OF MATERIALS", // | STATUS: Paid
+            "REFUND OF BILL DEPOSIT", // DIRECTLY DONE | STATUS: Forwarded to Accounting
+            "SALE OF ITEMS", // | STATUS:  Paid
+            "SENIOR CITIZEN'S DISCOUNT", // DIRECTLY DONE | STATUS:  Forwarded to CS Supervisor
         ];
     }
 

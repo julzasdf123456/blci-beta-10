@@ -1,5 +1,5 @@
 <div>
-   <span class="text-muted" style="margin-left: 3px;"><i class="fas fa-hard-hat ico-tab-mini"></i><strong>Service Connections</strong> Statistics</span>
+   <span class="text-muted" style="margin-left: 3px;"><i class="fas fa-hard-hat ico-tab-mini"></i><strong>Service Connection Applications</strong></span>
    <div class="row mt-3">
         {{-- Requests for inspection --}}
         @canany(['Super Admin', 'sc view'])
@@ -102,7 +102,26 @@
             </div>
         </div>
         @endcanany
+   </div>
 
+   <span class="text-muted" style="margin-left: 3px;"><i class="fas fa-hard-hat ico-tab-mini"></i><strong>Other Applications</strong></span>
+   <div class="row mt-3">
+        {{-- Applied Requests --}}
+        @canany(['Super Admin', 'turn-on assigning'])
+        <div class="col-lg-3">                
+            <div class="card shadow-none">
+                <div class="card-body p-0 mt-3 mb-2">
+                    <div class="inner">
+                        <p class="no-pads text-muted text-center">Applied Requests</p>
+                        <h1 class="text-center strong text-xxl text-success mt-3" id="applied-requests">...</h1>
+                    </div>
+                    <div class="px-3">
+                        <a href="{{ route('serviceConnections.applied-requests') }}" class="btn btn-block btn-transparent" title="Applied requests">View <i class="fas fa-arrow-circle-right ico-tab-left-mini"></i></a>
+                    </div>
+                </div>               
+            </div>
+        </div>
+        @endcanany
         {{-- Other Services --}}
         @canany(['Super Admin', 'turn-on assigning'])
         <div class="col-lg-3">                
@@ -119,7 +138,7 @@
             </div>
         </div>
         @endcanany
-   </div>
+    </div>
 </div>
 
 {{-- MODAL FOR APPROVED AND FOR PAYMENT --}}
@@ -324,6 +343,22 @@
                success : function(response) {
                    console.log(response.length);
                    $('#other-services').text(response.length);
+               },
+               error : function(error) {
+                   // alert(error);
+                   console.log('Server error!');
+               }
+           })
+
+           /**
+            * APPLIED REQUESTS
+            */
+            $.ajax({
+               url : '{{ route("serviceConnections.get-applied-requests") }}',
+               type: "GET",
+               success : function(response) {
+                   console.log(response.length);
+                   $('#applied-requests').text(response.length);
                },
                error : function(error) {
                    // alert(error);

@@ -204,6 +204,8 @@ Route::group(['middleware' => ['settings']], function () {
     Route::post('/service_connections/trash-documents', [ServiceConnectionsController::class, 'trashDocumets'])->name('serviceConnections.trash-documents');
     Route::get('/service_connections/print-inspection-fee/{id}', [ServiceConnectionsController::class, 'printInspectionFee'])->name('serviceConnections.print-inspection-fee');
     Route::get('/service_connections/update-inspection-fee', [ServiceConnectionsController::class, 'updateInspectionFee'])->name('serviceConnections.update-inspection-fee');
+    Route::get('/service_connections/applied-requests', [ServiceConnectionsController::class, 'appliedRequests'])->name('serviceConnections.applied-requests');
+    Route::get('/service_connections/get-applied-requests', [ServiceConnectionsController::class, 'getAppliedRequests'])->name('serviceConnections.get-applied-requests');
     Route::resource('serviceConnections', App\Http\Controllers\ServiceConnectionsController::class);
 
 
