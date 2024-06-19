@@ -116,7 +116,7 @@
                 </tr>
                 <tr>
                     <th>Multiplier</th>
-                    <th>{{ $meters != null ? $meters->Multiplier : "1" }}</th>
+                    <th>{{ $serviceAccounts != null ? $serviceAccounts->Multiplier : "1" }}</th>
                 </tr>
                 {{-- <tr>
                     <th>Coreloss</th>
