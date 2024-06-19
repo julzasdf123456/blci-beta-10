@@ -3876,6 +3876,7 @@ class ServiceAccountsController extends AppBaseController
                             //     </tr>";
                             
                             // UPDATE BALANCES
+                            $acctNo  = utf8_decode($acctNo);
                             $serviceAccount = ServiceAccounts::where('OldAccountNo', $acctNo)->first();
                             if ($serviceAccount != null) {
                                 $serviceAccount->AdvancedMaterialDeposit = $outBalance;
@@ -3974,6 +3975,7 @@ class ServiceAccountsController extends AppBaseController
                             //     </tr>";
                             
                             // UPDATE BALANCES
+                            $acctNo  = utf8_decode($acctNo);
                             $serviceAccount = ServiceAccounts::where('OldAccountNo', $acctNo)->first();
                             if ($serviceAccount != null) {
                                 if (trim($outBalance) != null) {
