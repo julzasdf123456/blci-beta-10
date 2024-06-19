@@ -10,6 +10,7 @@ use Illuminate\Support\Facades\DB;
 use App\Models\IDGenerator;
 use App\Models\Bills;
 use App\Models\PaidBills;
+use App\Models\BillingMeters;
 use App\Models\Readings;
 use App\Models\ServiceAccounts;
 class Ledgers implements  WithCalculatedFormulas, ToCollection
@@ -30,6 +31,14 @@ class Ledgers implements  WithCalculatedFormulas, ToCollection
                 if ($acct != null) {
                     $acct->Multiplier = $row[4] != null ? (is_numeric(htmlspecialchars_decode(trim($row[4]))) ? (floatval(htmlspecialchars_decode(trim($row[4]))) === 0 ? 1 : floatval(htmlspecialchars_decode(trim($row[4])))) : 1) : 1;
                     $acct->save();
+
+                    // update meter number
+                    $meter = BillingMeters::where('ServiceAccountId', $acct->id)->first();
+                    if ($meter !== null) {
+                        $meter->SerialNumber = $row[1] != null ? htmlspecialchars_decode(trim($row[1])) : null;
+                        $meter->Multiplier = $row[4] != null ? (is_numeric(htmlspecialchars_decode(trim($row[4]))) ? (floatval(htmlspecialchars_decode(trim($row[4]))) === 0 ? 1 : floatval(htmlspecialchars_decode(trim($row[4])))) : 1) : 1;
+                        $meter->save();
+                    }
                 }
 
                 $billNo = IDGenerator::generateID() . $key;
