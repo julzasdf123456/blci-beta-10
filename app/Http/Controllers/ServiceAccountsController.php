@@ -3615,7 +3615,7 @@ class ServiceAccountsController extends AppBaseController
                     $block = substr($line, 4, 3);
                     $classification = substr($line, 8, 2);
                     $name = substr($line, 14, 28);
-                    $acctNo = substr($line, 43, 8);
+                    $acctNo = substr(utf8_decode($line), 43, 8);
                     $houseNo = trim(substr($line, 52, 8));
                     $meterNo = trim(substr($line, 61, 12));
                     $flag = trim(substr($line, 74, 4));
@@ -3657,131 +3657,136 @@ class ServiceAccountsController extends AppBaseController
                             //         <td style='border: 1px solid black;'>" . $status . "</td>
                             //     </tr>";
                             
-                            // INSERT ACCOUNTS
-                            $serviceAccount = ServiceAccounts::where('OldAccountNo', $acctNo)->first();
-                            if ($serviceAccount != null) {
-                                // UPDATE
-                                $serviceAccount->Zone = (trim($zone) == null ? $prevZone : $zone);
-                                $serviceAccount->BlockCode = (trim($block) == null ? $prevBlock : $block);
-                                $serviceAccount->AccountType = utf8_decode(trim($classification) == null ? $prevClass : $classification);
-                                $serviceAccount->ServiceAccountName = utf8_decode($name);
-                                $serviceAccount->HouseNumber = utf8_decode($houseNo);
-                                $serviceAccount->MeterDetailsId = utf8_decode($meterNo);
-                                $serviceAccount->Flag = utf8_decode($flag);
-                                $serviceAccount->Multiplier = $multiplier;
-                                $serviceAccount->DiscountType = $dscType;                                
-                                $serviceAccount->DiscountRate = is_numeric($rate) ? $rate : '0';                              
-                                $serviceAccount->AccountStatus = $status;                           
-                                $serviceAccount->OutstandingBalance = is_numeric($outBalance) ? $outBalance : '0';
-                                $serviceAccount->save();
+                            if ($acctNo != null && strlen(trim($acctNo)) > 0) {
+                                // INSERT ACCOUNTS
+                                $acctNo  = utf8_decode($acctNo);
+                                $serviceAccount = ServiceAccounts::where('OldAccountNo', $acctNo)->first();
 
-                                // INSERT METER NO HERE
-                                $meter = BillingMeters::where('SerialNumber', $meterNo)
-                                    ->where('ServiceAccountId', $serviceAccount->id)
-                                    ->first();
-                                
-                                if ($meter == null) {
-                                    $meter = new BillingMeters;
-                                    $meter->id = IDGenerator::generateID() . $i;
-                                    $meter->ServiceAccountId = $serviceAccount->id;
-                                    $meter->SerialNumber = $meterNo;
-                                    $meter->Multiplier = $multiplier;
-                                    $meter->LatestReading = $lastReading;
-                                    $meter->LatestReadingDate = date('Y-m-d', strtotime($lastReadingDate));
-                                    $meter->save();
+                                if ($serviceAccount != null) {
+                                    // UPDATE
+                                    $serviceAccount->Zone = (trim($zone) == null ? $prevZone : $zone);
+                                    $serviceAccount->BlockCode = (trim($block) == null ? $prevBlock : $block);
+                                    $serviceAccount->AccountType = utf8_decode(trim($classification) == null ? $prevClass : $classification);
+                                    $serviceAccount->ServiceAccountName = utf8_decode($name);
+                                    $serviceAccount->HouseNumber = utf8_decode($houseNo);
+                                    $serviceAccount->MeterDetailsId = utf8_decode($meterNo);
+                                    $serviceAccount->Flag = utf8_decode($flag);
+                                    $serviceAccount->Multiplier = $multiplier;
+                                    $serviceAccount->DiscountType = $dscType;                                
+                                    $serviceAccount->DiscountRate = is_numeric($rate) ? $rate : '0';                              
+                                    $serviceAccount->AccountStatus = $status;                           
+                                    $serviceAccount->OutstandingBalance = is_numeric($outBalance) ? $outBalance : '0';
+                                    $serviceAccount->save();
+
+                                    // INSERT METER NO HERE
+                                    $meter = BillingMeters::where('SerialNumber', $meterNo)
+                                        ->where('ServiceAccountId', $serviceAccount->id)
+                                        ->first();
+                                    
+                                    if ($meter == null) {
+                                        $meter = new BillingMeters;
+                                        $meter->id = IDGenerator::generateID() . $i;
+                                        $meter->ServiceAccountId = $serviceAccount->id;
+                                        $meter->SerialNumber = $meterNo;
+                                        $meter->Multiplier = $multiplier;
+                                        $meter->LatestReading = isset($lastReading) ? (is_numeric($lastReading) ? $lastReading : 0) : 0;
+                                        $meter->LatestReadingDate = date('Y-m-d', strtotime($lastReadingDate));
+                                        $meter->save();
+                                    } else {
+                                        $meter->Multiplier = $multiplier;
+                                        $meter->LatestReading = isset($lastReading) ? (is_numeric($lastReading) ? $lastReading : 0) : 0;
+                                        $meter->LatestReadingDate = date('Y-m-d', strtotime($lastReadingDate));
+                                        $meter->save();
+                                    }
+
+
+                                    // INSERT LAST READING HERE
+                                    $period = date('Y-m-01', strtotime($lastReadingDate));
+                                    $reading = Readings::where('AccountNumber', $serviceAccount->id)
+                                        ->where('ServicePeriod', $period)
+                                        ->first();
+
+                                    if ($reading != null) {
+                                        $reading->KwhUsed = isset($lastReading) ? (is_numeric($lastReading) ? $lastReading : 0) : 0;
+                                        $reading->ReadingTimestamp = $period;
+                                        $reading->save();
+                                    } else {
+                                        $reading = new Readings;
+                                        $reading->id = IDGenerator::generateIDandRandString() . $i;
+                                        $reading->AccountNumber = $serviceAccount->id;
+                                        $reading->ServicePeriod = $period;
+                                        $reading->KwhUsed = isset($lastReading) ? (is_numeric($lastReading) ? $lastReading : 0) : 0;
+                                        $reading->ReadingTimestamp = $period;
+                                        $reading->save();
+                                    }
                                 } else {
-                                    $meter->Multiplier = $multiplier;
-                                    $meter->LatestReading = $lastReading;
-                                    $meter->LatestReadingDate = date('Y-m-d', strtotime($lastReadingDate));
-                                    $meter->save();
+                                    // INSERT NEW
+                                    $serviceAccount = new ServiceAccounts;
+                                    $serviceAccount->id = IDGenerator::generateID() . $i;
+                                    $serviceAccount->Zone = (trim($zone) == null ? $prevZone : $zone);
+                                    $serviceAccount->BlockCode = (trim($block) == null ? $prevBlock : $block);
+                                    $serviceAccount->AccountType = utf8_decode(trim($classification) == null ? $prevClass : $classification);
+                                    $serviceAccount->ServiceAccountName = utf8_decode($name);
+                                    $serviceAccount->OldAccountNo = utf8_decode($acctNo);
+                                    $serviceAccount->HouseNumber = utf8_decode($houseNo);
+                                    $serviceAccount->MeterDetailsId = utf8_decode($meterNo);
+                                    $serviceAccount->Flag = utf8_decode($flag);
+                                    $serviceAccount->Multiplier = $multiplier;
+                                    $serviceAccount->DiscountType = $dscType;                                        
+                                    $serviceAccount->DiscountRate = is_numeric($rate) ? $rate : '0';                              
+                                    $serviceAccount->AccountStatus = $status;                           
+                                    $serviceAccount->OutstandingBalance = is_numeric($outBalance) ? $outBalance : '0';
+                                    $serviceAccount->save();
+
+                                    // INSERT METER NO HERE
+                                    $meter = BillingMeters::where('SerialNumber', $meterNo)
+                                        ->where('ServiceAccountId', $serviceAccount->id)
+                                        ->first();
+                                    
+                                    if ($meter == null) {
+                                        $meter = new BillingMeters;
+                                        $meter->id = IDGenerator::generateID() . $i;
+                                        $meter->ServiceAccountId = $serviceAccount->id;
+                                        $meter->SerialNumber = $meterNo;
+                                        $meter->Multiplier = $multiplier;
+                                        $meter->LatestReading = isset($lastReading) ? (is_numeric($lastReading) ? $lastReading : 0) : 0;
+                                        $meter->LatestReadingDate = date('Y-m-d', strtotime($lastReadingDate));
+                                        $meter->save();
+                                    } else {
+                                        $meter->Multiplier = $multiplier;
+                                        $meter->LatestReading = isset($lastReading) ? (is_numeric($lastReading) ? $lastReading : 0) : 0;
+                                        $meter->LatestReadingDate = date('Y-m-d', strtotime($lastReadingDate));
+                                        $meter->save();
+                                    }
+
+
+                                    // INSERT LAST READING HERE
+                                    $period = date('Y-m-01', strtotime($lastReadingDate));
+                                    $reading = Readings::where('AccountNumber', $serviceAccount->id)
+                                        ->where('ServicePeriod', $period)
+                                        ->first();
+
+                                    if ($reading != null) {
+                                        $reading->KwhUsed = isset($lastReading) ? (is_numeric($lastReading) ? $lastReading : 0) : 0;;
+                                        $reading->ReadingTimestamp = $period;
+                                        $reading->save();
+                                    } else {
+                                        $reading = new Readings;
+                                        $reading->id = IDGenerator::generateIDandRandString() . $i;
+                                        $reading->AccountNumber = $serviceAccount->id;
+                                        $reading->ServicePeriod = $period;
+                                        $reading->KwhUsed = isset($lastReading) ? (is_numeric($lastReading) ? $lastReading : 0) : 0;;
+                                        $reading->ReadingTimestamp = $period;
+                                        $reading->save();
+                                    }
                                 }
 
-
-                                // INSERT LAST READING HERE
-                                $period = date('Y-m-01', strtotime($lastReadingDate));
-                                $reading = Readings::where('AccountNumber', $serviceAccount->id)
-                                    ->where('ServicePeriod', $period)
-                                    ->first();
-
-                                if ($reading != null) {
-                                    $reading->KwhUsed = $lastReading;
-                                    $reading->ReadingTimestamp = $period;
-                                    $reading->save();
-                                } else {
-                                    $reading = new Readings;
-                                    $reading->id = IDGenerator::generateIDandRandString() . $i;
-                                    $reading->AccountNumber = $serviceAccount->id;
-                                    $reading->ServicePeriod = $period;
-                                    $reading->KwhUsed = $lastReading;
-                                    $reading->ReadingTimestamp = $period;
-                                    $reading->save();
-                                }
-                            } else {
-                                // INSERT NEW
-                                $serviceAccount = new ServiceAccounts;
-                                $serviceAccount->id = IDGenerator::generateID() . $i;
-                                $serviceAccount->Zone = (trim($zone) == null ? $prevZone : $zone);
-                                $serviceAccount->BlockCode = (trim($block) == null ? $prevBlock : $block);
-                                $serviceAccount->AccountType = utf8_decode(trim($classification) == null ? $prevClass : $classification);
-                                $serviceAccount->ServiceAccountName = utf8_decode($name);
-                                $serviceAccount->OldAccountNo = utf8_decode($acctNo);
-                                $serviceAccount->HouseNumber = utf8_decode($houseNo);
-                                $serviceAccount->MeterDetailsId = utf8_decode($meterNo);
-                                $serviceAccount->Flag = utf8_decode($flag);
-                                $serviceAccount->Multiplier = $multiplier;
-                                $serviceAccount->DiscountType = $dscType;                                        
-                                $serviceAccount->DiscountRate = is_numeric($rate) ? $rate : '0';                              
-                                $serviceAccount->AccountStatus = $status;                           
-                                $serviceAccount->OutstandingBalance = is_numeric($outBalance) ? $outBalance : '0';
-                                $serviceAccount->save();
-
-                                // INSERT METER NO HERE
-                                $meter = BillingMeters::where('SerialNumber', $meterNo)
-                                    ->where('ServiceAccountId', $serviceAccount->id)
-                                    ->first();
-                                
-                                if ($meter == null) {
-                                    $meter = new BillingMeters;
-                                    $meter->id = IDGenerator::generateID() . $i;
-                                    $meter->ServiceAccountId = $serviceAccount->id;
-                                    $meter->SerialNumber = $meterNo;
-                                    $meter->Multiplier = $multiplier;
-                                    $meter->LatestReading = $lastReading;
-                                    $meter->LatestReadingDate = date('Y-m-d', strtotime($lastReadingDate));
-                                    $meter->save();
-                                } else {
-                                    $meter->Multiplier = $multiplier;
-                                    $meter->LatestReading = $lastReading;
-                                    $meter->LatestReadingDate = date('Y-m-d', strtotime($lastReadingDate));
-                                    $meter->save();
-                                }
-
-
-                                // INSERT LAST READING HERE
-                                $period = date('Y-m-01', strtotime($lastReadingDate));
-                                $reading = Readings::where('AccountNumber', $serviceAccount->id)
-                                    ->where('ServicePeriod', $period)
-                                    ->first();
-
-                                if ($reading != null) {
-                                    $reading->KwhUsed = $lastReading;
-                                    $reading->ReadingTimestamp = $period;
-                                    $reading->save();
-                                } else {
-                                    $reading = new Readings;
-                                    $reading->id = IDGenerator::generateIDandRandString() . $i;
-                                    $reading->AccountNumber = $serviceAccount->id;
-                                    $reading->ServicePeriod = $period;
-                                    $reading->KwhUsed = $lastReading;
-                                    $reading->ReadingTimestamp = $period;
-                                    $reading->save();
-                                }
+                                $prevZone = trim($zone) == null ? $prevZone : $zone;
+                                $prevBlock = trim($block) == null ? $prevBlock : $block;
+                                $prevClass = trim($classification) == null ? $prevClass : $classification;
+                                $i+=1;
                             }
-
-                            $prevZone = trim($zone) == null ? $prevZone : $zone;
-                            $prevBlock = trim($block) == null ? $prevBlock : $block;
-                            $prevClass = trim($classification) == null ? $prevClass : $classification;
-                            $i+=1;
+                            
                         }
                     }
 
