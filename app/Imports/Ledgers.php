@@ -27,6 +27,11 @@ class Ledgers implements  WithCalculatedFormulas, ToCollection
                 // get account first
                 $acct = ServiceAccounts::where('OldAccountNo', htmlspecialchars_decode(trim($row[0])))->first();
 
+                if ($acct != null) {
+                    $acct->Multiplier = $row[4] != null ? (is_numeric(htmlspecialchars_decode(trim($row[4]))) ? (floatval(htmlspecialchars_decode(trim($row[4]))) === 0 ? 1 : floatval(htmlspecialchars_decode(trim($row[4])))) : 1) : 1;
+                    $acct->save();
+                }
+
                 $billNo = IDGenerator::generateID() . $key;
                 // create bills
                 Bills::create([
