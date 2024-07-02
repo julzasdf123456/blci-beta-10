@@ -947,10 +947,13 @@ class Bills extends Model
          */
         $unpaid = DB::table('Billing_Bills')
             ->whereRaw("AccountNumber='" . $account->id . "' AND Balance > 0 AND DueDate < GETDATE() AND ServicePeriod < '" . $period . "'")
+            ->orderByDesc('ServicePeriod')
             ->get();
         $previousSurcharges = 0;
+        $sIndex = 1;
         foreach($unpaid as $item) {
-            $previousSurcharges += round(floatval(Bills::assessDueBillAndGetSurcharge($item)), 2);
+            $previousSurcharges += round(floatval(Bills::assessDueBillAndGetSurcharge($item)) * $sIndex, 2);
+            $sIndex += 1;
         }
         /**
          * GET OCL
