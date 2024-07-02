@@ -512,11 +512,11 @@ class Bills extends Model
     }
 
     public static function getFinalPenalty($bill) {
-        return (floatval($bill->Balance) * .0226);
+        return (floatval($bill->Balance) * .02);
     }
 
     public static function getFinalRawPenalty($bill) {
-        return (floatval($bill->Balance) * .0226);
+        return (floatval($bill->Balance) * .02);
     }
 
     public static function getAccountType($account) {
