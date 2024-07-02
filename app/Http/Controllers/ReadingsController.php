@@ -4202,26 +4202,7 @@ class ReadingsController extends AppBaseController
     }
 
     public function getMeterReaders(Request $request) {
-        $town = $request['Town'];
-
-        if ($town=='All') {
-            $meterReaders = DB::table('Billing_ServiceAccounts')
-                ->leftJoin('users', 'Billing_ServiceAccounts.MeterReader', '=', 'users.id')
-                ->whereNotNull('MeterReader')
-                ->select('Billing_ServiceAccounts.MeterReader', 'users.name')
-                ->groupBy('Billing_ServiceAccounts.MeterReader', 'users.name')
-                ->orderBy('users.name')
-                ->get();
-        } else {
-            $meterReaders = DB::table('Billing_ServiceAccounts')
-                ->leftJoin('users', 'Billing_ServiceAccounts.MeterReader', '=', 'users.id')
-                ->where('Billing_ServiceAccounts.Town', $town)
-                ->whereNotNull('MeterReader')
-                ->select('Billing_ServiceAccounts.MeterReader', 'users.name')
-                ->groupBy('Billing_ServiceAccounts.MeterReader', 'users.name')
-                ->orderBy('users.name')
-                ->get();
-        }
+        $meterReaders = User::role('Meter Reader Inhouse')->orderBy('name')->get();
 
         return response()->json($meterReaders, 200);
     }
@@ -5278,5 +5259,65 @@ class ReadingsController extends AppBaseController
 
         // Output the content
         echo $text;
+    }
+
+    public function fullReport(Request $request) {
+        return view('/readings/full_report', [
+
+        ]);
+    }
+
+    public function getBillingMonths(Request $request) {
+        $data = DB::table('Billing_Readings')
+            ->select('ServicePeriod')
+            ->groupBy('ServicePeriod')
+            ->orderByDesc('ServicePeriod')
+            ->get();
+
+        return response()->json($data, 200);
+    }
+
+    public function getReadingReportData(Request $request) {
+        $period = $request['Period'];
+        $meterReader = $request['MeterReader'];
+        $day = $request['Day'];
+
+        $data = DB::table('Billing_Readings')
+            ->leftJoin("Billing_Bills", function($join) {
+                $join->on('Billing_Readings.AccountNumber', '=', 'Billing_Bills.AccountNumber')
+                    ->on('Billing_Readings.ServicePeriod', '=', 'Billing_Bills.ServicePeriod');
+            })
+            ->leftJoin('Billing_ServiceAccounts', 'Billing_Readings.AccountNumber', '=', 'Billing_ServiceAccounts.id')
+            ->whereRaw("Billing_Readings.MeterReader = '" . $meterReader . "' AND Billing_Readings.ServicePeriod='" . $period . "' AND Billing_ServiceAccounts.GroupCode='" . $day . "'")
+            ->select('Billing_ServiceAccounts.Zone',
+                    'Billing_ServiceAccounts.BlockCode',
+                )
+            ->groupBy('Billing_ServiceAccounts.Zone', 'Billing_ServiceAccounts.BlockCode')
+            ->get();
+
+        foreach($data as $item) {
+            $item->ReadingData = DB::table('Billing_Readings')
+                ->leftJoin("Billing_Bills", function($join) {
+                    $join->on('Billing_Readings.AccountNumber', '=', 'Billing_Bills.AccountNumber')
+                        ->on('Billing_Readings.ServicePeriod', '=', 'Billing_Bills.ServicePeriod');
+                })
+                ->leftJoin('Billing_ServiceAccounts', 'Billing_Readings.AccountNumber', '=', 'Billing_ServiceAccounts.id')
+                ->whereRaw("Billing_Readings.MeterReader = '" . $meterReader . "' AND Billing_Readings.ServicePeriod='" . $period . "' 
+                    AND Billing_ServiceAccounts.GroupCode='" . $day . "' AND Billing_ServiceAccounts.Zone='" . $item->Zone . "' AND Billing_ServiceAccounts.BlockCode='" . $item->BlockCode . "'")
+                ->select('Billing_Readings.*',
+                    'Billing_Readings.AccountNumber AS AccountId',
+                    'Billing_Readings.OldAccountNo',
+                    'Billing_Readings.ConsumerName AS ServiceAccountName',
+                    'Billing_Readings.HouseNumber AS SequenceCode',
+                    'Billing_Bills.id AS BillId',
+                    'Billing_Bills.Balance',
+                    'Billing_ServiceAccounts.AccountStatus',
+                    )
+                ->orderBy('HouseNumber')
+                ->orderBy('ConsumerName')
+                ->get();
+        }
+
+        return response()->json($data, 200);
     }
 }

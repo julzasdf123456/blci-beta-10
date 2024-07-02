@@ -41,6 +41,7 @@ class Ledgers implements  WithCalculatedFormulas, ToCollection
                     }
                 }
 
+
                 $billNo = IDGenerator::generateID() . $key;
                 // create bills
                 Bills::create([

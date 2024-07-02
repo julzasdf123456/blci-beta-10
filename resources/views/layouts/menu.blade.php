@@ -208,13 +208,7 @@ use Illuminate\Support\Facades\Auth;
                         </a>
                     </li>
                     @endcanany
-{{-- 
-                    <li class="nav-item">
-                        <a href="{{ route('serviceConnections.energization') }}"
-                        class="nav-link {{ Request::is('serviceConnections.energization*') ? 'active' : '' }}">
-                        <i class="fas fa-check nav-icon text-warning"></i><p>For Energization</p>
-                        </a>
-                    </li> --}}
+
                 </ul>
             </li>
 
@@ -771,7 +765,13 @@ use Illuminate\Support\Facades\Auth;
                    class="nav-link {{ Request::is('serviceAccounts.reading-account-grouper*') ? 'active' : '' }}">                   
                    <i class="fas fa-calendar-alt nav-icon text-primary"></i><p>Reading Schedules</p>
                 </a>
-            </li>            
+            </li>    
+            <li class="nav-item">
+                <a href="{{ route('readings.full-report') }}"
+                   class="nav-link {{ Request::is('readings.full-report*') ? 'active' : '' }}">                   
+                   <i class="fas fa-street-view nav-icon text-primary"></i><p>Reading Monitoring</p>
+                </a>
+            </li>        
             <li class="nav-item">
                 <a href="{{ route('serviceAccounts.meter-readers') }}"
                    class="nav-link {{ Request::is('serviceAccounts.meter-readers*') ? 'active' : '' }}">                   
@@ -782,12 +782,6 @@ use Illuminate\Support\Facades\Auth;
                 <a href="{{ route('readings.manual-reading') }}"
                    class="nav-link {{ Request::is('readings.manual-reading*') ? 'active' : '' }}">                   
                    <i class="fas fa-circle nav-icon text-primary"></i><p>Manual Reading</p>
-                </a>
-            </li>
-            <li class="nav-item">
-                <a href="{{ route('readings.reading-monitor') }}"
-                   class="nav-link {{ Request::is('readings.reading-monitor*') ? 'active' : '' }}">                   
-                   <i class="fas fa-street-view nav-icon text-primary"></i><p>Reading Monitoring</p>
                 </a>
             </li>
             <li class="nav-item">

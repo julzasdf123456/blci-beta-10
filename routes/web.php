@@ -588,6 +588,9 @@ Route::group(['middleware' => ['settings']], function () {
     Route::get('/readings/upload-text-file', [ReadingsController::class, 'uploadTextFile'])->name('readings.upload-text-file');
     Route::post('/readings/process-uploaded-text-file', [ReadingsController::class, 'processUploadedTextFile'])->name('readings.process-uploaded-text-file');
     Route::get('/readings/download-text-file/{svcPeriod}/{meterReader}/{groupCode}/{areaCode}', [ReadingsController::class, 'downloadTextFile'])->name('readings.download-text-file');
+    Route::get('/readings/full-report', [ReadingsController::class, 'fullReport'])->name('readings.full-report');
+    Route::get('/readings/get-billing-months', [ReadingsController::class, 'getBillingMonths'])->name('readings.get-billing-months');
+    Route::get('/readings/get-reading-report-data', [ReadingsController::class, 'getReadingReportData'])->name('readings.get-reading-report-data');
     Route::resource('readings', ReadingsController::class);
 
     Route::get('/bills/unbilled-readings', [BillsController::class, 'unbilledReadings'])->name('bills.unbilled-readings');

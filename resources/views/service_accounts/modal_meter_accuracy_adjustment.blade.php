@@ -43,7 +43,7 @@
                                         onclick="selectInit(`{{ $item->id }}`)" 
                                         class="fas fa-check-circle text-muted"></i>
                                 </td>
-                                <td class="{{ $item->ORNumber != null ? 'text-success' : 'text-danger' }}">{{ date('M Y', strtotime($item->ServicePeriod)) }}</td>
+                                <td class="{{ $item->PaidBillId != null ? 'text-success' : 'text-danger' }}">{{ date('M Y', strtotime($item->ServicePeriod)) }}</td>
                                 <td class="text-right text-muted">{{ $item->PresentKwh }}</td>
                                 <td class="text-right text-muted"><strong>{{ $item->Multiplier }}</strong></td>
                                 <th class="text-right text-muted">{{ $item->KwhUsed }}</th>

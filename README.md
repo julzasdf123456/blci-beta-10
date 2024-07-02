@@ -22,6 +22,9 @@
 
 ### New Permissions
 
+### New NPM Packages
+- npm install mapbox-gl
+
 
 ### GENERATE MODELS FROM TABLE
 - php artisan infyom:scaffold Post --fromTable --table=posts --connection=server_name

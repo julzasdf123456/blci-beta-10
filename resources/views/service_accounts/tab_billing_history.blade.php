@@ -59,7 +59,7 @@
                                 </td>
                             @else
                                 <td>
-                                    <i class="fas {{ $item->ORNumber != null ? 'fa-check-circle text-success' : 'fa-exclamation-circle text-danger' }} ico-tab-mini" title="{{ $item->ORNumber != null ? 'Paid' : 'Unpaid' }}"></i>
+                                    <i class="fas {{ $item->PaidBillId != null ? 'fa-check-circle text-success' : 'fa-exclamation-circle text-danger' }} ico-tab-mini" title="{{ $item->PaidBillId != null ? 'Paid' : 'Unpaid' }}"></i>
                                     @if ($item->SurchargeWaived != null)
                                         <i onclick="toast(`info`, `Surcharge Waived | Status: {{ $item->SurchargeWaived }}`)" class="fas fa-minus text-danger ico-tab-mini" title="Surcharge Waived | Status: {{ $item->SurchargeWaived }}"></i>
                                     @endif
@@ -83,7 +83,7 @@
                             <th class="text-right text-danger">P {{ $item->Balance != null ? (is_numeric($item->Balance) ? number_format($item->Balance, 2) : '0') : '0' }}</th>
                             <td class="text-right">
                                 @if (Auth::user()->hasAnyRole(['Administrator', 'Heads and Managers', 'Data Administrator'])) 
-                                    @if ($item->ORNumber == null)
+                                    @if ($item->PaidBillId == null)
                                         @if ($item->IsUnlockedForPayment == 'CLOSED')
                                             <span class="badge bg-success">CLOSED</span>
                                         @endif   
@@ -112,7 +112,7 @@
                                         <i class="fas fa-ellipsis-v" style="color: #878787;"></i>
                                     </button>
                                     <div class="dropdown-menu">
-                                        @if ($item->ORNumber == null)
+                                        @if ($item->PaidBillId == null)
                                             @if (Bills::isBillDue($item))
                                                 {{-- SKIPPABLE --}}
                                                 @if ($item->Item3 != null)
