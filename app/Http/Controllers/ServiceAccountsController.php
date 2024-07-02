@@ -382,10 +382,12 @@ class ServiceAccountsController extends AppBaseController
             
         $balances = 0;
         $surcharges = 0;
+        $sIndex = 1;
         foreach($unpaid as $item) {
             $balances += round(floatval($item->Balance), 2);
             if (strtotime($item->DueDate) < strtotime('today')) {
-                $surcharges += Bills::assessDueBillAndGetSurcharge($item);
+                $surcharges += Bills::assessDueBillAndGetSurcharge($item) * $sIndex;
+                $sIndex += 1;
             }
         }
 
