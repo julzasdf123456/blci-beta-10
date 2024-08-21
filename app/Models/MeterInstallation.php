@@ -109,7 +109,8 @@ class MeterInstallation extends Model
         'InstalledBySignature',
         'ApprovedBySignature',
         'CheckedBySignature',
-        'BLCIRepresentativeSignature'
+        'BLCIRepresentativeSignature',
+        'NetMetering'
     ];
 
     /**
@@ -156,7 +157,8 @@ class MeterInstallation extends Model
         'InstalledBySignature' => 'string',
         'ApprovedBySignature' => 'string',
         'CheckedBySignature' => 'string',
-        'BLCIRepresentativeSignature' => 'string'
+        'BLCIRepresentativeSignature' => 'string',
+        'NetMetering' => 'string',
     ];
 
     /**
@@ -204,7 +206,8 @@ class MeterInstallation extends Model
         'CheckedBySignature' => 'nullable|string|max:255',
         'BLCIRepresentativeSignature' => 'nullable|string|max:255',
         'created_at' => 'nullable',
-        'updated_at' => 'nullable'
+        'updated_at' => 'nullable',
+        'NetMetering' => 'nullable|string',
     ];
 
     

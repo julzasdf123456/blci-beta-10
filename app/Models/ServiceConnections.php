@@ -101,6 +101,7 @@ class ServiceConnections extends Model
         'TypeOfCustomer',
         'NumberOfAccounts',
         'BLCIInitiated',
+        'NetMetered'
     ];
 
     /**
@@ -161,6 +162,7 @@ class ServiceConnections extends Model
         'TypeOfCustomer' => 'string',
         'NumberOfAccounts' => 'string',
         'BLCIInitiated' => 'string',
+        'NetMetered' => 'string',
     ];
 
     /**
@@ -223,6 +225,7 @@ class ServiceConnections extends Model
         'TypeOfCustomer' => 'nullable|string',
         'NumberOfAccounts' => 'nullable|string',
         'BLCIInitiated' => 'nullable|string',
+        'NetMetered' => 'nullable|string',
     ];
 
     public static function getAccountCount($consumerId) {

@@ -66,7 +66,10 @@
                                 <input type="text" style="width: 60px; display: inline;" class="form-control form-control-sm" name="NumberOfAccounts" id="NumberOfAccounts" value="{{ $serviceConnections->NumberOfAccounts }}" maxlength="2">
                             </td>
                             <td></td>
-                            <td></td>
+                            <td>
+                                {{-- <input type="checkbox" class="form-checkbox" name="NetMetered" id="NetMetered" checked="{{ $serviceConnections->NetMetered === 'Yes' ? true : false }}" value="{{ $serviceConnections->NetMetered  }}" style="width: 24px; display: inline;">
+                                <label for="NetMetered">Net Metered</label> --}}
+                            </td>
                         </tr>
                     </table>
                 </div>

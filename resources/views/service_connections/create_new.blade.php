@@ -91,7 +91,10 @@
                                 <input type="checkbox" class="form-checkbox" name="BLCIInitiated" id="BLCIInitiated" value="Yes" style="width: 24px; display: inline;">
                                 <label for="BLCIInitiated">BLCI Initiated?</label>
                             </td>
-                            <td></td>
+                            <td>
+                                {{-- <input type="checkbox" class="form-checkbox" name="NetMetered" id="NetMetered" value="Yes" style="width: 24px; display: inline;">
+                                <label for="NetMetered">Net Metered</label> --}}
+                            </td>
                         </tr>
                     </table>
                 </div>

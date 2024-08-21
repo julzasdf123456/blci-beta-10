@@ -16,7 +16,12 @@
 
 
 ### Added New Columns
- 
+ - ServiceConnections
+    - NetMetered
+
+- MeterAndTransformer
+    - NetMetering
+
 ### Added New Tables
 
 

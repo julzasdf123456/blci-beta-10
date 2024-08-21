@@ -608,6 +608,8 @@ class ServiceConnectionsController extends AppBaseController
     public function update($id, UpdateServiceConnectionsRequest $request)
     {
         $serviceConnections = $this->serviceConnectionsRepository->find($id);
+        
+        // dd($request->all());
 
         if (empty($serviceConnections)) {
             Flash::error('Service Connections not found');

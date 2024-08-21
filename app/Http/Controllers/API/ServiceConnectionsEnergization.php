@@ -185,96 +185,106 @@ class ServiceConnectionsEnergization extends Controller {
         $id = $input['id'];
         $input['CustomerSignature'] = null; // temporarily hold signature upload
 
-        $meterInstallation = MeterInstallation::where('ServiceConnectionId', $input['ServiceConnectionId'])->first();
+        $meterInstallation = MeterInstallation::create($input);
 
-        if ($meterInstallation != null) {
-            $meterInstallation->Type = isset($input['Type']) ? $input['Type'] : '';
-            $meterInstallation->NewMeterNumber = isset($input['NewMeterNumber']) ? $input['NewMeterNumber'] : '';
-            $meterInstallation->NewMeterBrand = isset($input['NewMeterBrand']) ? $input['NewMeterBrand'] : '';
-            $meterInstallation->NewMeterSize = isset($input['NewMeterSize']) ? $input['NewMeterSize'] : '';
-            $meterInstallation->NewMeterType = isset($input['NewMeterType']) ? $input['NewMeterType'] : '';
-            $meterInstallation->NewMeterAmperes = isset($input['NewMeterAmperes']) ? $input['NewMeterAmperes'] : '';
-            $meterInstallation->NewMeterInitialReading = isset($input['NewMeterInitialReading']) ? (is_numeric($input['NewMeterInitialReading']) ? $input['NewMeterInitialReading'] : 0) : 0;
-            $meterInstallation->NewMeterLineToNeutral = isset($input['NewMeterLineToNeutral']) ? $input['NewMeterLineToNeutral'] : '';
-            $meterInstallation->NewMeterLineToGround = isset($input['NewMeterLineToGround']) ? $input['NewMeterLineToGround'] : '';
-            $meterInstallation->NewMeterNeutralToGround = isset($input['NewMeterNeutralToGround']) ? $input['NewMeterNeutralToGround'] : '';
-            $meterInstallation->DateInstalled = isset($input['DateInstalled']) ? $input['DateInstalled'] : '';
-            $meterInstallation->NewMeterMultiplier = isset($input['NewMeterMultiplier']) ? $input['NewMeterMultiplier'] : '';
-            $meterInstallation->TransfomerCapacity = isset($input['TransfomerCapacity']) ? $input['TransfomerCapacity'] : '';
-            $meterInstallation->TransformerID = isset($input['TransformerID']) ? $input['TransformerID'] : '';
-            $meterInstallation->PoleID = isset($input['PoleID']) ? $input['PoleID'] : '';
-            $meterInstallation->CTSerialNumber = isset($input['CTSerialNumber']) ? $input['CTSerialNumber'] : '';
-            $meterInstallation->NewMeterRemarks = isset($input['NewMeterRemarks']) ? $input['NewMeterRemarks'] : '';
-            $meterInstallation->OldMeterNumber = isset($input['OldMeterNumber']) ? $input['OldMeterNumber'] : '';
-            $meterInstallation->OldMeterBrand = isset($input['OldMeterBrand']) ? $input['OldMeterBrand'] : '';
-            $meterInstallation->OldMeterSize = isset($input['OldMeterSize']) ? $input['OldMeterSize'] : '';
-            $meterInstallation->OldMeterType = isset($input['OldMeterType']) ? $input['OldMeterType'] : '';
-            $meterInstallation->DateRemoved = isset($input['DateRemoved']) ? $input['DateRemoved'] : '';
-            $meterInstallation->ReasonForChanging = isset($input['ReasonForChanging']) ? $input['ReasonForChanging'] : '';
-            $meterInstallation->OldMeterMultiplier = isset($input['OldMeterMultiplier']) ? $input['OldMeterMultiplier'] : '';
-            $meterInstallation->OldMeterRemarks = isset($input['OldMeterRemarks']) ? $input['OldMeterRemarks'] : '';
-            $meterInstallation->save();
+        // CREATE LOG
+        $timeFrame = new ServiceConnectionTimeframes;
+        $timeFrame->id = IDGenerator::generateIDandRandString();
+        $timeFrame->ServiceConnectionId = $request['ServiceConnectionId'];
+        $timeFrame->UserId = "0";
+        $timeFrame->Status = '[WEB] Meter Installation Created';
+        $timeFrame->Notes = "Meter installation created by linemen/crew from Linemen's App.";
+        $timeFrame->save();
+        // $meterInstallation = MeterInstallation::where('ServiceConnectionId', $input['ServiceConnectionId'])->first();
+
+        // if ($meterInstallation != null) {
+        //     $meterInstallation->Type = isset($input['Type']) ? $input['Type'] : '';
+        //     $meterInstallation->NewMeterNumber = isset($input['NewMeterNumber']) ? $input['NewMeterNumber'] : '';
+        //     $meterInstallation->NewMeterBrand = isset($input['NewMeterBrand']) ? $input['NewMeterBrand'] : '';
+        //     $meterInstallation->NewMeterSize = isset($input['NewMeterSize']) ? $input['NewMeterSize'] : '';
+        //     $meterInstallation->NewMeterType = isset($input['NewMeterType']) ? $input['NewMeterType'] : '';
+        //     $meterInstallation->NewMeterAmperes = isset($input['NewMeterAmperes']) ? $input['NewMeterAmperes'] : '';
+        //     $meterInstallation->NewMeterInitialReading = isset($input['NewMeterInitialReading']) ? (is_numeric($input['NewMeterInitialReading']) ? $input['NewMeterInitialReading'] : 0) : 0;
+        //     $meterInstallation->NewMeterLineToNeutral = isset($input['NewMeterLineToNeutral']) ? $input['NewMeterLineToNeutral'] : '';
+        //     $meterInstallation->NewMeterLineToGround = isset($input['NewMeterLineToGround']) ? $input['NewMeterLineToGround'] : '';
+        //     $meterInstallation->NewMeterNeutralToGround = isset($input['NewMeterNeutralToGround']) ? $input['NewMeterNeutralToGround'] : '';
+        //     $meterInstallation->DateInstalled = isset($input['DateInstalled']) ? $input['DateInstalled'] : '';
+        //     $meterInstallation->NewMeterMultiplier = isset($input['NewMeterMultiplier']) ? $input['NewMeterMultiplier'] : '';
+        //     $meterInstallation->TransfomerCapacity = isset($input['TransfomerCapacity']) ? $input['TransfomerCapacity'] : '';
+        //     $meterInstallation->TransformerID = isset($input['TransformerID']) ? $input['TransformerID'] : '';
+        //     $meterInstallation->PoleID = isset($input['PoleID']) ? $input['PoleID'] : '';
+        //     $meterInstallation->CTSerialNumber = isset($input['CTSerialNumber']) ? $input['CTSerialNumber'] : '';
+        //     $meterInstallation->NewMeterRemarks = isset($input['NewMeterRemarks']) ? $input['NewMeterRemarks'] : '';
+        //     $meterInstallation->OldMeterNumber = isset($input['OldMeterNumber']) ? $input['OldMeterNumber'] : '';
+        //     $meterInstallation->OldMeterBrand = isset($input['OldMeterBrand']) ? $input['OldMeterBrand'] : '';
+        //     $meterInstallation->OldMeterSize = isset($input['OldMeterSize']) ? $input['OldMeterSize'] : '';
+        //     $meterInstallation->OldMeterType = isset($input['OldMeterType']) ? $input['OldMeterType'] : '';
+        //     $meterInstallation->DateRemoved = isset($input['DateRemoved']) ? $input['DateRemoved'] : '';
+        //     $meterInstallation->ReasonForChanging = isset($input['ReasonForChanging']) ? $input['ReasonForChanging'] : '';
+        //     $meterInstallation->OldMeterMultiplier = isset($input['OldMeterMultiplier']) ? $input['OldMeterMultiplier'] : '';
+        //     $meterInstallation->OldMeterRemarks = isset($input['OldMeterRemarks']) ? $input['OldMeterRemarks'] : '';
+        //     $meterInstallation->save();
             
-            // CREATE LOG
-            $timeFrame = new ServiceConnectionTimeframes;
-            $timeFrame->id = IDGenerator::generateIDandRandString();
-            $timeFrame->ServiceConnectionId = $request['ServiceConnectionId'];
-            $timeFrame->UserId = "0";
-            $timeFrame->Status = '[WEB] Meter Installation Updated';
-            $timeFrame->Notes = "Meter installation updated by linemen/crew from Linemen's App.";
-            $timeFrame->save();
-        } else {
-            $meterInstallation = MeterInstallation::find($id);
+        //     // CREATE LOG
+        //     $timeFrame = new ServiceConnectionTimeframes;
+        //     $timeFrame->id = IDGenerator::generateIDandRandString();
+        //     $timeFrame->ServiceConnectionId = $request['ServiceConnectionId'];
+        //     $timeFrame->UserId = "0";
+        //     $timeFrame->Status = '[WEB] Meter Installation Updated';
+        //     $timeFrame->Notes = "Meter installation updated by linemen/crew from Linemen's App.";
+        //     $timeFrame->save();
+        // } else {
+        //     $meterInstallation = MeterInstallation::find($id);
 
-            if ($meterInstallation != null) {
-                $meterInstallation->Type = isset($input['Type']) ? $input['Type'] : '';
-                $meterInstallation->NewMeterNumber = isset($input['NewMeterNumber']) ? $input['NewMeterNumber'] : '';
-                $meterInstallation->NewMeterBrand = isset($input['NewMeterBrand']) ? $input['NewMeterBrand'] : '';
-                $meterInstallation->NewMeterSize = isset($input['NewMeterSize']) ? $input['NewMeterSize'] : '';
-                $meterInstallation->NewMeterType = isset($input['NewMeterType']) ? $input['NewMeterType'] : '';
-                $meterInstallation->NewMeterAmperes = isset($input['NewMeterAmperes']) ? $input['NewMeterAmperes'] : '';
-                $meterInstallation->NewMeterInitialReading = isset($input['NewMeterInitialReading']) ? (is_numeric($input['NewMeterInitialReading']) ? $input['NewMeterInitialReading'] : 0) : 0;
-                $meterInstallation->NewMeterLineToNeutral = isset($input['NewMeterLineToNeutral']) ? $input['NewMeterLineToNeutral'] : '';
-                $meterInstallation->NewMeterLineToGround = isset($input['NewMeterLineToGround']) ? $input['NewMeterLineToGround'] : '';
-                $meterInstallation->NewMeterNeutralToGround = isset($input['NewMeterNeutralToGround']) ? $input['NewMeterNeutralToGround'] : '';
-                $meterInstallation->DateInstalled = isset($input['DateInstalled']) ? $input['DateInstalled'] : '';
-                $meterInstallation->NewMeterMultiplier = isset($input['NewMeterMultiplier']) ? $input['NewMeterMultiplier'] : '';
-                $meterInstallation->TransfomerCapacity = isset($input['TransfomerCapacity']) ? $input['TransfomerCapacity'] : '';
-                $meterInstallation->TransformerID = isset($input['TransformerID']) ? $input['TransformerID'] : '';
-                $meterInstallation->PoleID = isset($input['PoleID']) ? $input['PoleID'] : '';
-                $meterInstallation->CTSerialNumber = isset($input['CTSerialNumber']) ? $input['CTSerialNumber'] : '';
-                $meterInstallation->NewMeterRemarks = isset($input['NewMeterRemarks']) ? $input['NewMeterRemarks'] : '';
-                $meterInstallation->OldMeterNumber = isset($input['OldMeterNumber']) ? $input['OldMeterNumber'] : '';
-                $meterInstallation->OldMeterBrand = isset($input['OldMeterBrand']) ? $input['OldMeterBrand'] : '';
-                $meterInstallation->OldMeterSize = isset($input['OldMeterSize']) ? $input['OldMeterSize'] : '';
-                $meterInstallation->OldMeterType = isset($input['OldMeterType']) ? $input['OldMeterType'] : '';
-                $meterInstallation->DateRemoved = isset($input['DateRemoved']) ? $input['DateRemoved'] : '';
-                $meterInstallation->ReasonForChanging = isset($input['ReasonForChanging']) ? $input['ReasonForChanging'] : '';
-                $meterInstallation->OldMeterMultiplier = isset($input['OldMeterMultiplier']) ? $input['OldMeterMultiplier'] : '';
-                $meterInstallation->OldMeterRemarks = isset($input['OldMeterRemarks']) ? $input['OldMeterRemarks'] : '';
-                $meterInstallation->save();
+        //     if ($meterInstallation != null) {
+        //         $meterInstallation->Type = isset($input['Type']) ? $input['Type'] : '';
+        //         $meterInstallation->NewMeterNumber = isset($input['NewMeterNumber']) ? $input['NewMeterNumber'] : '';
+        //         $meterInstallation->NewMeterBrand = isset($input['NewMeterBrand']) ? $input['NewMeterBrand'] : '';
+        //         $meterInstallation->NewMeterSize = isset($input['NewMeterSize']) ? $input['NewMeterSize'] : '';
+        //         $meterInstallation->NewMeterType = isset($input['NewMeterType']) ? $input['NewMeterType'] : '';
+        //         $meterInstallation->NewMeterAmperes = isset($input['NewMeterAmperes']) ? $input['NewMeterAmperes'] : '';
+        //         $meterInstallation->NewMeterInitialReading = isset($input['NewMeterInitialReading']) ? (is_numeric($input['NewMeterInitialReading']) ? $input['NewMeterInitialReading'] : 0) : 0;
+        //         $meterInstallation->NewMeterLineToNeutral = isset($input['NewMeterLineToNeutral']) ? $input['NewMeterLineToNeutral'] : '';
+        //         $meterInstallation->NewMeterLineToGround = isset($input['NewMeterLineToGround']) ? $input['NewMeterLineToGround'] : '';
+        //         $meterInstallation->NewMeterNeutralToGround = isset($input['NewMeterNeutralToGround']) ? $input['NewMeterNeutralToGround'] : '';
+        //         $meterInstallation->DateInstalled = isset($input['DateInstalled']) ? $input['DateInstalled'] : '';
+        //         $meterInstallation->NewMeterMultiplier = isset($input['NewMeterMultiplier']) ? $input['NewMeterMultiplier'] : '';
+        //         $meterInstallation->TransfomerCapacity = isset($input['TransfomerCapacity']) ? $input['TransfomerCapacity'] : '';
+        //         $meterInstallation->TransformerID = isset($input['TransformerID']) ? $input['TransformerID'] : '';
+        //         $meterInstallation->PoleID = isset($input['PoleID']) ? $input['PoleID'] : '';
+        //         $meterInstallation->CTSerialNumber = isset($input['CTSerialNumber']) ? $input['CTSerialNumber'] : '';
+        //         $meterInstallation->NewMeterRemarks = isset($input['NewMeterRemarks']) ? $input['NewMeterRemarks'] : '';
+        //         $meterInstallation->OldMeterNumber = isset($input['OldMeterNumber']) ? $input['OldMeterNumber'] : '';
+        //         $meterInstallation->OldMeterBrand = isset($input['OldMeterBrand']) ? $input['OldMeterBrand'] : '';
+        //         $meterInstallation->OldMeterSize = isset($input['OldMeterSize']) ? $input['OldMeterSize'] : '';
+        //         $meterInstallation->OldMeterType = isset($input['OldMeterType']) ? $input['OldMeterType'] : '';
+        //         $meterInstallation->DateRemoved = isset($input['DateRemoved']) ? $input['DateRemoved'] : '';
+        //         $meterInstallation->ReasonForChanging = isset($input['ReasonForChanging']) ? $input['ReasonForChanging'] : '';
+        //         $meterInstallation->OldMeterMultiplier = isset($input['OldMeterMultiplier']) ? $input['OldMeterMultiplier'] : '';
+        //         $meterInstallation->OldMeterRemarks = isset($input['OldMeterRemarks']) ? $input['OldMeterRemarks'] : '';
+        //         $meterInstallation->save();
 
-                // CREATE LOG
-                $timeFrame = new ServiceConnectionTimeframes;
-                $timeFrame->id = IDGenerator::generateIDandRandString();
-                $timeFrame->ServiceConnectionId = $request['ServiceConnectionId'];
-                $timeFrame->UserId = "0";
-                $timeFrame->Status = '[WEB] Meter Installation Updated';
-                $timeFrame->Notes = "Meter installation updated by linemen/crew from Linemen's App.";
-                $timeFrame->save();
-            } else {
-                $meterInstallation = MeterInstallation::create($input);
+        //         // CREATE LOG
+        //         $timeFrame = new ServiceConnectionTimeframes;
+        //         $timeFrame->id = IDGenerator::generateIDandRandString();
+        //         $timeFrame->ServiceConnectionId = $request['ServiceConnectionId'];
+        //         $timeFrame->UserId = "0";
+        //         $timeFrame->Status = '[WEB] Meter Installation Updated';
+        //         $timeFrame->Notes = "Meter installation updated by linemen/crew from Linemen's App.";
+        //         $timeFrame->save();
+        //     } else {
+        //         $meterInstallation = MeterInstallation::create($input);
 
-                // CREATE LOG
-                $timeFrame = new ServiceConnectionTimeframes;
-                $timeFrame->id = IDGenerator::generateIDandRandString();
-                $timeFrame->ServiceConnectionId = $request['ServiceConnectionId'];
-                $timeFrame->UserId = "0";
-                $timeFrame->Status = '[WEB] Meter Installation Created';
-                $timeFrame->Notes = "Meter installation created by linemen/crew from Linemen's App.";
-                $timeFrame->save();
-            }
-        }
+        //         // CREATE LOG
+        //         $timeFrame = new ServiceConnectionTimeframes;
+        //         $timeFrame->id = IDGenerator::generateIDandRandString();
+        //         $timeFrame->ServiceConnectionId = $request['ServiceConnectionId'];
+        //         $timeFrame->UserId = "0";
+        //         $timeFrame->Status = '[WEB] Meter Installation Created';
+        //         $timeFrame->Notes = "Meter installation created by linemen/crew from Linemen's App.";
+        //         $timeFrame->save();
+        //     }
+        // }
         
         return response()->json($meterInstallation, 200);
     }
@@ -283,83 +293,93 @@ class ServiceConnectionsEnergization extends Controller {
         $input = $request->all();
 
         $id = $input['id'];
+        $lineAndMetering = LineAndMeteringServices::create($input);
 
-        $lineAndMetering = LineAndMeteringServices::where('ServiceConnectionId', $input['ServiceConnectionId'])->first();
+        // CREATE LOG
+        $timeFrame = new ServiceConnectionTimeframes;
+        $timeFrame->id = IDGenerator::generateIDandRandString();
+        $timeFrame->ServiceConnectionId = $request['ServiceConnectionId'];
+        $timeFrame->UserId = "0";
+        $timeFrame->Status = '[WEB] Line & Metering Created';
+        $timeFrame->Notes = "Line and metering services data created by linemen/crew from Linemen's App.";
+        $timeFrame->save();
 
-        if ($lineAndMetering != null) {
-            $lineAndMetering->TypeOfService = isset($input['TypeOfService']) ? $input['TypeOfService'] : '';
-            $lineAndMetering->MeterSealNumber = isset($input['MeterSealNumber']) ? $input['MeterSealNumber'] : '';
-            $lineAndMetering->IsLeadSeal = isset($input['IsLeadSeal']) ? $input['IsLeadSeal'] : '';
-            $lineAndMetering->MeterStatus = isset($input['MeterStatus']) ? $input['MeterStatus'] : '';
-            $lineAndMetering->MeterNumber = isset($input['MeterNumber']) ? $input['MeterNumber'] : '';
-            $lineAndMetering->Multiplier = isset($input['Multiplier']) ? (is_numeric($input['Multiplier']) ? $input['Multiplier'] : 0) : 0;
-            $lineAndMetering->MeterType = isset($input['MeterType']) ? $input['MeterType'] : '';
-            $lineAndMetering->MeterBrand = isset($input['MeterBrand']) ? $input['MeterBrand'] : '';
-            $lineAndMetering->Notes = isset($input['Notes']) ? $input['Notes'] : '';
-            $lineAndMetering->ServiceDate = isset($input['ServiceDate']) ? $input['ServiceDate'] : '';
-            $lineAndMetering->UserId = isset($input['UserId']) ? $input['UserId'] : '';
-            $lineAndMetering->PrivateElectrician = isset($input['PrivateElectrician']) ? $input['PrivateElectrician'] : '';
-            $lineAndMetering->LineLength = isset($input['LineLength']) ? $input['LineLength'] : '';
-            $lineAndMetering->ConductorType = isset($input['ConductorType']) ? $input['ConductorType'] : '';
-            $lineAndMetering->ConductorSize = isset($input['ConductorSize']) ? $input['ConductorSize'] : '';
-            $lineAndMetering->ConductorUnit = isset($input['ConductorUnit']) ? $input['ConductorUnit'] : '';
-            $lineAndMetering->Status = isset($input['Status']) ? $input['Status'] : '';
-            $lineAndMetering->AccountNumber = isset($input['AccountNumber']) ? $input['AccountNumber'] : '';
-            $lineAndMetering->save();
+        // $lineAndMetering = LineAndMeteringServices::where('ServiceConnectionId', $input['ServiceConnectionId'])->first();
+
+        // if ($lineAndMetering != null) {
+        //     $lineAndMetering->TypeOfService = isset($input['TypeOfService']) ? $input['TypeOfService'] : '';
+        //     $lineAndMetering->MeterSealNumber = isset($input['MeterSealNumber']) ? $input['MeterSealNumber'] : '';
+        //     $lineAndMetering->IsLeadSeal = isset($input['IsLeadSeal']) ? $input['IsLeadSeal'] : '';
+        //     $lineAndMetering->MeterStatus = isset($input['MeterStatus']) ? $input['MeterStatus'] : '';
+        //     $lineAndMetering->MeterNumber = isset($input['MeterNumber']) ? $input['MeterNumber'] : '';
+        //     $lineAndMetering->Multiplier = isset($input['Multiplier']) ? (is_numeric($input['Multiplier']) ? $input['Multiplier'] : 0) : 0;
+        //     $lineAndMetering->MeterType = isset($input['MeterType']) ? $input['MeterType'] : '';
+        //     $lineAndMetering->MeterBrand = isset($input['MeterBrand']) ? $input['MeterBrand'] : '';
+        //     $lineAndMetering->Notes = isset($input['Notes']) ? $input['Notes'] : '';
+        //     $lineAndMetering->ServiceDate = isset($input['ServiceDate']) ? $input['ServiceDate'] : '';
+        //     $lineAndMetering->UserId = isset($input['UserId']) ? $input['UserId'] : '';
+        //     $lineAndMetering->PrivateElectrician = isset($input['PrivateElectrician']) ? $input['PrivateElectrician'] : '';
+        //     $lineAndMetering->LineLength = isset($input['LineLength']) ? $input['LineLength'] : '';
+        //     $lineAndMetering->ConductorType = isset($input['ConductorType']) ? $input['ConductorType'] : '';
+        //     $lineAndMetering->ConductorSize = isset($input['ConductorSize']) ? $input['ConductorSize'] : '';
+        //     $lineAndMetering->ConductorUnit = isset($input['ConductorUnit']) ? $input['ConductorUnit'] : '';
+        //     $lineAndMetering->Status = isset($input['Status']) ? $input['Status'] : '';
+        //     $lineAndMetering->AccountNumber = isset($input['AccountNumber']) ? $input['AccountNumber'] : '';
+        //     $lineAndMetering->save();
             
-            // CREATE LOG
-            $timeFrame = new ServiceConnectionTimeframes;
-            $timeFrame->id = IDGenerator::generateIDandRandString();
-            $timeFrame->ServiceConnectionId = $request['ServiceConnectionId'];
-            $timeFrame->UserId = "0";
-            $timeFrame->Status = '[WEB] Line & Metering Updated';
-            $timeFrame->Notes = "Line and metering services data updated by linemen/crew from Linemen's App.";
-            $timeFrame->save();
-        } else {
-            $lineAndMetering = LineAndMeteringServices::find($id);
+        //     // CREATE LOG
+        //     $timeFrame = new ServiceConnectionTimeframes;
+        //     $timeFrame->id = IDGenerator::generateIDandRandString();
+        //     $timeFrame->ServiceConnectionId = $request['ServiceConnectionId'];
+        //     $timeFrame->UserId = "0";
+        //     $timeFrame->Status = '[WEB] Line & Metering Updated';
+        //     $timeFrame->Notes = "Line and metering services data updated by linemen/crew from Linemen's App.";
+        //     $timeFrame->save();
+        // } else {
+        //     $lineAndMetering = LineAndMeteringServices::find($id);
 
-            if ($lineAndMetering != null) {
-                $lineAndMetering->TypeOfService = isset($input['TypeOfService']) ? $input['TypeOfService'] : '';
-                $lineAndMetering->MeterSealNumber = isset($input['MeterSealNumber']) ? $input['MeterSealNumber'] : '';
-                $lineAndMetering->IsLeadSeal = isset($input['IsLeadSeal']) ? $input['IsLeadSeal'] : '';
-                $lineAndMetering->MeterStatus = isset($input['MeterStatus']) ? $input['MeterStatus'] : '';
-                $lineAndMetering->MeterNumber = isset($input['MeterNumber']) ? $input['MeterNumber'] : '';
-                $lineAndMetering->Multiplier = isset($input['Multiplier']) ? (is_numeric($input['Multiplier']) ? $input['Multiplier'] : 0) : 0;
-                $lineAndMetering->MeterType = isset($input['MeterType']) ? $input['MeterType'] : '';
-                $lineAndMetering->MeterBrand = isset($input['MeterBrand']) ? $input['MeterBrand'] : '';
-                $lineAndMetering->Notes = isset($input['Notes']) ? $input['Notes'] : '';
-                $lineAndMetering->ServiceDate = isset($input['ServiceDate']) ? $input['ServiceDate'] : '';
-                $lineAndMetering->UserId = isset($input['UserId']) ? $input['UserId'] : '';
-                $lineAndMetering->PrivateElectrician = isset($input['PrivateElectrician']) ? $input['PrivateElectrician'] : '';
-                $lineAndMetering->LineLength = isset($input['LineLength']) ? $input['LineLength'] : '';
-                $lineAndMetering->ConductorType = isset($input['ConductorType']) ? $input['ConductorType'] : '';
-                $lineAndMetering->ConductorSize = isset($input['ConductorSize']) ? $input['ConductorSize'] : '';
-                $lineAndMetering->ConductorUnit = isset($input['ConductorUnit']) ? $input['ConductorUnit'] : '';
-                $lineAndMetering->Status = isset($input['Status']) ? $input['Status'] : '';
-                $lineAndMetering->AccountNumber = isset($input['AccountNumber']) ? $input['AccountNumber'] : '';
-                $lineAndMetering->save();
+        //     if ($lineAndMetering != null) {
+        //         $lineAndMetering->TypeOfService = isset($input['TypeOfService']) ? $input['TypeOfService'] : '';
+        //         $lineAndMetering->MeterSealNumber = isset($input['MeterSealNumber']) ? $input['MeterSealNumber'] : '';
+        //         $lineAndMetering->IsLeadSeal = isset($input['IsLeadSeal']) ? $input['IsLeadSeal'] : '';
+        //         $lineAndMetering->MeterStatus = isset($input['MeterStatus']) ? $input['MeterStatus'] : '';
+        //         $lineAndMetering->MeterNumber = isset($input['MeterNumber']) ? $input['MeterNumber'] : '';
+        //         $lineAndMetering->Multiplier = isset($input['Multiplier']) ? (is_numeric($input['Multiplier']) ? $input['Multiplier'] : 0) : 0;
+        //         $lineAndMetering->MeterType = isset($input['MeterType']) ? $input['MeterType'] : '';
+        //         $lineAndMetering->MeterBrand = isset($input['MeterBrand']) ? $input['MeterBrand'] : '';
+        //         $lineAndMetering->Notes = isset($input['Notes']) ? $input['Notes'] : '';
+        //         $lineAndMetering->ServiceDate = isset($input['ServiceDate']) ? $input['ServiceDate'] : '';
+        //         $lineAndMetering->UserId = isset($input['UserId']) ? $input['UserId'] : '';
+        //         $lineAndMetering->PrivateElectrician = isset($input['PrivateElectrician']) ? $input['PrivateElectrician'] : '';
+        //         $lineAndMetering->LineLength = isset($input['LineLength']) ? $input['LineLength'] : '';
+        //         $lineAndMetering->ConductorType = isset($input['ConductorType']) ? $input['ConductorType'] : '';
+        //         $lineAndMetering->ConductorSize = isset($input['ConductorSize']) ? $input['ConductorSize'] : '';
+        //         $lineAndMetering->ConductorUnit = isset($input['ConductorUnit']) ? $input['ConductorUnit'] : '';
+        //         $lineAndMetering->Status = isset($input['Status']) ? $input['Status'] : '';
+        //         $lineAndMetering->AccountNumber = isset($input['AccountNumber']) ? $input['AccountNumber'] : '';
+        //         $lineAndMetering->save();
 
-                // CREATE LOG
-                $timeFrame = new ServiceConnectionTimeframes;
-                $timeFrame->id = IDGenerator::generateIDandRandString();
-                $timeFrame->ServiceConnectionId = $request['ServiceConnectionId'];
-                $timeFrame->UserId = "0";
-                $timeFrame->Status = '[WEB] Line & Metering Updated';
-                $timeFrame->Notes = "Line and metering services data updated by linemen/crew from Linemen's App.";
-                $timeFrame->save();
-            } else {
-                $lineAndMetering = LineAndMeteringServices::create($input);
+        //         // CREATE LOG
+        //         $timeFrame = new ServiceConnectionTimeframes;
+        //         $timeFrame->id = IDGenerator::generateIDandRandString();
+        //         $timeFrame->ServiceConnectionId = $request['ServiceConnectionId'];
+        //         $timeFrame->UserId = "0";
+        //         $timeFrame->Status = '[WEB] Line & Metering Updated';
+        //         $timeFrame->Notes = "Line and metering services data updated by linemen/crew from Linemen's App.";
+        //         $timeFrame->save();
+        //     } else {
+        //         $lineAndMetering = LineAndMeteringServices::create($input);
 
-                // CREATE LOG
-                $timeFrame = new ServiceConnectionTimeframes;
-                $timeFrame->id = IDGenerator::generateIDandRandString();
-                $timeFrame->ServiceConnectionId = $request['ServiceConnectionId'];
-                $timeFrame->UserId = "0";
-                $timeFrame->Status = '[WEB] Line & Metering Created';
-                $timeFrame->Notes = "Line and metering services data created by linemen/crew from Linemen's App.";
-                $timeFrame->save();
-            }
-        }
+        //         // CREATE LOG
+        //         $timeFrame = new ServiceConnectionTimeframes;
+        //         $timeFrame->id = IDGenerator::generateIDandRandString();
+        //         $timeFrame->ServiceConnectionId = $request['ServiceConnectionId'];
+        //         $timeFrame->UserId = "0";
+        //         $timeFrame->Status = '[WEB] Line & Metering Created';
+        //         $timeFrame->Notes = "Line and metering services data created by linemen/crew from Linemen's App.";
+        //         $timeFrame->save();
+        //     }
+        // }
         
         return response()->json($lineAndMetering, 200);
     }
