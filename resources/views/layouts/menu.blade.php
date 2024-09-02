@@ -212,6 +212,7 @@ use Illuminate\Support\Facades\Auth;
                 </ul>
             </li>
 
+            {{-- REPORTS --}}
             @canany(['Super Admin', 'sc create'])
             <li class="nav-item">
                 <a href="#" class="nav-link">
@@ -237,6 +238,12 @@ use Illuminate\Support\Facades\Auth;
                         <a href="{{ route('serviceConnections.metering-installation') }}"
                         class="nav-link {{ Request::is('serviceConnections.metering-installation*') ? 'active' : '' }}">
                         <i class="fas fa-tachometer-alt nav-icon text-warning"></i><p>Meter Installation</p>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="{{ route('serviceConnections.metering-installation-net-metering') }}"
+                        class="nav-link {{ Request::is('serviceConnections.metering-installation-net-metering*') ? 'active' : '' }}">
+                        <i class="fas fa-tachometer-alt nav-icon text-warning"></i><p>Meter Inst. (Net Meter)</p>
                         </a>
                     </li>
                     <li class="nav-item">

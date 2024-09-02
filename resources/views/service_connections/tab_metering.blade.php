@@ -9,11 +9,11 @@
         <div class="col-lg-12 mb-2">            
             <a href="{{ route('meterInstallations.edit', [$serviceConnectionMeter->id]) }}" class="btn btn-primary-skinny float-right btn-sm"><i class="fas fa-pen ico-tab-mini"></i>Update Meter Data</a>
         </div>
-        {{-- METER --}}
+        {{-- kWH METER --}}
         <div class="col-lg-6">
             <div class="card">
                 <div class="card-header">
-                    <span class="card-title"><i class="fas fa-info-circle ico-tab"></i>Meter Information</span>
+                    <span class="card-title"><i class="fas fa-info-circle ico-tab"></i>Meter Information (kWH Meter)</span>
                 </div>
                 <div class="card-body table-responsive p-0">
                     <table class="table table-sm table-hover">
@@ -49,6 +49,49 @@
                 </div>
             </div>
         </div>
+
+        {{-- NET METERING --}}
+        @if ($netMeteringMeter != null)
+            <div class="col-lg-6">
+                <div class="card">
+                    <div class="card-header">
+                        <span class="card-title"><i class="fas fa-info-circle ico-tab"></i>Meter Information - Solar Generation (Net Metering)</span>
+                    </div>
+                    <div class="card-body table-responsive p-0">
+                        <table class="table table-sm table-hover">
+                            <tr>
+                                <td>Meter Number</td>
+                                <td><strong>{{ $netMeteringMeter->NewMeterNumber }}</strong></td>
+                            </tr>
+                            <tr>
+                                <td>Meter Brand</td>
+                                <td><strong>{{ $netMeteringMeter->NewMeterBrand }}</strong></td>
+                            </tr>
+                            <tr>
+                                <td>Ampere Rating</td>
+                                <td><strong>{{ $netMeteringMeter->NewMeterAmperes }}</strong></td>
+                            </tr>
+                            <tr>
+                                <td>Old Meter No.</td>
+                                <td><strong>{{ $netMeteringMeter->OldMeterNumber }}</strong></td>
+                            </tr>
+                            <tr>
+                                <td>Initial Reading</td>
+                                <td><strong>{{ $netMeteringMeter->NewMeterInitialReading }} kWh</strong></td>
+                            </tr>
+                            <tr>
+                                <td>Multiplier</td>
+                                <td><strong>{{ $netMeteringMeter->NewMeterMultiplier }}</strong></td>
+                            </tr>
+                            <tr>
+                                <td>Date Installed</td>
+                                <td><strong>{{ $netMeteringMeter->DateInstalled != null ? date('M d, Y', strtotime($netMeteringMeter->DateInstalled)) : "" }}</strong></td>
+                            </tr>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        @endif
 
         {{-- TRANSFORMER --}}
         <div class="col-lg-6">

@@ -405,7 +405,8 @@ class ServiceConnectionsController extends AppBaseController
                         'CRM_ServiceConnections.NumberOfAccounts',
                         'CRM_ServiceConnections.CertificateOfConnectionIssuedOn',
                         'users.name',
-                        'CRM_ServiceConnectionCrew.StationName'
+                        'CRM_ServiceConnectionCrew.StationName',
+                        'CRM_ServiceConnections.NetMetered',
                         )
         ->where('CRM_ServiceConnections.id', $id)
         ->where(function ($query) {
@@ -421,7 +422,13 @@ class ServiceConnectionsController extends AppBaseController
             ->orderByDesc('CRM_ServiceConnectionInspections.created_at')
             ->first();
         
-        $serviceConnectionMeter = MeterInstallation::where('ServiceConnectionId', $id)->first();
+        $serviceConnectionMeter = MeterInstallation::where('ServiceConnectionId', $id)
+            ->whereRaw("NetMetering IS NULL")
+            ->first();
+
+        $netMeteringMeter = MeterInstallation::where('ServiceConnectionId', $id)
+            ->whereRaw("NetMetering='Yes'")
+            ->first();
 
         $timeFrame = DB::table('CRM_ServiceConnectionTimeframes')
                 ->leftJoin('users', 'CRM_ServiceConnectionTimeframes.UserId', '=', 'users.id')
@@ -544,6 +551,7 @@ class ServiceConnectionsController extends AppBaseController
                             'materialPresets' => $materialPresets,
                             'line' => $line,
                             'metering' => $metering,
+                            'netMeteringMeter' => $netMeteringMeter,
                         ]);
         } else {
             return abort(403, "You're not authorized to view a service connection application.");
@@ -609,7 +617,11 @@ class ServiceConnectionsController extends AppBaseController
     {
         $serviceConnections = $this->serviceConnectionsRepository->find($id);
         
-        // dd($request->all());
+        if (!isset($request['NetMetered'])) {
+            $request['NetMetered'] = null;
+        } else {
+            $request['NetMetered'] = 'Yes';
+        }
 
         if (empty($serviceConnections)) {
             Flash::error('Service Connections not found');
@@ -3098,7 +3110,7 @@ class ServiceConnectionsController extends AppBaseController
                 ->leftJoin('CRM_Barangays', 'CRM_ServiceConnections.Barangay', '=', 'CRM_Barangays.id')
                 ->leftJoin('CRM_Towns', 'CRM_ServiceConnections.Town', '=', 'CRM_Towns.id')
                 ->leftJoin('CRM_ServiceConnectionCrew', 'CRM_ServiceConnections.StationCrewAssigned', '=', 'CRM_ServiceConnectionCrew.id')
-                ->whereRaw("(TRY_CAST(CRM_ServiceConnections.DateTimeOfEnergization AS DATE) BETWEEN '" . $from . "' AND '" . $to . "') AND CRM_ServiceConnections.Status='Energized'")
+                ->whereRaw("CRM_MeterInstallation.NetMetering IS NULL AND (TRY_CAST(CRM_ServiceConnections.DateTimeOfEnergization AS DATE) BETWEEN '" . $from . "' AND '" . $to . "') AND CRM_ServiceConnections.Status='Energized'")
                 ->select(
                     'CRM_ServiceConnections.id',
                     'CRM_ServiceConnections.ServiceAccountName',
@@ -3125,13 +3137,50 @@ class ServiceConnectionsController extends AppBaseController
         ]);
     }
 
+    public function meteringInstallationNetMetering(Request $request) {
+        // $town = $request['Town'];
+        $from = $request['From'];
+        $to = $request['To'];
+
+        $data = DB::table('CRM_MeterInstallation')
+                ->leftJoin('CRM_ServiceConnections', 'CRM_MeterInstallation.ServiceConnectionId', '=', 'CRM_ServiceConnections.id')
+                ->leftJoin('CRM_Barangays', 'CRM_ServiceConnections.Barangay', '=', 'CRM_Barangays.id')
+                ->leftJoin('CRM_Towns', 'CRM_ServiceConnections.Town', '=', 'CRM_Towns.id')
+                ->leftJoin('CRM_ServiceConnectionCrew', 'CRM_ServiceConnections.StationCrewAssigned', '=', 'CRM_ServiceConnectionCrew.id')
+                ->whereRaw("CRM_MeterInstallation.NetMetering='Yes' AND (TRY_CAST(CRM_ServiceConnections.DateTimeOfEnergization AS DATE) BETWEEN '" . $from . "' AND '" . $to . "') AND CRM_ServiceConnections.Status='Energized'")
+                ->select(
+                    'CRM_ServiceConnections.id',
+                    'CRM_ServiceConnections.ServiceAccountName',
+                    'CRM_ServiceConnections.Sitio',
+                    'CRM_Barangays.Barangay',
+                    'CRM_Towns.Town',
+                    'CRM_ServiceConnections.Office',
+                    'CRM_ServiceConnections.DateOfApplication',
+                    'CRM_ServiceConnections.DateTimeOfEnergization',
+                    'CRM_MeterInstallation.NewMeterNumber AS MeterSerialNumber',
+                    'CRM_MeterInstallation.NewMeterBrand',
+                    'CRM_MeterInstallation.created_at',
+                    'CRM_ServiceConnectionCrew.StationName',
+                    'CRM_ServiceConnections.Notes',
+                    'CRM_ServiceConnections.AccountApplicationType',
+                )
+                ->orderBy('CRM_Towns.Town')
+                ->orderBy('CRM_ServiceConnections.ServiceAccountName')
+                ->get();
+        
+        return view('/service_connections/metering_installation_net_metering', [
+            'data' => $data,
+            'towns' => Towns::all()
+        ]);
+    }
+
     public function downloadMeteringInstallation($from, $to) {
         $data = DB::table('CRM_MeterInstallation')
             ->leftJoin('CRM_ServiceConnections', 'CRM_MeterInstallation.ServiceConnectionId', '=', 'CRM_ServiceConnections.id')
             ->leftJoin('CRM_Barangays', 'CRM_ServiceConnections.Barangay', '=', 'CRM_Barangays.id')
             ->leftJoin('CRM_Towns', 'CRM_ServiceConnections.Town', '=', 'CRM_Towns.id')
             ->leftJoin('CRM_ServiceConnectionCrew', 'CRM_ServiceConnections.StationCrewAssigned', '=', 'CRM_ServiceConnectionCrew.id')
-            ->whereRaw("(TRY_CAST(CRM_ServiceConnections.DateTimeOfEnergization AS DATE) BETWEEN '" . $from . "' AND '" . $to . "') AND CRM_ServiceConnections.Status='Energized'")
+            ->whereRaw("CRM_MeterInstallation.NetMetering IS NULL AND (TRY_CAST(CRM_ServiceConnections.DateTimeOfEnergization AS DATE) BETWEEN '" . $from . "' AND '" . $to . "') AND CRM_ServiceConnections.Status='Energized'")
             ->select(
                 'CRM_ServiceConnections.id AS ConnectionId',
                 'CRM_ServiceConnections.ServiceAccountName',
@@ -3227,6 +3276,110 @@ class ServiceConnectionsController extends AppBaseController
                                 );
 
         return Excel::download($export, 'Meter-Installation-Report.xlsx');
+    }
+
+    public function downloadNetMeteringInstallation($from, $to) {
+        $data = DB::table('CRM_MeterInstallation')
+            ->leftJoin('CRM_ServiceConnections', 'CRM_MeterInstallation.ServiceConnectionId', '=', 'CRM_ServiceConnections.id')
+            ->leftJoin('CRM_Barangays', 'CRM_ServiceConnections.Barangay', '=', 'CRM_Barangays.id')
+            ->leftJoin('CRM_Towns', 'CRM_ServiceConnections.Town', '=', 'CRM_Towns.id')
+            ->leftJoin('CRM_ServiceConnectionCrew', 'CRM_ServiceConnections.StationCrewAssigned', '=', 'CRM_ServiceConnectionCrew.id')
+            ->whereRaw("CRM_MeterInstallation.NetMetering='Yes' AND (TRY_CAST(CRM_ServiceConnections.DateTimeOfEnergization AS DATE) BETWEEN '" . $from . "' AND '" . $to . "') AND CRM_ServiceConnections.Status='Energized'")
+            ->select(
+                'CRM_ServiceConnections.id AS ConnectionId',
+                'CRM_ServiceConnections.ServiceAccountName',
+                'CRM_ServiceConnections.Sitio',
+                'CRM_Barangays.Barangay',
+                'CRM_Towns.Town',
+                'CRM_ServiceConnections.Office',
+                'CRM_ServiceConnections.DateOfApplication',
+                'CRM_ServiceConnections.DateTimeOfEnergization',
+                'CRM_MeterInstallation.*',
+                'CRM_MeterInstallation.created_at',
+                'CRM_ServiceConnectionCrew.StationName',
+                'CRM_ServiceConnections.Notes',
+                'CRM_ServiceConnections.AccountApplicationType',
+            )
+            ->orderBy('CRM_Towns.Town')
+            ->orderBy('CRM_ServiceConnections.ServiceAccountName')
+            ->get();
+
+        $headers = [
+            'Svc. No',
+            'Applicant Name',
+            'Address',
+            'Application Type',
+            'Date of Application',
+            'Date of Energization',
+            'Meter Serial Number',
+            'Meter Brand',
+            'Ampere Rating',
+            'Initial Reading',
+            'Line to Neutral',
+            'Line to Ground',
+            'Neutral to Ground',
+            'Multiplier',
+            'Date Installed',
+            'Transformer ID',
+            'TransformerCapacity',
+            'Crew',
+            'Notes/Remarks',
+        ];
+
+        $arr = [];
+        foreach($data as $item) {
+            array_push($arr, [
+                'SvcNo' => "#" . $item->ConnectionId,
+                'Applicant' => $item->ServiceAccountName,
+                'Address' => ServiceConnections::getAddress($item),
+                'ApplicationType' => $item->AccountApplicationType,
+                'DateofAppliction' => $item->DateOfApplication != null ? date('M d, Y', strtotime($item->DateOfApplication)) : '-',
+                'DateOfEnergization' => $item->DateTimeOfEnergization != null ? date('M d, Y', strtotime($item->DateTimeOfEnergization)) : '-',
+                'MeterNo' => $item->NewMeterNumber,
+                'Brand' => $item->NewMeterBrand,
+                'Rating' => $item->NewMeterAmperes,
+                'InitReading' => $item->NewMeterInitialReading,
+                'LineToNeutral' => $item->NewMeterLineToNeutral,
+                'LineToGround' => $item->NewMeterLineToGround,
+                'NeutralToGround' => $item->NewMeterNeutralToGround,
+                'Multiplier' => $item->NewMeterMultiplier,
+                'DateInstalled' => $item->DateTimeOfEnergization != null ? date('M d, Y', strtotime($item->DateTimeOfEnergization)) : '-',
+                'TransformerId' => $item->TransformerID,
+                'TransformerCapacity' => $item->TransfomerCapacity,
+                'Crew' => $item->StationName,
+                'Remarks' => $item->Notes,
+            ]);
+        }
+
+        $styles = [
+            // Style the first row as bold text.
+            1 => [
+                'font' => ['bold' => true],
+                'alignment' => ['horizontal' => 'center'],
+            ],
+            2 => [
+                'alignment' => ['horizontal' => 'center'],
+            ],
+            4 => [
+                'font' => ['bold' => true],
+                'alignment' => ['horizontal' => 'center'],
+            ],
+            8 => [
+                'font' => ['bold' => true],
+                'alignment' => ['horizontal' => 'center'],
+            ],
+        ];
+        
+        $export = new DynamicExportsNoBillingMonth($arr, 
+                                    'TAGBILARAN CITY',
+                                    $headers, 
+                                    [],
+                                    'A8',
+                                    $styles,
+                                    'NET METERING METER INSTALLATION REPORT FROM ' . date('M d, Y', strtotime($from)) . ' TO ' . date('M d, Y', strtotime($to))
+                                );
+
+        return Excel::download($export, 'Net-Meter-Installation-Report.xlsx');
     }
 
     public function detailedSummary(Request $request) {

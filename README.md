@@ -19,7 +19,7 @@
  - ServiceConnections
     - NetMetered
 
-- MeterAndTransformer
+- MeterInstallation
     - NetMetering
 
 ### Added New Tables

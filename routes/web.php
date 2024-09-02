@@ -206,6 +206,8 @@ Route::group(['middleware' => ['settings']], function () {
     Route::get('/service_connections/update-inspection-fee', [ServiceConnectionsController::class, 'updateInspectionFee'])->name('serviceConnections.update-inspection-fee');
     Route::get('/service_connections/applied-requests', [ServiceConnectionsController::class, 'appliedRequests'])->name('serviceConnections.applied-requests');
     Route::get('/service_connections/get-applied-requests', [ServiceConnectionsController::class, 'getAppliedRequests'])->name('serviceConnections.get-applied-requests');
+    Route::get('/service_connections/metering-installation-net-metering', [ServiceConnectionsController::class, 'meteringInstallationNetMetering'])->name('serviceConnections.metering-installation-net-metering');
+    Route::get('/service_connections/download-net-metering-installation-report/{from}/{to}', [ServiceConnectionsController::class, 'downloadNetMeteringInstallation'])->name('serviceConnections.download-net-metering-installation-report');
     Route::resource('serviceConnections', App\Http\Controllers\ServiceConnectionsController::class);
 
 

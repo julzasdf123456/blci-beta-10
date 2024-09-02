@@ -96,8 +96,14 @@
                 <tr>
                     <td class="text-muted">Transformer Load (kVa)</td>
                     <td>{{ $serviceConnectionInspections->SizeOfTransformer==null ? '-' : $serviceConnectionInspections->SizeOfTransformer }}</td>
-                    <td class="text-muted" style="padding-left: 50px;"></td>
-                    <td></td> 
+                    <td class="text-muted" style="padding-left: 50px;">Net Metering</td>
+                    <td>
+                        @if ($serviceConnections->NetMetered === 'Yes')
+                            <span class="badge bg-success">Yes</span>
+                        @else
+                            <span class="badge bg-gray">No</span>
+                        @endif    
+                    </td> 
                 </tr>
                 <tr>
                     <td class="text-muted">Pole Number</td>

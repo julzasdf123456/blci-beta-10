@@ -67,8 +67,8 @@
                             </td>
                             <td></td>
                             <td>
-                                {{-- <input type="checkbox" class="form-checkbox" name="NetMetered" id="NetMetered" checked="{{ $serviceConnections->NetMetered === 'Yes' ? true : false }}" value="{{ $serviceConnections->NetMetered  }}" style="width: 24px; display: inline;">
-                                <label for="NetMetered">Net Metered</label> --}}
+                                <input type="checkbox" class="form-checkbox" name="NetMetered" id="NetMetered" {{ $serviceConnections->NetMetered != null && $serviceConnections->NetMetered === 'Yes' ? 'checked' : '' }} value="Yes" style="width: 24px; display: inline;">
+                                <label for="NetMetered">Net Metered</label>
                             </td>
                         </tr>
                     </table>
