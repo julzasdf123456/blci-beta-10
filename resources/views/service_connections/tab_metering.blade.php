@@ -7,7 +7,11 @@
 @else
     <div class="row p-3">
         <div class="col-lg-12 mb-2">            
-            <a href="{{ route('meterInstallations.edit', [$serviceConnectionMeter->id]) }}" class="btn btn-primary-skinny float-right btn-sm"><i class="fas fa-pen ico-tab-mini"></i>Update Meter Data</a>
+            <a href="{{ route('meterInstallations.edit', [$serviceConnectionMeter->id]) }}" class="btn btn-primary-skinny float-right btn-sm"><i class="fas fa-pen ico-tab-mini"></i>Update kWH Meter Data</a>
+
+            @if ($netMeteringMeter != null)
+                <a href="{{ route('meterInstallations.edit', [$netMeteringMeter->id]) }}" class="btn btn-primary-skinny float-right btn-sm mr-1"><i class="fas fa-pen ico-tab-mini"></i>Update Solar Generation Meter Data</a>
+            @endif
         </div>
         {{-- kWH METER --}}
         <div class="col-lg-6">
