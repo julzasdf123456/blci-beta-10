@@ -308,7 +308,7 @@ class ServiceConnectionsEnergization extends Controller {
         $input = $request->all();
 
         $id = $input['id'];
-        $input['ServiceDate'] = isset($input['ServiceDate']) && validateDate($input['ServiceDate']) ? $input['ServiceDate'] : '';
+        $input['ServiceDate'] = isset($input['ServiceDate']) && $this->validateDate($input['ServiceDate']) ? $input['ServiceDate'] : '';
 
         $lineAndMetering = LineAndMeteringServices::find($id);
 
