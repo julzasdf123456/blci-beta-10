@@ -17,7 +17,7 @@
                         <td>{{ $item->ConductorSize }}</td>
                         <td>{{ $item->ConductorUnit }}</td>
                         <td>{{ $item->name }}</td>
-                        <td>{{ $item->ServiceDate != null ? date('F d, Y h:i A', strtotime($item->ServiceDate)) : '' }}</td>
+                        <td>{{ $item->created_at != null ? date('F d, Y h:i A', strtotime($item->created_at)) : '' }}</td>
                     </tr>
                 @endforeach
             </tbody>

@@ -503,7 +503,7 @@ class ServiceConnectionsController extends AppBaseController
         // line services
         $line = DB::table('CRM_LineAndMeteringServices')
             ->leftJoin('users', 'CRM_LineAndMeteringServices.UserId', '=', 'users.id')
-            ->whereRaw("AccountNumber LIKE '%". $accountNo . "%' AND (LineLength IS NOT NULL OR ConductorType IS NOT NULL OR ConductorUnit IS NOT NULL)")
+            ->whereRaw("AccountNumber LIKE '%". $accountNo . "%' AND (LineLength IS NOT NULL OR ConductorType IS NOT NULL OR ConductorUnit IS NOT NULL) AND CRM_LineAndMeteringServices.Notes LIKE '%LINE_DATA%'")
             ->select(
                 'CRM_LineAndMeteringServices.*',
                 'users.name'
@@ -513,7 +513,7 @@ class ServiceConnectionsController extends AppBaseController
 
         $metering = DB::table('CRM_LineAndMeteringServices')
             ->leftJoin('users', 'CRM_LineAndMeteringServices.UserId', '=', 'users.id')
-            ->whereRaw("AccountNumber LIKE '%". $accountNo . "%' AND (MeterSealNumber IS NOT NULL OR MeterNumber IS NOT NULL)")
+            ->whereRaw("AccountNumber LIKE '%". $accountNo . "%' AND (MeterSealNumber IS NOT NULL OR MeterNumber IS NOT NULL) AND (CRM_LineAndMeteringServices.Notes IS NULL OR CRM_LineAndMeteringServices.Notes NOT LIKE '%LINE_DATA%')")
             ->select(
                 'CRM_LineAndMeteringServices.*',
                 'users.name'
