@@ -29,7 +29,7 @@
                         <td>{{ $item->name }}</td>
                         <td>{{ $item->PrivateElectrician }}</td>
                         <td>{{ $item->Notes }}</td>
-                        <td>{{ $item->ServiceDate != null ? date('F d, Y h:i A', strtotime($item->ServiceDate)) : '' }}</td>
+                        <td>{{ $item->ServiceDate != null ? date('F d, Y h:i A', strtotime($item->ServiceDate)) : date('F d, Y h:i A', strtotime($item->created_at)) }}</td>
                     </tr>
                 @endforeach
             </tbody>
