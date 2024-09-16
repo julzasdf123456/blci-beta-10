@@ -307,16 +307,59 @@ class ServiceConnectionsEnergization extends Controller {
         $input = $request->all();
 
         $id = $input['id'];
-        $lineAndMetering = LineAndMeteringServices::create($input);
+
+        $lineAndMetering = LineAndMeteringServices::find($id);
+
+        if ($lineAndMetering != null) {
+            $lineAndMetering->TypeOfService = isset($input['TypeOfService']) ? $input['TypeOfService'] : '';
+            $lineAndMetering->MeterSealNumber = isset($input['MeterSealNumber']) ? $input['MeterSealNumber'] : '';
+            $lineAndMetering->IsLeadSeal = isset($input['IsLeadSeal']) ? $input['IsLeadSeal'] : '';
+            $lineAndMetering->MeterStatus = isset($input['MeterStatus']) ? $input['MeterStatus'] : '';
+            $lineAndMetering->MeterNumber = isset($input['MeterNumber']) ? $input['MeterNumber'] : '';
+            $lineAndMetering->Multiplier = isset($input['Multiplier']) ? (is_numeric($input['Multiplier']) ? $input['Multiplier'] : 0) : 0;
+            $lineAndMetering->MeterType = isset($input['MeterType']) ? $input['MeterType'] : '';
+            $lineAndMetering->MeterBrand = isset($input['MeterBrand']) ? $input['MeterBrand'] : '';
+            $lineAndMetering->Notes = isset($input['Notes']) ? $input['Notes'] : '';
+            $lineAndMetering->ServiceDate = isset($input['ServiceDate']) ? $input['ServiceDate'] : '';
+            $lineAndMetering->UserId = isset($input['UserId']) ? $input['UserId'] : '';
+            $lineAndMetering->PrivateElectrician = isset($input['PrivateElectrician']) ? $input['PrivateElectrician'] : '';
+            $lineAndMetering->LineLength = isset($input['LineLength']) ? $input['LineLength'] : '';
+            $lineAndMetering->ConductorType = isset($input['ConductorType']) ? $input['ConductorType'] : '';
+            $lineAndMetering->ConductorSize = isset($input['ConductorSize']) ? $input['ConductorSize'] : '';
+            $lineAndMetering->ConductorUnit = isset($input['ConductorUnit']) ? $input['ConductorUnit'] : '';
+            $lineAndMetering->Status = isset($input['Status']) ? $input['Status'] : '';
+            $lineAndMetering->AccountNumber = isset($input['AccountNumber']) ? $input['AccountNumber'] : '';
+            $lineAndMetering->save();
+
+            // CREATE LOG
+            $timeFrame = new ServiceConnectionTimeframes;
+            $timeFrame->id = IDGenerator::generateIDandRandString();
+            $timeFrame->ServiceConnectionId = $request['ServiceConnectionId'];
+            $timeFrame->UserId = "0";
+            $timeFrame->Status = '[WEB] Line & Metering Updated';
+            $timeFrame->Notes = "Line and metering services data updated by linemen/crew from Linemen's App.";
+            $timeFrame->save();
+        } else {
+            $lineAndMetering = LineAndMeteringServices::create($input);
+
+            // CREATE LOG
+            $timeFrame = new ServiceConnectionTimeframes;
+            $timeFrame->id = IDGenerator::generateIDandRandString();
+            $timeFrame->ServiceConnectionId = $request['ServiceConnectionId'];
+            $timeFrame->UserId = "0";
+            $timeFrame->Status = '[WEB] Line & Metering Created';
+            $timeFrame->Notes = "Line and metering services data created by linemen/crew from Linemen's App.";
+            $timeFrame->save();
+        }
 
         // CREATE LOG
-        $timeFrame = new ServiceConnectionTimeframes;
-        $timeFrame->id = IDGenerator::generateIDandRandString();
-        $timeFrame->ServiceConnectionId = $request['ServiceConnectionId'];
-        $timeFrame->UserId = "0";
-        $timeFrame->Status = '[WEB] Line & Metering Created';
-        $timeFrame->Notes = "Line and metering services data created by linemen/crew from Linemen's App.";
-        $timeFrame->save();
+        // $timeFrame = new ServiceConnectionTimeframes;
+        // $timeFrame->id = IDGenerator::generateIDandRandString();
+        // $timeFrame->ServiceConnectionId = $request['ServiceConnectionId'];
+        // $timeFrame->UserId = "0";
+        // $timeFrame->Status = '[WEB] Line & Metering Created';
+        // $timeFrame->Notes = "Line and metering services data created by linemen/crew from Linemen's App.";
+        // $timeFrame->save();
 
         // $lineAndMetering = LineAndMeteringServices::where('ServiceConnectionId', $input['ServiceConnectionId'])->first();
 
