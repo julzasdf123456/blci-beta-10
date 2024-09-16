@@ -15,6 +15,7 @@ use App\Models\MeterReaders;
 use App\Models\MeterInstallation;
 use App\Models\LineAndMeteringServices;
 use File;
+use DateTime;
 
 class ServiceConnectionsEnergization extends Controller {
 
@@ -307,6 +308,7 @@ class ServiceConnectionsEnergization extends Controller {
         $input = $request->all();
 
         $id = $input['id'];
+        $input['ServiceDate'] = isset($input['ServiceDate']) && validateDate($input['ServiceDate']) ? $input['ServiceDate'] : '';
 
         $lineAndMetering = LineAndMeteringServices::find($id);
 
@@ -439,5 +441,11 @@ class ServiceConnectionsEnergization extends Controller {
         // }
         
         return response()->json($lineAndMetering, 200);
+    }
+
+    function validateDate($date, $format = 'Y-m-d') {
+        $d = DateTime::createFromFormat($format, $date);
+        // The Y ( 4 digits year ) returns TRUE for any integer with any number of digits so changing the comparison from == to === fixes the issue.
+        return $d && strtolower($d->format($format)) === strtolower($date);
     }
 }
