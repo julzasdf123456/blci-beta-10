@@ -5914,4 +5914,175 @@ class ServiceConnectionsController extends AppBaseController
 
         return response()->json($data, 200);
     }
+
+    public function technicalDataReport(Request $request) {
+        return view('/service_connections/technical_data', []);
+    }
+
+    public function getTechnicalDataReport(Request $request) {
+        $from = $request['From'];
+        $to = $request['To'];
+        $options = $request['Options'];
+
+        if ($options === 'All Applications') {
+            $data = DB::table('CRM_ServiceConnectionInspections')
+                ->leftJoin('CRM_ServiceConnections', 'CRM_ServiceConnectionInspections.ServiceConnectionId', '=', 'CRM_ServiceConnections.id')
+                ->leftJoin('CRM_MeterInstallation', 'CRM_ServiceConnections.id', '=', 'CRM_MeterInstallation.ServiceConnectionId')
+                ->leftJoin('CRM_Barangays', 'CRM_ServiceConnections.Barangay', '=', 'CRM_Barangays.id')
+                ->leftJoin('CRM_Towns', 'CRM_ServiceConnections.Town', '=', 'CRM_Towns.id')
+                ->whereRaw("(CRM_ServiceConnections.DateOfApplication BETWEEN '" . $from . "' AND '" . $to . "') AND CRM_ServiceConnections.Trash IS NULL")
+                ->select(
+                    'CRM_ServiceConnections.*',
+                    'CRM_ServiceConnectionInspections.GeoBuilding',
+                    'CRM_ServiceConnectionInspections.GeoTappingPole',
+                    'CRM_ServiceConnectionInspections.GeoMeteringPole',
+                    'CRM_ServiceConnectionInspections.GeoSEPole',
+                    'CRM_ServiceConnectionInspections.PoleNo',
+                    'CRM_ServiceConnectionInspections.TransformerNo',
+                    'CRM_MeterInstallation.NewMeterBrand',
+                    'CRM_MeterInstallation.NewMeterNumber',
+                    'CRM_Towns.Town as TownSpelled',
+                    'CRM_Barangays.Barangay as BarangaySpelled',
+                )
+                ->orderBy('DateOfApplication')
+                ->paginate(50);
+        } else {
+            $data = DB::table('CRM_ServiceConnectionInspections')
+                ->leftJoin('CRM_ServiceConnections', 'CRM_ServiceConnectionInspections.ServiceConnectionId', '=', 'CRM_ServiceConnections.id')
+                ->leftJoin('CRM_MeterInstallation', 'CRM_ServiceConnections.id', '=', 'CRM_MeterInstallation.ServiceConnectionId')
+                ->leftJoin('CRM_Barangays', 'CRM_ServiceConnections.Barangay', '=', 'CRM_Barangays.id')
+                ->leftJoin('CRM_Towns', 'CRM_ServiceConnections.Town', '=', 'CRM_Towns.id')
+                ->whereRaw("(CRM_ServiceConnections.DateOfApplication BETWEEN '" . $from . "' AND '" . $to . "') AND CRM_ServiceConnections.Status IN ('Energized') AND CRM_ServiceConnections.Trash IS NULL")
+                ->select(
+                    'CRM_ServiceConnections.*',
+                    'CRM_ServiceConnectionInspections.GeoBuilding',
+                    'CRM_ServiceConnectionInspections.GeoTappingPole',
+                    'CRM_ServiceConnectionInspections.GeoMeteringPole',
+                    'CRM_ServiceConnectionInspections.GeoSEPole',
+                    'CRM_ServiceConnectionInspections.PoleNo',
+                    'CRM_ServiceConnectionInspections.TransformerNo',
+                    'CRM_MeterInstallation.NewMeterBrand',
+                    'CRM_MeterInstallation.NewMeterNumber',
+                    'CRM_Towns.Town as TownSpelled',
+                    'CRM_Barangays.Barangay as BarangaySpelled',
+                )
+                ->orderBy('DateOfApplication')
+                ->paginate(50);
+        }
+
+        return response()->json($data, 200);
+    }
+
+    public function downloadTechnicalData($options, $from, $to) {
+        if ($options === 'All Applications') {
+            $data = DB::table('CRM_ServiceConnectionInspections')
+                ->leftJoin('CRM_ServiceConnections', 'CRM_ServiceConnectionInspections.ServiceConnectionId', '=', 'CRM_ServiceConnections.id')
+                ->leftJoin('CRM_MeterInstallation', 'CRM_ServiceConnections.id', '=', 'CRM_MeterInstallation.ServiceConnectionId')
+                ->leftJoin('CRM_Barangays', 'CRM_ServiceConnections.Barangay', '=', 'CRM_Barangays.id')
+                ->leftJoin('CRM_Towns', 'CRM_ServiceConnections.Town', '=', 'CRM_Towns.id')
+                ->whereRaw("(CRM_ServiceConnections.DateOfApplication BETWEEN '" . $from . "' AND '" . $to . "') AND CRM_ServiceConnections.Trash IS NULL")
+                ->select(
+                    'CRM_ServiceConnections.*',
+                    'CRM_ServiceConnectionInspections.GeoBuilding',
+                    'CRM_ServiceConnectionInspections.GeoTappingPole',
+                    'CRM_ServiceConnectionInspections.GeoMeteringPole',
+                    'CRM_ServiceConnectionInspections.GeoSEPole',
+                    'CRM_ServiceConnectionInspections.PoleNo',
+                    'CRM_ServiceConnectionInspections.TransformerNo',
+                    'CRM_MeterInstallation.NewMeterBrand',
+                    'CRM_MeterInstallation.NewMeterNumber',
+                    'CRM_Towns.Town',
+                    'CRM_Barangays.Barangay',
+                )
+                ->orderBy('DateOfApplication')
+                ->get();
+        } else {
+            $data = DB::table('CRM_ServiceConnectionInspections')
+                ->leftJoin('CRM_ServiceConnections', 'CRM_ServiceConnectionInspections.ServiceConnectionId', '=', 'CRM_ServiceConnections.id')
+                ->leftJoin('CRM_MeterInstallation', 'CRM_ServiceConnections.id', '=', 'CRM_MeterInstallation.ServiceConnectionId')
+                ->leftJoin('CRM_Barangays', 'CRM_ServiceConnections.Barangay', '=', 'CRM_Barangays.id')
+                ->leftJoin('CRM_Towns', 'CRM_ServiceConnections.Town', '=', 'CRM_Towns.id')
+                ->whereRaw("(CRM_ServiceConnections.DateOfApplication BETWEEN '" . $from . "' AND '" . $to . "') AND CRM_ServiceConnections.Status IN ('Energized') AND CRM_ServiceConnections.Trash IS NULL")
+                ->select(
+                    'CRM_ServiceConnections.*',
+                    'CRM_ServiceConnectionInspections.GeoBuilding',
+                    'CRM_ServiceConnectionInspections.GeoTappingPole',
+                    'CRM_ServiceConnectionInspections.GeoMeteringPole',
+                    'CRM_ServiceConnectionInspections.GeoSEPole',
+                    'CRM_ServiceConnectionInspections.PoleNo',
+                    'CRM_ServiceConnectionInspections.TransformerNo',
+                    'CRM_MeterInstallation.NewMeterBrand',
+                    'CRM_MeterInstallation.NewMeterNumber',
+                    'CRM_Towns.Town',
+                    'CRM_Barangays.Barangay',
+                )
+                ->orderBy('DateOfApplication')
+                ->get();
+        }
+
+        $headers = [
+            'AccountNo',
+            'Customer',
+            'Address',
+            'Application',
+            'Account Type',
+            'Zone/Block',
+            'Building Lat/Long',
+            'Metering Lat/Long',
+            'Tapping Pole Lat/Long',
+            'Service Entrance Lat/Long',
+            'Pole Number',
+            'Transformer Number',
+        ];
+    
+        $arr = [];
+        foreach($data as $item) {
+            array_push($arr, [
+                'AcctountNo' =>  $item->AccountNumber . "-" . $item->NumberOfAccounts,
+                'Customer' => $item->ServiceAccountName,
+                'Address' => ServiceConnections::getAddress($item),
+                'Application' => $item->AccountApplicationType,
+                'AccountType' => $item->AccountType,
+                'ZoneBlock' => $item->Zone . '-' . $item->Block,
+                'GEOBuilding' => $item->GeoBuilding,
+                'GEOMeteringPole' => $item->GeoMeteringPole,
+                'GeoTappingPole' => $item->GeoTappingPole,
+                'GeoSEPole' => $item->GeoSEPole,
+                'PoleNo' => $item->PoleNo,
+                'TransformerNo' => $item->TransformerNo,
+            ]);
+        }
+    
+        $styles = [
+            // Style the first row as bold text.
+            1 => [
+                'font' => ['bold' => true],
+                'alignment' => ['horizontal' => 'center'],
+            ],
+            2 => [
+                'alignment' => ['horizontal' => 'center'],
+            ],
+            4 => [
+                'font' => ['bold' => true],
+                'alignment' => ['horizontal' => 'center'],
+            ],
+            8 => [
+                'font' => ['bold' => true],
+                'alignment' => ['horizontal' => 'center'],
+            ],
+        ];
+        
+        $export = new DynamicExportsNoBillingMonth($arr, 
+                                    'TAGBILARAN CITY',
+                                    $headers, 
+                                    [],
+                                    'A8',
+                                    $styles,
+                                    'TECHNICAL DATA REPORT FROM ' . date('M d, Y', strtotime($from)) . ' TO ' . date('M d, Y', strtotime($to))
+                                );
+    
+        return Excel::download($export, 'Technical-Data-Report.xlsx');
+    }
 }
+
+

@@ -270,6 +270,13 @@ use Illuminate\Support\Facades\Auth;
                         <i class="fas fa-circle nav-icon text-warning"></i><p>Service Connections</p>
                         </a>
                     </li>
+                    
+                    <li class="nav-item">
+                        <a href="{{ route('serviceConnections.technical-data-report') }}" title="GPS Coordinates, Meter, Pole Number, and other data"
+                        class="nav-link {{ Request::is('serviceConnections.technical-data-report*') ? 'active' : '' }}">
+                        <i class="fas fa-circle nav-icon text-warning"></i><p>Technical Data</p>
+                        </a>
+                    </li>
                 </ul>
             </li>
             @endcanany

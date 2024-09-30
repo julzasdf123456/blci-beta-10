@@ -208,6 +208,9 @@ Route::group(['middleware' => ['settings']], function () {
     Route::get('/service_connections/get-applied-requests', [ServiceConnectionsController::class, 'getAppliedRequests'])->name('serviceConnections.get-applied-requests');
     Route::get('/service_connections/metering-installation-net-metering', [ServiceConnectionsController::class, 'meteringInstallationNetMetering'])->name('serviceConnections.metering-installation-net-metering');
     Route::get('/service_connections/download-net-metering-installation-report/{from}/{to}', [ServiceConnectionsController::class, 'downloadNetMeteringInstallation'])->name('serviceConnections.download-net-metering-installation-report');
+    Route::get('/service_connections/technical-data-report', [ServiceConnectionsController::class, 'technicalDataReport'])->name('serviceConnections.technical-data-report');
+    Route::get('/service_connections/get-technical-data-report', [ServiceConnectionsController::class, 'getTechnicalDataReport'])->name('serviceConnections.get-technical-data-report');
+    Route::get('/service_connections/download-technical-data/{ops}/{from}/{to}', [ServiceConnectionsController::class, 'downloadTechnicalData'])->name('serviceConnections.download-technical-data');
     Route::resource('serviceConnections', App\Http\Controllers\ServiceConnectionsController::class);
 
 
