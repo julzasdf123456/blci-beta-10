@@ -36,26 +36,27 @@
         </thead>
         <tbody>
             @foreach ($bills as $item)
-                <tr>
-                    <td>{{ $item->BillNumber }}</td>
-                    <td><a href="{{ route('serviceAccounts.show', [$item->AccountNumber]) }}">{{ $item->AccountNumber }}</a></td>
-                    <td>{{ $item->OldAccountNo }}</td>
-                    <td>{{ $item->ServiceAccountName }} {{ $item->AccountCount != null ? '(# ' . $item->AccountCount . ')' : '' }}</td>                
-                    <td>{{ $item->Barangay }}, {{ $item->Town }}</td>
-                    <td>{{ date('F Y', strtotime($item->ServicePeriod)) }}</td>
-                    <td>{{ $item->ConsumerType }}</td>
-                    <td>{{ $item->ORNumber }}</td>
-                    <td width="120">
-                        <div class='btn-group'>
-                            <a href="{{ route('bills.show', [$item->id]) }}"
-                               class='btn btn-default btn-xs'>
-                                <i class="far fa-eye"></i>
-                            </a>
-                        </div>
-                        {!! Form::close() !!}
-                    </td>
-                </tr>
-                
+                @if ($item != null && $item->AccountNumber != null)
+                    <tr>
+                        <td>{{ $item->BillNumber }}</td>
+                        <td><a href="{{ route('serviceAccounts.show', [$item->AccountNumber]) }}">{{ $item->AccountNumber }}</a></td>
+                        <td>{{ $item->OldAccountNo }}</td>
+                        <td>{{ $item->ServiceAccountName }} {{ $item->AccountCount != null ? '(# ' . $item->AccountCount . ')' : '' }}</td>                
+                        <td>{{ $item->Barangay }}, {{ $item->Town }}</td>
+                        <td>{{ date('F Y', strtotime($item->ServicePeriod)) }}</td>
+                        <td>{{ $item->ConsumerType }}</td>
+                        <td>{{ $item->ORNumber }}</td>
+                        <td width="120">
+                            <div class='btn-group'>
+                                <a href="{{ route('bills.show', [$item->id]) }}"
+                                class='btn btn-default btn-xs'>
+                                    <i class="far fa-eye"></i>
+                                </a>
+                            </div>
+                            {!! Form::close() !!}
+                        </td>
+                    </tr>
+                @endif
             @endforeach
         </tbody>
     </table>
